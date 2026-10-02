@@ -1,0 +1,325 @@
+/*
+ * Pavva Widgets – Listă interactivă cu imagine
+ * Creat de imagient pentru Pavva.
+ *
+ * Valorile de aici sunt doar implicite; totul se reglează din Elementor → Style.
+ * Așezarea (alături / carduri glisante / acordeon) schimbă variabilele --pf-*.
+ */
+
+.pf {
+	/* culori și timpi */
+	--pf-title: #1d1127;
+	--pf-title-off: #cdc8c2;
+	--pf-title-hover: #9c958e;
+	--pf-desc: #1d1127;
+	--pf-desc-off: #d2cdc7;
+	--pf-dur: 900ms;
+	--pf-text-dur: 500ms;
+	--pf-ease: cubic-bezier(.16, 1, .3, 1);
+	--pf-zoom: 1.08;
+	--pf-dot: #d9d3cc;
+	--pf-dot-on: #1d1127;
+
+	/* așezarea implicită: listă și imagine alături */
+	--pf-dir: row;
+	--pf-media-order: var(--pf-side-order, 1);
+	--pf-media-flex: 1 1 0%;
+	--pf-list-basis: var(--pf-list-width, 44%);
+	--pf-list-dir: column;
+	--pf-list-ov: visible;
+	--pf-snap: none;
+	--pf-list-pad: 24px 0;
+	--pf-list-justify: space-between;
+	--pf-item-flex: 0 0 auto;
+	--pf-item-bg: transparent;
+	--pf-item-bg-on: transparent;
+	--pf-item-pad: 0px;
+	--pf-item-radius: 0px;
+	--pf-item-border: transparent;
+	--pf-item-border-on: transparent;
+	--pf-item-dir: row;
+	--pf-title-basis: var(--pf-title-w, 170px);
+	--pf-row-gap: 24px;
+	--pf-inactive-rows: 1fr;
+	--pf-dots: none;
+	--pf-m: 0;
+
+	position: relative;
+}
+
+.pf .pf-inner {
+	display: flex;
+	flex-direction: var(--pf-dir);
+	align-items: stretch;
+	gap: 40px;
+}
+
+/* ---------------- Lista ---------------- */
+.pf .pf-list {
+	position: relative;
+	display: flex;
+	flex-direction: var(--pf-list-dir);
+	justify-content: var(--pf-list-justify);
+	flex: 0 0 var(--pf-list-basis);
+	min-width: 0;
+	gap: var(--pf-items-gap, var(--pf-gap-def, 32px));
+	padding: var(--pf-list-pad);
+	overflow-x: var(--pf-list-ov);
+	overflow-y: visible;
+	scroll-snap-type: var(--pf-snap);
+	scrollbar-width: none;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-x: contain;
+	box-sizing: border-box;
+}
+.pf .pf-list::-webkit-scrollbar { display: none; }
+
+/* carduri glisante: spațiu invizibil la final, ca ultimul card să se poată
+   opri aliniat la stânga, exact ca celelalte (clasa o pune JavaScript) */
+.pf.pf-swiping .pf-list::after {
+	content: "";
+	display: block;
+	flex: 0 0 calc(100% - var(--pf-card-w, 82%));
+	margin-left: calc(var(--pf-gap-px, 0px) * -1);
+}
+
+.pf .pf-item {
+	position: relative;
+	flex: var(--pf-item-flex);
+	min-width: 0;
+	box-sizing: border-box;
+	padding: var(--pf-item-pad);
+	border: 1px solid var(--pf-item-border);
+	border-radius: var(--pf-item-radius);
+	background-color: var(--pf-item-bg);
+	scroll-snap-align: start;
+	cursor: pointer;
+	outline: none;
+	-webkit-tap-highlight-color: transparent;
+	transition:
+		background-color var(--pf-text-dur) ease,
+		border-color var(--pf-text-dur) ease;
+}
+.pf .pf-item.is-active {
+	background-color: var(--pf-item-bg-on);
+	border-color: var(--pf-item-border-on);
+}
+.pf .pf-item:focus-visible {
+	outline: 2px solid var(--pf-title);
+	outline-offset: 4px;
+	border-radius: max(var(--pf-item-radius), 4px);
+}
+
+.pf .pf-row {
+	display: flex;
+	flex-direction: var(--pf-item-dir);
+	align-items: flex-start;
+	gap: var(--pf-row-gap);
+}
+
+.pf .pf-title {
+	flex: 0 0 var(--pf-title-basis);
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 17px;
+	font-weight: 700;
+	line-height: 1.3;
+	color: var(--pf-title-off);
+	transition: color var(--pf-text-dur) ease;
+}
+.pf .pf-item.is-active .pf-title { color: var(--pf-title); }
+
+.pf .pf-desc-wrap {
+	display: grid;
+	grid-template-rows: var(--pf-inactive-rows);
+	flex: 1 1 auto;
+	min-width: 0;
+	transition: grid-template-rows var(--pf-dur) var(--pf-ease);
+}
+.pf .pf-item.is-active .pf-desc-wrap { grid-template-rows: 1fr; }
+.pf .pf-desc-inner {
+	min-height: 0;
+	overflow: hidden;
+}
+.pf .pf-desc {
+	max-width: var(--pf-desc-max, 340px);
+	margin: 0;
+	padding: 0;
+	font-size: 15px;
+	line-height: 1.5;
+	color: var(--pf-desc-off);
+	transition: color var(--pf-text-dur) ease;
+}
+.pf .pf-item.is-active .pf-desc { color: var(--pf-desc); }
+
+@media (hover: hover) {
+	.pf .pf-item:not(.is-active):hover .pf-title { color: var(--pf-title-hover); }
+}
+
+/* ---------------- Imaginea ---------------- */
+.pf .pf-media {
+	order: var(--pf-media-order);
+	flex: var(--pf-media-flex);
+	min-width: 0;
+}
+.pf .pf-frame {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1.33;
+	overflow: hidden;
+	border-radius: 8px;
+	background-color: #e9e7e3;
+	isolation: isolate;
+	-webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+.pf .pf-img {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	visibility: hidden;
+	opacity: 0;
+	overflow: hidden;
+}
+.pf .pf-img.is-prev {
+	z-index: 1;
+	visibility: visible;
+	opacity: 1;
+}
+.pf .pf-img.is-active {
+	z-index: 2;
+	visibility: visible;
+	opacity: 1;
+}
+.pf .pf-picture {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+.pf .pf-photo {
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	margin: 0;
+	object-fit: cover;
+	object-position: center center;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	pointer-events: none;
+	-webkit-user-drag: none;
+}
+
+/* Efect 1: estompare cu zoom ușor */
+.pf.pf-fx-fade .pf-img.is-active {
+	transition: opacity var(--pf-dur) var(--pf-ease);
+}
+.pf.pf-fx-fade .pf-photo {
+	transform: scale(var(--pf-zoom));
+}
+.pf.pf-fx-fade .pf-img.is-active .pf-photo,
+.pf.pf-fx-fade .pf-img.is-prev .pf-photo {
+	transform: scale(1);
+	transition: transform calc(var(--pf-dur) * 1.6) var(--pf-ease);
+}
+
+/* Efect 2: dezvăluire de jos în sus */
+.pf.pf-fx-reveal .pf-img {
+	opacity: 1;
+	clip-path: inset(100% 0 0 0);
+}
+.pf.pf-fx-reveal .pf-img.is-prev { clip-path: inset(0 0 0 0); }
+.pf.pf-fx-reveal .pf-img.is-active {
+	clip-path: inset(0 0 0 0);
+	transition: clip-path var(--pf-dur) var(--pf-ease);
+}
+.pf.pf-fx-reveal .pf-photo { transform: scale(calc(var(--pf-zoom) + .06)); }
+.pf.pf-fx-reveal .pf-img.is-active .pf-photo,
+.pf.pf-fx-reveal .pf-img.is-prev .pf-photo {
+	transform: scale(1);
+	transition: transform calc(var(--pf-dur) * 1.5) var(--pf-ease);
+}
+
+/* Efect 3: alunecare în sus */
+.pf.pf-fx-slide .pf-img { transform: translate3d(0, 8%, 0); }
+.pf.pf-fx-slide .pf-img.is-prev { transform: none; }
+.pf.pf-fx-slide .pf-img.is-active {
+	transform: none;
+	transition:
+		opacity var(--pf-dur) var(--pf-ease),
+		transform var(--pf-dur) var(--pf-ease);
+}
+
+/* Efect 4: estompare din blur */
+.pf.pf-fx-blur .pf-img {
+	filter: blur(18px);
+	transform: scale(1.04);
+}
+.pf.pf-fx-blur .pf-img.is-prev {
+	filter: none;
+	transform: none;
+}
+.pf.pf-fx-blur .pf-img.is-active {
+	filter: none;
+	transform: none;
+	transition:
+		opacity var(--pf-dur) var(--pf-ease),
+		filter var(--pf-dur) var(--pf-ease),
+		transform var(--pf-dur) var(--pf-ease);
+}
+
+/* ---------------- Punctele (carduri glisante) ---------------- */
+.pf .pf-dots {
+	display: var(--pf-dots);
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	margin-top: 18px;
+}
+.pf .pf-dot {
+	-webkit-appearance: none;
+	appearance: none;
+	display: block;
+	width: 7px;
+	height: 7px;
+	min-width: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 99px;
+	background: var(--pf-dot);
+	box-shadow: none;
+	cursor: pointer;
+	transition:
+		width .45s var(--pf-ease),
+		background-color .45s ease;
+}
+.pf .pf-dot:hover,
+.pf .pf-dot:focus {
+	background: var(--pf-dot);
+	box-shadow: none;
+}
+.pf .pf-dot.is-active,
+.pf .pf-dot.is-active:hover,
+.pf .pf-dot.is-active:focus {
+	width: 24px;
+	background: var(--pf-dot-on);
+}
+.pf .pf-dot:focus-visible {
+	outline: 2px solid var(--pf-dot-on);
+	outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.pf .pf-img,
+	.pf .pf-photo,
+	.pf .pf-desc-wrap,
+	.pf .pf-title,
+	.pf .pf-desc,
+	.pf .pf-item,
+	.pf .pf-dot {
+		transition: none !important;
+	}
+}

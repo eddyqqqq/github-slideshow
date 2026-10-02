@@ -1,0 +1,110 @@
+/*
+ * Pavva Widgets – Dimensiuni și specificații
+ * Creat de imagient pentru Pavva.
+ *
+ * Valorile implicite reproduc designul la 1400px și se micșorează fluid.
+ * Toate se pot suprascrie din Elementor → Style (desktop / tabletă / mobil).
+ */
+
+.pvd {
+	--pvd-cols: 3;
+	--pvd-gap: clamp(16px, 3.3vw, 46px);
+	--pvd-row-gap: clamp(36px, 4vw, 56px);
+	--pvd-ratio: 1 / 1;
+	--pvd-line: #e5e2dc;
+	--pvd-line-w: 1px;
+	--pvd-text: #5d5a55;
+	position: relative;
+	width: 100%;
+}
+
+.pvd .pvd-heading {
+	margin: 0 0 clamp(22px, 3.4vw, 48px);
+	padding: 0;
+	font-size: clamp(26px, 2.9vw, 40px);
+	font-weight: 700;
+	line-height: 1.15;
+	color: #b35a2c;
+}
+
+.pvd .pvd-grid {
+	display: grid;
+	grid-template-columns: repeat(var(--pvd-cols), minmax(0, 1fr));
+	column-gap: var(--pvd-gap);
+	row-gap: var(--pvd-row-gap);
+	align-items: start;
+}
+
+/* ---------- Imaginea în chenar ---------- */
+.pvd .pvd-media {
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	aspect-ratio: var(--pvd-ratio);
+	margin: 0 0 clamp(18px, 2.4vw, 34px);
+	padding: 8%;
+	border: 1px solid #ddb497;
+	border-radius: 6px;
+	background-color: #fff;
+	overflow: hidden;
+}
+.pvd .pvd-media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	object-fit: contain;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+/* ---------- Tabelul ---------- */
+.pvd .pvd-specs {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.pvd .pvd-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 16px;
+	margin: 0;
+	padding: 11px 0;
+	border-bottom: var(--pvd-line-w) solid var(--pvd-line);
+	font-size: clamp(13px, 1.05vw, 15px);
+	line-height: 1.35;
+	color: var(--pvd-text);
+	list-style: none;
+}
+.pvd .pvd-row::before,
+.pvd .pvd-row::marker { content: none; }
+
+.pvd .pvd-label {
+	flex: 1 1 auto;
+	min-width: 0;
+	color: var(--pvd-text);
+}
+.pvd .pvd-value {
+	flex: 0 1 auto;
+	min-width: 0;
+	text-align: right;
+	color: var(--pvd-text);
+}
+.pvd .pvd-row.is-title .pvd-value { text-align: left; }
+
+/* Valoarea sub etichetă */
+.pvd.pvd-value-below .pvd-row {
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+}
+.pvd.pvd-value-below .pvd-value { text-align: left; }
+
+/* Telefon: o coloană (dacă nu ai ales altceva în Elementor) */
+@media (max-width: 767px) {
+	.pvd { --pvd-cols: 1; }
+}

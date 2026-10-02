@@ -1,0 +1,122 @@
+.pavva-admin-box{padding:4px 0}.pavva-admin-box>.description{margin-bottom:16px}.pavva-row{border:1px solid #dcdcde;background:#fff;margin-bottom:14px}.pavva-row-head{display:flex;gap:10px;align-items:center;padding:10px 12px;background:#f6f7f7;border-bottom:1px solid #dcdcde}.pavva-row-head strong{flex:1}.pavva-handle{cursor:move;font-size:18px;color:#646970}.pavva-fields{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:18px;padding:16px}.pavva-field label{display:block;font-weight:600;margin-bottom:7px}.pavva-media-preview{min-height:110px;border:1px dashed #c3c4c7;background:#f6f7f7;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px}.pavva-media-preview img{max-width:100%;max-height:160px;width:auto;height:auto}.pavva-file-preview{padding:12px;border:1px solid #dcdcde;background:#f6f7f7;margin-bottom:8px;word-break:break-word}.pavva-sort-placeholder{min-height:140px;border:2px dashed #8c8f94;background:#f6f7f7;margin-bottom:14px}@media(max-width:1100px){.pavva-fields{grid-template-columns:1fr}}
+.pavva-dimension-labels-panel{
+    margin:0 0 18px;
+    border:1px solid #dcdcde;
+    background:#f6f7f7;
+}
+.pavva-dimension-labels-panel>summary{
+    padding:12px 14px;
+    cursor:pointer;
+    font-weight:600;
+    user-select:none;
+}
+.pavva-dimension-labels-panel[open]>summary{
+    border-bottom:1px solid #dcdcde;
+}
+.pavva-dimension-labels{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(180px,1fr));
+    gap:12px;
+    padding:14px;
+}
+.pavva-dimension-labels>.description{
+    grid-column:1/-1;
+    margin:0 0 2px;
+}
+@media(max-width:1100px){
+    .pavva-dimension-labels{grid-template-columns:1fr}
+}
+
+.pavva-admin-setting{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    padding:4px 0 18px;
+}
+.pavva-admin-setting select{
+    min-width:150px;
+}
+
+
+/* 4.10.23 - Dimensiuni și specificații dinamice */
+.pavva-dimension-main-fields{
+    grid-template-columns:minmax(220px,360px);
+    padding-bottom:10px;
+}
+.pavva-dimension-specs{
+    padding:0 16px 16px;
+}
+.pavva-dimension-spec-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    flex-wrap:wrap;
+    padding:8px 0 12px;
+}
+.pavva-dimension-spec-head span{
+    color:#646970;
+    font-size:12px;
+}
+.pavva-dimension-spec-row{
+    display:grid;
+    grid-template-columns:26px minmax(180px,1fr) minmax(180px,1fr) auto;
+    gap:12px;
+    align-items:end;
+    padding:10px 0;
+    border-bottom:1px solid #dcdcde;
+}
+.pavva-spec-handle{
+    cursor:move;
+    align-self:center;
+    color:#646970;
+    font-size:17px;
+}
+.pavva-spec-field label{
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+}
+.pavva-delete-dimension-spec{
+    margin-bottom:7px;
+}
+.pavva-spec-sort-placeholder{
+    min-height:58px;
+    border:2px dashed #8c8f94;
+    background:#f6f7f7;
+}
+@media(max-width:900px){
+    .pavva-dimension-spec-row{
+        grid-template-columns:26px 1fr;
+    }
+    .pavva-dimension-spec-row .pavva-spec-field,
+    .pavva-dimension-spec-row .pavva-delete-dimension-spec{
+        grid-column:2;
+    }
+}
+
+
+/* 4.10.29 - vizibilitate per element */
+.pavva-item-visibility{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-left:auto;
+    margin-right:14px;
+    font-weight:400;
+    color:#50575e;
+    white-space:nowrap;
+}
+.pavva-item-visibility input[type="checkbox"]{
+    margin:0;
+}
+@media(max-width:900px){
+    .pavva-row-head{
+        flex-wrap:wrap;
+    }
+    .pavva-item-visibility{
+        order:3;
+        width:100%;
+        margin:8px 0 0 28px;
+    }
+}

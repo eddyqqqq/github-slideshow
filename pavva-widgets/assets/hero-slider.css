@@ -1,0 +1,627 @@
+/*
+ * Pavva Widgets – Slider header
+ * Creat de imagient pentru Pavva.
+ *
+ * Valorile de aici sunt doar implicite. Totul se suprascrie din Elementor → Style.
+ */
+
+.ps-hero {
+	--ps-ui-ease: cubic-bezier(.22, .61, .36, 1);
+	--ps-arrows-x: 48px;
+	--ps-arrows-y: 40px;
+	--ps-arrow-color: #ffffff;
+	--ps-arrow-bg: transparent;
+	--ps-arrow-shift: 6px;
+	--ps-arrow-disabled: .35;
+	--ps-arrow-speed: 400ms;
+	--ps-pag-x: 32px;
+	--ps-pag-y: 28px;
+	--ps-dot-size: 8px;
+	--ps-dot-active-w: 28px;
+	--ps-dot-color: rgba(255, 255, 255, .45);
+	--ps-dot-active: #ffffff;
+	--ps-text-dur: 750ms;
+	--ps-text-dist: 18px;
+	--ps-text-stagger: 90ms;
+	--ps-text-ease: cubic-bezier(.22, .61, .36, 1);
+	--ps-icon-h: 52px;
+	--ps-cta-color: #b0552a;
+	--ps-cta-bg: transparent;
+	--ps-cta-border: #b0552a;
+	--ps-cta-color-hover: #ffffff;
+	--ps-cta-bg-hover: #b0552a;
+	--ps-cta-border-hover: #b0552a;
+	--ps-kb-scale: 1.08;
+	--ps-kb-dur: 8000ms;
+	--ps-word-dur: 1100ms;
+	--ps-word-step: 55ms;
+	--ps-word-ease: cubic-bezier(.16, 1, .3, 1);     /* ca GSAP expo.out */
+	--ps-word-ease-out: cubic-bezier(.5, 0, .75, 0);  /* ca GSAP quart.in */
+	position: relative;
+}
+
+/* widgetul ocupă toată lățimea containerului în care îl pui */
+.elementor-widget-pavva_hero_slider {
+	width: 100%;
+}
+
+.ps-hero .ps-frame {
+	position: relative;
+	width: 100%;
+	max-width: none;           /* implicit: cât containerul; se poate limita din Style → Dimensiuni widget */
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* ---------------- Slider ---------------- */
+.ps-hero .ps-slider {
+	position: relative;
+	outline: none;
+}
+.ps-hero .ps-slider:focus-visible {
+	outline: 2px solid var(--ps-arrow-color);
+	outline-offset: 4px;
+	border-radius: 8px;
+}
+
+.ps-hero .ps-viewport {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1.94;
+	overflow: hidden;
+	border-radius: 6px;
+	background-color: #b0552a;
+	isolation: isolate;
+	/* Safari: păstrează colțurile rotunjite în timpul animațiilor */
+	-webkit-mask-image: -webkit-radial-gradient(white, black);
+	touch-action: pan-y;
+	-webkit-user-select: none;
+	user-select: none;
+}
+.ps-hero.ps-draggable .ps-viewport { cursor: grab; }
+.ps-hero.ps-draggable .ps-viewport.is-dragging { cursor: grabbing; }
+
+.ps-hero .ps-slide {
+	position: absolute;
+	inset: 0;
+	visibility: hidden;
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
+}
+.ps-hero .ps-slide.is-active {
+	visibility: visible;
+	z-index: 1;
+}
+
+.ps-hero .ps-slide-inner {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 100%;
+	color: inherit;
+	text-decoration: none;
+}
+
+.ps-hero .ps-picture {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.ps-hero .ps-img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	margin: 0;
+	object-fit: cover;
+	object-position: center center;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	pointer-events: none;
+	-webkit-user-drag: none;
+}
+
+.ps-hero .ps-overlay {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+/* Zoom lent (Ken Burns) */
+.ps-hero.ps-kenburns .ps-img {
+	transform: scale(1);
+	transition: transform var(--ps-kb-dur) linear;
+}
+.ps-hero.ps-kenburns .ps-slide.is-kb .ps-img {
+	transform: scale(var(--ps-kb-scale));
+}
+
+/* ---------------- Săgeți ---------------- */
+.ps-hero .ps-arrows {
+	position: absolute;
+	z-index: 5;
+	display: flex;
+	align-items: center;
+	gap: 24px;
+}
+.ps-hero.ps-arrows-group .ps-arrows {
+	right: var(--ps-arrows-x);
+	bottom: var(--ps-arrows-y);
+}
+.ps-hero.ps-arrows-sides .ps-arrows {
+	inset: 0;
+	justify-content: space-between;
+	padding: 0 var(--ps-arrows-x);
+	pointer-events: none;
+}
+.ps-hero.ps-arrows-sides .ps-arrow { pointer-events: auto; }
+
+.ps-hero .ps-arrow {
+	-webkit-appearance: none;
+	appearance: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 8px 4px;
+	border: 0 solid transparent;
+	border-radius: 0;
+	background-color: var(--ps-arrow-bg);
+	background-image: none;
+	box-shadow: none;
+	color: var(--ps-arrow-color);
+	font-size: 14px;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+	transition:
+		transform var(--ps-arrow-speed) var(--ps-ui-ease),
+		color var(--ps-arrow-speed) var(--ps-ui-ease),
+		background-color var(--ps-arrow-speed) var(--ps-ui-ease),
+		border-color var(--ps-arrow-speed) var(--ps-ui-ease),
+		opacity var(--ps-arrow-speed) var(--ps-ui-ease);
+}
+/* suprascrie stilurile de buton ale temei / kit-ului Elementor */
+.ps-hero .ps-arrow:hover,
+.ps-hero .ps-arrow:focus,
+.ps-hero .ps-arrow:active {
+	background-color: var(--ps-arrow-bg-hover, var(--ps-arrow-bg));
+	color: var(--ps-arrow-color-hover, var(--ps-arrow-color));
+	box-shadow: none;
+	outline: none;
+}
+.ps-hero .ps-arrow:focus-visible {
+	outline: 2px solid var(--ps-arrow-color);
+	outline-offset: 3px;
+}
+.ps-hero .ps-prev:hover { transform: translateX(calc(var(--ps-arrow-shift) * -1)); }
+.ps-hero .ps-next:hover { transform: translateX(var(--ps-arrow-shift)); }
+.ps-hero .ps-arrow.is-disabled {
+	opacity: var(--ps-arrow-disabled);
+	cursor: default;
+	transform: none;
+}
+
+.ps-hero .ps-arrow svg {
+	display: block;
+	width: auto;
+	height: 1em;
+	overflow: visible;
+}
+.ps-hero .ps-arrow .ps-arrow-default { width: 4em; }
+.ps-hero .ps-arrow i { font-size: 1em; }
+.ps-hero .ps-arrow .ps-arrow-img {
+	display: block;
+	width: auto;
+	height: 1em;
+	max-width: none;
+	border: 0;
+	box-shadow: none;
+	pointer-events: none;
+}
+
+/* Colorarea SVG-urilor încărcate / din bibliotecă */
+.ps-hero.ps-svg-auto .ps-arrow svg:not(.ps-arrow-default) { fill: currentColor; }
+.ps-hero.ps-svg-fill .ps-arrow svg:not(.ps-arrow-default),
+.ps-hero.ps-svg-fill .ps-arrow svg:not(.ps-arrow-default) * { fill: currentColor; }
+.ps-hero.ps-svg-stroke .ps-arrow svg:not(.ps-arrow-default) * { stroke: currentColor; }
+.ps-hero.ps-svg-both .ps-arrow svg:not(.ps-arrow-default),
+.ps-hero.ps-svg-both .ps-arrow svg:not(.ps-arrow-default) * { fill: currentColor; stroke: currentColor; }
+
+/* ---------------- Paginare ---------------- */
+.ps-hero .ps-pagination {
+	position: absolute;
+	z-index: 5;
+	bottom: var(--ps-pag-y);
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.ps-hero .ps-dot {
+	-webkit-appearance: none;
+	appearance: none;
+	display: block;
+	width: var(--ps-dot-size);
+	height: var(--ps-dot-size);
+	min-width: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 999px;
+	background: var(--ps-dot-color);
+	box-shadow: none;
+	cursor: pointer;
+	transition:
+		width 600ms var(--ps-ui-ease),
+		background-color 600ms var(--ps-ui-ease);
+}
+.ps-hero .ps-dot:hover,
+.ps-hero .ps-dot:focus {
+	background: var(--ps-dot-color);
+	box-shadow: none;
+}
+.ps-hero .ps-dot.is-active,
+.ps-hero .ps-dot.is-active:hover,
+.ps-hero .ps-dot.is-active:focus {
+	width: var(--ps-dot-active-w);
+	background: var(--ps-dot-active);
+}
+.ps-hero .ps-dot:focus-visible {
+	outline: 2px solid var(--ps-dot-active);
+	outline-offset: 3px;
+}
+.ps-hero .ps-fraction {
+	color: #ffffff;
+	font-size: 14px;
+	line-height: 1;
+	letter-spacing: .04em;
+	font-variant-numeric: tabular-nums;
+}
+
+/* ---------------- Text sub slider ---------------- */
+.ps-hero .ps-text {
+	padding: 56px 0 0 60px;
+}
+
+/* rândul cu cele două coloane (flexbox) */
+.ps-hero .ps-text-inner {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: stretch;
+	gap: 40px;
+	max-width: 1120px;
+	min-height: var(--ps-row-min, 300px);
+	margin-left: 0;
+	margin-right: auto;
+}
+
+/* coloanele */
+.ps-hero .ps-col {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	min-width: 0;
+	box-sizing: border-box;
+}
+.ps-hero .ps-col-title {
+	flex: 0 1 auto;
+	max-width: var(--ps-tcol-max, 60%);
+	justify-content: flex-start;
+}
+.ps-hero .ps-col-desc {
+	flex: 0 0 auto;
+	width: var(--ps-dcol-w, 480px);
+	max-width: 100%;
+	justify-content: var(--ps-dcol-justify, flex-end);
+}
+
+.ps-hero .ps-title {
+	margin: 0;
+	padding: 0;
+	font-size: clamp(34px, 4.2vw, 58px);
+	font-weight: 700;
+	line-height: 1.08;
+	letter-spacing: -0.01em;
+	color: #b0552a;
+}
+.ps-hero .ps-desc {
+	margin: 0;
+	padding: 0;
+	font-size: 18px;
+	line-height: 1.5;
+	color: #1f1e1c;
+}
+
+/* Fiecare slide are propriul bloc de text (rândul cu cele două coloane).
+   Blocurile stau suprapuse în aceeași celulă: la schimbare pleacă blocul vechi
+   și vine cel nou, fără ca nimic să se miște din loc. */
+.ps-hero .ps-text-groups {
+	display: grid;
+	--ps-out: calc(var(--ps-text-dur) * .5);
+}
+.ps-hero .ps-text-groups > .ps-group {
+	grid-area: 1 / 1;
+	align-self: start;         /* fiecare bloc își păstrează înălțimea lui: distanța titlu–descriere rămâne cea setată */
+	width: 100%;               /* rândul ocupă toată lățimea (max. 1120px), nu doar cât conținutul */
+	min-width: 0;
+}
+.ps-hero .ps-group:not(.is-active):not(.is-leaving) {
+	visibility: hidden;
+	pointer-events: none;
+}
+.ps-hero .ps-group.is-leaving {
+	pointer-events: none;
+}
+.ps-hero .ps-desc {
+	--ps-delay: var(--ps-text-stagger);
+}
+
+.ps-hero .ps-group .ps-t {
+	opacity: 0;
+	visibility: hidden;
+	transform: translate3d(0, var(--ps-text-dist), 0);
+	transition:
+		opacity var(--ps-text-dur) var(--ps-text-ease),
+		transform var(--ps-text-dur) var(--ps-text-ease),
+		visibility 0s linear var(--ps-text-dur);
+}
+.ps-hero .ps-group .ps-t.is-active {
+	opacity: 1;
+	visibility: visible;
+	transform: none;
+	transition-delay:
+		calc(var(--ps-out) + var(--ps-delay, 0ms)),
+		calc(var(--ps-out) + var(--ps-delay, 0ms)),
+		0s;
+}
+.ps-hero .ps-group .ps-t.is-leaving {
+	transform: translate3d(0, calc(var(--ps-text-dist) * -0.6), 0);
+	transition:
+		opacity var(--ps-out) var(--ps-text-ease) var(--ps-delay, 0ms),
+		transform var(--ps-out) var(--ps-text-ease) var(--ps-delay, 0ms),
+		visibility 0s linear calc(var(--ps-out) + var(--ps-delay, 0ms));
+}
+.ps-hero.ps-text-anim-fade .ps-group .ps-t { transform: none; }
+.ps-hero.ps-text-anim-none .ps-group .ps-t { transition: none; }
+.ps-hero .ps-group .ps-t.is-instant,
+.ps-hero .ps-group .ps-t.is-instant .ps-wi { transition: none !important; }
+
+/* ---------------- Cuvânt cu cuvânt ---------------- */
+.ps-hero.ps-words .ps-title {
+	--ps-ws: var(--ps-word-step);
+	--ps-base: 0ms;
+}
+.ps-hero.ps-words .ps-desc {
+	--ps-ws: calc(var(--ps-word-step) * .35);             /* descrierea are mai multe cuvinte */
+	--ps-base: calc(var(--ps-text-stagger) * 2.5);
+}
+.ps-hero.ps-words .ps-group .ps-t {
+	opacity: 1;
+	transform: none;
+	visibility: hidden;
+	transition: none;
+}
+.ps-hero.ps-words .ps-group .ps-t.is-active,
+.ps-hero.ps-words .ps-group .ps-t.is-leaving {
+	visibility: visible;
+}
+.ps-hero.ps-words .ps-w {
+	display: inline-block;
+	vertical-align: top;
+}
+/* masca: cuvântul urcă de sub o linie invizibilă; spațiu extra pentru diacritice (ă, î, ș, ț) */
+.ps-hero.ps-text-anim-words .ps-w {
+	overflow: hidden;
+	padding: .18em .06em .24em;
+	margin: -.18em -.06em -.24em;
+}
+.ps-hero.ps-words .ps-wi {
+	display: inline-block;
+	backface-visibility: hidden;
+}
+
+/* start: ascuns, fără tranziție */
+.ps-hero.ps-text-anim-words .ps-t .ps-wi {
+	transform: translate3d(0, calc(100% + .32em), 0);
+	transition: none;
+}
+.ps-hero.ps-text-anim-words-blur .ps-t .ps-wi {
+	opacity: 0;
+	filter: blur(10px);
+	transform: translate3d(0, .4em, 0);
+	transition: none;
+}
+
+/* intrare: cuvânt după cuvânt */
+.ps-hero.ps-words .ps-t.is-active .ps-wi {
+	opacity: 1;
+	filter: none;
+	transform: none;
+	transition:
+		transform var(--ps-word-dur) var(--ps-word-ease),
+		opacity calc(var(--ps-word-dur) * .8) var(--ps-word-ease),
+		filter calc(var(--ps-word-dur) * .8) var(--ps-word-ease);
+	transition-delay: calc(var(--ps-in, 0ms) + var(--ps-base) + var(--wi, 0) * var(--ps-ws));
+}
+/* la schimbarea slide-ului, textul nou așteaptă puțin să plece cel vechi */
+.ps-hero.ps-words.ps-changing .ps-t.is-active .ps-wi {
+	--ps-in: calc(var(--ps-word-dur) * .45 + 40ms);
+}
+
+/* ieșire: cuvintele urcă și dispar, mai repede decât au venit */
+.ps-hero.ps-text-anim-words .ps-t.is-leaving .ps-wi {
+	transform: translate3d(0, calc(-100% - .26em), 0);
+	transition: transform calc(var(--ps-word-dur) * .42) var(--ps-word-ease-out);
+	transition-delay: calc(var(--wi, 0) * var(--ps-ws) * .25);
+}
+.ps-hero.ps-text-anim-words-blur .ps-t.is-leaving .ps-wi {
+	opacity: 0;
+	filter: blur(8px);
+	transform: translate3d(0, -.3em, 0);
+	transition:
+		opacity calc(var(--ps-word-dur) * .42) ease-in,
+		filter calc(var(--ps-word-dur) * .42) ease-in,
+		transform calc(var(--ps-word-dur) * .42) ease-in;
+	transition-delay: calc(var(--wi, 0) * var(--ps-ws) * .25);
+}
+
+/* intro: cuvintele pornesc ascunse, fără să scoatem textul din pagină */
+.ps-hero.ps-text-anim-words.ps-pre .ps-t.is-active .ps-wi {
+	transform: translate3d(0, calc(100% + .32em), 0);
+	transition: none;
+}
+.ps-hero.ps-text-anim-words-blur.ps-pre .ps-t.is-active .ps-wi {
+	opacity: 0;
+	filter: blur(10px);
+	transform: translate3d(0, .4em, 0);
+	transition: none;
+}
+
+/* siguranță: dacă JavaScript nu pornește, textul apare oricum după 2.5s */
+.ps-hero.ps-intro:not(.ps-ready) .ps-group .ps-t.is-active {
+	visibility: hidden;
+	animation: ps-failsafe 0s linear 2.5s forwards;
+}
+@keyframes ps-failsafe {
+	to { visibility: visible; }
+}
+
+/* ---------------- Iconițe și buton (coloana descrierii) ---------------- */
+.ps-hero .ps-icons {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 14px;
+	margin-bottom: 24px;
+}
+.ps-hero .ps-icon {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	max-width: calc(var(--ps-icon-h) * 2);
+}
+.ps-hero .ps-icon-img {
+	display: block;
+	width: auto;
+	height: var(--ps-icon-h);
+	max-width: none;
+	object-fit: contain;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+.ps-hero .ps-icon-label {
+	font-size: 12px;
+	line-height: 1.3;
+	text-align: center;
+	color: #1f1e1c;
+}
+
+.ps-hero .ps-cta-wrap {
+	margin-top: 28px;
+}
+.ps-hero .ps-cta {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	padding: 11px 28px;
+	border: 1.5px solid var(--ps-cta-border);
+	border-radius: 6px;
+	background-color: var(--ps-cta-bg);
+	color: var(--ps-cta-color);
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	transition:
+		background-color .35s var(--ps-ui-ease),
+		color .35s var(--ps-ui-ease),
+		border-color .35s var(--ps-ui-ease);
+}
+.ps-hero .ps-cta:hover,
+.ps-hero .ps-cta:focus-visible {
+	background-color: var(--ps-cta-bg-hover);
+	color: var(--ps-cta-color-hover);
+	border-color: var(--ps-cta-border-hover);
+	text-decoration: none;
+}
+.ps-hero .ps-cta:focus-visible {
+	outline: 2px solid var(--ps-cta-border);
+	outline-offset: 3px;
+}
+
+/* apar lin după text, odată cu blocul slide-ului */
+.ps-hero .ps-extra {
+	transition:
+		opacity 600ms var(--ps-text-ease),
+		transform 600ms var(--ps-text-ease);
+}
+.ps-hero .ps-group:not(.is-active) .ps-extra {
+	opacity: 0;
+	transform: translate3d(0, 10px, 0);
+	transition-duration: 300ms;
+}
+.ps-hero .ps-group.is-active .ps-icons { transition-delay: 380ms; }
+.ps-hero .ps-group.is-active .ps-cta-wrap { transition-delay: 520ms; }
+.ps-hero.ps-pre .ps-extra {
+	opacity: 0;
+	transform: translate3d(0, 10px, 0);
+	transition: none;
+}
+
+/* ---------------- Tabletă (implicit) ---------------- */
+@media (max-width: 1024px) {
+	.ps-hero {
+		--ps-arrows-x: 32px;
+		--ps-arrows-y: 28px;
+	}
+	.ps-hero .ps-viewport { aspect-ratio: 1.6; }
+	.ps-hero .ps-text { padding: 44px 0 0 40px; }
+	.ps-hero .ps-text-inner {
+		--ps-row-min: 220px;
+		--ps-tcol-max: 55%;
+		--ps-dcol-w: 400px;
+	}
+}
+
+/* ---------------- Mobil (implicit) ---------------- */
+@media (max-width: 767px) {
+	.ps-hero {
+		--ps-arrows-x: 18px;
+		--ps-arrows-y: 18px;
+		--ps-pag-y: 18px;
+	}
+	.ps-hero .ps-viewport { aspect-ratio: 1.1; }
+	.ps-hero .ps-arrow { font-size: 12px; }
+	.ps-hero .ps-text { padding: 28px 0 0; }
+	.ps-hero .ps-text-inner {
+		flex-direction: column;
+		gap: 16px;
+		--ps-row-min: 0px;
+		--ps-tcol-max: 100%;
+		--ps-dcol-w: 100%;
+		--ps-dcol-justify: flex-start;
+	}
+	.ps-hero .ps-desc { font-size: 16px; }
+	.ps-hero { --ps-icon-h: 44px; }
+	.ps-hero .ps-cta-wrap { margin-top: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ps-hero .ps-extra,
+	.ps-hero .ps-wi,
+	.ps-hero .ps-group .ps-t,
+	.ps-hero .ps-arrow,
+	.ps-hero .ps-dot,
+	.ps-hero.ps-kenburns .ps-img { transition: none !important; }
+}

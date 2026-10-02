@@ -1,0 +1,285 @@
+/*
+ * Pavva Widgets – Carusel produse
+ * Creat de imagient pentru Pavva.
+ */
+/* Carusel produse – stiluri de bază.
+   Toate valorile de aici sunt doar implicite: le suprascrii din Elementor → Style. */
+
+.cc-carousel {
+	--cc-heading-color: #b35a2c;
+	--cc-ink: #1f1e1c;
+	--cc-muted: #6b6964;
+	--cc-focus: #b35a2c;
+	--cc-zoom: 1.04;
+	--cc-lift: 0px;
+	--cc-arrow-shift: 4px;
+	--cc-arrow-dir: 1;        /* 1 = spre dreapta, -1 = spre stânga (în interior), 0 = fără */
+	--cc-tline-h: 1px;
+	--cc-tline-y: 2px;
+	--cc-title-shift: 6px;
+	--cc-arrow-y: 0px;
+	--cc-bleed: 0px;          /* calculat automat de JS */
+	--cc-bleed-on: 0;
+	--cc-bar-bleed-on: 0;
+	--cc-end-auto: 0px;       /* calculat de JS: oglindește distanța din stânga când caruselul iese până la marginea ecranului */
+	--cc-speed-card: 400ms;
+	--cc-speed-zoom: 900ms;
+	--cc-speed-bar: 450ms;
+	--cc-ease: cubic-bezier(.22, .61, .36, 1);
+	position: relative;
+	color: var(--cc-ink);
+}
+
+.cc-carousel .cc-heading {
+	margin: 0 0 28px;
+	font-size: clamp(26px, 3.2vw, 36px);
+	font-weight: 700;
+	line-height: 1.1;
+	color: var(--cc-heading-color);
+}
+
+/* ---------- Pista cu carduri ---------- */
+.cc-carousel .cc-track {
+	--cc-per-view: 2.75;
+	--cc-gap: 24px;
+	display: flex;
+	gap: var(--cc-gap);
+	overflow-x: auto;
+	overflow-y: hidden;
+	overscroll-behavior-x: contain;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
+	scrollbar-width: none;
+	-webkit-overflow-scrolling: touch;
+	outline: none;
+	/* iese în dreapta până la marginea ecranului, dacă e activat */
+	margin-right: calc(var(--cc-bleed) * -1 * var(--cc-bleed-on));
+	/* loc pentru umbre și pentru „ridicarea” la hover */
+	padding-top: 12px;
+	margin-top: -12px;
+	padding-bottom: 12px;
+	margin-bottom: -12px;
+}
+.cc-carousel .cc-track::-webkit-scrollbar { display: none; }
+.cc-carousel .cc-track.cc-draggable { cursor: grab; }
+.cc-carousel .cc-track.is-dragging {
+	scroll-snap-type: none;
+	scroll-behavior: auto;
+	cursor: grabbing;
+	user-select: none;
+	-webkit-user-select: none;
+}
+.cc-carousel .cc-track:focus-visible {
+	outline: 2px solid var(--cc-focus);
+	outline-offset: 4px;
+	border-radius: 4px;
+}
+
+/* ---------- Card ---------- */
+.cc-carousel .cc-card {
+	/* lățimea se calculează după zona de conținut, nu după partea care iese în dreapta */
+	flex: 0 0 calc((100% - var(--cc-bleed) * var(--cc-bleed-on) - (var(--cc-per-view) - 1) * var(--cc-gap)) / var(--cc-per-view));
+	min-width: 0;
+	box-sizing: border-box;
+	scroll-snap-align: start;
+	display: block;
+	color: inherit;
+	text-decoration: none;
+	border: 0 solid transparent;
+	transition:
+		transform var(--cc-speed-card) var(--cc-ease),
+		box-shadow var(--cc-speed-card) var(--cc-ease),
+		background-color var(--cc-speed-card) var(--cc-ease),
+		border-color var(--cc-speed-card) var(--cc-ease);
+}
+.cc-carousel .cc-card:hover,
+.cc-carousel .cc-card:focus,
+.cc-carousel .cc-card:visited {
+	color: inherit;
+	text-decoration: none;
+}
+.cc-carousel .cc-card:hover { transform: translateY(calc(var(--cc-lift) * -1)); }
+/* spațiu după ultimul card: manual (Elementor) sau automat */
+.cc-carousel .cc-track::after {
+	content: "";
+	flex: 0 0 var(--cc-end-space, var(--cc-end-auto));
+	margin-left: calc(var(--cc-gap) * -1);
+}
+.cc-carousel .cc-card:focus-visible {
+	outline: 2px solid var(--cc-focus);
+	outline-offset: 4px;
+}
+
+/* ---------- Imagine ---------- */
+.cc-carousel .cc-media {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	border-radius: 6px;
+	overflow: hidden;
+	background-color: #e9e7e3;
+}
+.cc-carousel .cc-media img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	object-fit: cover;
+	object-position: center center;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	pointer-events: none;
+	-webkit-user-drag: none;
+	transition:
+		transform var(--cc-speed-zoom) var(--cc-ease),
+		filter var(--cc-speed-zoom) var(--cc-ease);
+}
+.cc-carousel .cc-card:hover .cc-media img { transform: scale(var(--cc-zoom)); }
+
+/* ---------- Texte ---------- */
+.cc-carousel .cc-body { padding: 20px 14px 0; }
+.cc-carousel .cc-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin: 0;
+}
+.cc-carousel .cc-title {
+	margin: 0;
+	padding: 0;
+	font-size: 15px;
+	font-weight: 700;
+	line-height: 1.3;
+	color: var(--cc-ink);
+	transition: color var(--cc-speed-card) var(--cc-ease);
+}
+.cc-carousel .cc-desc {
+	margin: 12px 0 0;
+	padding: 0;
+	font-size: 13px;
+	line-height: 1.55;
+	color: var(--cc-muted);
+	transition: color var(--cc-speed-card) var(--cc-ease);
+}
+
+/* ---------- Săgeată ---------- */
+.cc-carousel .cc-arrow-wrap {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: none;
+	font-size: 20px;
+	line-height: 1;
+	color: var(--cc-ink);
+	transition:
+		transform var(--cc-speed-card) var(--cc-ease),
+		color var(--cc-speed-card) var(--cc-ease);
+}
+.cc-carousel .cc-arrow-wrap svg {
+	display: block;
+	width: 1em;
+	height: 1em;
+}
+.cc-carousel .cc-arrow-wrap i { font-size: 1em; }
+.cc-carousel .cc-arrow-wrap .cc-arrow-img {
+	display: block;
+	width: 1em;
+	height: 1em;
+	max-width: none;
+	object-fit: contain;
+	border: 0;
+	box-shadow: none;
+	pointer-events: none;
+}
+
+/* Colorarea SVG-urilor încărcate / din bibliotecă (Style → Săgeată) */
+.cc-carousel.cc-svg-auto .cc-arrow-wrap svg:not(.cc-arrow-default) { fill: currentColor; }
+.cc-carousel.cc-svg-fill .cc-arrow-wrap svg:not(.cc-arrow-default),
+.cc-carousel.cc-svg-fill .cc-arrow-wrap svg:not(.cc-arrow-default) * { fill: currentColor; }
+.cc-carousel.cc-svg-stroke .cc-arrow-wrap svg:not(.cc-arrow-default) * { stroke: currentColor; }
+.cc-carousel.cc-svg-both .cc-arrow-wrap svg:not(.cc-arrow-default),
+.cc-carousel.cc-svg-both .cc-arrow-wrap svg:not(.cc-arrow-default) * { fill: currentColor; stroke: currentColor; }
+.cc-carousel .cc-arrow-wrap { transform: translate(0, var(--cc-arrow-y)); }
+.cc-carousel .cc-card:hover .cc-arrow-wrap { transform: translate(calc(var(--cc-arrow-shift) * var(--cc-arrow-dir)), var(--cc-arrow-y)); }
+
+/* ---------- Efecte titlu la hover ---------- */
+.cc-carousel .cc-title-text {
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+.cc-carousel.cc-tfx-underline .cc-title-text,
+.cc-carousel.cc-tfx-center .cc-title-text {
+	padding-bottom: var(--cc-tline-y);
+	background-image: linear-gradient(var(--cc-tline-color, currentColor), var(--cc-tline-color, currentColor));
+	background-repeat: no-repeat;
+	background-position: 0 100%;
+	background-size: 0% var(--cc-tline-h);
+	transition: background-size var(--cc-speed-card) var(--cc-ease);
+}
+.cc-carousel.cc-tfx-center .cc-title-text { background-position: 50% 100%; }
+.cc-carousel.cc-tfx-underline .cc-card:hover .cc-title-text,
+.cc-carousel.cc-tfx-center .cc-card:hover .cc-title-text,
+.cc-carousel.cc-tfx-underline .cc-card:focus-visible .cc-title-text,
+.cc-carousel.cc-tfx-center .cc-card:focus-visible .cc-title-text {
+	background-size: 100% var(--cc-tline-h);
+}
+.cc-carousel.cc-tfx-shift .cc-title {
+	transition:
+		color var(--cc-speed-card) var(--cc-ease),
+		transform var(--cc-speed-card) var(--cc-ease);
+}
+.cc-carousel.cc-tfx-shift .cc-card:hover .cc-title,
+.cc-carousel.cc-tfx-shift .cc-card:focus-visible .cc-title {
+	transform: translateX(var(--cc-title-shift));
+}
+
+/* ---------- Bară de progres ---------- */
+.cc-carousel .cc-bar {
+	--cc-bar-track: #dedcd8;
+	--cc-bar-fill: #1f1e1c;
+	--cc-bar-track-h: 1px;
+	--cc-bar-fill-h: 2px;
+	--cc-bar-radius: 0px;
+	position: relative;
+	width: calc(100% + var(--cc-bleed) * var(--cc-bar-bleed-on));
+	height: max(var(--cc-bar-track-h), var(--cc-bar-fill-h));
+	margin-top: 32px;
+	cursor: pointer;
+}
+.cc-carousel .cc-bar::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 50%;
+	height: var(--cc-bar-track-h);
+	transform: translateY(-50%);
+	background: var(--cc-bar-track);
+	border-radius: var(--cc-bar-radius);
+}
+.cc-carousel .cc-thumb {
+	position: absolute;
+	left: 0;
+	top: 50%;
+	height: var(--cc-bar-fill-h);
+	margin-top: calc(var(--cc-bar-fill-h) / -2);
+	width: 100%;
+	background: var(--cc-bar-fill);
+	border-radius: var(--cc-bar-radius);
+	transform-origin: left center;
+	transform: scaleX(0.3);
+	transition: transform var(--cc-speed-bar) var(--cc-ease);
+	will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cc-carousel .cc-track { scroll-behavior: auto; }
+	.cc-carousel .cc-card,
+	.cc-carousel .cc-media img,
+	.cc-carousel .cc-arrow-wrap,
+	.cc-carousel .cc-title,
+	.cc-carousel .cc-title-text,
+	.cc-carousel .cc-thumb { transition: none; }
+}
