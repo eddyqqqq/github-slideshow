@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
+use Elementor\Icons_Manager;
 use Elementor\Utils;
 
 class Pavva_Culori_Widget extends Widget_Base {
@@ -41,11 +42,36 @@ class Pavva_Culori_Widget extends Widget_Base {
 	}
 
 	public function get_style_depends() {
-		return array( 'pavva-culori' );
+		return array( 'pavva-culori', 'pavva-sectiuni-goale' );
 	}
 
 	public function get_script_depends() {
-		return array( 'pavva-culori' );
+		return array( 'pavva-culori', 'pavva-sectiuni-goale' );
+	}
+
+	/* Conținutul depinde de produsul paginii: Elementor nu are voie să-l țină în cache. */
+	protected function is_dynamic_content(): bool {
+		return true;
+	}
+
+	/* Fără culori: widgetul primește o clasă care ascunde containerul (vezi sectiuni-goale.css). */
+	protected function get_html_wrapper_class(): string {
+		$class = parent::get_html_wrapper_class();
+		if ( ! $this->is_edit_mode() && ! $this->colors_for_page() ) {
+			$class .= ' pavva-w-is-empty';
+		}
+		return $class;
+	}
+
+	/** @var array|null Culorile produsului paginii (calculate o singură dată). */
+	private $colors_cache = null;
+
+	private function colors_for_page() {
+		if ( null === $this->colors_cache ) {
+			$pid                = (int) Pavva_W_Data::resolve_product_id();
+			$this->colors_cache = $pid ? $this->get_colors( $pid ) : array();
+		}
+		return $this->colors_cache;
 	}
 
 	/* Prefix comun pentru toate selectorii: bate stilurile globale ale temei. */
@@ -81,12 +107,12 @@ class Pavva_Culori_Widget extends Widget_Base {
 			'show_heading',
 			array(
 				'label'        => 'Afișează titlul',
-				'description'  => 'Dacă produsul nu are culori, widgetul (cu tot cu titlu) nu apare deloc.',
+				'description'  => 'Poți pune titlul și ca widget Heading separat, în același container. Dacă produsul nu are culori, containerul se ascunde cu tot cu titlu.',
 				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => 'Da',
 				'label_off'    => 'Nu',
 				'return_value' => 'yes',
-				'default'      => 'yes',
+				'default'      => '',
 			)
 		);
 
@@ -262,6 +288,114 @@ class Pavva_Culori_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'prev_icon',
+			array(
+				'label'       => 'Săgeată anterior / SVG',
+				'description' => 'Gol = săgeata subțire din design.',
+				'type'        => Controls_Manager::ICONS,
+				'skin'        => 'inline',
+				'separator'   => 'before',
+				'condition'   => array( 'show_arrows' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'next_icon',
+			array(
+				'label'     => 'Săgeată următor / SVG',
+				'type'      => Controls_Manager::ICONS,
+				'skin'      => 'inline',
+				'condition' => array( 'show_arrows' => 'yes' ),
+			)
+		);
+
+		$this->end_controls_section();
+
+		/* ---------- Animație ---------- */
+		$this->start_controls_section(
+			'section_animation',
+			array(
+				'label' => 'Animație și interacțiune',
+				'tab'   => Controls_Manager::TAB_CONTENT,
+			)
+		);
+
+		$this->add_control(
+			'animation_mode',
+			array(
+				'label'   => 'Tip animație',
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'slide',
+				'options' => array(
+					'slide' => 'Alunecare',
+					'fade'  => 'Estompare',
+					'none'  => 'Fără',
+				),
+			)
+		);
+
+		$this->add_control(
+			'animation_duration',
+			array(
+				'label'     => 'Durată (ms)',
+				'type'      => Controls_Manager::NUMBER,
+				'min'       => 0,
+				'max'       => 3000,
+				'step'      => 50,
+				'default'   => 600,
+				'condition' => array( 'animation_mode!' => 'none' ),
+				'selectors' => array(
+					$this->sel() => '--pvc-speed: {{VALUE}}ms;',
+				),
+			)
+		);
+
+		$this->add_control(
+			'animation_easing',
+			array(
+				'label'     => 'Easing',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'cubic-bezier(.22,.61,.36,1)',
+				'options'   => array(
+					'cubic-bezier(.22,.61,.36,1)' => 'Lin (implicit)',
+					'cubic-bezier(.4,0,.2,1)'     => 'Material',
+					'cubic-bezier(.65,0,.35,1)'   => 'Lin la ambele capete',
+					'ease'                        => 'Ease',
+					'ease-in-out'                 => 'Ease in / out',
+					'linear'                      => 'Linear',
+				),
+				'condition' => array( 'animation_mode!' => 'none' ),
+				'selectors' => array(
+					$this->sel() => '--pvc-ease: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'swipe',
+			array(
+				'label'        => 'Swipe pe telefon / tabletă',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+			)
+		);
+
+		$this->add_control(
+			'drag',
+			array(
+				'label'        => 'Tragere cu mouse-ul',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -429,20 +563,6 @@ class Pavva_Culori_Widget extends Widget_Base {
 				),
 				'selectors' => array(
 					$this->sel( '.pvc-slide img' ) => 'object-fit: {{VALUE}};',
-				),
-			)
-		);
-
-		$this->add_control(
-			'fade_speed',
-			array(
-				'label'     => 'Durata schimbării (ms)',
-				'type'      => Controls_Manager::NUMBER,
-				'min'       => 0,
-				'max'       => 3000,
-				'step'      => 50,
-				'selectors' => array(
-					$this->sel() => '--pvc-speed: {{VALUE}}ms;',
 				),
 			)
 		);
@@ -878,6 +998,28 @@ class Pavva_Culori_Widget extends Widget_Base {
 		echo '<div class="pavva-editor-notice" style="padding:16px 18px;border:1px dashed #c9c4bb;border-radius:6px;background:#faf8f5;color:#6b6964;font-size:13px;line-height:1.5;">' . wp_kses_post( $text ) . '</div>';
 	}
 
+	private function arrow_html( $s, $dir ) {
+		$icon = isset( $s[ $dir . '_icon' ] ) ? $s[ $dir . '_icon' ] : array();
+		if ( is_array( $icon ) && ! empty( $icon['value'] ) ) {
+			ob_start();
+			Icons_Manager::render_icon( $icon, array( 'aria-hidden' => 'true' ) );
+			$html = trim( ob_get_clean() );
+			if ( '' !== $html ) {
+				return $html;
+			}
+		}
+		return $this->chevron_svg( $dir );
+	}
+
+	/* Fără date: în editor un mesaj, pe site un marcaj invizibil (ascunde containerul). */
+	private function empty_output( $notice ) {
+		if ( $this->is_edit_mode() ) {
+			$this->editor_notice( $notice );
+			return;
+		}
+		echo '<span class="pavva-w-empty" hidden></span>';
+	}
+
 	private function chevron_svg( $dir ) {
 		$d = 'prev' === $dir ? 'M15 4.5 7.5 12l7.5 7.5' : 'M9 4.5 16.5 12 9 19.5';
 		return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="' . $d . '" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -912,13 +1054,13 @@ class Pavva_Culori_Widget extends Widget_Base {
 		$product_id = (int) Pavva_W_Data::resolve_product_id();
 
 		if ( ! $product_id ) {
-			$this->editor_notice( '<strong>Culori și finisaje:</strong> nu găsesc produsul. În template, alege un produs la <em>rotița Setări → Preview Settings</em>, apoi Apply &amp; Preview.' );
+			$this->empty_output( '<strong>Culori și finisaje:</strong> nu găsesc produsul. În template, alege un produs la <em>rotița Setări → Preview Settings</em>, apoi Apply &amp; Preview.' );
 			return;
 		}
 
-		$colors = $this->get_colors( $product_id );
+		$colors = $this->colors_for_page();
 		if ( ! $colors ) {
-			$this->editor_notice( '<strong>Culori și finisaje:</strong> produsul acesta nu are culori adăugate. Pe site widgetul nu apare.' );
+			$this->empty_output( '<strong>Culori și finisaje:</strong> produsul acesta nu are culori adăugate. Pe site containerul acestei secțiuni se ascunde.' );
 			return;
 		}
 
@@ -936,10 +1078,16 @@ class Pavva_Culori_Widget extends Widget_Base {
 		$show_labels = isset( $s['show_thumb_labels'] ) && 'yes' === $s['show_thumb_labels'];
 		$heading     = isset( $s['heading_text'] ) ? (string) $s['heading_text'] : '';
 		$label       = '' !== trim( $heading ) ? $heading : 'Culori și finisaje';
-		$options     = array( 'trigger' => ( isset( $s['trigger'] ) && 'hover' === $s['trigger'] ) ? 'hover' : 'click' );
+		$mode        = isset( $s['animation_mode'] ) && in_array( $s['animation_mode'], array( 'slide', 'fade', 'none' ), true ) ? $s['animation_mode'] : 'slide';
+		$options     = array(
+			'trigger' => ( isset( $s['trigger'] ) && 'hover' === $s['trigger'] ) ? 'hover' : 'click',
+			'mode'    => $mode,
+			'swipe'   => isset( $s['swipe'] ) && 'yes' === $s['swipe'],
+			'drag'    => isset( $s['drag'] ) && 'yes' === $s['drag'],
+		);
 		$uid         = 'pvc-' . $this->get_id();
 		?>
-		<div class="pvc" data-pvc="<?php echo esc_attr( wp_json_encode( $options ) ); ?>" style="--pvc-cols-auto: <?php echo (int) $auto_cols; ?>;">
+		<div class="pvc pvc-mode-<?php echo esc_attr( $mode ); ?>" data-pvc="<?php echo esc_attr( wp_json_encode( $options ) ); ?>" style="--pvc-cols-auto: <?php echo (int) $auto_cols; ?>;">
 			<?php if ( isset( $s['show_heading'] ) && 'yes' === $s['show_heading'] && '' !== trim( $heading ) ) : ?>
 				<<?php echo $heading_tag; // phpcs:ignore ?> class="pvc-heading"><?php echo esc_html( $heading ); ?></<?php echo $heading_tag; // phpcs:ignore ?>>
 			<?php endif; ?>
@@ -956,7 +1104,9 @@ class Pavva_Culori_Widget extends Widget_Base {
 								array(
 									'alt'       => $c['name'],
 									'loading'   => 0 === $i ? 'eager' : 'lazy',
+									'decoding'  => 'async',
 									'draggable' => 'false',
+									'sizes'     => '(max-width: 767px) 100vw, (max-width: 1400px) 50vw, 700px',
 								)
 							);
 							?>
@@ -970,8 +1120,8 @@ class Pavva_Culori_Widget extends Widget_Base {
 					<?php endforeach; ?>
 
 					<?php if ( $show_arrows ) : ?>
-						<button type="button" class="pvc-arrow pvc-prev" aria-label="Culoarea anterioară"><?php echo $this->chevron_svg( 'prev' ); // phpcs:ignore ?></button>
-						<button type="button" class="pvc-arrow pvc-next" aria-label="Culoarea următoare"><?php echo $this->chevron_svg( 'next' ); // phpcs:ignore ?></button>
+						<button type="button" class="pvc-arrow pvc-prev" aria-label="Culoarea anterioară"><?php echo $this->arrow_html( $s, 'prev' ); // phpcs:ignore ?></button>
+						<button type="button" class="pvc-arrow pvc-next" aria-label="Culoarea următoare"><?php echo $this->arrow_html( $s, 'next' ); // phpcs:ignore ?></button>
 					<?php endif; ?>
 				</div>
 
@@ -988,7 +1138,9 @@ class Pavva_Culori_Widget extends Widget_Base {
 										array(
 											'alt'       => '',
 											'loading'   => 'lazy',
+											'decoding'  => 'async',
 											'draggable' => 'false',
+											'sizes'     => '(max-width: 767px) 25vw, 160px',
 										)
 									);
 									?>

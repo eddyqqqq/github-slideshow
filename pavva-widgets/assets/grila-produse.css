@@ -164,3 +164,38 @@
 	.pvg .pvg-arrow,
 	.pvg .pvg-title { transition: none; }
 }
+
+/* ---------- Culori +N ---------- */
+.pvg { --pvg-color: 28px; }
+.pvg .pvg-colors {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	margin-top: 14px;
+}
+.pvg .pvg-color {
+	display: block;
+	flex: none;
+	width: var(--pvg-color);
+	height: var(--pvg-color);
+	border-radius: 4px;
+	overflow: hidden;
+	background-color: #e9e7e3;
+}
+.pvg .pvg-color img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	object-fit: cover;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+.pvg .pvg-colors-more {
+	margin-left: 2px;
+	font-size: 13px;
+	line-height: 1;
+	color: var(--pvg-muted);
+}

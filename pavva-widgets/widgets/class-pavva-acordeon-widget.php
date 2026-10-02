@@ -44,11 +44,25 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 	}
 
 	public function get_style_depends() {
-		return array( 'pavva-acordeon' );
+		return array( 'pavva-acordeon', 'pavva-sectiuni-goale' );
 	}
 
 	public function get_script_depends() {
-		return array( 'pavva-acordeon' );
+		return array( 'pavva-acordeon', 'pavva-sectiuni-goale' );
+	}
+
+	/* Conținutul depinde de produsul paginii: Elementor nu are voie să-l țină în cache. */
+	protected function is_dynamic_content(): bool {
+		return true;
+	}
+
+	/* Nicio secțiune cu date: widgetul primește o clasă care ascunde containerul (vezi sectiuni-goale.css). */
+	protected function get_html_wrapper_class(): string {
+		$class = parent::get_html_wrapper_class();
+		if ( ! $this->is_edit_mode() && ! $this->rows_for_page( $this->get_settings_for_display() ) ) {
+			$class .= ' pavva-w-is-empty';
+		}
+		return $class;
 	}
 
 	private function sel( $inner = '' ) {
@@ -1025,8 +1039,10 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 					$size,
 					false,
 					array(
-						'alt'     => $img['title'],
-						'loading' => 'lazy',
+						'alt'      => $img['title'],
+						'loading'  => 'lazy',
+						'decoding' => 'async',
+						'sizes'    => '(max-width: 767px) 100vw, (max-width: 1024px) 50vw, 33vw',
 					)
 				);
 				$html .= '<figure class="pva-gal-item">';
@@ -1073,18 +1089,18 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 		return '<span class="pva-icon pva-icon-plus" aria-hidden="true"></span>';
 	}
 
-	/* ================================================================
-	 * RENDER
-	 * ================================================================ */
-	protected function render() {
-		$s          = $this->get_settings_for_display();
+	/** @var array|null Secțiunile cu conținut (calculate o singură dată). */
+	private $rows_cache = null;
+
+	/* Secțiunile de afișat: titlu + HTML. În editor apar și cele goale, cu un mesaj. */
+	private function rows_for_page( $s ) {
+		if ( null !== $this->rows_cache ) {
+			return $this->rows_cache;
+		}
 		$items      = isset( $s['items'] ) && is_array( $s['items'] ) ? $s['items'] : array();
 		$product_id = (int) Pavva_W_Data::resolve_product_id();
 		$edit       = $this->is_edit_mode();
 		$hide_empty = isset( $s['hide_empty'] ) && 'yes' === $s['hide_empty'];
-		$title_tag  = Utils::validate_html_tag( ! empty( $s['title_tag'] ) ? $s['title_tag'] : 'h3' );
-		$icon       = $this->icon_html( $s );
-		$icon_pos   = isset( $s['icon_position'] ) && in_array( $s['icon_position'], array( 'inline', 'end', 'start' ), true ) ? $s['icon_position'] : 'inline';
 		$sources    = $this->sources();
 
 		$rows = array();
@@ -1112,7 +1128,22 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 			);
 		}
 
+		$this->rows_cache = $rows;
+		return $rows;
+	}
+
+	/* ================================================================
+	 * RENDER
+	 * ================================================================ */
+	protected function render() {
+		$s          = $this->get_settings_for_display();
+		$title_tag  = Utils::validate_html_tag( ! empty( $s['title_tag'] ) ? $s['title_tag'] : 'h3' );
+		$icon       = $this->icon_html( $s );
+		$icon_pos   = isset( $s['icon_position'] ) && in_array( $s['icon_position'], array( 'inline', 'end', 'start' ), true ) ? $s['icon_position'] : 'inline';
+
+		$rows = $this->rows_for_page( $s );
 		if ( ! $rows ) {
+			echo '<span class="pavva-w-empty" hidden></span>';
 			return;
 		}
 

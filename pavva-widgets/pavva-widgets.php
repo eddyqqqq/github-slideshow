@@ -139,6 +139,8 @@ function pavva_widgets_register_styles() {
 	wp_register_style( 'pavva-dimensiuni', PAVVA_WIDGETS_URL . 'assets/dimensiuni.css', array(), pavva_widgets_asset_version( 'assets/dimensiuni.css' ) );
 	wp_register_style( 'pavva-acordeon', PAVVA_WIDGETS_URL . 'assets/acordeon.css', array(), pavva_widgets_asset_version( 'assets/acordeon.css' ) );
 	wp_register_style( 'pavva-grila-produse', PAVVA_WIDGETS_URL . 'assets/grila-produse.css', array(), pavva_widgets_asset_version( 'assets/grila-produse.css' ) );
+	wp_register_style( 'pavva-caracteristici', PAVVA_WIDGETS_URL . 'assets/caracteristici.css', array(), pavva_widgets_asset_version( 'assets/caracteristici.css' ) );
+	wp_register_style( 'pavva-sectiuni-goale', PAVVA_WIDGETS_URL . 'assets/sectiuni-goale.css', array(), pavva_widgets_asset_version( 'assets/sectiuni-goale.css' ) );
 }
 
 function pavva_widgets_register_scripts() {
@@ -147,6 +149,7 @@ function pavva_widgets_register_scripts() {
 	wp_register_script( 'pavva-feature-tabs', PAVVA_WIDGETS_URL . 'assets/feature-tabs.js', array( 'jquery', 'elementor-frontend' ), pavva_widgets_asset_version( 'assets/feature-tabs.js' ), true );
 	wp_register_script( 'pavva-culori', PAVVA_WIDGETS_URL . 'assets/culori.js', array( 'jquery', 'elementor-frontend' ), pavva_widgets_asset_version( 'assets/culori.js' ), true );
 	wp_register_script( 'pavva-acordeon', PAVVA_WIDGETS_URL . 'assets/acordeon.js', array( 'jquery', 'elementor-frontend' ), pavva_widgets_asset_version( 'assets/acordeon.js' ), true );
+	wp_register_script( 'pavva-sectiuni-goale', PAVVA_WIDGETS_URL . 'assets/sectiuni-goale.js', array(), pavva_widgets_asset_version( 'assets/sectiuni-goale.js' ), true );
 }
 
 function pavva_widgets_register_widgets( $widgets_manager ) {
@@ -154,7 +157,8 @@ function pavva_widgets_register_widgets( $widgets_manager ) {
 		'widgets/class-pavva-carusel-widget.php'     => 'Pavva_Carusel_Widget',
 		'widgets/class-pavva-hero-slider-widget.php' => 'Pavva_Hero_Slider_Widget',
 		'widgets/class-pavva-feature-tabs-widget.php' => 'Pavva_Feature_Tabs_Widget',
-		/* widgeturile de produs (citesc câmpurile Pavva ale produsului / categoriei) */
+		/* widgeturile de produs / categorie (citesc câmpurile Pavva ale paginii curente) */
+		'widgets/class-pavva-caracteristici-widget.php' => 'Pavva_Caracteristici_Widget',
 		'widgets/class-pavva-culori-widget.php'        => 'Pavva_Culori_Widget',
 		'widgets/class-pavva-dimensiuni-widget.php'    => 'Pavva_Dimensiuni_Widget',
 		'widgets/class-pavva-acordeon-widget.php'      => 'Pavva_Acordeon_Widget',

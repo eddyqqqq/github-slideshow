@@ -43,7 +43,53 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 	}
 
 	public function get_style_depends() {
-		return array( 'pavva-dimensiuni' );
+		return array( 'pavva-dimensiuni', 'pavva-sectiuni-goale' );
+	}
+
+	public function get_script_depends() {
+		return array( 'pavva-sectiuni-goale' );
+	}
+
+	/* Conținutul depinde de produsul paginii: Elementor nu are voie să-l țină în cache. */
+	protected function is_dynamic_content(): bool {
+		return true;
+	}
+
+	/* Fără dimensiuni: widgetul primește o clasă care ascunde containerul (vezi sectiuni-goale.css). */
+	protected function get_html_wrapper_class(): string {
+		$class = parent::get_html_wrapper_class();
+		if ( ! $this->is_edit_mode() && ! $this->items_for_page( $this->get_settings_for_display() ) ) {
+			$class .= ' pavva-w-is-empty';
+		}
+		return $class;
+	}
+
+	/** @var array|null Dimensiunile produsului paginii (calculate o singură dată). */
+	private $items_cache = null;
+
+	private function items_for_page( $s ) {
+		if ( null !== $this->items_cache ) {
+			return $this->items_cache;
+		}
+		$this->items_cache = array();
+		$product_id        = (int) Pavva_W_Data::resolve_product_id();
+		if ( ! $product_id ) {
+			return $this->items_cache;
+		}
+		$show_image = isset( $s['show_image'] ) && 'yes' === $s['show_image'];
+		$show_specs = ! isset( $s['show_specs'] ) || 'yes' === $s['show_specs'];
+		foreach ( Pavva_W_Data::visible_items( Pavva_W_Data::items( $product_id, Pavva_W_Data::META_DIM ) ) as $item ) {
+			$specs = $show_specs ? Pavva_W_Data::dimension_item_specs( $item, $product_id ) : array();
+			$image = ! empty( $item['imagine_id'] ) ? absint( $item['imagine_id'] ) : 0;
+			if ( ! $specs && ! ( $show_image && $image ) ) {
+				continue;
+			}
+			$this->items_cache[] = array(
+				'image' => $image,
+				'specs' => $specs,
+			);
+		}
+		return $this->items_cache;
 	}
 
 	private function sel( $inner = '' ) {
@@ -75,12 +121,12 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 			'show_heading',
 			array(
 				'label'        => 'Afișează titlul',
-				'description'  => 'Dacă produsul nu are dimensiuni, widgetul (cu tot cu titlu) nu apare deloc.',
+				'description'  => 'Poți pune titlul și ca widget Heading separat, în același container. Dacă produsul nu are dimensiuni, containerul se ascunde cu tot cu titlu.',
 				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => 'Da',
 				'label_off'    => 'Nu',
 				'return_value' => 'yes',
-				'default'      => 'yes',
+				'default'      => '',
 			)
 		);
 
@@ -172,6 +218,19 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'show_specs',
+			array(
+				'label'        => 'Afișează specificațiile',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+				'separator'    => 'before',
+			)
+		);
+
+		$this->add_control(
 			'value_position',
 			array(
 				'label'     => 'Valoarea',
@@ -181,7 +240,7 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 					'right' => 'Pe același rând, în dreapta',
 					'below' => 'Sub etichetă',
 				),
-				'separator' => 'before',
+				'condition' => array( 'show_specs' => 'yes' ),
 			)
 		);
 
@@ -580,6 +639,15 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 		echo '<div class="pavva-editor-notice" style="padding:16px 18px;border:1px dashed #c9c4bb;border-radius:6px;background:#faf8f5;color:#6b6964;font-size:13px;line-height:1.5;">' . wp_kses_post( $text ) . '</div>';
 	}
 
+	/* Fără date: în editor un mesaj, pe site un marcaj invizibil (ascunde containerul). */
+	private function empty_output( $notice ) {
+		if ( $this->is_edit_mode() ) {
+			$this->editor_notice( $notice );
+			return;
+		}
+		echo '<span class="pavva-w-empty" hidden></span>';
+	}
+
 	/* ================================================================
 	 * RENDER
 	 * ================================================================ */
@@ -588,26 +656,15 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 		$product_id = (int) Pavva_W_Data::resolve_product_id();
 
 		if ( ! $product_id ) {
-			$this->editor_notice( '<strong>Dimensiuni și specificații:</strong> nu găsesc produsul. În template, alege un produs la <em>rotița Setări → Preview Settings</em>, apoi Apply &amp; Preview.' );
+			$this->empty_output( '<strong>Dimensiuni și specificații:</strong> nu găsesc produsul. În template, alege un produs la <em>rotița Setări → Preview Settings</em>, apoi Apply &amp; Preview.' );
 			return;
 		}
 
 		$show_image = isset( $s['show_image'] ) && 'yes' === $s['show_image'];
-		$items      = array();
-		foreach ( Pavva_W_Data::visible_items( Pavva_W_Data::items( $product_id, Pavva_W_Data::META_DIM ) ) as $item ) {
-			$specs = Pavva_W_Data::dimension_item_specs( $item, $product_id );
-			$image = ! empty( $item['imagine_id'] ) ? absint( $item['imagine_id'] ) : 0;
-			if ( ! $specs && ! ( $show_image && $image ) ) {
-				continue;
-			}
-			$items[] = array(
-				'image' => $image,
-				'specs' => $specs,
-			);
-		}
+		$items      = $this->items_for_page( $s );
 
 		if ( ! $items ) {
-			$this->editor_notice( '<strong>Dimensiuni și specificații:</strong> produsul acesta nu are dimensiuni vizibile. Pe site widgetul nu apare.' );
+			$this->empty_output( '<strong>Dimensiuni și specificații:</strong> produsul acesta nu are dimensiuni vizibile. Pe site containerul acestei secțiuni se ascunde.' );
 			return;
 		}
 
@@ -642,8 +699,10 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 									$size,
 									false,
 									array(
-										'alt'     => $alt,
-										'loading' => 'lazy',
+										'alt'      => $alt,
+										'loading'  => 'lazy',
+										'decoding' => 'async',
+										'sizes'    => '(max-width: 767px) 100vw, (max-width: 1024px) 50vw, 400px',
 									)
 								);
 								?>

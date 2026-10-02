@@ -43,7 +43,39 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 	}
 
 	public function get_style_depends() {
-		return array( 'pavva-grila-produse' );
+		return array( 'pavva-grila-produse', 'pavva-sectiuni-goale' );
+	}
+
+	public function get_script_depends() {
+		return array( 'pavva-sectiuni-goale' );
+	}
+
+	/* Conținutul depinde de categoria paginii: Elementor nu are voie să-l țină în cache. */
+	protected function is_dynamic_content(): bool {
+		return true;
+	}
+
+	/* Niciun produs (și fără text de rezervă): widgetul primește o clasă care ascunde containerul. */
+	protected function get_html_wrapper_class(): string {
+		$class = parent::get_html_wrapper_class();
+		if ( ! $this->is_edit_mode() ) {
+			$s = $this->get_settings_for_display();
+			list( $ids ) = $this->ids_for_page( $s );
+			if ( ! $ids && '' === trim( (string) ( isset( $s['empty_text'] ) ? $s['empty_text'] : '' ) ) ) {
+				$class .= ' pavva-w-is-empty';
+			}
+		}
+		return $class;
+	}
+
+	/** @var array|null Rezultatul interogării (calculat o singură dată). */
+	private $ids_cache = null;
+
+	private function ids_for_page( $s ) {
+		if ( null === $this->ids_cache ) {
+			$this->ids_cache = $this->query_ids( $s );
+		}
+		return $this->ids_cache;
 	}
 
 	private function sel( $inner = '' ) {
@@ -58,6 +90,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->controls_style_card();
 		$this->controls_style_image();
 		$this->controls_style_texts();
+		$this->controls_style_colors();
 		$this->controls_style_arrow();
 	}
 
@@ -323,6 +356,44 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 				'max'         => 200,
 				'default'     => 0,
 				'condition'   => array( 'show_desc' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'show_colors',
+			array(
+				'label'        => 'Culori (thumbnails)',
+				'description'  => 'Primele culori din „Culori și finisaje” ale produsului, apoi +N pentru restul.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+			)
+		);
+
+		$this->add_control(
+			'max_colors',
+			array(
+				'label'     => 'Număr maxim culori',
+				'type'      => Controls_Manager::NUMBER,
+				'min'       => 1,
+				'max'       => 24,
+				'default'   => 6,
+				'condition' => array( 'show_colors' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'show_counter',
+			array(
+				'label'        => 'Afișează +N',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+				'condition'    => array( 'show_colors' => 'yes' ),
 			)
 		);
 
@@ -712,6 +783,94 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	private function controls_style_colors() {
+		$this->start_controls_section(
+			'section_style_colors',
+			array(
+				'label'     => 'Culori',
+				'tab'       => Controls_Manager::TAB_STYLE,
+				'condition' => array( 'show_colors' => 'yes' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_size',
+			array(
+				'label'      => 'Mărime thumbnail',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 10, 'max' => 80 ) ),
+				'selectors'  => array(
+					$this->sel() => '--pvg-color: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_gap',
+			array(
+				'label'      => 'Spațiu între thumbnails',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 30 ) ),
+				'selectors'  => array(
+					$this->sel( '.pvg-colors' ) => 'gap: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_radius',
+			array(
+				'label'      => 'Colțuri rotunjite',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
+				'selectors'  => array(
+					$this->sel( '.pvg-color' ) => 'border-radius: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_spacing',
+			array(
+				'label'      => 'Spațiu deasupra',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
+				'selectors'  => array(
+					$this->sel( '.pvg-colors' ) => 'margin-top: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'counter_color',
+			array(
+				'label'     => 'Culoare +N',
+				'type'      => Controls_Manager::COLOR,
+				'separator' => 'before',
+				'condition' => array( 'show_counter' => 'yes' ),
+				'selectors' => array(
+					$this->sel( '.pvg-colors-more' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'      => 'counter_typo',
+				'label'     => 'Tipografie +N',
+				'selector'  => $this->sel( '.pvg-colors-more' ),
+				'condition' => array( 'show_counter' => 'yes' ),
+			)
+		);
+
+		$this->end_controls_section();
+	}
+
 	private function controls_style_arrow() {
 		$this->start_controls_section(
 			'section_style_arrow',
@@ -985,13 +1144,57 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		return $text;
 	}
 
+	/* Thumbnails culori pentru card: primele $max, apoi +N (ca „Culori card” din Pavva Products). */
+	private function colors_html( $id, $max, $counter ) {
+		$items = Pavva_W_Data::items( $id, Pavva_W_Data::META_CULORI );
+		$list  = array();
+		foreach ( $items as $item ) {
+			if ( ! is_array( $item ) || ! Pavva_W_Data::item_is_visible( $item ) ) {
+				continue;
+			}
+			$thumb = ! empty( $item['thumbnail_id'] ) ? absint( $item['thumbnail_id'] ) : ( ! empty( $item['imagine_mare_id'] ) ? absint( $item['imagine_mare_id'] ) : 0 );
+			if ( $thumb ) {
+				$list[] = array(
+					'id'   => $thumb,
+					'name' => isset( $item['denumire'] ) ? (string) $item['denumire'] : '',
+				);
+			}
+		}
+		if ( ! $list ) {
+			return '';
+		}
+		$max   = max( 1, (int) $max );
+		$shown = array_slice( $list, 0, $max );
+		$rest  = count( $list ) - count( $shown );
+
+		$html = '<div class="pvg-colors">';
+		foreach ( $shown as $c ) {
+			$html .= '<span class="pvg-color" title="' . esc_attr( $c['name'] ) . '">'
+				. wp_get_attachment_image(
+					$c['id'],
+					'thumbnail',
+					false,
+					array(
+						'alt'      => $c['name'],
+						'loading'  => 'lazy',
+						'decoding' => 'async',
+					)
+				)
+				. '</span>';
+		}
+		if ( $counter && $rest > 0 ) {
+			$html .= '<span class="pvg-colors-more" aria-label="' . esc_attr( 'încă ' . $rest . ' culori' ) . '">+' . (int) $rest . '</span>';
+		}
+		return $html . '</div>';
+	}
+
 	/* ================================================================
 	 * RENDER
 	 * ================================================================ */
 	protected function render() {
 		$s = $this->get_settings_for_display();
 
-		list( $ids, $preview_all ) = $this->query_ids( $s );
+		list( $ids, $preview_all ) = $this->ids_for_page( $s );
 
 		$heading_tag = Utils::validate_html_tag( ! empty( $s['heading_tag'] ) ? $s['heading_tag'] : 'h2' );
 		$title_tag   = Utils::validate_html_tag( ! empty( $s['title_tag'] ) ? $s['title_tag'] : 'h3' );
@@ -1001,12 +1204,17 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$words       = isset( $s['desc_words'] ) ? absint( $s['desc_words'] ) : 0;
 		$heading     = isset( $s['heading_text'] ) ? (string) $s['heading_text'] : '';
 		$empty_text  = isset( $s['empty_text'] ) ? trim( (string) $s['empty_text'] ) : '';
+		$show_colors = isset( $s['show_colors'] ) && 'yes' === $s['show_colors'];
+		$max_colors  = isset( $s['max_colors'] ) ? absint( $s['max_colors'] ) : 6;
+		$counter     = isset( $s['show_counter'] ) && 'yes' === $s['show_counter'];
 
 		if ( ! $ids ) {
 			if ( '' !== $empty_text ) {
 				echo '<div class="pvg"><p class="pvg-empty">' . esc_html( $empty_text ) . '</p></div>';
+			} elseif ( $this->is_edit_mode() ) {
+				$this->editor_notice( '<strong>Grilă produse:</strong> nu am găsit produse pentru setările alese. Pe site containerul acestei secțiuni se ascunde.' );
 			} else {
-				$this->editor_notice( '<strong>Grilă produse:</strong> nu am găsit produse pentru setările alese. Pe site widgetul nu apare.' );
+				echo '<span class="pavva-w-empty" hidden></span>';
 			}
 			return;
 		}
@@ -1026,6 +1234,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 					$name  = get_the_title( $id );
 					$thumb = get_post_thumbnail_id( $id );
 					$desc  = $show_desc ? $this->product_desc( $id, $words ) : '';
+					$cols  = $show_colors ? $this->colors_html( $id, $max_colors, $counter ) : '';
 					?>
 					<li class="pvg-item">
 						<a class="pvg-card" href="<?php echo esc_url( get_permalink( $id ) ); ?>">
@@ -1037,8 +1246,10 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 										$size,
 										false,
 										array(
-											'alt'     => wp_strip_all_tags( $name ),
-											'loading' => 'lazy',
+											'alt'      => wp_strip_all_tags( $name ),
+											'loading'  => 'lazy',
+											'decoding' => 'async',
+											'sizes'    => '(max-width: 767px) 100vw, (max-width: 1024px) 50vw, 33vw',
 										)
 									);
 								}
@@ -1054,6 +1265,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 								<?php if ( '' !== $desc ) : ?>
 									<p class="pvg-desc"><?php echo esc_html( $desc ); ?></p>
 								<?php endif; ?>
+								<?php echo $cols; // phpcs:ignore -- generat și escapat în colors_html() ?>
 							</div>
 						</a>
 					</li>

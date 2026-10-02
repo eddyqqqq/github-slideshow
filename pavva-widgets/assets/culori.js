@@ -27,35 +27,66 @@
 		var o = {};
 		try { o = JSON.parse(root.getAttribute('data-pvc') || '{}'); } catch (e) { o = {}; }
 		var hover = o.trigger === 'hover' && CAN_HOVER;
+		var mode = o.mode === 'fade' || o.mode === 'none' ? o.mode : 'slide';
+		if (REDUCE) mode = 'none';
+		if (mode === 'slide' && !stage.animate) mode = 'fade';
 
 		var current = 0;
 		var leaveTimer = null;
+		var running = [];
 
 		function duration() {
-			return REDUCE ? 0 : toMs(getComputedStyle(root).getPropertyValue('--pvc-speed'), 600);
+			return toMs(getComputedStyle(root).getPropertyValue('--pvc-speed'), 600);
+		}
+		function easing() {
+			return getComputedStyle(root).getPropertyValue('--pvc-ease').trim() || 'ease';
 		}
 
-		function go(index) {
+		function eager(slide) {
+			var img = slide.querySelector('img');
+			if (img && img.loading === 'lazy') img.loading = 'eager';
+		}
+
+		/* dir: 1 = vine din dreapta (următoarea), -1 = vine din stânga */
+		function go(index, dir) {
 			var n = slides.length;
 			index = ((index % n) + n) % n;
 			if (index === current) return;
+			if (!dir) dir = index > current ? 1 : -1;
 
 			var prev = slides[current];
 			var next = slides[index];
+			eager(next);
 
-			slides.forEach(function (sl) { sl.classList.remove('is-leaving'); });
+			/* o tranziție încă în curs se încheie imediat */
+			running.forEach(function (a) { try { a.finish(); } catch (e) { /* nimic */ } });
+			running = [];
 			clearTimeout(leaveTimer);
+			slides.forEach(function (sl) { sl.classList.remove('is-leaving'); });
 
 			prev.classList.remove('is-active');
-			prev.classList.add('is-leaving');
 			prev.setAttribute('aria-hidden', 'true');
 			next.classList.add('is-active');
 			next.removeAttribute('aria-hidden');
-			/* imaginea leneșă (lazy) se cere imediat */
-			var img = next.querySelector('img');
-			if (img && img.loading === 'lazy') img.loading = 'eager';
 
-			leaveTimer = setTimeout(function () { prev.classList.remove('is-leaving'); }, duration() + 50);
+			if (mode === 'slide') {
+				var d = duration();
+				var ease = easing();
+				prev.classList.add('is-leaving');
+				var a1 = next.animate(
+					[{ transform: 'translateX(' + (dir * 100) + '%)' }, { transform: 'translateX(0)' }],
+					{ duration: d, easing: ease }
+				);
+				var a2 = prev.animate(
+					[{ transform: 'translateX(0)' }, { transform: 'translateX(' + (-dir * 100) + '%)' }],
+					{ duration: d, easing: ease }
+				);
+				running = [a1, a2];
+				a2.onfinish = function () { prev.classList.remove('is-leaving'); };
+			} else if (mode === 'fade') {
+				prev.classList.add('is-leaving');
+				leaveTimer = setTimeout(function () { prev.classList.remove('is-leaving'); }, duration() + 50);
+			}
 
 			thumbs.forEach(function (t, i) {
 				var on = i === index;
@@ -71,44 +102,66 @@
 			if (hover) t.addEventListener('mouseenter', function () { go(i); });
 		});
 
-		/* săgeți */
+		/* săgeți (circular) */
 		var prevBtn = root.querySelector('.pvc-prev');
 		var nextBtn = root.querySelector('.pvc-next');
-		if (prevBtn) prevBtn.addEventListener('click', function (e) { e.preventDefault(); go(current - 1); });
-		if (nextBtn) nextBtn.addEventListener('click', function (e) { e.preventDefault(); go(current + 1); });
+		if (prevBtn) prevBtn.addEventListener('click', function (e) { e.preventDefault(); go(current - 1, -1); });
+		if (nextBtn) nextBtn.addEventListener('click', function (e) { e.preventDefault(); go(current + 1, 1); });
 
 		/* tastatură pe imaginea mare */
 		stage.addEventListener('keydown', function (e) {
-			if (e.key === 'ArrowLeft') { e.preventDefault(); go(current - 1); }
-			else if (e.key === 'ArrowRight') { e.preventDefault(); go(current + 1); }
+			if (e.key === 'ArrowLeft') { e.preventDefault(); go(current - 1, -1); }
+			else if (e.key === 'ArrowRight') { e.preventDefault(); go(current + 1, 1); }
 		});
 
-		/* glisare pe telefon / tabletă */
-		var sx = 0, sy = 0, tracking = false;
-		stage.addEventListener('touchstart', function (e) {
-			if (!e.touches || e.touches.length !== 1) { tracking = false; return; }
-			sx = e.touches[0].clientX;
-			sy = e.touches[0].clientY;
-			tracking = true;
-		}, { passive: true });
-		stage.addEventListener('touchend', function (e) {
-			if (!tracking || !e.changedTouches || !e.changedTouches.length) return;
-			tracking = false;
-			var dx = e.changedTouches[0].clientX - sx;
-			var dy = e.changedTouches[0].clientY - sy;
-			if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) go(current + (dx < 0 ? 1 : -1));
-		}, { passive: true });
+		/* glisare: deget (swipe) și / sau mouse (drag) */
+		function swipeEnd(dx, dy) {
+			if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+				if (dx < 0) go(current + 1, 1); else go(current - 1, -1);
+			}
+		}
 
-		/* imaginile celorlalte culori se încarcă după ce pagina e gata */
-		function warm() {
-			slides.forEach(function (sl) {
-				var im = sl.querySelector('img');
-				if (im && im.loading === 'lazy') im.loading = 'eager';
+		if (o.swipe) {
+			var tx = 0, ty = 0, touching = false;
+			stage.addEventListener('touchstart', function (e) {
+				if (!e.touches || e.touches.length !== 1) { touching = false; return; }
+				tx = e.touches[0].clientX;
+				ty = e.touches[0].clientY;
+				touching = true;
+			}, { passive: true });
+			stage.addEventListener('touchend', function (e) {
+				if (!touching || !e.changedTouches || !e.changedTouches.length) return;
+				touching = false;
+				swipeEnd(e.changedTouches[0].clientX - tx, e.changedTouches[0].clientY - ty);
+			}, { passive: true });
+		}
+
+		if (o.drag) {
+			root.classList.add('pvc-draggable');
+			var mx = 0, my = 0, dragging = false;
+			stage.addEventListener('mousedown', function (e) {
+				if (e.button !== 0 || e.target.closest('.pvc-arrow')) return;
+				mx = e.clientX;
+				my = e.clientY;
+				dragging = true;
+				stage.classList.add('is-dragging');
+				e.preventDefault();
+			});
+			window.addEventListener('mouseup', function (e) {
+				if (!dragging) return;
+				dragging = false;
+				stage.classList.remove('is-dragging');
+				swipeEnd(e.clientX - mx, e.clientY - my);
 			});
 		}
+
+		/* imaginile celorlalte culori se încarcă când secțiunea se apropie de ecran */
 		if ('IntersectionObserver' in window) {
 			var io = new IntersectionObserver(function (entries) {
-				if (entries[0] && entries[0].isIntersecting) { warm(); io.disconnect(); }
+				if (entries[0] && entries[0].isIntersecting) {
+					slides.forEach(eager);
+					io.disconnect();
+				}
 			}, { rootMargin: '300px 0px' });
 			io.observe(root);
 		}

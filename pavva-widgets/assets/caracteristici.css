@@ -1,0 +1,44 @@
+/*
+ * Pavva Widgets – Caracteristici
+ * Creat de imagient pentru Pavva.
+ *
+ * Aceleași valori implicite ca iconițele din Slider header.
+ */
+
+.pvk {
+	--pvk-h: 52px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 14px;
+}
+
+.pvk .pvk-item {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	text-align: center;
+}
+
+.pvk .pvk-img {
+	display: block;
+	width: auto;
+	height: var(--pvk-h);
+	max-width: none;
+	object-fit: contain;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.pvk .pvk-label {
+	max-width: calc(var(--pvk-h) * 2.4);
+	font-size: 12px;
+	line-height: 1.3;
+	color: #1f1e1c;
+}
+
+@media (max-width: 767px) {
+	.pvk { --pvk-h: 44px; }
+}

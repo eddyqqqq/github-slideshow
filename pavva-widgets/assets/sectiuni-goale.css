@@ -1,0 +1,16 @@
+/*
+ * Pavva Widgets – secțiuni goale
+ * Creat de imagient pentru Pavva.
+ *
+ * Când un widget Pavva nu are date pentru produsul / categoria paginii
+ * (ex.: produsul nu are declarații), se ascunde containerul lui, cu tot cu
+ * titlul pus separat. Se întâmplă din CSS, deci fără salt de pagină.
+ * Containerul rămâne vizibil dacă mai are alt conținut (text, imagine,
+ * buton, alt widget Pavva cu date). Titlurile, spacer-ele și liniile nu contează.
+ */
+.elementor-widget.pavva-w-is-empty { display: none !important; }
+
+.e-con:has(.pavva-w-is-empty):not(:has(.elementor-widget:not(.pavva-w-is-empty, .elementor-widget-heading, .elementor-widget-spacer, .elementor-widget-divider))),
+.elementor-section:has(.pavva-w-is-empty):not(:has(.elementor-widget:not(.pavva-w-is-empty, .elementor-widget-heading, .elementor-widget-spacer, .elementor-widget-divider))) {
+	display: none !important;
+}
