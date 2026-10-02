@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Text_Shadow;
+use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Utils;
@@ -100,6 +102,7 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 		$this->controls_content();
 		$this->controls_style_heading();
 		$this->controls_style_grid();
+		$this->controls_style_card();
 		$this->controls_style_image();
 		$this->controls_style_table();
 	}
@@ -304,6 +307,14 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			array(
+				'name' => 'heading_tshadow',
+				'selector' => $this->sel( '.pvd-heading' ),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -346,6 +357,128 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	private function controls_style_card() {
+		$this->start_controls_section(
+			'section_style_card',
+			array(
+				'label' => 'Card (fiecare coloană)',
+				'tab' => Controls_Manager::TAB_STYLE,
+			)
+		);
+
+		$this->add_responsive_control(
+			'card_padding',
+			array(
+				'label' => 'Padding',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvd-item' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'card_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvd-item' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->start_controls_tabs( 'card_tabs' );
+
+		$this->start_controls_tab( 'card_tab_normal', array( 'label' => 'Normal' ) );
+
+		$this->add_control(
+			'card_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvd-item' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'card_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pvd-item' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'card_shadow',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pvd-item' ),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'card_tab_hover', array( 'label' => 'Hover' ) );
+
+		$this->add_control(
+			'card_bg_hover',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvd-item:hover' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'card_border_hover',
+			array(
+				'label' => 'Culoare bordură',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvd-item:hover' ) => 'border-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'card_shadow_hover',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pvd-item:hover' ),
+			)
+		);
+
+		$this->add_control(
+			'card_lift',
+			array(
+				'label' => 'Ridicare',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 30, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvd-item:hover' ) => 'transform: translateY(calc({{SIZE}}{{UNIT}} * -1));',
+				),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->end_controls_section();
+
+	}
+
 	private function controls_style_image() {
 		$this->start_controls_section(
 			'section_style_image',
@@ -380,13 +513,11 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 		$this->add_responsive_control(
 			'image_padding',
 			array(
-				'label'       => 'Spațiu în jurul imaginii',
-				'description' => 'Distanța dintre chenar și imagine.',
-				'type'        => Controls_Manager::SLIDER,
-				'size_units'  => array( 'px', '%' ),
-				'range'       => array( 'px' => array( 'min' => 0, 'max' => 100 ) ),
-				'selectors'   => array(
-					$this->sel( '.pvd-media' ) => 'padding: {{SIZE}}{{UNIT}};',
+				'label' => 'Spațiu în jurul imaginii (padding)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvd-media' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -430,12 +561,11 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 		$this->add_responsive_control(
 			'image_radius',
 			array(
-				'label'      => 'Colțuri rotunjite',
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%' ),
-				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
-				'selectors'  => array(
-					$this->sel( '.pvd-media' ) => 'border-radius: {{SIZE}}{{UNIT}};',
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvd-media' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -451,6 +581,29 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 				'selectors'  => array(
 					$this->sel( '.pvd-media' ) => 'margin-bottom: {{SIZE}}{{UNIT}};',
 				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'image_shadow',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pvd-media' ),
+			)
+		);
+
+		$this->add_control(
+			'image_zoom',
+			array(
+				'label' => 'Zoom imagine la hover pe card',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 1, 'max' => 1.3, 'step' => 0.01 ) ),
+				'selectors' => array(
+					$this->sel( '.pvd-item:hover .pvd-media img' ) => 'transform: scale({{SIZE}});',
+				),
+				'separator' => 'before',
 			)
 		);
 
@@ -475,6 +628,92 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 				'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
 				'selectors'  => array(
 					$this->sel( '.pvd-row' ) => 'padding-top: {{SIZE}}{{UNIT}}; padding-bottom: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'row_padding_x',
+			array(
+				'label' => 'Padding stânga / dreapta rând',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 40, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvd-row' ) => 'padding-left: {{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'row_gap_lv',
+			array(
+				'label' => 'Spațiu etichetă – valoare',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 80, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvd-row' ) => 'gap: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'label_width',
+			array(
+				'label' => 'Lățime coloană etichete',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( '%', 'px' ),
+				'range' => array( 'px' => array( 'min' => 20, 'max' => 80, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvd-label' ) => 'flex: 0 0 {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'value_position' => 'right' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'value_align',
+			array(
+				'label' => 'Aliniere valoare',
+				'type' => Controls_Manager::CHOOSE,
+				'options' => $this->align_options(),
+				'selectors' => array(
+					$this->sel( '.pvd-row:not(.is-title) .pvd-value' ) => 'text-align: {{VALUE}}; margin-left: auto;',
+				),
+				'condition' => array( 'value_position' => 'right' ),
+			)
+		);
+
+		$this->add_control(
+			'row_bg',
+			array(
+				'label' => 'Fundal rând',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvd-row' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'row_bg_alt',
+			array(
+				'label' => 'Fundal rânduri alternative (zebra)',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvd-row:nth-child(even)' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'row_bg_hover',
+			array(
+				'label' => 'Fundal rând la hover',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvd-row:hover' ) => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -504,6 +743,32 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'line_style',
+			array(
+				'label' => 'Stil linii',
+				'type' => Controls_Manager::SELECT,
+				'options' => array( '' => 'Continuă', 'dashed' => 'Întreruptă', 'dotted' => 'Punctată' ),
+				'selectors' => array(
+					$this->sel() => '--pvd-line-s: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'line_top',
+			array(
+				'label' => 'Linie și deasupra primului rând',
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => 'Da',
+				'label_off' => 'Nu',
+				'return_value' => 'yes',
+				'selectors' => array(
+					$this->sel( '.pvd-row:first-child' ) => 'border-top: var(--pvd-line-w) var(--pvd-line-s, solid) var(--pvd-line);',
+				),
+			)
+		);
+
+		$this->add_control(
 			'title_row_heading',
 			array(
 				'label'     => 'Rând titlu (fără valoare)',
@@ -519,6 +784,29 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->sel( '.pvd-row.is-title' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'title_row_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvd-row.is-title' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'title_row_padding',
+			array(
+				'label' => 'Padding',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvd-row.is-title' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);

@@ -16,6 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Css_Filter;
+use Elementor\Group_Control_Text_Shadow;
+use Elementor\Group_Control_Box_Shadow;
+use Elementor\Group_Control_Border;
 use Elementor\Repeater;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
@@ -469,6 +473,111 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'item_box_heading',
+			array(
+				'label' => 'Chenar secțiune',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'item_padding',
+			array(
+				'label' => 'Padding',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pva-item' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'item_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pva-item' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->start_controls_tabs( 'item_tabs' );
+
+		$this->start_controls_tab( 'item_tab_normal', array( 'label' => 'Normal' ) );
+
+		$this->add_control(
+			'item_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-item' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'item_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pva-item' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'item_shadow',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pva-item' ),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'item_tab_open', array( 'label' => 'Deschis' ) );
+
+		$this->add_control(
+			'item_bg_open',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-item[open]:not(.is-closing)' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'item_border_open',
+			array(
+				'label' => 'Culoare bordură',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-item[open]:not(.is-closing)' ) => 'border-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'item_shadow_open',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pva-item[open]:not(.is-closing)' ),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 		$this->end_controls_section();
 	}
 
@@ -502,6 +611,17 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 				),
 			)
 		);
+		$this->add_control(
+			'title_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-title' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'title_tab_hover', array( 'label' => 'Hover' ) );
@@ -515,6 +635,17 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 				),
 			)
 		);
+		$this->add_control(
+			'title_bg_hover',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-title:hover' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'title_tab_open', array( 'label' => 'Deschis' ) );
@@ -528,6 +659,17 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 				),
 			)
 		);
+		$this->add_control(
+			'title_bg_open',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-item[open]:not(.is-closing) > .pva-title' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
 		$this->end_controls_tab();
 		$this->end_controls_tabs();
 
@@ -541,6 +683,36 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 				'selectors'  => array(
 					$this->sel( '.pva-title' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'title_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pva-title' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'title_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pva-title' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			array(
+				'name' => 'title_tshadow',
+				'label' => 'Umbră text',
+				'selector' => $this->sel( '.pva-title-text' ),
 			)
 		);
 
@@ -619,6 +791,96 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'icon_color_hover',
+			array(
+				'label' => 'Culoare (hover pe titlu)',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-title:hover' ) => '--pva-icon-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'icon_box_heading',
+			array(
+				'label' => 'Fundal iconiță (cerc / pătrat)',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'icon_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-icon' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'icon_bg_open',
+			array(
+				'label' => 'Fundal (deschis)',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-item[open]:not(.is-closing) .pva-icon' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'icon_box',
+			array(
+				'label' => 'Mărime fundal',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 80, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-icon' ) => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'icon_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pva-icon' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'icon_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pva-icon' ),
+			)
+		);
+
+		$this->add_control(
+			'icon_rotate',
+			array(
+				'label' => 'Rotire la deschidere (grade)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 180, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-item[open]:not(.is-closing) .pva-icon' ) => 'transform: rotate({{SIZE}}deg);',
+				),
+				'separator' => 'before',
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -661,6 +923,74 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 				'name'     => 'text_typo',
 				'label'    => 'Tipografie text',
 				'selector' => $this->sel( '.pva-text' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'panel_padding',
+			array(
+				'label' => 'Padding conținut',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pva-panel-inner' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'panel_bg',
+			array(
+				'label' => 'Fundal conținut',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-panel-inner' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'panel_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pva-panel-inner' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'panel_border',
+				'label' => 'Bordură conținut',
+				'selector' => $this->sel( '.pva-panel-inner' ),
+			)
+		);
+
+		$this->add_control(
+			'text_link',
+			array(
+				'label' => 'Culoare linkuri',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-text a' ) => 'color: {{VALUE}};',
+				),
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'text_link_hover',
+			array(
+				'label' => 'Culoare linkuri (hover)',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-text a:hover' ) => 'color: {{VALUE}};',
+				),
 			)
 		);
 
@@ -756,6 +1086,17 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 				),
 			)
 		);
+		$this->add_control(
+			'doc_bg',
+			array(
+				'label' => 'Fundal rând',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-doc' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'doc_tab_hover', array( 'label' => 'Hover' ) );
@@ -779,6 +1120,28 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 				),
 			)
 		);
+		$this->add_control(
+			'doc_bg_hover',
+			array(
+				'label' => 'Fundal rând',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-doc:hover' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'doc_icon_hover',
+			array(
+				'label' => 'Culoare iconiță PDF',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-doc:hover .pva-doc-icon' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
 		$this->end_controls_tab();
 		$this->end_controls_tabs();
 
@@ -811,6 +1174,102 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 				'name'     => 'doc_action_typo',
 				'label'    => 'Tipografie „Descarcă”',
 				'selector' => $this->sel( '.pva-doc-action' ),
+			)
+		);
+
+		$this->add_control(
+			'doc_box_heading',
+			array(
+				'label' => 'Rând document',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'doc_padding_x',
+			array(
+				'label' => 'Padding stânga / dreapta',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 40, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-doc' ) => 'padding-left: {{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'doc_row_gap',
+			array(
+				'label' => 'Spațiu între rânduri',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 40, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-docs' ) => 'row-gap: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'doc_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pva-doc' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'doc_border',
+				'label' => 'Bordură (înlocuiește linia)',
+				'selector' => $this->sel( '.pva-doc' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'doc_icon_size',
+			array(
+				'label' => 'Mărime iconiță PDF',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 8, 'max' => 60, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-doc-icon' ) => 'font-size: {{SIZE}}{{UNIT}};',
+				),
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'doc_action_icon_size',
+			array(
+				'label' => 'Mărime săgeată descărcare',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 8, 'max' => 40, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-doc-action svg' ) => 'font-size: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'doc_inner_gap',
+			array(
+				'label' => 'Spațiu iconiță – text',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 40, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-doc' ) => 'gap: {{SIZE}}{{UNIT}};',
+				),
 			)
 		);
 
@@ -862,12 +1321,11 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 		$this->add_responsive_control(
 			'gallery_radius',
 			array(
-				'label'      => 'Colțuri rotunjite',
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%' ),
-				'range'      => array( 'px' => array( 'min' => 0, 'max' => 50 ) ),
-				'selectors'  => array(
-					$this->sel( '.pva-gal-media' ) => 'border-radius: {{SIZE}}{{UNIT}};',
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pva-gal-media' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -890,6 +1348,74 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 			array(
 				'name'      => 'gallery_caption_typo',
 				'selector'  => $this->sel( '.pva-gal-caption' ),
+				'condition' => array( 'gallery_titles' => 'yes' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'gallery_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pva-gal-media' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'gallery_shadow',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pva-gal-media' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			array(
+				'name' => 'gallery_filter',
+				'label' => 'Filtre imagine',
+				'selector' => $this->sel( '.pva-gal-media img' ),
+			)
+		);
+
+		$this->add_control(
+			'gallery_zoom',
+			array(
+				'label' => 'Zoom la hover',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 1, 'max' => 1.3, 'step' => 0.01 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-gal-media:hover img' ) => 'transform: scale({{SIZE}});',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'gallery_caption_spacing',
+			array(
+				'label' => 'Spațiu deasupra titlului',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 40, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-gal-caption' ) => 'margin-top: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'gallery_titles' => 'yes' ),
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'gallery_caption_align',
+			array(
+				'label' => 'Aliniere titlu',
+				'type' => Controls_Manager::CHOOSE,
+				'options' => array( 'left' => array( 'title' => 'Stânga', 'icon' => 'eicon-text-align-left' ), 'center' => array( 'title' => 'Centru', 'icon' => 'eicon-text-align-center' ), 'right' => array( 'title' => 'Dreapta', 'icon' => 'eicon-text-align-right' ) ),
+				'selectors' => array(
+					$this->sel( '.pva-gal-caption' ) => 'text-align: {{VALUE}};',
+				),
 				'condition' => array( 'gallery_titles' => 'yes' ),
 			)
 		);

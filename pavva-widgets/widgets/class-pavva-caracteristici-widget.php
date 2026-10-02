@@ -16,6 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Css_Filter;
+use Elementor\Group_Control_Text_Shadow;
+use Elementor\Group_Control_Box_Shadow;
+use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
 
 class Pavva_Caracteristici_Widget extends Widget_Base {
@@ -199,6 +203,103 @@ class Pavva_Caracteristici_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'opacity_hover',
+			array(
+				'label' => 'Opacitate la hover',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0.1, 'max' => 1, 'step' => 0.05 ) ),
+				'selectors' => array(
+					$this->sel( '.pvk-item:hover .pvk-img' ) => 'opacity: {{SIZE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'scale_hover',
+			array(
+				'label' => 'Mărire la hover',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 1, 'max' => 1.4, 'step' => 0.01 ) ),
+				'selectors' => array(
+					$this->sel( '.pvk-item:hover .pvk-img' ) => 'transform: scale({{SIZE}});',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			array(
+				'name' => 'img_filter',
+				'label' => 'Filtre iconiță (ex.: alb-negru)',
+				'selector' => $this->sel( '.pvk-img' ),
+			)
+		);
+
+		$this->add_control(
+			'item_box_heading',
+			array(
+				'label' => 'Chenar fiecare iconiță',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'item_padding',
+			array(
+				'label' => 'Padding',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvk-item' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'item_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvk-item' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'item_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvk-item' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'item_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pvk-item' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'item_shadow',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pvk-item' ),
+			)
+		);
+
+		$this->add_control(
 			'label_heading',
 			array(
 				'label'     => 'Denumire',
@@ -240,6 +341,30 @@ class Pavva_Caracteristici_Widget extends Widget_Base {
 				'selectors'  => array(
 					$this->sel( '.pvk-item' ) => 'gap: {{SIZE}}{{UNIT}};',
 				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			array(
+				'name' => 'label_tshadow',
+				'label' => 'Umbră text',
+				'selector' => $this->sel( '.pvk-label' ),
+				'condition' => array( 'show_labels' => 'yes' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'label_max',
+			array(
+				'label' => 'Lățime maximă denumire',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%' ),
+				'range' => array( 'px' => array( 'min' => 40, 'max' => 400, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvk-label' ) => 'max-width: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'show_labels' => 'yes' ),
 			)
 		);
 

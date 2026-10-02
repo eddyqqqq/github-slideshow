@@ -272,3 +272,12 @@
 	.pvc .pvc-thumb-media,
 	.pvc .pvc-thumb-media::after { transition: none; }
 }
+
+/* Săgeți vizibile doar la hover (opțiune în Elementor) */
+.pvc-arrows-hover-yes .pvc .pvc-arrow { opacity: 0; }
+.pvc-arrows-hover-yes .pvc .pvc-stage:hover .pvc-arrow,
+.pvc-arrows-hover-yes .pvc .pvc-arrow:focus-visible { opacity: 1; }
+@media (hover: none) {
+	.pvc-arrows-hover-yes .pvc .pvc-arrow { opacity: 1; }
+}
+.pvc .pvc-thumb-media img { transition: transform .5s cubic-bezier(.22, .61, .36, 1); }

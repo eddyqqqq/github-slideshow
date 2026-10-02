@@ -15,6 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Css_Filter;
+use Elementor\Group_Control_Text_Shadow;
+use Elementor\Group_Control_Box_Shadow;
+use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Utils;
@@ -456,6 +460,14 @@ class Pavva_Culori_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			array(
+				'name' => 'heading_tshadow',
+				'selector' => $this->sel( '.pvc-heading' ),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -497,6 +509,18 @@ class Pavva_Culori_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_responsive_control(
+			'thumbs_valign',
+			array(
+				'label' => 'Aliniere verticală thumbnails',
+				'type' => Controls_Manager::SELECT,
+				'options' => array( '' => 'Implicit (sus)', 'start' => 'Sus', 'center' => 'Centru', 'end' => 'Jos', 'stretch' => 'Întinse' ),
+				'selectors' => array(
+					$this->sel( '.pvc-layout' ) => 'align-items: {{VALUE}};',
+				),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -529,12 +553,11 @@ class Pavva_Culori_Widget extends Widget_Base {
 		$this->add_responsive_control(
 			'stage_radius',
 			array(
-				'label'      => 'Colțuri rotunjite',
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%' ),
-				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
-				'selectors'  => array(
-					$this->sel() => '--pvc-radius: {{SIZE}}{{UNIT}};',
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvc-stage' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -564,6 +587,33 @@ class Pavva_Culori_Widget extends Widget_Base {
 				'selectors' => array(
 					$this->sel( '.pvc-slide img' ) => 'object-fit: {{VALUE}};',
 				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'stage_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pvc-stage' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'stage_shadow',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pvc-stage' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			array(
+				'name' => 'stage_filter',
+				'label' => 'Filtre imagine',
+				'selector' => $this->sel( '.pvc-slide img' ),
 			)
 		);
 
@@ -638,6 +688,94 @@ class Pavva_Culori_Widget extends Widget_Base {
 				'selectors' => array(
 					$this->sel() => '--pvc-shade: {{VALUE}};',
 				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'shade_height',
+			array(
+				'label' => 'Înălțime umbră',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( '%', 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 100, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvc-shade' ) => 'height: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'show_shade' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'name_box_heading',
+			array(
+				'label' => 'Casetă nume',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'name_bg',
+			array(
+				'label' => 'Fundal casetă',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvc-name' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'name_inner_padding',
+			array(
+				'label' => 'Padding casetă',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvc-name' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'name_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvc-name' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'name_border',
+				'label' => 'Bordură casetă',
+				'selector' => $this->sel( '.pvc-name' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'name_align',
+			array(
+				'label' => 'Aliniere text',
+				'type' => Controls_Manager::CHOOSE,
+				'options' => $this->align_options(),
+				'selectors' => array(
+					$this->sel( '.pvc-name' ) => 'text-align: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			array(
+				'name' => 'name_tshadow',
+				'label' => 'Umbră text',
+				'selector' => $this->sel( '.pvc-name' ),
 			)
 		);
 
@@ -749,27 +887,69 @@ class Pavva_Culori_Widget extends Widget_Base {
 		$this->add_responsive_control(
 			'arrow_padding',
 			array(
-				'label'      => 'Padding',
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
-				'range'      => array( 'px' => array( 'min' => 0, 'max' => 30 ) ),
-				'separator'  => 'before',
-				'selectors'  => array(
-					$this->sel( '.pvc-arrow' ) => 'padding: {{SIZE}}{{UNIT}};',
+				'label' => 'Padding',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvc-arrow' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'arrow_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvc-arrow' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
 
-		$this->add_control(
-			'arrow_radius',
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
 			array(
-				'label'      => 'Colțuri rotunjite',
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%' ),
-				'range'      => array( 'px' => array( 'min' => 0, 'max' => 50 ) ),
-				'selectors'  => array(
-					$this->sel( '.pvc-arrow' ) => 'border-radius: {{SIZE}}{{UNIT}};',
+				'name' => 'arrow_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pvc-arrow' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'arrow_shadow',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pvc-arrow' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'arrow_top',
+			array(
+				'label' => 'Poziție verticală',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( '%', 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 100, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvc-arrow' ) => 'top: {{SIZE}}{{UNIT}};',
 				),
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'arrow_on_hover',
+			array(
+				'label' => 'Săgeți vizibile doar la hover',
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => 'Da',
+				'label_off' => 'Nu',
+				'return_value' => 'yes',
+				'prefix_class' => 'pvc-arrows-hover-',
 			)
 		);
 
@@ -804,12 +984,11 @@ class Pavva_Culori_Widget extends Widget_Base {
 		$this->add_responsive_control(
 			'thumb_radius',
 			array(
-				'label'      => 'Colțuri rotunjite',
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%' ),
-				'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
-				'selectors'  => array(
-					$this->sel() => '--pvc-tradius: {{SIZE}}{{UNIT}};',
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvc-thumb-media' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -851,6 +1030,26 @@ class Pavva_Culori_Widget extends Widget_Base {
 				),
 			)
 		);
+		$this->add_control(
+			'thumb_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvc-thumb-media' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'thumb_shadow',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pvc-thumb-media' ),
+			)
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'thumb_tab_hover', array( 'label' => 'Hover' ) );
@@ -875,6 +1074,28 @@ class Pavva_Culori_Widget extends Widget_Base {
 				),
 			)
 		);
+		$this->add_control(
+			'thumb_zoom',
+			array(
+				'label' => 'Zoom imagine',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 1, 'max' => 1.3, 'step' => 0.01 ) ),
+				'selectors' => array(
+					$this->sel( '.pvc-thumb:hover .pvc-thumb-media img' ) => 'transform: scale({{SIZE}});',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'thumb_shadow_hover',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pvc-thumb:hover .pvc-thumb-media' ),
+			)
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'thumb_tab_active', array( 'label' => 'Activ' ) );
@@ -899,6 +1120,27 @@ class Pavva_Culori_Widget extends Widget_Base {
 				),
 			)
 		);
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'thumb_shadow_active',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pvc-thumb.is-active .pvc-thumb-media' ),
+			)
+		);
+
+		$this->add_control(
+			'thumb_label_color_active',
+			array(
+				'label' => 'Culoare nume (activ)',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvc-thumb.is-active .pvc-thumb-label' ) => 'color: {{VALUE}};',
+				),
+				'condition' => array( 'show_thumb_labels' => 'yes' ),
+			)
+		);
+
 		$this->end_controls_tab();
 		$this->end_controls_tabs();
 
@@ -929,6 +1171,33 @@ class Pavva_Culori_Widget extends Widget_Base {
 			array(
 				'name'      => 'thumb_label_typo',
 				'selector'  => $this->sel( '.pvc-thumb-label' ),
+				'condition' => array( 'show_thumb_labels' => 'yes' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'thumb_label_spacing',
+			array(
+				'label' => 'Spațiu deasupra numelui',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 40, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvc-thumb-label' ) => 'margin-top: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'show_thumb_labels' => 'yes' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'thumb_label_align',
+			array(
+				'label' => 'Aliniere nume',
+				'type' => Controls_Manager::CHOOSE,
+				'options' => $this->align_options(),
+				'selectors' => array(
+					$this->sel( '.pvc-thumb-label' ) => 'text-align: {{VALUE}};',
+				),
 				'condition' => array( 'show_thumb_labels' => 'yes' ),
 			)
 		);

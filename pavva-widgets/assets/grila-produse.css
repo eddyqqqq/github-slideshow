@@ -199,3 +199,31 @@
 	line-height: 1;
 	color: var(--pvg-muted);
 }
+.pvg .pvg-color { box-sizing: border-box; transition: transform .25s ease; }
+.pvg .pvg-colors-more { box-sizing: border-box; }
+/* +N ca pătrățel, la fel ca o culoare */
+.pvg .pvg-colors-more.is-box {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: var(--pvg-color);
+	height: var(--pvg-color);
+	margin-left: 0;
+	padding: 0 4px;
+	border-radius: 4px;
+	background-color: #f1efeb;
+	font-size: 12px;
+	color: var(--pvg-ink);
+}
+/* Culorile peste imagine */
+.pvg .pvg-media .pvg-colors {
+	position: absolute;
+	left: 12px;
+	right: auto;
+	bottom: 12px;
+	margin: 0;
+	z-index: 1;
+}
+.pvg .pvg-body > .pvg-colors:first-child { margin: 0 0 12px; }
+.pvg .pvg-arrow i { font-size: 1em; line-height: 1; color: inherit; }
+.pvg .pvg-arrow svg { fill: currentColor; } /* iconițe din bibliotecă; săgeata implicită e doar contur */

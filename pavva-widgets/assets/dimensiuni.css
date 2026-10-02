@@ -50,7 +50,13 @@
 	background-color: #fff;
 	overflow: hidden;
 }
+.pvd .pvd-item {
+	box-sizing: border-box;
+	min-width: 0;
+	transition: transform .4s cubic-bezier(.22, .61, .36, 1), box-shadow .4s ease, background-color .4s ease, border-color .4s ease;
+}
 .pvd .pvd-media img {
+	transition: transform .6s cubic-bezier(.22, .61, .36, 1);
 	display: block;
 	width: 100%;
 	height: 100%;
@@ -74,7 +80,7 @@
 	gap: 16px;
 	margin: 0;
 	padding: 11px 0;
-	border-bottom: var(--pvd-line-w) solid var(--pvd-line);
+	border-bottom: var(--pvd-line-w) var(--pvd-line-s, solid) var(--pvd-line);
 	font-size: clamp(13px, 1.05vw, 15px);
 	line-height: 1.35;
 	color: var(--pvd-text);

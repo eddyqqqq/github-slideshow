@@ -60,6 +60,14 @@ Citesc automat produsul sau categoria paginii: le pui o singură dată
    Carduri cu imagine, nume, săgeată, descriere sinteză și culori +N.
    Categoria paginii automat, categorii alese sau produse alese manual.
 
+PERSONALIZARE
+Toate widgeturile de mai sus se pot stiliza complet din Elementor → Style,
+separat pe desktop / tabletă / mobil: fonturi, culori, spațieri, padding,
+fundaluri, borduri, colțuri rotunjite pe fiecare colț, umbre, filtre pe imagini
+și stări Normal / Hover / Activ / Deschis unde au sens.
+Culorile din cardurile Grilei: număr maxim, colțuri rotunjite, contor „+N”
+cu text propriu (ex.: „+{n} culori”), ca text sau ca pătrățel.
+
 SECȚIUNI GOALE
 Dacă produsul nu are date pentru un widget (ex.: nicio declarație), containerul
 Elementor al widgetului se ascunde cu tot cu titlul pus separat (Heading),

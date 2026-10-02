@@ -15,6 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
+use Elementor\Icons_Manager;
+use Elementor\Group_Control_Css_Filter;
+use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
@@ -398,6 +401,39 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'counter_format',
+			array(
+				'label' => 'Text contor',
+				'type' => Controls_Manager::TEXT,
+				'description' => '{n} = câte culori mai sunt. Ex.: +{n} sau +{n} culori.',
+				'default' => '+{n}',
+				'condition' => array( 'show_colors' => 'yes', 'show_counter' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'counter_style',
+			array(
+				'label' => 'Aspect contor',
+				'type' => Controls_Manager::SELECT,
+				'options' => array( 'text' => 'Text lângă culori', 'box' => 'Pătrățel, ca o culoare' ),
+				'default' => 'text',
+				'condition' => array( 'show_colors' => 'yes', 'show_counter' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'colors_position',
+			array(
+				'label' => 'Poziție culori',
+				'type' => Controls_Manager::SELECT,
+				'options' => array( 'bottom' => 'Sub descriere', 'top' => 'Deasupra numelui', 'image' => 'Peste imagine (jos)' ),
+				'default' => 'bottom',
+				'condition' => array( 'show_colors' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
 			'show_arrow',
 			array(
 				'label'        => 'Săgeată lângă nume',
@@ -406,6 +442,17 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 				'label_off'    => 'Nu',
 				'return_value' => 'yes',
 				'default'      => 'yes',
+			)
+		);
+
+		$this->add_control(
+			'arrow_icon',
+			array(
+				'label' => 'Iconiță săgeată / SVG',
+				'type' => Controls_Manager::ICONS,
+				'description' => 'Gol = săgeata implicită.',
+				'skin' => 'inline',
+				'condition' => array( 'show_arrow' => 'yes' ),
 			)
 		);
 
@@ -616,6 +663,44 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->end_controls_tab();
 		$this->end_controls_tabs();
 
+		$this->add_responsive_control(
+			'body_align',
+			array(
+				'label' => 'Aliniere text',
+				'type' => Controls_Manager::CHOOSE,
+				'options' => array( 'left' => array( 'title' => 'Stânga', 'icon' => 'eicon-text-align-left' ), 'center' => array( 'title' => 'Centru', 'icon' => 'eicon-text-align-center' ), 'right' => array( 'title' => 'Dreapta', 'icon' => 'eicon-text-align-right' ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-body' ) => 'text-align: {{VALUE}};',
+				),
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'body_bg',
+			array(
+				'label' => 'Fundal zonă text',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-body' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'card_speed',
+			array(
+				'label' => 'Durata efectelor hover (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
+				'max' => 3000,
+				'step' => 50,
+				'selectors' => array(
+					$this->sel() => '--pvg-speed: {{VALUE}}ms;',
+				),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -652,12 +737,11 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->add_responsive_control(
 			'image_radius',
 			array(
-				'label'      => 'Colțuri rotunjite',
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%' ),
-				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
-				'selectors'  => array(
-					$this->sel( '.pvg-media' ) => 'border-radius: {{SIZE}}{{UNIT}};',
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvg-media' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -684,6 +768,54 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 				),
 			)
 		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'image_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pvg-media' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'image_shadow',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pvg-media' ),
+			)
+		);
+
+		$this->start_controls_tabs( 'image_filter_tabs' );
+
+		$this->start_controls_tab( 'image_filter_normal', array( 'label' => 'Normal' ) );
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			array(
+				'name' => 'image_filter',
+				'label' => 'Filtre',
+				'selector' => $this->sel( '.pvg-media img' ),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'image_filter_hover', array( 'label' => 'Hover' ) );
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			array(
+				'name' => 'image_filter_hover',
+				'label' => 'Filtre',
+				'selector' => $this->sel( '.pvg-card:hover .pvg-media img' ),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 	}
@@ -735,6 +867,15 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			array(
+				'name' => 'title_tshadow',
+				'label' => 'Umbră text',
+				'selector' => $this->sel( '.pvg-title' ),
+			)
+		);
+
 		$this->add_control(
 			'desc_heading',
 			array(
@@ -780,6 +921,21 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_responsive_control(
+			'desc_lines',
+			array(
+				'label' => 'Descriere: număr maxim de rânduri',
+				'type' => Controls_Manager::NUMBER,
+				'min' => 1,
+				'max' => 12,
+				'description' => 'Gol = textul întreg.',
+				'selectors' => array(
+					$this->sel( '.pvg-desc' ) => 'display: -webkit-box; -webkit-line-clamp: {{VALUE}}; -webkit-box-orient: vertical; overflow: hidden;',
+				),
+				'condition' => array( 'show_desc' => 'yes' ),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -822,12 +978,11 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->add_responsive_control(
 			'colors_radius',
 			array(
-				'label'      => 'Colțuri rotunjite',
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%' ),
-				'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
-				'selectors'  => array(
-					$this->sel( '.pvg-color' ) => 'border-radius: {{SIZE}}{{UNIT}};',
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvg-color, {{WRAPPER}} .pvg .pvg-colors-more.is-box' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -841,6 +996,49 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
 				'selectors'  => array(
 					$this->sel( '.pvg-colors' ) => 'margin-top: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'colors_border',
+				'label' => 'Bordură culoare',
+				'selector' => $this->sel( '.pvg-color' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'colors_shadow',
+				'label' => 'Umbră culoare',
+				'selector' => $this->sel( '.pvg-color' ),
+			)
+		);
+
+		$this->add_control(
+			'colors_hover_scale',
+			array(
+				'label' => 'Mărire culoare la hover',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 1, 'max' => 1.5, 'step' => 0.01 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-color:hover' ) => 'transform: scale({{SIZE}});',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_justify',
+			array(
+				'label' => 'Aliniere',
+				'type' => Controls_Manager::CHOOSE,
+				'options' => array( 'flex-start' => array( 'title' => 'Stânga', 'icon' => 'eicon-h-align-left' ), 'center' => array( 'title' => 'Centru', 'icon' => 'eicon-h-align-center' ), 'flex-end' => array( 'title' => 'Dreapta', 'icon' => 'eicon-h-align-right' ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-colors' ) => 'justify-content: {{VALUE}};',
 				),
 			)
 		);
@@ -865,6 +1063,144 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 				'label'     => 'Tipografie +N',
 				'selector'  => $this->sel( '.pvg-colors-more' ),
 				'condition' => array( 'show_counter' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'counter_bg',
+			array(
+				'label' => 'Fundal +N',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-colors-more' ) => 'background-color: {{VALUE}};',
+				),
+				'condition' => array( 'show_counter' => 'yes' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'counter_padding',
+			array(
+				'label' => 'Padding +N',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvg-colors-more' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'condition' => array( 'show_counter' => 'yes' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'counter_radius',
+			array(
+				'label' => 'Colțuri rotunjite +N',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvg-colors-more' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'condition' => array( 'show_counter' => 'yes' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'counter_border',
+				'label' => 'Bordură +N',
+				'selector' => $this->sel( '.pvg-colors-more' ),
+				'condition' => array( 'show_counter' => 'yes' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'counter_spacing',
+			array(
+				'label' => 'Spațiu înainte de +N',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 30, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-colors-more' ) => 'margin-left: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'show_counter' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'colors_overlay_heading',
+			array(
+				'label' => 'Culori peste imagine',
+				'type' => Controls_Manager::HEADING,
+				'condition' => array( 'colors_position' => 'image' ),
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_overlay_left',
+			array(
+				'label' => 'Distanță stânga',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 100, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-media .pvg-colors' ) => 'left: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'colors_position' => 'image' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_overlay_bottom',
+			array(
+				'label' => 'Distanță jos',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 100, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-media .pvg-colors' ) => 'bottom: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'colors_position' => 'image' ),
+			)
+		);
+
+		$this->add_control(
+			'colors_overlay_bg',
+			array(
+				'label' => 'Fundal bandă culori',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-media .pvg-colors' ) => 'background-color: {{VALUE}};',
+				),
+				'condition' => array( 'colors_position' => 'image' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_overlay_padding',
+			array(
+				'label' => 'Padding bandă culori',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvg-media .pvg-colors' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'condition' => array( 'colors_position' => 'image' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_overlay_radius',
+			array(
+				'label' => 'Colțuri bandă culori',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvg-media .pvg-colors' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'condition' => array( 'colors_position' => 'image' ),
 			)
 		);
 
@@ -925,6 +1261,19 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 				'range'      => array( 'px' => array( 'min' => 0, 'max' => 30 ) ),
 				'selectors'  => array(
 					$this->sel() => '--pvg-arrow-shift: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'arrow_y',
+			array(
+				'label' => 'Ajustare verticală',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => -20, 'max' => 20, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-arrow' ) => 'margin-top: {{SIZE}}{{UNIT}};',
 				),
 			)
 		);
@@ -1008,6 +1357,18 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			return;
 		}
 		echo '<div class="pavva-editor-notice" style="margin-bottom:16px;padding:16px 18px;border:1px dashed #c9c4bb;border-radius:6px;background:#faf8f5;color:#6b6964;font-size:13px;line-height:1.5;">' . wp_kses_post( $text ) . '</div>';
+	}
+
+	private function arrow_html( $s ) {
+		if ( ! empty( $s['arrow_icon']['value'] ) ) {
+			ob_start();
+			Icons_Manager::render_icon( $s['arrow_icon'], array( 'aria-hidden' => 'true' ) );
+			$html = trim( ob_get_clean() );
+			if ( '' !== $html ) {
+				return $html;
+			}
+		}
+		return $this->arrow_svg();
 	}
 
 	private function arrow_svg() {
@@ -1145,7 +1506,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 	}
 
 	/* Thumbnails culori pentru card: primele $max, apoi +N (ca „Culori card” din Pavva Products). */
-	private function colors_html( $id, $max, $counter ) {
+	private function colors_html( $id, $max, $counter, $format = '+{n}', $box = false ) {
 		$items = Pavva_W_Data::items( $id, Pavva_W_Data::META_CULORI );
 		$list  = array();
 		foreach ( $items as $item ) {
@@ -1183,7 +1544,8 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 				. '</span>';
 		}
 		if ( $counter && $rest > 0 ) {
-			$html .= '<span class="pvg-colors-more" aria-label="' . esc_attr( 'încă ' . $rest . ' culori' ) . '">+' . (int) $rest . '</span>';
+			$label = str_replace( '{n}', (string) (int) $rest, '' !== trim( (string) $format ) ? (string) $format : '+{n}' );
+			$html .= '<span class="pvg-colors-more' . ( $box ? ' is-box' : '' ) . '" aria-label="' . esc_attr( 'încă ' . $rest . ' culori' ) . '">' . esc_html( $label ) . '</span>';
 		}
 		return $html . '</div>';
 	}
@@ -1207,6 +1569,10 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$show_colors = isset( $s['show_colors'] ) && 'yes' === $s['show_colors'];
 		$max_colors  = isset( $s['max_colors'] ) ? absint( $s['max_colors'] ) : 6;
 		$counter     = isset( $s['show_counter'] ) && 'yes' === $s['show_counter'];
+		$c_format    = isset( $s['counter_format'] ) ? (string) $s['counter_format'] : '+{n}';
+		$c_box       = isset( $s['counter_style'] ) && 'box' === $s['counter_style'];
+		$c_pos       = isset( $s['colors_position'] ) && in_array( $s['colors_position'], array( 'bottom', 'top', 'image' ), true ) ? $s['colors_position'] : 'bottom';
+		$arrow_html  = $this->arrow_html( $s );
 
 		if ( ! $ids ) {
 			if ( '' !== $empty_text ) {
@@ -1234,7 +1600,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 					$name  = get_the_title( $id );
 					$thumb = get_post_thumbnail_id( $id );
 					$desc  = $show_desc ? $this->product_desc( $id, $words ) : '';
-					$cols  = $show_colors ? $this->colors_html( $id, $max_colors, $counter ) : '';
+					$cols  = $show_colors ? $this->colors_html( $id, $max_colors, $counter, $c_format, $c_box ) : '';
 					?>
 					<li class="pvg-item">
 						<a class="pvg-card" href="<?php echo esc_url( get_permalink( $id ) ); ?>">
@@ -1253,19 +1619,31 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 										)
 									);
 								}
+								if ( 'image' === $c_pos ) {
+									echo $cols; // phpcs:ignore -- generat și escapat în colors_html()
+								}
 								?>
 							</div>
 							<div class="pvg-body">
+								<?php
+								if ( 'top' === $c_pos ) {
+									echo $cols; // phpcs:ignore -- generat și escapat în colors_html()
+								}
+								?>
 								<div class="pvg-row">
 									<<?php echo $title_tag; // phpcs:ignore ?> class="pvg-title"><?php echo esc_html( wp_strip_all_tags( $name ) ); ?></<?php echo $title_tag; // phpcs:ignore ?>>
 									<?php if ( $show_arrow ) : ?>
-										<span class="pvg-arrow" aria-hidden="true"><?php echo $this->arrow_svg(); // phpcs:ignore ?></span>
+										<span class="pvg-arrow" aria-hidden="true"><?php echo $arrow_html; // phpcs:ignore -- generat în arrow_html() ?></span>
 									<?php endif; ?>
 								</div>
 								<?php if ( '' !== $desc ) : ?>
 									<p class="pvg-desc"><?php echo esc_html( $desc ); ?></p>
 								<?php endif; ?>
-								<?php echo $cols; // phpcs:ignore -- generat și escapat în colors_html() ?>
+								<?php
+								if ( 'bottom' === $c_pos ) {
+									echo $cols; // phpcs:ignore -- generat și escapat în colors_html()
+								}
+								?>
 							</div>
 						</a>
 					</li>

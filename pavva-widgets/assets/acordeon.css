@@ -30,9 +30,11 @@
 }
 
 .pva .pva-item {
+	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
 	border: 0;
+	transition: background-color .3s ease, border-color .3s ease, box-shadow .3s ease;
 }
 .pva .pva-item + .pva-item { margin-top: var(--pva-gap); }
 
@@ -84,8 +86,11 @@
 	font-size: var(--pva-icon);
 	line-height: 1;
 	color: var(--pva-icon-color);
-	transition: color .25s ease;
+	box-sizing: border-box;
+	transition: color .25s ease, background-color .25s ease, transform var(--pva-speed) var(--pva-ease);
 }
+.pva .pva-icon-plus::before { max-width: var(--pva-icon); }
+.pva .pva-icon-plus::after { max-height: var(--pva-icon); }
 .pva .pva-icon-plus::before,
 .pva .pva-icon-plus::after {
 	content: "";
@@ -161,7 +166,7 @@
 	color: var(--pva-ink);
 	text-decoration: none;
 	box-shadow: none;
-	transition: color .25s ease;
+	transition: color .25s ease, background-color .25s ease;
 }
 .pva .pva-doc:hover { color: var(--pva-accent); text-decoration: none; }
 .pva .pva-doc:focus-visible {
