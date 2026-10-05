@@ -1092,7 +1092,7 @@ class Pavva_Culori_Widget extends Widget_Base {
 				'label'     => 'Culoare chenar',
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					$this->sel( '.pvc-thumb' ) => '--pvc-tbc: {{VALUE}};',
+					$this->sel() => '--pvc-tbc: {{VALUE}};',
 				),
 			)
 		);
@@ -1136,7 +1136,7 @@ class Pavva_Culori_Widget extends Widget_Base {
 				'label'     => 'Culoare chenar',
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					$this->sel( '.pvc-thumb:hover' ) => '--pvc-tbc: {{VALUE}};',
+					$this->sel() => '--pvc-tbc-h: {{VALUE}};',
 				),
 			)
 		);
@@ -1182,10 +1182,23 @@ class Pavva_Culori_Widget extends Widget_Base {
 				'label'     => 'Culoare chenar',
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					$this->sel( '.pvc-thumb.is-active' ) => '--pvc-tbc: {{VALUE}};',
+					$this->sel() => '--pvc-tbc-a: {{VALUE}};',
 				),
 			)
 		);
+		$this->add_control(
+			'thumb_border_width_active',
+			array(
+				'label' => 'Grosime chenar',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 8, 'step' => 0.5 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-tbw-a: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
 		$this->add_control(
 			'thumb_opacity_active',
 			array(

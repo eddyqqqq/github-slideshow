@@ -212,9 +212,17 @@
 	appearance: none;
 	-webkit-tap-highlight-color: transparent;
 }
-.pvc .pvc-thumb { --pvc-tbc: transparent; }
-.pvc .pvc-thumb:hover { --pvc-tbc: rgba(179, 90, 44, .45); }
-.pvc .pvc-thumb.is-active { --pvc-tbc: var(--pvc-accent); }
+/* Culoarea / grosimea chenarului pe stări. Se calculează pe stratul de efect,
+   deci culoarea „Normal” setată în Elementor nu mai acoperă selecția. */
+.pvc .pvc-thumb-fx {
+	--pvc-c: var(--pvc-tbc, transparent);
+	--pvc-w: var(--pvc-tbw);
+}
+.pvc .pvc-thumb:hover .pvc-thumb-fx { --pvc-c: var(--pvc-tbc-h, rgba(179, 90, 44, .45)); }
+.pvc .pvc-thumb.is-active .pvc-thumb-fx {
+	--pvc-c: var(--pvc-tbc-a, var(--pvc-accent));
+	--pvc-w: var(--pvc-tbw-a, 2px);
+}
 .pvc .pvc-thumb:focus-visible {
 	outline: 2px solid var(--pvc-accent);
 	outline-offset: 2px;
@@ -336,31 +344,31 @@
 	border-radius: var(--pvc-tradius);
 	pointer-events: none;
 	box-shadow:
-		inset 0 0 0 var(--pvc-tbw) var(--pvc-tbc),
+		inset 0 0 0 var(--pvc-w) var(--pvc-c),
 		0 0 0 0 transparent,
 		0 0 0 0 transparent;
 	transition: box-shadow var(--pvc-fx-speed) var(--pvc-ease);
 }
 
 /* efectele care nu folosesc chenarul */
-.pvc.pvc-fx-ring .pvc-thumb.is-active,
-.pvc.pvc-fx-underline .pvc-thumb.is-active,
-.pvc.pvc-fx-corner .pvc-thumb.is-active,
-.pvc.pvc-fx-none .pvc-thumb.is-active { --pvc-tbc: transparent; }
+.pvc.pvc-fx-ring .pvc-thumb.is-active .pvc-thumb-fx,
+.pvc.pvc-fx-underline .pvc-thumb.is-active .pvc-thumb-fx,
+.pvc.pvc-fx-corner .pvc-thumb.is-active .pvc-thumb-fx,
+.pvc.pvc-fx-none .pvc-thumb.is-active .pvc-thumb-fx { --pvc-c: transparent; }
 
 /* 1. Inel: contur cu spațiu între imagine și culoarea accent */
 .pvc.pvc-fx-ring .pvc-thumb.is-active .pvc-thumb-fx {
 	box-shadow:
-		inset 0 0 0 var(--pvc-tbw) var(--pvc-tbc),
+		inset 0 0 0 var(--pvc-w) var(--pvc-c),
 		0 0 0 var(--pvc-ring-gap) var(--pvc-ring-bg),
-		0 0 0 calc(var(--pvc-ring-gap) + var(--pvc-tbw)) var(--pvc-accent);
+		0 0 0 calc(var(--pvc-ring-gap) + var(--pvc-tbw-a, 2px)) var(--pvc-tbc-a, var(--pvc-accent));
 }
 
 /* 2. Ridicare + umbră (+ chenar) */
 .pvc.pvc-fx-lift .pvc-thumb.is-active .pvc-thumb-frame { transform: translateY(calc(var(--pvc-lift) * -1)); }
 .pvc.pvc-fx-lift .pvc-thumb.is-active .pvc-thumb-fx {
 	box-shadow:
-		inset 0 0 0 var(--pvc-tbw) var(--pvc-tbc),
+		inset 0 0 0 var(--pvc-w) var(--pvc-c),
 		0 calc(var(--pvc-lift) * 2) calc(var(--pvc-lift) * 3.5) calc(var(--pvc-lift) * -1.5) var(--pvc-lift-shadow),
 		0 0 0 0 transparent;
 }
