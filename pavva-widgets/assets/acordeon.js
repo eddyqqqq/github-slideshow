@@ -23,6 +23,7 @@
 		var items = Array.prototype.slice.call(root.querySelectorAll(':scope > .pva-item'));
 		if (!items.length) return;
 		root.__pvaReady = true;
+		root.classList.add('pva-js');
 
 		var o = {};
 		try { o = JSON.parse(root.getAttribute('data-pva') || '{}'); } catch (e) { o = {}; }
@@ -42,13 +43,21 @@
 
 		function open(item) {
 			var panel = item.querySelector('.pva-panel');
-			var start = panel ? panel.offsetHeight : 0;
+			/* Închis = 0. (Chrome raportează înălțimea reală și pentru <details> închis.)
+			   Dacă se închidea chiar acum, pornim de la înălțimea curentă. */
+			var start = (panel && item.open && item.classList.contains('is-closing')) ? panel.offsetHeight : 0;
 			finish(item);
 			item.classList.remove('is-closing');
+			item.classList.remove('is-opening');
 			item.open = true;
 			var d = duration();
 			if (!panel || !d || !panel.animate) return;
+			/* înălțimea finală se măsoară înainte ca rândurile să pornească animația de intrare */
 			var end = panel.scrollHeight;
+			void item.offsetWidth;
+			item.classList.add('is-opening');
+			clearTimeout(item.__pvaOpenT);
+			item.__pvaOpenT = setTimeout(function () { item.classList.remove('is-opening'); }, d + 400);
 			panel.style.overflow = 'hidden';
 			var anim = panel.animate([{ height: start + 'px' }, { height: end + 'px' }], { duration: d, easing: ease() });
 			item.__pvaAnim = anim;
@@ -61,6 +70,8 @@
 			if (!panel || !d || !panel.animate) { finish(item); item.open = false; return; }
 			var start = panel.offsetHeight;
 			finish(item);
+			clearTimeout(item.__pvaOpenT);
+			item.classList.remove('is-opening');
 			item.classList.add('is-closing');
 			panel.style.overflow = 'hidden';
 			var anim = panel.animate([{ height: start + 'px' }, { height: '0px' }], { duration: d, easing: ease() });

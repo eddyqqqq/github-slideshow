@@ -128,7 +128,34 @@
 
 /* ---------- Conținut ---------- */
 .pva .pva-panel { overflow: hidden; }
-.pva .pva-panel-inner { padding-top: var(--pva-content-top); }
+.pva .pva-panel-inner {
+	padding-top: var(--pva-content-top);
+	transition:
+		opacity var(--pva-speed) var(--pva-ease),
+		transform var(--pva-speed) var(--pva-ease);
+}
+/* conținutul apare lin odată cu deschiderea și dispare la închidere */
+.pva .pva-item.is-closing > .pva-panel > .pva-panel-inner {
+	opacity: 0;
+	transform: translateY(-6px);
+}
+.pva.pva-js .pva-item.is-opening > .pva-panel > .pva-panel-inner {
+	animation: pva-in var(--pva-speed) var(--pva-ease) both;
+}
+/* rândurile cu PDF-uri / imaginile apar unul după altul */
+.pva.pva-js .pva-item.is-opening .pva-docs-item,
+.pva.pva-js .pva-item.is-opening .pva-gal-item {
+	animation: pva-in calc(var(--pva-speed) * .9) var(--pva-ease) both;
+}
+.pva.pva-js .pva-item.is-opening :is(.pva-docs-item, .pva-gal-item):nth-child(2) { animation-delay: 50ms; }
+.pva.pva-js .pva-item.is-opening :is(.pva-docs-item, .pva-gal-item):nth-child(3) { animation-delay: 100ms; }
+.pva.pva-js .pva-item.is-opening :is(.pva-docs-item, .pva-gal-item):nth-child(4) { animation-delay: 150ms; }
+.pva.pva-js .pva-item.is-opening :is(.pva-docs-item, .pva-gal-item):nth-child(5) { animation-delay: 200ms; }
+.pva.pva-js .pva-item.is-opening :is(.pva-docs-item, .pva-gal-item):nth-child(n+6) { animation-delay: 250ms; }
+@keyframes pva-in {
+	from { opacity: 0; transform: translateY(10px); }
+	to { opacity: 1; transform: none; }
+}
 
 .pva .pva-text {
 	font-size: 15px;
@@ -211,6 +238,15 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
+	margin-left: var(--pva-act-gap, 0px);
+	box-sizing: border-box;
+	border: 0 solid transparent;
+	transition:
+		color var(--pva-act-speed, .25s) ease,
+		background-color var(--pva-act-speed, .25s) ease,
+		border-color var(--pva-act-speed, .25s) ease,
+		box-shadow var(--pva-act-speed, .25s) ease,
+		transform var(--pva-act-speed, .25s) ease;
 	font-size: 13px;
 	line-height: 1;
 	color: var(--pva-accent);
@@ -219,7 +255,11 @@
 	font-size: 16px;
 	transition: transform .25s ease;
 }
-.pva .pva-doc:hover .pva-doc-action svg { transform: translateY(2px); }
+.pva .pva-doc:hover .pva-doc-action svg { transform: translateY(var(--pva-act-arrow, 2px)); }
+
+/* butonul imediat după numele documentului */
+.pva .pva-act-after .pva-doc-text { flex: 0 1 auto; }
+.pva .pva-act-after .pva-doc-action { margin-left: var(--pva-act-gap, 16px); }
 
 /* ---------- Variante de amenajare ---------- */
 .pva .pva-gallery {
@@ -264,6 +304,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.pva .pva-panel-inner,
+	.pva .pva-docs-item,
+	.pva .pva-gal-item { transition: none !important; animation: none !important; }
 	.pva .pva-icon-plus::before,
 	.pva .pva-icon-plus::after,
 	.pva .pva-gal-media img { transition: none; }

@@ -91,6 +91,7 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 		$this->controls_style_icon();
 		$this->controls_style_content();
 		$this->controls_style_docs();
+		$this->controls_style_doc_button();
 		$this->controls_style_gallery();
 	}
 
@@ -338,6 +339,26 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 				'description' => 'Apare în dreapta fiecărui document. Gol = doar săgeata.',
 				'type'        => Controls_Manager::TEXT,
 				'default'     => 'Descarcă',
+			)
+		);
+
+		$this->add_control(
+			'docs_action_pos',
+			array(
+				'label' => 'Poziție buton „Descarcă”',
+				'type' => Controls_Manager::SELECT,
+				'options' => array( 'end' => 'La capătul rândului (dreapta)', 'after' => 'Imediat după numele documentului' ),
+				'default' => 'end',
+			)
+		);
+
+		$this->add_control(
+			'docs_action_icon',
+			array(
+				'label' => 'Săgeată descărcare',
+				'type' => Controls_Manager::SELECT,
+				'options' => array( 'after' => 'După text', 'before' => 'Înainte de text', 'none' => 'Fără săgeată' ),
+				'default' => 'after',
 			)
 		);
 
@@ -1276,6 +1297,214 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	private function controls_style_doc_button() {
+		$this->start_controls_section(
+			'section_style_doc_button',
+			array(
+				'label' => 'Buton „Descarcă”',
+				'tab' => Controls_Manager::TAB_STYLE,
+			)
+		);
+
+		$this->add_responsive_control(
+			'doc_btn_gap',
+			array(
+				'label' => 'Distanța față de text',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 200, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pva-act-gap: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'doc_btn_icon_gap',
+			array(
+				'label' => 'Spațiu text – săgeată',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 40, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-doc-action' ) => 'gap: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'doc_btn_padding',
+			array(
+				'label' => 'Padding buton',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pva-doc-action' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'doc_btn_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pva-doc-action' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->start_controls_tabs( 'doc_btn_tabs' );
+
+		$this->start_controls_tab( 'doc_btn_tab_normal', array( 'label' => 'Normal' ) );
+
+		$this->add_control(
+			'doc_btn_color',
+			array(
+				'label' => 'Culoare text',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-doc-action' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'doc_btn_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-doc-action' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'doc_btn_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pva-doc-action' ),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'doc_btn_shadow',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pva-doc-action' ),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'doc_btn_tab_hover', array( 'label' => 'Hover' ) );
+
+		$this->add_control(
+			'doc_btn_hover_note',
+			array(
+				'label' => '',
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => 'Se aplică la hover pe tot rândul documentului (tot rândul e link).',
+				'content_classes' => 'elementor-descriptor',
+			)
+		);
+
+		$this->add_control(
+			'doc_btn_color_hover',
+			array(
+				'label' => 'Culoare text',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-doc:hover .pva-doc-action' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'doc_btn_bg_hover',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-doc:hover .pva-doc-action' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'doc_btn_border_hover',
+			array(
+				'label' => 'Culoare bordură',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pva-doc:hover .pva-doc-action' ) => 'border-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			array(
+				'name' => 'doc_btn_shadow_hover',
+				'label' => 'Umbră',
+				'selector' => $this->sel( '.pva-doc:hover .pva-doc-action' ),
+			)
+		);
+
+		$this->add_control(
+			'doc_btn_lift',
+			array(
+				'label' => 'Ridicare',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 10, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pva-doc:hover .pva-doc-action' ) => 'transform: translateY(calc({{SIZE}}{{UNIT}} * -1));',
+				),
+			)
+		);
+
+		$this->add_control(
+			'doc_btn_arrow_move',
+			array(
+				'label' => 'Mișcare săgeată',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 10, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pva-act-arrow: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->add_control(
+			'doc_btn_speed',
+			array(
+				'label' => 'Durata efectului hover (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
+				'max' => 2000,
+				'step' => 50,
+				'selectors' => array(
+					$this->sel() => '--pva-act-speed: {{VALUE}}ms;',
+				),
+				'separator' => 'before',
+			)
+		);
+
+		$this->end_controls_section();
+
+	}
+
 	private function controls_style_gallery() {
 		$this->start_controls_section(
 			'section_style_gallery',
@@ -1531,8 +1760,10 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 			$new_tab = isset( $s['docs_new_tab'] ) && 'yes' === $s['docs_new_tab'];
 			$meta_on = isset( $s['docs_meta'] ) && 'yes' === $s['docs_meta'];
 			$action  = isset( $s['docs_action'] ) ? trim( (string) $s['docs_action'] ) : '';
+			$a_icon  = isset( $s['docs_action_icon'] ) && in_array( $s['docs_action_icon'], array( 'after', 'before', 'none' ), true ) ? $s['docs_action_icon'] : 'after';
+			$a_pos   = isset( $s['docs_action_pos'] ) && 'after' === $s['docs_action_pos'] ? 'after' : 'end';
 
-			$html = '<ul class="pva-docs">';
+			$html = '<ul class="pva-docs pva-act-' . $a_pos . '">';
 			foreach ( $docs as $doc ) {
 				$html .= '<li class="pva-docs-item"><a class="pva-doc" href="' . esc_url( $doc['url'] ) . '"' . ( $new_tab ? ' target="_blank" rel="noopener"' : '' ) . '>';
 				$html .= '<span class="pva-doc-icon">' . $this->doc_icon_svg() . '</span>';
@@ -1541,7 +1772,11 @@ class Pavva_Acordeon_Widget extends Widget_Base {
 					$html .= '<span class="pva-doc-meta">' . esc_html( $doc['meta'] ) . '</span>';
 				}
 				$html .= '</span>';
-				$html .= '<span class="pva-doc-action">' . ( '' !== $action ? '<span class="pva-doc-action-text">' . esc_html( $action ) . '</span>' : '' ) . $this->download_svg() . '</span>';
+				$a_text = '' !== $action ? '<span class="pva-doc-action-text">' . esc_html( $action ) . '</span>' : '';
+				$a_svg  = 'none' === $a_icon ? '' : $this->download_svg();
+				if ( '' !== $a_text || '' !== $a_svg ) {
+					$html .= '<span class="pva-doc-action">' . ( 'before' === $a_icon ? $a_svg . $a_text : $a_text . $a_svg ) . '</span>';
+				}
 				$html .= '</a></li>';
 			}
 			$html .= '</ul>';
