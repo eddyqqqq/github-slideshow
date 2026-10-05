@@ -25,6 +25,10 @@ final class Pavva_W_Data {
     const META_CULORI_COLS = '_pavva_culori_coloane';
     const META_DESCRIERE_SINTEZA = '_pavva_descriere_sinteza';
 
+    /* ---------- Imagini Slider header (noi în Pavva Widgets 3.1.0) ---------- */
+    const META_SLIDER     = '_pavva_slider_imagini';      // produs (post meta)
+    const META_CAT_SLIDER = '_pavva_cat_slider_imagini';  // categorie (term meta)
+
     /* ---------- Categorie (identice cu Pavva Categories 1.0.2) ---------- */
     const META_HERO_ID          = '_pavva_cat_hero_image_id';
     const META_INTRO            = '_pavva_cat_intro';
@@ -122,6 +126,43 @@ final class Pavva_W_Data {
         }
 
         return $out;
+    }
+
+    /* Lista curată de imagini slider: array( array( 'id' => int, 'mobile' => int ), ... ). */
+    public static function clean_slider_images( $raw ): array {
+        if ( ! is_array( $raw ) ) return array();
+        $out = array();
+        foreach ( $raw as $row ) {
+            if ( ! is_array( $row ) ) continue;
+            $id = isset( $row['id'] ) ? absint( $row['id'] ) : 0;
+            if ( ! $id ) continue;
+            $out[] = array(
+                'id'     => $id,
+                'mobile' => isset( $row['mobile'] ) ? absint( $row['mobile'] ) : 0,
+            );
+        }
+        return $out;
+    }
+
+    public static function product_slider_images( $product_id ): array {
+        return $product_id ? self::clean_slider_images( get_post_meta( $product_id, self::META_SLIDER, true ) ) : array();
+    }
+
+    public static function term_slider_images( $term_id ): array {
+        return $term_id ? self::clean_slider_images( get_term_meta( $term_id, self::META_CAT_SLIDER, true ) ) : array();
+    }
+
+    /* Imaginea principală + galeria WooCommerce a produsului. */
+    public static function product_gallery_images( $product_id ): array {
+        if ( ! $product_id ) return array();
+        $ids   = array();
+        $thumb = absint( get_post_thumbnail_id( $product_id ) );
+        if ( $thumb ) $ids[] = $thumb;
+        foreach ( explode( ',', (string) get_post_meta( $product_id, '_product_image_gallery', true ) ) as $id ) {
+            $id = absint( $id );
+            if ( $id && ! in_array( $id, $ids, true ) ) $ids[] = $id;
+        }
+        return array_map( function ( $id ) { return array( 'id' => $id, 'mobile' => 0 ); }, $ids );
     }
 
     public static function instance_data( $meta_key ) {

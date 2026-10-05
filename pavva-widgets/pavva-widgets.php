@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Pavva Widgets
  * Description:       Widgeturile Elementor și câmpurile de produs / categorie create special pentru site-ul Pavva. Creat de imagient.
- * Version:           3.1.0
+ * Version:           3.2.0
  * Author:            imagient
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -20,12 +20,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '3.1.0' );
+define( 'PAVVA_WIDGETS_VERSION', '3.2.0' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 
 /* Accesul la datele produselor / categoriilor (aceleași câmpuri ca pluginurile vechi). */
 require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-data.php';
+
+/* Verificarea widgeturilor vechi (pagina Plugins), doar în admin. */
+if ( is_admin() ) {
+	require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-migration.php';
+	Pavva_W_Migration::init();
+}
 
 add_action( 'plugins_loaded', 'pavva_widgets_init' );
 add_action( 'plugins_loaded', 'pavva_widgets_init_fields', 20 );
@@ -39,6 +45,10 @@ function pavva_widgets_init_fields() {
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		return;
 	}
+	/* Câmp nou (Imagini slider header): activ mereu, nu există în pluginurile vechi. */
+	require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-slider-fields.php';
+	new Pavva_W_Slider_Fields();
+
 	if ( ! class_exists( 'PAVVA_Produse' ) ) {
 		require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-product-fields.php';
 		new Pavva_W_Product_Fields();

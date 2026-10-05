@@ -90,6 +90,83 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'slides_source',
+			array(
+				'label'       => 'Sursă imagini',
+				'type'        => Controls_Manager::SELECT,
+				'default'     => 'manual',
+				'options'     => array(
+					'manual'   => 'Alese manual (static)',
+					'product'  => 'Din produs (template produs)',
+					'category' => 'Din categorie (template categorie)',
+				),
+				'description' => '„Alese manual” = slide-urile de mai jos, pentru orice pagină. Din produs / categorie = imaginile din câmpul „Imagini slider header” al paginii curente.',
+			)
+		);
+
+		$this->add_control(
+			'slides_source_info',
+			array(
+				'type'            => Controls_Manager::RAW_HTML,
+				'raw'             => 'Imaginile se iau din câmpul <strong>Imagini slider header</strong> al produsului / categoriei. Dacă e gol: la produs se iau imaginea + galeria WooCommerce (opțiunea de mai jos), la categorie Imagine categorie. Dacă nu există nicio imagine, apar <strong>slide-urile manuale de mai jos</strong>, ca rezervă.',
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'condition'       => array( 'slides_source!' => 'manual' ),
+			)
+		);
+
+		$this->add_control(
+			'slides_source_wc',
+			array(
+				'label'        => 'Rezervă: imaginea + galeria WooCommerce',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+				'condition'    => array( 'slides_source' => 'product' ),
+			)
+		);
+
+		$this->add_control(
+			'slides_source_max',
+			array(
+				'label'       => 'Număr maxim de imagini',
+				'description' => '0 = toate.',
+				'type'        => Controls_Manager::NUMBER,
+				'min'         => 0,
+				'max'         => 30,
+				'default'     => 0,
+				'condition'   => array( 'slides_source!' => 'manual' ),
+			)
+		);
+
+		$this->add_control(
+			'slides_source_position',
+			array(
+				'label'     => 'Punctul de focus al imaginilor',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '',
+				'options'   => $this->position_options(),
+				'condition' => array( 'slides_source!' => 'manual' ),
+				'selectors' => array(
+					'{{WRAPPER}} .ps-hero .ps-slide-dyn .ps-img' => 'object-position: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'slides_source_bg',
+			array(
+				'label'     => 'Culoare fundal (cât se încarcă imaginea)',
+				'type'      => Controls_Manager::COLOR,
+				'condition' => array( 'slides_source!' => 'manual' ),
+				'selectors' => array(
+					'{{WRAPPER}} .ps-hero .ps-slide-dyn' => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
 		$r = new Repeater();
 
 		$r->add_control(
@@ -210,6 +287,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			'slides',
 			array(
 				'label'       => 'Slide-uri',
+				'description' => 'La „Din produs / Din categorie” aceste slide-uri sunt rezerva, dacă pagina nu are imagini.',
 				'type'        => Controls_Manager::REPEATER,
 				'fields'      => $r->get_controls(),
 				'title_field' => '{{{ slide_title ? slide_title : "Slide" }}}',
@@ -2559,9 +2637,67 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 	/* =====================================================================
 	 * RENDER
 	 * ===================================================================== */
+	/*
+	 * Slide-urile din produs / categorie (câmpul „Imagini slider header”), cu rezerve.
+	 * Întoarce array gol când trebuie folosite slide-urile manuale.
+	 */
+	private function dynamic_slides( $s ) {
+		$source = isset( $s['slides_source'] ) ? $s['slides_source'] : 'manual';
+		if ( ! in_array( $source, array( 'product', 'category' ), true ) || ! class_exists( 'Pavva_W_Data' ) ) {
+			return array();
+		}
+
+		$images = array();
+		if ( 'product' === $source ) {
+			$pid    = (int) Pavva_W_Data::resolve_product_id();
+			$images = Pavva_W_Data::product_slider_images( $pid );
+			if ( ! $images && ( ! isset( $s['slides_source_wc'] ) || 'yes' === $s['slides_source_wc'] ) ) {
+				$images = Pavva_W_Data::product_gallery_images( $pid );
+			}
+		} else {
+			$tid    = (int) Pavva_W_Data::current_term_id();
+			$images = Pavva_W_Data::term_slider_images( $tid );
+			if ( ! $images && $tid ) {
+				$hero = absint( get_term_meta( $tid, Pavva_W_Data::META_HERO_ID, true ) );
+				if ( $hero ) {
+					$images = array( array( 'id' => $hero, 'mobile' => 0 ) );
+				}
+			}
+		}
+
+		$max = isset( $s['slides_source_max'] ) ? absint( $s['slides_source_max'] ) : 0;
+		if ( $max > 0 ) {
+			$images = array_slice( $images, 0, $max );
+		}
+
+		$slides = array();
+		foreach ( $images as $i => $img ) {
+			$url = wp_get_attachment_image_url( $img['id'], 'full' );
+			if ( ! $url ) {
+				continue;
+			}
+			$mob_url  = $img['mobile'] ? wp_get_attachment_image_url( $img['mobile'], 'full' ) : '';
+			$slides[] = array(
+				'_id'                => 'pvdyn' . $i,
+				'_pavva_dyn'         => true,
+				'slide_image'        => array( 'id' => $img['id'], 'url' => $url ),
+				'slide_image_tablet' => array( 'id' => 0, 'url' => '' ),
+				'slide_image_mobile' => $mob_url ? array( 'id' => $img['mobile'], 'url' => $mob_url ) : array( 'id' => 0, 'url' => '' ),
+				'slide_alt'          => '',
+				'slide_link'         => array( 'url' => '' ),
+				'slide_title'        => '',
+				'slide_desc'         => '',
+			);
+		}
+		return $slides;
+	}
+
 	protected function render() {
 		$s      = $this->get_settings_for_display();
-		$slides = ( isset( $s['slides'] ) && is_array( $s['slides'] ) ) ? array_values( $s['slides'] ) : array();
+		$slides = $this->dynamic_slides( $s );
+		if ( ! $slides ) {
+			$slides = ( isset( $s['slides'] ) && is_array( $s['slides'] ) ) ? array_values( $s['slides'] ) : array();
+		}
 		$count  = count( $slides );
 		if ( 0 === $count ) {
 			return;
@@ -2678,7 +2814,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 							$this->add_render_attribute(
 								$key,
 								array(
-									'class'                => array( 'ps-slide', 'elementor-repeater-item-' . ( isset( $slide['_id'] ) ? $slide['_id'] : $i ) ),
+									'class'                => array( 'ps-slide', 'elementor-repeater-item-' . ( isset( $slide['_id'] ) ? $slide['_id'] : $i ), ! empty( $slide['_pavva_dyn'] ) ? 'ps-slide-dyn' : '' ),
 									'role'                 => 'group',
 									'aria-roledescription' => 'slide',
 									'aria-label'           => ( $i + 1 ) . ' din ' . $count,

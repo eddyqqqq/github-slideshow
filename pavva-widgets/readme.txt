@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 3.1.0
+Versiune: 3.2.0
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 
 Widgeturi Elementor create de imagient special pentru site-ul Pavva.
@@ -26,6 +26,10 @@ WIDGETURI
    - Autoplay cu pauză la hover, drag cu mouse-ul, swipe pe telefon, tastatură.
    - Toate dimensiunile, culorile, fonturile și spațierile se setează din
      Style, separat pe desktop / tabletă / mobil.
+   - Sursă imagini (din 3.2.0): Alese manual (static, implicit, pentru orice
+     pagină) / Din produs / Din categorie. Din produs / categorie folosesc
+     câmpul „Imagini slider header”; dacă e gol: imaginea + galeria
+     WooCommerce (produs) sau Imagine categorie; apoi slide-urile manuale.
 
 2) Pavva – Listă interactivă cu imagine
    Listă de avantaje (titlu + descriere) care schimbă lin imaginea la hover / click.
@@ -68,6 +72,16 @@ fundaluri, borduri, colțuri rotunjite pe fiecare colț, umbre, filtre pe imagin
 Culorile din cardurile Grilei: număr maxim, colțuri rotunjite, contor „+N”
 cu text propriu (ex.: „+{n} culori”), ca text sau ca pătrățel.
 
+CÂMPUL „IMAGINI SLIDER HEADER” (din 3.2.0)
+La produs (casetă separată) și la categorie: alegi mai multe imagini odată,
+le ordonezi prin tragere, opțional o imagine verticală pentru mobil.
+Câmpul e activ imediat, chiar dacă pluginurile vechi sunt încă active.
+
+ÎNAINTE DE ȘTERGEREA PLUGINURILOR VECHI
+Pe pagina Plugins, Pavva Widgets arată ce pagini / template-uri mai folosesc
+widgeturi din Pavva Products / Pavva Categories și cu ce le înlocuiești.
+Când lista e goală, apare mesajul verde: le poți șterge în siguranță.
+
 SECȚIUNI GOALE
 Dacă produsul nu are date pentru un widget (ex.: nicio declarație), containerul
 Elementor al widgetului se ascunde cu tot cu titlul pus separat (Heading),
@@ -104,6 +118,8 @@ includes/class-pavva-data.php               – citirea datelor produs / categor
 includes/class-pavva-product-fields.php     – câmpurile produsului (admin)
 includes/class-pavva-category-fields.php    – câmpurile categoriei (admin)
 includes/class-pavva-dynamic-tags.php       – câmpuri selectabile în Elementor
+includes/class-pavva-slider-fields.php      – câmpul Imagini slider header
+includes/class-pavva-migration.php          – verificarea widgeturilor vechi
 assets/admin/                               – scripturi și stiluri pentru admin
 widgets/class-pavva-hero-slider-widget.php  – Slider header: setări + HTML
 widgets/class-pavva-carusel-widget.php      – Carusel produse: setări + HTML
