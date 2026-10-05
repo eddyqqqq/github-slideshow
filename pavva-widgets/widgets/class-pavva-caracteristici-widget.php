@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
+use Elementor\Icons_Manager;
 use Elementor\Group_Control_Css_Filter;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Box_Shadow;
@@ -177,6 +178,41 @@ class Pavva_Caracteristici_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'color_mode',
+			array(
+				'label' => 'Colorare iconițe SVG',
+				'type' => Controls_Manager::SELECT,
+				'description' => 'Pentru iconițele SVG. PNG / JPG: folosește „Filtre iconiță” sau încarcă varianta colorată.',
+				'options' => array( 'original' => 'Culorile originale', 'fill' => 'Colorează umplerea', 'stroke' => 'Colorează conturul', 'both' => 'Umplere + contur' ),
+				'default' => 'original',
+			)
+		);
+
+		$this->add_control(
+			'icon_color',
+			array(
+				'label' => 'Culoare iconițe',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvk-item' ) => 'color: {{VALUE}};',
+				),
+				'condition' => array( 'color_mode!' => 'original' ),
+			)
+		);
+
+		$this->add_control(
+			'icon_color_hover',
+			array(
+				'label' => 'Culoare iconițe (hover)',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvk-item:hover' ) => 'color: {{VALUE}};',
+				),
+				'condition' => array( 'color_mode!' => 'original' ),
+			)
+		);
+
 		$this->add_responsive_control(
 			'gap',
 			array(
@@ -198,6 +234,7 @@ class Pavva_Caracteristici_Widget extends Widget_Base {
 				'range'     => array( 'px' => array( 'min' => 0.1, 'max' => 1, 'step' => 0.05 ) ),
 				'selectors' => array(
 					$this->sel( '.pvk-img' ) => 'opacity: {{SIZE}};',
+					$this->sel( '.pvk-svg' ) => 'opacity: {{SIZE}};',
 				),
 			)
 		);
@@ -210,7 +247,7 @@ class Pavva_Caracteristici_Widget extends Widget_Base {
 				'size_units' => array( 'px' ),
 				'range' => array( 'px' => array( 'min' => 0.1, 'max' => 1, 'step' => 0.05 ) ),
 				'selectors' => array(
-					$this->sel( '.pvk-item:hover .pvk-img' ) => 'opacity: {{SIZE}};',
+					$this->sel( '.pvk-item:hover .pvk-img, {{WRAPPER}} .pvk .pvk-item:hover .pvk-svg' ) => 'opacity: {{SIZE}};',
 				),
 			)
 		);
@@ -223,7 +260,7 @@ class Pavva_Caracteristici_Widget extends Widget_Base {
 				'size_units' => array( 'px' ),
 				'range' => array( 'px' => array( 'min' => 1, 'max' => 1.4, 'step' => 0.01 ) ),
 				'selectors' => array(
-					$this->sel( '.pvk-item:hover .pvk-img' ) => 'transform: scale({{SIZE}});',
+					$this->sel( '.pvk-item:hover .pvk-img, {{WRAPPER}} .pvk .pvk-item:hover .pvk-svg' ) => 'transform: scale({{SIZE}});',
 				),
 			)
 		);
@@ -233,7 +270,7 @@ class Pavva_Caracteristici_Widget extends Widget_Base {
 			array(
 				'name' => 'img_filter',
 				'label' => 'Filtre iconiță (ex.: alb-negru)',
-				'selector' => $this->sel( '.pvk-img' ),
+				'selector' => $this->sel( '.pvk-img, {{WRAPPER}} .pvk .pvk-svg' ),
 			)
 		);
 
@@ -401,6 +438,22 @@ class Pavva_Caracteristici_Widget extends Widget_Base {
 		return $list;
 	}
 
+	/* Iconiță SVG pusă direct în pagină (colorabilă). '' dacă fișierul nu e SVG. */
+	private function inline_svg( $id, $label ) {
+		$url  = (string) wp_get_attachment_url( $id );
+		$path = $url ? wp_parse_url( $url, PHP_URL_PATH ) : '';
+		if ( ! $path || 'svg' !== strtolower( pathinfo( $path, PATHINFO_EXTENSION ) ) ) {
+			return '';
+		}
+		ob_start();
+		Icons_Manager::render_icon( array( 'library' => 'svg', 'value' => array( 'id' => (int) $id, 'url' => $url ) ), array( 'aria-hidden' => 'true' ) );
+		$svg = trim( ob_get_clean() );
+		if ( '' === $svg || false === stripos( $svg, '<svg' ) ) {
+			return '';
+		}
+		return '<span class="pvk-svg" role="img"' . ( '' !== $label ? ' aria-label="' . esc_attr( $label ) . '"' : ' aria-hidden="true"' ) . '>' . $svg . '</span>';
+	}
+
 	protected function render() {
 		$s     = $this->get_settings_for_display();
 		$icons = $this->icons_for_page( $s );
@@ -417,13 +470,15 @@ class Pavva_Caracteristici_Widget extends Widget_Base {
 		}
 
 		$labels = isset( $s['show_labels'] ) && 'yes' === $s['show_labels'];
+		$mode   = isset( $s['color_mode'] ) && in_array( $s['color_mode'], array( 'original', 'fill', 'stroke', 'both' ), true ) ? $s['color_mode'] : 'original';
 		?>
-		<div class="pvk">
+		<div class="pvk pvk-color-<?php echo esc_attr( $mode ); ?>">
 			<?php foreach ( $icons as $ic ) : ?>
 				<?php $alt = wp_strip_all_tags( $ic['label'] ); ?>
 				<span class="pvk-item">
 					<?php
-					echo wp_get_attachment_image( // phpcs:ignore -- HTML generat de WordPress
+					$svg = $this->inline_svg( $ic['id'], $alt );
+					echo '' !== $svg ? $svg : wp_get_attachment_image( // phpcs:ignore -- HTML generat de WordPress / SVG prin Elementor
 						$ic['id'],
 						'medium',
 						false,

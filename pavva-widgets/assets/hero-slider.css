@@ -335,8 +335,8 @@
 .ps-hero .ps-desc {
 	margin: 0;
 	padding: 0;
-	font-size: 18px;
-	line-height: 1.5;
+	font-size: 17px;
+	line-height: 1.7;
 	color: #1f1e1c;
 }
 
@@ -500,7 +500,7 @@
 	flex-wrap: wrap;
 	align-items: flex-start;
 	gap: 14px;
-	margin-bottom: 24px;
+	margin-bottom: 30px;
 }
 .ps-hero .ps-icon {
 	display: inline-flex;
@@ -527,14 +527,14 @@
 }
 
 .ps-hero .ps-cta-wrap {
-	margin-top: 28px;
+	margin-top: 40px;
 }
 .ps-hero .ps-cta {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
-	padding: 11px 28px;
+	padding: 9px 24px;
 	border: 1.5px solid var(--ps-cta-border);
 	border-radius: 6px;
 	background-color: var(--ps-cta-bg);
@@ -625,3 +625,53 @@
 	.ps-hero .ps-dot,
 	.ps-hero.ps-kenburns .ps-img { transition: none !important; }
 }
+
+/* ---------------- Coloana descrierii începe sub titlu ----------------
+   (Style → Bloc text → Poziție coloană descriere: Începe sub titlu)
+   Iconițele, descrierea și butonul stau împreună în coloana din dreapta,
+   pe rândul de sub titlu. Pe mobil totul se așază unul sub altul. */
+.ps-desc-pos-below .ps-hero .ps-text-inner {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, var(--ps-dcol-w, 480px));
+	grid-template-rows: auto auto;
+	align-items: start;
+	row-gap: 16px;
+	min-height: 0;
+}
+.ps-desc-pos-below .ps-hero .ps-col-title {
+	grid-column: 1;
+	grid-row: 1;
+	max-width: none;
+}
+.ps-desc-pos-below .ps-hero .ps-col-desc {
+	grid-column: 2;
+	grid-row: 2;
+	width: auto;
+	justify-content: flex-start;
+}
+@media (max-width: 767px) {
+	.ps-desc-pos-below .ps-hero .ps-text-inner { grid-template-columns: minmax(0, 1fr); }
+	.ps-desc-pos-below .ps-hero .ps-col-desc { grid-column: 1; }
+}
+
+/* ---------------- Iconițe SVG (colorabile) ---------------- */
+.ps-hero .ps-icon-svg {
+	display: block;
+	line-height: 0;
+}
+.ps-hero .ps-icon-svg svg {
+	display: block;
+	width: auto;
+	height: var(--ps-icon-h);
+	max-width: none;
+}
+.ps-hero .ps-icon { transition: color .3s ease; }
+.ps-hero.ps-icons-fill .ps-icon-svg svg,
+.ps-hero.ps-icons-fill .ps-icon-svg svg *:not([fill="none"]),
+.ps-hero.ps-icons-both .ps-icon-svg svg,
+.ps-hero.ps-icons-both .ps-icon-svg svg *:not([fill="none"]) { fill: currentColor; }
+.ps-hero.ps-icons-stroke .ps-icon-svg svg [stroke]:not([stroke="none"]),
+.ps-hero.ps-icons-both .ps-icon-svg svg [stroke]:not([stroke="none"]) { stroke: currentColor; }
+.ps-hero.ps-icons-fill .ps-icon,
+.ps-hero.ps-icons-stroke .ps-icon,
+.ps-hero.ps-icons-both .ps-icon { color: #b35a2c; }

@@ -44,3 +44,26 @@
 @media (max-width: 767px) {
 	.pvk { --pvk-h: 44px; }
 }
+
+/* Iconițe SVG (colorabile din Style → Iconițe → Colorare iconițe SVG) */
+.pvk .pvk-svg {
+	display: block;
+	line-height: 0;
+	transition: opacity .3s ease, transform .3s ease, filter .3s ease;
+}
+.pvk .pvk-svg svg {
+	display: block;
+	width: auto;
+	height: var(--pvk-h);
+	max-width: none;
+}
+.pvk .pvk-item { transition: color .3s ease; }
+.pvk.pvk-color-fill .pvk-item,
+.pvk.pvk-color-stroke .pvk-item,
+.pvk.pvk-color-both .pvk-item { color: #b35a2c; }
+.pvk.pvk-color-fill .pvk-svg svg,
+.pvk.pvk-color-fill .pvk-svg svg *:not([fill="none"]),
+.pvk.pvk-color-both .pvk-svg svg,
+.pvk.pvk-color-both .pvk-svg svg *:not([fill="none"]) { fill: currentColor; }
+.pvk.pvk-color-stroke .pvk-svg svg [stroke]:not([stroke="none"]),
+.pvk.pvk-color-both .pvk-svg svg [stroke]:not([stroke="none"]) { stroke: currentColor; }

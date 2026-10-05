@@ -599,6 +599,55 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 
 		$this->add_control( 'icons_heading', array( 'label' => 'Iconițe', 'type' => Controls_Manager::HEADING ) );
 
+		$this->add_control(
+			'icons_color_mode',
+			array(
+				'label'       => 'Colorare iconițe SVG',
+				'description' => 'Funcționează pentru iconițele încărcate ca SVG (se pun direct în pagină). Pentru PNG / JPG folosește „Filtre iconițe” de mai jos sau încarcă varianta colorată.',
+				'type'        => Controls_Manager::SELECT,
+				'default'     => 'original',
+				'options'     => array(
+					'original' => 'Culorile originale',
+					'fill'     => 'Colorează umplerea',
+					'stroke'   => 'Colorează conturul',
+					'both'     => 'Umplere + contur',
+				),
+			)
+		);
+
+		$this->add_control(
+			'icons_color',
+			array(
+				'label'     => 'Culoare iconițe',
+				'type'      => Controls_Manager::COLOR,
+				'condition' => array( 'icons_color_mode!' => 'original' ),
+				'selectors' => array(
+					$this->sel( '.ps-icon' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'icons_color_hover',
+			array(
+				'label'     => 'Culoare iconițe (hover)',
+				'type'      => Controls_Manager::COLOR,
+				'condition' => array( 'icons_color_mode!' => 'original' ),
+				'selectors' => array(
+					$this->sel( '.ps-icon:hover' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			array(
+				'name'     => 'icons_filter',
+				'label'    => 'Filtre iconițe',
+				'selector' => $this->sel( '.ps-icon-img, {{WRAPPER}} .ps-hero .ps-icon svg' ),
+			)
+		);
+
 		$this->add_responsive_control(
 			'icons_size',
 			array(
@@ -1912,6 +1961,46 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'desc_position',
+			array(
+				'label' => 'Poziție coloană descriere',
+				'type' => Controls_Manager::SELECT,
+				'description' => '„Începe sub titlu”: iconițele, descrierea și butonul încep sub titlu, în coloana din dreapta (ca în designul paginii de produs). Pe mobil totul se așază unul sub altul.',
+				'options' => array( 'beside' => 'Alături de titlu (sus aliniat)', 'below' => 'Începe sub titlu' ),
+				'prefix_class' => 'ps-desc-pos-',
+				'default' => 'beside',
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'desc_below_gap',
+			array(
+				'label' => 'Spațiu între titlu și coloana descriere',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 200, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.ps-text-inner' ) => 'row-gap: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'desc_position' => 'below' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'desc_offset',
+			array(
+				'label' => 'Mută coloana descriere (sus / jos)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range' => array( 'px' => array( 'min' => -200, 'max' => 300, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.ps-col-desc' ) => 'margin-top: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
 		$this->add_responsive_control(
 			'text_gap',
 			array(
@@ -2608,13 +2697,39 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		return $list;
 	}
 
+	/* Iconiță SVG pusă direct în pagină (ca să i se poată schimba culoarea). '' dacă nu e SVG. */
+	private function inline_svg_icon( $ic ) {
+		$url = $ic['url'];
+		if ( '' === $url && $ic['id'] ) {
+			$url = (string) wp_get_attachment_url( $ic['id'] );
+		}
+		$path = $url ? wp_parse_url( $url, PHP_URL_PATH ) : '';
+		if ( ! $path || 'svg' !== strtolower( pathinfo( $path, PATHINFO_EXTENSION ) ) ) {
+			return '';
+		}
+		ob_start();
+		Icons_Manager::render_icon(
+			array(
+				'library' => 'svg',
+				'value'   => array( 'id' => (int) $ic['id'], 'url' => $url ),
+			),
+			array( 'aria-hidden' => 'true' )
+		);
+		$svg = trim( ob_get_clean() );
+		if ( '' === $svg || false === stripos( $svg, '<svg' ) ) {
+			return '';
+		}
+		$label = wp_strip_all_tags( $ic['label'] );
+		return '<span class="ps-icon-svg" role="img"' . ( '' !== $label ? ' aria-label="' . esc_attr( $label ) . '"' : ' aria-hidden="true"' ) . '>' . $svg . '</span>';
+	}
+
 	private function icons_html( $icons, $show_labels ) {
 		if ( empty( $icons ) ) return '';
 		$out = '<div class="ps-extra ps-icons">';
 		foreach ( $icons as $ic ) {
 			$alt = wp_strip_all_tags( $ic['label'] );
-			$img = '';
-			if ( $ic['id'] ) {
+			$img = $this->inline_svg_icon( $ic );
+			if ( '' === $img && $ic['id'] ) {
 				$img = wp_get_attachment_image( $ic['id'], 'medium', false, array( 'class' => 'ps-icon-img', 'alt' => $alt, 'loading' => 'lazy', 'decoding' => 'async' ) );
 			}
 			if ( '' === $img && '' !== $ic['url'] ) {
@@ -2733,8 +2848,10 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		$options['textAnim'] = $anim;
 		$options['intro']    = $intro;
 
+		$icons_mode = isset( $s['icons_color_mode'] ) && in_array( $s['icons_color_mode'], array( 'original', 'fill', 'stroke', 'both' ), true ) ? $s['icons_color_mode'] : 'original';
 		$classes = array(
 			'ps-hero',
+			'ps-icons-' . $icons_mode,
 			'ps-effect-' . $effect,
 			'ps-arrows-' . $layout,
 			'ps-svg-' . $svg_mode,

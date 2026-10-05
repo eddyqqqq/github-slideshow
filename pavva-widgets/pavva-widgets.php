@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Pavva Widgets
  * Description:       Widgeturile Elementor și câmpurile de produs / categorie create special pentru site-ul Pavva. Creat de imagient.
- * Version:           3.2.0
+ * Version:           3.2.1
  * Author:            imagient
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '3.2.0' );
+define( 'PAVVA_WIDGETS_VERSION', '3.2.1' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 
