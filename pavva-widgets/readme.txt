@@ -51,6 +51,10 @@ Citesc automat produsul sau categoria paginii: le pui o singură dată
    Imaginea mare cu săgeți și numele culorii + grila de thumbnails.
    Coloane din produs (3 / 4) sau alese în Elementor; alunecare / estompare,
    swipe pe telefon, tragere cu mouse-ul. Pe mobil thumbnails trec sub imagine.
+   Săgeți: implicite, din bibliotecă (inclusiv Upload SVG) sau imagine / SVG
+   din Media. Efect la selectarea culorii: chenar, inel, ridicare, linie,
+   bifă, colț colorat; opțional celelalte estompate și cea activă mărită.
+   Numele culorii apare animat la schimbare.
 
 6) Pavva – Dimensiuni și specificații
    Câte o coloană pe dimensiune: imagine în chenar + rânduri Etichetă / Valoare.

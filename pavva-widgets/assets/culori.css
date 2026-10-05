@@ -231,16 +231,6 @@
 	opacity: var(--pvc-top);
 	transition: opacity .3s ease;
 }
-/* chenarul stă peste imagine, deci nu mișcă nimic când apare */
-.pvc .pvc-thumb-media::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	box-shadow: inset 0 0 0 var(--pvc-tbw) var(--pvc-tbc);
-	transition: box-shadow .3s ease;
-	pointer-events: none;
-}
 .pvc .pvc-thumb-media img {
 	display: block;
 	width: 100%;
@@ -270,7 +260,13 @@
 	.pvc .pvc-slide,
 	.pvc .pvc-slide.is-active,
 	.pvc .pvc-thumb-media,
-	.pvc .pvc-thumb-media::after { transition: none; }
+	.pvc .pvc-thumb-frame,
+	.pvc .pvc-thumb-fx,
+	.pvc .pvc-thumb-fx::before,
+	.pvc .pvc-thumb-fx::after,
+	.pvc .pvc-thumb-media::after,
+	.pvc .pvc-thumb::after,
+	.pvc .pvc-name { transition: none !important; }
 }
 
 /* Săgeți vizibile doar la hover (opțiune în Elementor) */
@@ -281,3 +277,184 @@
 	.pvc-arrows-hover-yes .pvc .pvc-arrow { opacity: 1; }
 }
 .pvc .pvc-thumb-media img { transition: transform .5s cubic-bezier(.22, .61, .36, 1); }
+
+/* ================================================================
+ * Săgeți: imagine încărcată + deplasare la hover
+ * ================================================================ */
+.pvc .pvc-arrow .pvc-arrow-img {
+	display: block;
+	width: 1em;
+	height: 1em;
+	max-width: none;
+	object-fit: contain;
+	border: 0;
+	box-shadow: none;
+	pointer-events: none;
+}
+.pvc .pvc-arrow > * { transition: transform .3s cubic-bezier(.22, .61, .36, 1); }
+.pvc .pvc-prev:hover > * { transform: translateX(calc(var(--pvc-arrow-nudge, 3px) * -1)); }
+.pvc .pvc-next:hover > * { transform: translateX(var(--pvc-arrow-nudge, 3px)); }
+
+/* ================================================================
+ * Efect la selectarea culorii
+ * Toate valorile se schimbă din Elementor → Style → Efect la selectarea culorii.
+ * ================================================================ */
+.pvc {
+	--pvc-fx-speed: 450ms;
+	--pvc-spring: cubic-bezier(.34, 1.56, .64, 1);
+	--pvc-ring-gap: 3px;
+	--pvc-ring-bg: #fff;
+	--pvc-lift: 6px;
+	--pvc-lift-shadow: rgba(31, 30, 28, .28);
+	--pvc-bar-h: 3px;
+	--pvc-bar-gap: 8px;
+	--pvc-bar-w: 100%;
+	--pvc-check: 22px;
+	--pvc-check-bg: var(--pvc-accent);
+	--pvc-check-ink: #fff;
+	--pvc-corner: 26px;
+	--pvc-dim: .5;
+	--pvc-dim-gray: 0%;
+	--pvc-zoom-a: 1.08;
+}
+
+/* cadrul (fără decupare) ține imaginea și stratul de efect */
+.pvc .pvc-thumb-frame {
+	position: relative;
+	display: block;
+	transition: transform var(--pvc-fx-speed) var(--pvc-ease);
+}
+.pvc .pvc-thumb-media {
+	transition:
+		opacity var(--pvc-fx-speed) ease,
+		filter var(--pvc-fx-speed) ease;
+}
+.pvc .pvc-thumb-fx {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	border-radius: var(--pvc-tradius);
+	pointer-events: none;
+	box-shadow:
+		inset 0 0 0 var(--pvc-tbw) var(--pvc-tbc),
+		0 0 0 0 transparent,
+		0 0 0 0 transparent;
+	transition: box-shadow var(--pvc-fx-speed) var(--pvc-ease);
+}
+
+/* efectele care nu folosesc chenarul */
+.pvc.pvc-fx-ring .pvc-thumb.is-active,
+.pvc.pvc-fx-underline .pvc-thumb.is-active,
+.pvc.pvc-fx-corner .pvc-thumb.is-active,
+.pvc.pvc-fx-none .pvc-thumb.is-active { --pvc-tbc: transparent; }
+
+/* 1. Inel: contur cu spațiu între imagine și culoarea accent */
+.pvc.pvc-fx-ring .pvc-thumb.is-active .pvc-thumb-fx {
+	box-shadow:
+		inset 0 0 0 var(--pvc-tbw) var(--pvc-tbc),
+		0 0 0 var(--pvc-ring-gap) var(--pvc-ring-bg),
+		0 0 0 calc(var(--pvc-ring-gap) + var(--pvc-tbw)) var(--pvc-accent);
+}
+
+/* 2. Ridicare + umbră (+ chenar) */
+.pvc.pvc-fx-lift .pvc-thumb.is-active .pvc-thumb-frame { transform: translateY(calc(var(--pvc-lift) * -1)); }
+.pvc.pvc-fx-lift .pvc-thumb.is-active .pvc-thumb-fx {
+	box-shadow:
+		inset 0 0 0 var(--pvc-tbw) var(--pvc-tbc),
+		0 calc(var(--pvc-lift) * 2) calc(var(--pvc-lift) * 3.5) calc(var(--pvc-lift) * -1.5) var(--pvc-lift-shadow),
+		0 0 0 0 transparent;
+}
+
+/* 3. Linie sub thumbnail, crește din centru */
+.pvc.pvc-fx-underline .pvc-thumb::after {
+	content: "";
+	display: block;
+	width: var(--pvc-bar-w);
+	height: var(--pvc-bar-h);
+	margin: var(--pvc-bar-gap) auto 0;
+	border-radius: var(--pvc-bar-h);
+	background: var(--pvc-accent);
+	transform: scaleX(0);
+	transition: transform var(--pvc-fx-speed) var(--pvc-ease);
+}
+.pvc.pvc-fx-underline .pvc-thumb.is-active::after { transform: scaleX(1); }
+
+/* 4. Bifă în colț (+ chenar), apare cu un mic „pop” */
+.pvc.pvc-fx-check .pvc-thumb-fx::before,
+.pvc.pvc-fx-check .pvc-thumb-fx::after {
+	content: "";
+	position: absolute;
+	transform: scale(0);
+	transition: transform var(--pvc-fx-speed) var(--pvc-spring);
+}
+.pvc.pvc-fx-check .pvc-thumb-fx::before {
+	top: calc(var(--pvc-check) * -.3);
+	right: calc(var(--pvc-check) * -.3);
+	width: var(--pvc-check);
+	height: var(--pvc-check);
+	border-radius: 50%;
+	background: var(--pvc-check-bg);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, .18);
+}
+.pvc.pvc-fx-check .pvc-thumb-fx::after {
+	top: calc(var(--pvc-check) * -.3 + var(--pvc-check) * .22);
+	right: calc(var(--pvc-check) * -.3 + var(--pvc-check) * .37);
+	width: calc(var(--pvc-check) * .26);
+	height: calc(var(--pvc-check) * .44);
+	border-right: max(2px, calc(var(--pvc-check) * .09)) solid var(--pvc-check-ink);
+	border-bottom: max(2px, calc(var(--pvc-check) * .09)) solid var(--pvc-check-ink);
+	transform: rotate(45deg) scale(0);
+}
+.pvc.pvc-fx-check .pvc-thumb.is-active .pvc-thumb-fx::before { transform: scale(1); }
+.pvc.pvc-fx-check .pvc-thumb.is-active .pvc-thumb-fx::after {
+	transform: rotate(45deg) scale(1);
+	transition-delay: calc(var(--pvc-fx-speed) * .25);
+}
+
+/* 5. Colț colorat (sus-dreapta), decupat de colțurile rotunjite */
+.pvc.pvc-fx-corner .pvc-thumb-media::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 1;
+	width: var(--pvc-corner);
+	height: var(--pvc-corner);
+	background: var(--pvc-accent);
+	clip-path: polygon(0 0, 100% 0, 100% 100%);
+	transform: scale(0);
+	transform-origin: top right;
+	transition: transform var(--pvc-fx-speed) var(--pvc-spring);
+}
+.pvc.pvc-fx-corner .pvc-thumb.is-active .pvc-thumb-media::after { transform: scale(1); }
+
+/* Celelalte culori estompate (revin la hover) */
+.pvc.pvc-dim .pvc-thumb:not(.is-active) .pvc-thumb-media {
+	opacity: var(--pvc-dim);
+	filter: grayscale(var(--pvc-dim-gray));
+}
+.pvc.pvc-dim .pvc-thumb:not(.is-active):hover .pvc-thumb-media,
+.pvc.pvc-dim .pvc-thumb:not(.is-active):focus-visible .pvc-thumb-media {
+	opacity: 1;
+	filter: none;
+}
+
+/* Culoarea selectată ușor mărită */
+.pvc.pvc-zoom-active .pvc-thumb.is-active .pvc-thumb-media img { transform: scale(var(--pvc-zoom-a)); }
+
+/* ================================================================
+ * Numele culorii pe imaginea mare: animație la schimbare
+ * ================================================================ */
+.pvc.pvc-name-up .pvc-name,
+.pvc.pvc-name-fade .pvc-name {
+	opacity: 0;
+	transition:
+		opacity calc(var(--pvc-speed) * .9) var(--pvc-ease) calc(var(--pvc-speed) * .35),
+		transform calc(var(--pvc-speed) * .9) var(--pvc-ease) calc(var(--pvc-speed) * .35);
+}
+.pvc.pvc-name-up .pvc-name { transform: translateY(14px); }
+.pvc.pvc-name-up .pvc-slide.is-active .pvc-name,
+.pvc.pvc-name-fade .pvc-slide.is-active .pvc-name {
+	opacity: 1;
+	transform: none;
+}

@@ -91,6 +91,7 @@ class Pavva_Culori_Widget extends Widget_Base {
 		$this->controls_style_name();
 		$this->controls_style_arrows();
 		$this->controls_style_thumbs();
+		$this->controls_style_fx();
 	}
 
 	/* ================================================================
@@ -293,24 +294,60 @@ class Pavva_Culori_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'arrow_type',
+			array(
+				'label'     => 'Tip săgeți',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'default',
+				'options'   => array(
+					'default' => 'Implicite (subțiri, din design)',
+					'icon'    => 'Iconițe din bibliotecă / Upload SVG',
+					'upload'  => 'Imagine sau SVG din Media',
+				),
+				'separator' => 'before',
+				'condition' => array( 'show_arrows' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
 			'prev_icon',
 			array(
-				'label'       => 'Săgeată anterior / SVG',
-				'description' => 'Gol = săgeata subțire din design.',
+				'label'       => 'Săgeată anterior',
+				'description' => 'Alege din bibliotecă sau „Upload SVG”.',
 				'type'        => Controls_Manager::ICONS,
-				'skin'        => 'inline',
-				'separator'   => 'before',
-				'condition'   => array( 'show_arrows' => 'yes' ),
+				'default'     => array( 'value' => 'fas fa-chevron-left', 'library' => 'fa-solid' ),
+				'condition'   => array( 'show_arrows' => 'yes', 'arrow_type' => 'icon' ),
 			)
 		);
 
 		$this->add_control(
 			'next_icon',
 			array(
-				'label'     => 'Săgeată următor / SVG',
+				'label'     => 'Săgeată următor',
 				'type'      => Controls_Manager::ICONS,
-				'skin'      => 'inline',
-				'condition' => array( 'show_arrows' => 'yes' ),
+				'default'   => array( 'value' => 'fas fa-chevron-right', 'library' => 'fa-solid' ),
+				'condition' => array( 'show_arrows' => 'yes', 'arrow_type' => 'icon' ),
+			)
+		);
+
+		$this->add_control(
+			'prev_upload',
+			array(
+				'label'       => 'Săgeată anterior (imagine / SVG)',
+				'description' => 'SVG-ul se pune direct în pagină, deci îi poți schimba culoarea din Style → Săgeți.',
+				'type'        => Controls_Manager::MEDIA,
+				'media_types' => array( 'image', 'svg' ),
+				'condition'   => array( 'show_arrows' => 'yes', 'arrow_type' => 'upload' ),
+			)
+		);
+
+		$this->add_control(
+			'next_upload',
+			array(
+				'label'       => 'Săgeată următor (imagine / SVG)',
+				'type'        => Controls_Manager::MEDIA,
+				'media_types' => array( 'image', 'svg' ),
+				'condition'   => array( 'show_arrows' => 'yes', 'arrow_type' => 'upload' ),
 			)
 		);
 
@@ -779,6 +816,17 @@ class Pavva_Culori_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'name_anim',
+			array(
+				'label' => 'Animație nume la schimbare',
+				'type' => Controls_Manager::SELECT,
+				'options' => array( 'up' => 'Urcă și apare', 'fade' => 'Apare treptat', 'none' => 'Fără' ),
+				'default' => 'up',
+				'separator' => 'before',
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -953,6 +1001,34 @@ class Pavva_Culori_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'arrow_nudge',
+			array(
+				'label' => 'Deplasare la hover',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 20, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-arrow-nudge: {{SIZE}}{{UNIT}};',
+				),
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'arrow_img_size',
+			array(
+				'label' => 'Mărime imagine săgeată',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 8, 'max' => 120, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvc-arrow-img' ) => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'arrow_type' => 'upload' ),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -989,6 +1065,7 @@ class Pavva_Culori_Widget extends Widget_Base {
 				'size_units' => array( 'px', '%', 'em' ),
 				'selectors' => array(
 					$this->sel( '.pvc-thumb-media' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$this->sel( '.pvc-thumb-fx' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
@@ -1206,6 +1283,285 @@ class Pavva_Culori_Widget extends Widget_Base {
 	}
 
 	/* ================================================================
+	 * STYLE: efect la selectare
+	 * ================================================================ */
+	private function controls_style_fx() {
+		$this->start_controls_section(
+			'section_style_fx',
+			array(
+				'label' => 'Efect la selectarea culorii',
+				'tab' => Controls_Manager::TAB_STYLE,
+			)
+		);
+
+		$this->add_control(
+			'active_fx',
+			array(
+				'label' => 'Efect',
+				'type' => Controls_Manager::SELECT,
+				'options' => array( 'border' => 'Chenar (ca în design)', 'ring' => 'Contur cu spațiu (inel)', 'lift' => 'Ridicare + umbră', 'underline' => 'Linie sub thumbnail', 'check' => 'Bifă în colț', 'corner' => 'Colț colorat', 'none' => 'Fără efect' ),
+				'default' => 'border',
+			)
+		);
+
+		$this->add_control(
+			'fx_color',
+			array(
+				'label' => 'Culoare accent',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel() => '--pvc-accent: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'fx_speed',
+			array(
+				'label' => 'Durata efectului (ms)',
+				'type' => Controls_Manager::NUMBER,
+				'min' => 0,
+				'max' => 2000,
+				'step' => 50,
+				'selectors' => array(
+					$this->sel() => '--pvc-fx-speed: {{VALUE}}ms;',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'fx_ring_gap',
+			array(
+				'label' => 'Spațiu până la inel',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 12, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-ring-gap: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'active_fx' => 'ring' ),
+			)
+		);
+
+		$this->add_control(
+			'fx_ring_bg',
+			array(
+				'label' => 'Culoare spațiu (fundalul paginii)',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel() => '--pvc-ring-bg: {{VALUE}};',
+				),
+				'condition' => array( 'active_fx' => 'ring' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'fx_lift',
+			array(
+				'label' => 'Cât se ridică',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 20, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-lift: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'active_fx' => 'lift' ),
+			)
+		);
+
+		$this->add_control(
+			'fx_lift_shadow',
+			array(
+				'label' => 'Culoare umbră',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel() => '--pvc-lift-shadow: {{VALUE}};',
+				),
+				'condition' => array( 'active_fx' => 'lift' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'fx_bar_h',
+			array(
+				'label' => 'Grosime linie',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 1, 'max' => 10, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-bar-h: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'active_fx' => 'underline' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'fx_bar_gap',
+			array(
+				'label' => 'Spațiu deasupra liniei',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 24, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-bar-gap: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'active_fx' => 'underline' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'fx_bar_w',
+			array(
+				'label' => 'Lățime linie',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( '%' ),
+				'range' => array( 'px' => array( 'min' => 10, 'max' => 100, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-bar-w: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'active_fx' => 'underline' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'fx_check',
+			array(
+				'label' => 'Mărime bifă',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 12, 'max' => 48, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-check: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'active_fx' => 'check' ),
+			)
+		);
+
+		$this->add_control(
+			'fx_check_bg',
+			array(
+				'label' => 'Fundal bifă',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel() => '--pvc-check-bg: {{VALUE}};',
+				),
+				'condition' => array( 'active_fx' => 'check' ),
+			)
+		);
+
+		$this->add_control(
+			'fx_check_ink',
+			array(
+				'label' => 'Culoare bifă',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel() => '--pvc-check-ink: {{VALUE}};',
+				),
+				'condition' => array( 'active_fx' => 'check' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'fx_corner',
+			array(
+				'label' => 'Mărime colț',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 8, 'max' => 60, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-corner: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'active_fx' => 'corner' ),
+			)
+		);
+
+		$this->add_control(
+			'fx_others_heading',
+			array(
+				'label' => 'Celelalte culori',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'fx_dim',
+			array(
+				'label' => 'Estompează culorile neselectate',
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => 'Da',
+				'label_off' => 'Nu',
+				'return_value' => 'yes',
+			)
+		);
+
+		$this->add_control(
+			'fx_dim_opacity',
+			array(
+				'label' => 'Opacitate neselectate',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0.1, 'max' => 1, 'step' => 0.05 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-dim: {{SIZE}};',
+				),
+				'condition' => array( 'fx_dim' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'fx_dim_gray',
+			array(
+				'label' => 'Alb-negru neselectate (%)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 100, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-dim-gray: {{SIZE}}%;',
+				),
+				'condition' => array( 'fx_dim' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
+			'fx_zoom_heading',
+			array(
+				'label' => 'Culoarea selectată',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'fx_zoom',
+			array(
+				'label' => 'Mărește ușor imaginea selectată',
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => 'Da',
+				'label_off' => 'Nu',
+				'return_value' => 'yes',
+			)
+		);
+
+		$this->add_control(
+			'fx_zoom_amount',
+			array(
+				'label' => 'Cât se mărește',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 1, 'max' => 1.3, 'step' => 0.01 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvc-zoom-a: {{SIZE}};',
+				),
+				'condition' => array( 'fx_zoom' => 'yes' ),
+			)
+		);
+
+		$this->end_controls_section();
+
+	}
+
+	/* ================================================================
 	 * Ajutătoare
 	 * ================================================================ */
 	private function tag_options() {
@@ -1268,7 +1624,33 @@ class Pavva_Culori_Widget extends Widget_Base {
 	}
 
 	private function arrow_html( $s, $dir ) {
-		$icon = isset( $s[ $dir . '_icon' ] ) ? $s[ $dir . '_icon' ] : array();
+		$type = isset( $s['arrow_type'] ) ? $s['arrow_type'] : 'default';
+
+		if ( 'upload' === $type ) {
+			$media = isset( $s[ $dir . '_upload' ] ) ? $s[ $dir . '_upload' ] : array();
+			$url   = ! empty( $media['url'] ) ? (string) $media['url'] : '';
+			if ( '' !== $url ) {
+				$path = wp_parse_url( $url, PHP_URL_PATH );
+				if ( $path && 'svg' === strtolower( pathinfo( $path, PATHINFO_EXTENSION ) ) ) {
+					ob_start();
+					Icons_Manager::render_icon(
+						array(
+							'library' => 'svg',
+							'value'   => array( 'id' => ! empty( $media['id'] ) ? (int) $media['id'] : 0, 'url' => $url ),
+						),
+						array( 'aria-hidden' => 'true' )
+					);
+					$inline = trim( ob_get_clean() );
+					if ( '' !== $inline && false !== stripos( $inline, '<svg' ) ) {
+						return $inline;
+					}
+				}
+				return '<img class="pvc-arrow-img" src="' . esc_url( $url ) . '" alt="" draggable="false">';
+			}
+			return $this->chevron_svg( $dir );
+		}
+
+		$icon = 'icon' === $type && isset( $s[ $dir . '_icon' ] ) ? $s[ $dir . '_icon' ] : array();
 		if ( is_array( $icon ) && ! empty( $icon['value'] ) ) {
 			ob_start();
 			Icons_Manager::render_icon( $icon, array( 'aria-hidden' => 'true' ) );
@@ -1355,8 +1737,13 @@ class Pavva_Culori_Widget extends Widget_Base {
 			'drag'    => isset( $s['drag'] ) && 'yes' === $s['drag'],
 		);
 		$uid         = 'pvc-' . $this->get_id();
+		$fx          = isset( $s['active_fx'] ) && in_array( $s['active_fx'], array( 'border', 'ring', 'lift', 'underline', 'check', 'corner', 'none' ), true ) ? $s['active_fx'] : 'border';
+		$name_anim   = isset( $s['name_anim'] ) && in_array( $s['name_anim'], array( 'up', 'fade', 'none' ), true ) ? $s['name_anim'] : 'up';
+		$root_class  = 'pvc pvc-mode-' . $mode . ' pvc-fx-' . $fx . ' pvc-name-' . $name_anim
+			. ( isset( $s['fx_dim'] ) && 'yes' === $s['fx_dim'] ? ' pvc-dim' : '' )
+			. ( isset( $s['fx_zoom'] ) && 'yes' === $s['fx_zoom'] ? ' pvc-zoom-active' : '' );
 		?>
-		<div class="pvc pvc-mode-<?php echo esc_attr( $mode ); ?>" data-pvc="<?php echo esc_attr( wp_json_encode( $options ) ); ?>" style="--pvc-cols-auto: <?php echo (int) $auto_cols; ?>;">
+		<div class="<?php echo esc_attr( $root_class ); ?>" data-pvc="<?php echo esc_attr( wp_json_encode( $options ) ); ?>" style="--pvc-cols-auto: <?php echo (int) $auto_cols; ?>;">
 			<?php if ( isset( $s['show_heading'] ) && 'yes' === $s['show_heading'] && '' !== trim( $heading ) ) : ?>
 				<<?php echo $heading_tag; // phpcs:ignore ?> class="pvc-heading"><?php echo esc_html( $heading ); ?></<?php echo $heading_tag; // phpcs:ignore ?>>
 			<?php endif; ?>
@@ -1398,6 +1785,7 @@ class Pavva_Culori_Widget extends Widget_Base {
 					<div class="pvc-thumbs">
 						<?php foreach ( $colors as $i => $c ) : ?>
 							<button type="button" class="pvc-thumb<?php echo 0 === $i ? ' is-active' : ''; ?>" data-index="<?php echo (int) $i; ?>" aria-controls="<?php echo esc_attr( $uid . '-' . $i ); ?>" aria-pressed="<?php echo 0 === $i ? 'true' : 'false'; ?>"<?php echo $show_labels ? '' : ' aria-label="' . esc_attr( '' !== $c['name'] ? $c['name'] : 'Culoarea ' . ( $i + 1 ) ) . '"'; ?>>
+								<span class="pvc-thumb-frame">
 								<span class="pvc-thumb-media">
 									<?php
 									echo wp_get_attachment_image( // phpcs:ignore -- HTML generat de WordPress
@@ -1413,6 +1801,8 @@ class Pavva_Culori_Widget extends Widget_Base {
 										)
 									);
 									?>
+								</span>
+								<span class="pvc-thumb-fx" aria-hidden="true"></span>
 								</span>
 								<?php if ( $show_labels && '' !== $c['name'] ) : ?>
 									<span class="pvc-thumb-label"><?php echo esc_html( $c['name'] ); ?></span>
