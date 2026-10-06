@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 3.2.5
+Versiune: 3.2.6
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 
 Widgeturi Elementor create de imagient special pentru site-ul Pavva.
@@ -84,17 +84,18 @@ La produs (casetă separată) și la categorie: alegi mai multe imagini odată,
 le ordonezi prin tragere, opțional o imagine verticală pentru mobil.
 Câmpul e activ imediat, chiar dacă pluginurile vechi sunt încă active.
 
-FORMULARUL DE OFERTĂ (din 3.2.4)
-Linkul „Solicită ofertă” (Pavva – Produs / Categorie) trimite
-?produs=…&categorie=… . Pe pagina formularului, Pavva Widgets alege singur
-categoria și produsul în câmpurile „Categorie produs” / „Produs solicitat”
-(liste sau text; recunoaște câmpurile după nume / etichetă / prima opțiune),
-inclusiv când lista de produse se încarcă după categorie.
-
-Formular Elementor Pro (din 3.2.5): la câmpurile Select pune
-Advanced → ID = categorie, respectiv produs. Listele se completează singure
-din WooCommerce (categorii / produse), iar „produs” arată doar produsele
-din categoria aleasă. Prima opțiune scrisă rămâne textul de început.
+FORMULARELE SITE-ULUI (din 3.2.6)
+În orice formular de pe site (Elementor, CF7, WPForms…), câmpurile sunt
+recunoscute singure după etichetă / prima opțiune / ID:
+- „Categorie produs”  → categoriile WooCommerce
+- „Produs solicitat”  → produsele, doar din categoria aleasă
+- „Județ”             → cele 42 de județe
+- „Localitate”        → 13.857 localități (doar din județul ales; dacă alegi
+                         întâi localitatea, județul se completează singur)
+- „Suprafață proiect” → câmp numeric, clientul scrie suprafața în m²
+Prima opțiune scrisă în listă rămâne textul de început.
+Linkul „Solicită ofertă” trimite ?produs=…&categorie=…, iar formularul le
+selectează singur. Listă localități: date publice (domeniu public).
 
 ÎNAINTE DE ȘTERGEREA PLUGINURILOR VECHI
 Pe pagina Plugins, Pavva Widgets arată ce pagini / template-uri mai folosesc
@@ -139,8 +140,9 @@ includes/class-pavva-category-fields.php    – câmpurile categoriei (admin)
 includes/class-pavva-dynamic-tags.php       – câmpuri selectabile în Elementor
 includes/class-pavva-slider-fields.php      – câmpul Imagini slider header
 includes/class-pavva-migration.php          – verificarea widgeturilor vechi
-includes/class-pavva-quote-prefill.php      – completarea formularului de ofertă
-includes/class-pavva-quote-form.php         – listele categorie / produs din formular
+includes/class-pavva-quote-form.php         – datele pentru formulare (categorii / produse)
+assets/oferta.js                            – completarea listelor din formulare
+assets/data/localitati.json                 – județe și localități
 assets/admin/                               – scripturi și stiluri pentru admin
 widgets/class-pavva-hero-slider-widget.php  – Slider header: setări + HTML
 widgets/class-pavva-carusel-widget.php      – Carusel produse: setări + HTML

@@ -1,6 +1,9 @@
 <?php
 /**
- * Pavva Widgets – listele „Categorie produs” / „Produs solicitat” din formularul Elementor
+ * Pavva Widgets – listele din formularele site-ului (categorie, produs, județ, localitate, suprafață)
+ *
+ * Scriptul assets/oferta.js lucrează în orice formular de pe site. Aici sunt
+ * datele pentru el (categorii / produse) și completarea din server pentru Elementor.
  *
  * În formularul Elementor Pro, la un câmp Select cu ID-ul (Advanced → ID):
  *   categorie → primește automat categoriile de produse WooCommerce;
@@ -21,15 +24,59 @@ final class Pavva_W_Quote_Form {
     const CAT_IDS  = array( 'categorie', 'categorie_produs', 'category' );
     const PROD_IDS = array( 'produs', 'produs_solicitat', 'product' );
 
-    /** @var bool Formularul cu liste Pavva e în pagina curentă. */
-    private static $used = false;
-
     /** @var array|null */
     private static $data = null;
 
+    const CACHE_KEY = 'pavva_w_oferta_data';
+
     public static function init() {
+        /* Elementor Pro: listele cu ID categorie / produs vin deja completate din server */
         add_filter( 'elementor_pro/forms/render/item', array( __CLASS__, 'fill_select' ), 10, 3 );
-        add_action( 'wp_footer', array( __CLASS__, 'print_script' ), 98 );
+        /* datele pentru script (funcționează și cu pagini din cache) */
+        add_action( 'rest_api_init', array( __CLASS__, 'register_route' ) );
+        add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
+        /* lista se recalculează când se schimbă produsele / categoriile */
+        foreach ( array( 'save_post_product', 'deleted_post', 'created_product_cat', 'edited_product_cat', 'delete_product_cat' ) as $hook ) {
+            add_action( $hook, array( __CLASS__, 'flush' ) );
+        }
+    }
+
+    public static function flush() {
+        delete_transient( self::CACHE_KEY );
+    }
+
+    /* Numele parametrilor din adresă (aceleași ca în setările linkului „Solicită ofertă”). */
+    public static function params(): array {
+        return (array) apply_filters( 'pavva_w_prefill_params', array( 'produs' => 'produs', 'categorie' => 'categorie' ) );
+    }
+
+    public static function register_route() {
+        register_rest_route(
+            'pavva/v1',
+            '/oferta',
+            array(
+                'methods'             => 'GET',
+                'permission_callback' => '__return_true', /* doar nume publice de categorii / produse */
+                'callback'            => function () {
+                    return rest_ensure_response( self::data() );
+                },
+            )
+        );
+    }
+
+    public static function enqueue() {
+        if ( is_admin() ) return;
+        $p = self::params();
+        wp_enqueue_script( 'pavva-oferta', PAVVA_WIDGETS_URL . 'assets/oferta.js', array(), pavva_widgets_asset_version( 'assets/oferta.js' ), true );
+        wp_localize_script(
+            'pavva-oferta',
+            'PavvaOferta',
+            array(
+                'rest'   => esc_url_raw( rest_url( 'pavva/v1/oferta' ) ),
+                'places' => PAVVA_WIDGETS_URL . 'assets/data/localitati.json?v=' . pavva_widgets_asset_version( 'assets/data/localitati.json' ),
+                'params' => array( 'produs' => (string) $p['produs'], 'categorie' => (string) $p['categorie'] ),
+            )
+        );
     }
 
     private static function role( $item ) {
@@ -47,6 +94,11 @@ final class Pavva_W_Quote_Form {
     /* Categoriile (ierarhic, în ordinea din WooCommerce) și produsele cu categoriile lor. */
     public static function data(): array {
         if ( null !== self::$data ) return self::$data;
+        $cached = get_transient( self::CACHE_KEY );
+        if ( is_array( $cached ) && isset( $cached['cats'], $cached['prods'] ) ) {
+            self::$data = $cached;
+            return self::$data;
+        }
 
         $cats  = array();
         $terms = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => true ) );
@@ -103,6 +155,7 @@ final class Pavva_W_Quote_Form {
         }
 
         self::$data = array( 'cats' => $cats, 'prods' => $prods );
+        set_transient( self::CACHE_KEY, self::$data, 12 * HOUR_IN_SECONDS );
         return self::$data;
     }
 
@@ -133,72 +186,6 @@ final class Pavva_W_Quote_Form {
             }
         }
         $item['field_options'] = implode( "\n", $lines );
-        self::$used = true;
         return $item;
-    }
-
-    public static function print_script() {
-        if ( ! self::$used || is_admin() ) return;
-        $d = self::data();
-        $map = array();
-        foreach ( $d['prods'] as $p ) $map[] = array( $p['name'], $p['cats'] );
-        ?>
-<script id="pavva-oferta-liste">
-/* Pavva Widgets – „Produs solicitat” arată doar produsele din categoria aleasă */
-(function () {
-	'use strict';
-	var PRODS = <?php echo wp_json_encode( $map ); ?>;
-	var CAT = <?php echo wp_json_encode( array_map( function ( $i ) { return 'form_fields[' . $i . ']'; }, self::CAT_IDS ) ); ?>;
-	var PROD = <?php echo wp_json_encode( array_map( function ( $i ) { return 'form_fields[' . $i . ']'; }, self::PROD_IDS ) ); ?>;
-
-	function norm(t) {
-		return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/^(—\s*)+/, '')
-			.toLowerCase().replace(/\s+/g, ' ').trim();
-	}
-	function find(form, names) {
-		for (var i = 0; i < names.length; i++) {
-			var el = form.querySelector('select[name="' + names[i] + '"]');
-			if (el) return el;
-		}
-		return null;
-	}
-
-	function filter(form) {
-		var cat = find(form, CAT), prod = find(form, PROD);
-		if (!cat || !prod) return;
-		var c = norm(cat.value);
-		var keep = prod.value;
-		var first = prod.options[0] && !prod.options[0].value ? prod.options[0].cloneNode(true) : null;
-		prod.innerHTML = '';
-		if (first) prod.appendChild(first);
-		PRODS.forEach(function (p) {
-			if (c && !p[1].some(function (n) { return norm(n) === c; })) return;
-			var o = document.createElement('option');
-			o.value = p[0];
-			o.textContent = p[0];
-			prod.appendChild(o);
-		});
-		/* produsul ales rămâne selectat dacă e în categoria nouă */
-		prod.value = keep;
-		if (prod.value !== keep) prod.value = '';
-	}
-
-	document.addEventListener('change', function (e) {
-		var el = e.target;
-		if (el && el.tagName === 'SELECT' && el.form && CAT.indexOf(el.name) !== -1) filter(el.form);
-	}, true);
-
-	function initAll() {
-		Array.prototype.forEach.call(document.querySelectorAll('form'), function (f) {
-			if (find(f, CAT) && find(f, PROD)) filter(f);
-		});
-	}
-	if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
-	else initAll();
-	/* formulare încărcate mai târziu (ex.: în popup Elementor) */
-	if (window.jQuery) window.jQuery(document).on('elementor/popup/show', function () { setTimeout(initAll, 50); });
-})();
-</script>
-        <?php
     }
 }
