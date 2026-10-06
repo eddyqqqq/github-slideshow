@@ -7,16 +7,18 @@
  */
 
 .pvg {
-	--pvg-ink: #1f1e1c;
+	--pvg-ink: #1f1d2b;
 	--pvg-muted: #6b6964;
-	--pvg-accent: #b35a2c;
+	--pvg-accent: #ab5525;
 	--pvg-cols: 3;
 	--pvg-gap: clamp(16px, 1.8vw, 24px);
 	--pvg-row-gap: clamp(32px, 3.4vw, 48px);
 	--pvg-ratio: 4 / 3;
 	--pvg-zoom: 1.04;
 	--pvg-lift: 0px;
-	--pvg-arrow-shift: 4px;
+	--pvg-arrow-shift: 8px;
+	--pvg-arrow-dir: -1;
+	--pvg-color: 22px;
 	--pvg-speed: 400ms;
 	--pvg-ease: cubic-bezier(.22, .61, .36, 1);
 	position: relative;
@@ -98,11 +100,14 @@
 	transition: transform 900ms var(--pvg-ease);
 }
 .pvg .pvg-card:hover .pvg-media img { transform: scale(var(--pvg-zoom)); }
+.pvg .pvg-card:hover .pvg-title,
+.pvg .pvg-card:focus-visible .pvg-title { color: var(--pvg-accent); }
 
 /* ---------- Texte ---------- */
 .pvg .pvg-body {
 	display: block;
-	padding: 20px 14px 0;
+	box-sizing: border-box;
+	padding: 22px 16px 0;
 }
 .pvg .pvg-row {
 	display: flex;
@@ -130,20 +135,38 @@
 
 .pvg .pvg-arrow {
 	flex: none;
-	display: inline-flex;
+	/* înălțime 0: săgeata (oricât de mare) stă centrată pe nume, fără să împingă textul */
+	display: flex;
+	align-items: center;
+	height: 0;
+	overflow: visible;
 	font-size: 20px;
-	line-height: 1;
+	line-height: 0;
 	color: var(--pvg-ink);
+	transform: translate(0, var(--pvg-arrow-y, 0px));
 	transition:
 		transform var(--pvg-speed) var(--pvg-ease),
 		color var(--pvg-speed) var(--pvg-ease);
 }
-.pvg .pvg-arrow svg {
+/* mărimea fișierului încărcat; „Lățime săgeată” o schimbă păstrând proporția */
+.pvg .pvg-arrow svg,
+.pvg .pvg-arrow .pvg-arrow-img {
 	display: block;
-	width: 1em;
-	height: 1em;
+	flex: none;
+	width: var(--pvg-arrow-w, auto);
+	height: auto;
+	max-width: none;
+	border: 0;
+	box-shadow: none;
 }
-.pvg .pvg-card:hover .pvg-arrow { transform: translateX(var(--pvg-arrow-shift)); }
+.pvg .pvg-arrow svg:not([width]) { width: var(--pvg-arrow-w, 46px); }
+.pvg .pvg-arrow svg.e-font-icon-svg { width: var(--pvg-arrow-w, 1em); height: auto; }
+.pvg .pvg-arrow-upload { display: flex; line-height: 0; }
+.pvg .pvg-card:hover .pvg-arrow,
+.pvg .pvg-card:focus-visible .pvg-arrow {
+	color: var(--pvg-accent);
+	transform: translate(calc(var(--pvg-arrow-shift) * var(--pvg-arrow-dir, -1)), var(--pvg-arrow-y, 0px));
+}
 
 .pvg .pvg-empty {
 	margin: 0;
@@ -166,7 +189,6 @@
 }
 
 /* ---------- Culori +N ---------- */
-.pvg { --pvg-color: 28px; }
 .pvg .pvg-colors {
 	display: flex;
 	flex-wrap: wrap;
@@ -177,9 +199,9 @@
 .pvg .pvg-color {
 	display: block;
 	flex: none;
-	width: var(--pvg-color);
-	height: var(--pvg-color);
-	border-radius: 4px;
+	width: var(--pvg-color-w, var(--pvg-color));
+	height: var(--pvg-color-h, var(--pvg-color));
+	border-radius: 3px;
 	overflow: hidden;
 	background-color: #e9e7e3;
 }
@@ -194,10 +216,11 @@
 	box-shadow: none;
 }
 .pvg .pvg-colors-more {
-	margin-left: 2px;
-	font-size: 13px;
+	margin-left: 4px;
+	font-size: 14px;
+	font-weight: 600;
 	line-height: 1;
-	color: var(--pvg-muted);
+	color: var(--pvg-ink);
 }
 .pvg .pvg-color { box-sizing: border-box; transition: transform .25s ease; }
 .pvg .pvg-colors-more { box-sizing: border-box; }
@@ -206,8 +229,8 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-width: var(--pvg-color);
-	height: var(--pvg-color);
+	min-width: var(--pvg-color-w, var(--pvg-color));
+	height: var(--pvg-color-h, var(--pvg-color));
 	margin-left: 0;
 	padding: 0 4px;
 	border-radius: 4px;
@@ -227,3 +250,9 @@
 .pvg .pvg-body > .pvg-colors:first-child { margin: 0 0 12px; }
 .pvg .pvg-arrow i { font-size: 1em; line-height: 1; color: inherit; }
 .pvg .pvg-arrow svg { fill: currentColor; } /* iconițe din bibliotecă; săgeata implicită e doar contur */
+
+/* SVG încărcat ca săgeată: preia culoarea săgeții (Normal / Hover) */
+.pvg-arrow-recolor-yes .pvg .pvg-arrow-upload svg [stroke]:not([stroke="none"]) { stroke: currentColor; }
+.pvg-arrow-recolor-yes .pvg .pvg-arrow-upload svg [fill]:not([fill="none"]),
+.pvg-arrow-recolor-yes .pvg .pvg-arrow-upload svg:not([fill]) > *:not([fill]):not([stroke]) { fill: currentColor; }
+.pvg .pvg-arrow svg * { transition: stroke var(--pvg-speed) var(--pvg-ease), fill var(--pvg-speed) var(--pvg-ease); }

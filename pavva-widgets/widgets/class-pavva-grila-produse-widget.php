@@ -446,13 +446,49 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'arrow_type',
+			array(
+				'label' => 'Tip săgeată',
+				'type' => Controls_Manager::SELECT,
+				'options' => array( '' => 'Implicită (sau iconița aleasă mai jos)', 'icon' => 'Iconiță din bibliotecă / Upload SVG', 'upload' => 'Imagine sau SVG din Media' ),
+				'default' => '',
+				'condition' => array( 'show_arrow' => 'yes' ),
+			)
+		);
+
+		$this->add_control(
 			'arrow_icon',
 			array(
-				'label' => 'Iconiță săgeată / SVG',
+				'label' => 'Iconiță săgeată',
 				'type' => Controls_Manager::ICONS,
-				'description' => 'Gol = săgeata implicită.',
-				'skin' => 'inline',
-				'condition' => array( 'show_arrow' => 'yes' ),
+				'description' => 'Din bibliotecă sau „Upload SVG”.',
+				'condition' => array( 'show_arrow' => 'yes', 'arrow_type' => array( '', 'icon' ) ),
+			)
+		);
+
+		$this->add_control(
+			'arrow_upload',
+			array(
+				'label' => 'Săgeată (imagine / SVG)',
+				'type' => Controls_Manager::MEDIA,
+				'description' => 'Apare exact la mărimea fișierului. SVG-ul se pune direct în pagină și își schimbă culoarea la hover.',
+				'media_types' => array( 'image', 'svg' ),
+				'condition' => array( 'show_arrow' => 'yes', 'arrow_type' => 'upload' ),
+			)
+		);
+
+		$this->add_control(
+			'arrow_recolor',
+			array(
+				'label' => 'Colorează SVG-ul încărcat',
+				'type' => Controls_Manager::SWITCHER,
+				'description' => 'Culoarea săgeții (și cea de hover) se aplică peste culorile din fișierul SVG.',
+				'label_on' => 'Da',
+				'label_off' => 'Nu',
+				'return_value' => 'yes',
+				'prefix_class' => 'pvg-arrow-recolor-',
+				'default' => 'yes',
+				'condition' => array( 'show_arrow' => 'yes', 'arrow_type' => 'upload' ),
 			)
 		);
 
@@ -936,6 +972,80 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'texts_layout_heading',
+			array(
+				'label' => 'Lățimi și spațieri',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'title_max_width',
+			array(
+				'label' => 'Lățime maximă nume',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%', 'ch' ),
+				'range' => array( 'px' => array( 'min' => 40, 'max' => 800, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-title' ) => 'max-width: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'desc_max_width',
+			array(
+				'label' => 'Lățime maximă descriere',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%', 'ch' ),
+				'range' => array( 'px' => array( 'min' => 40, 'max' => 800, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-desc' ) => 'max-width: {{SIZE}}{{UNIT}};',
+				),
+				'condition' => array( 'show_desc' => 'yes' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'body_max_width',
+			array(
+				'label' => 'Lățime maximă zonă text',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%' ),
+				'range' => array( 'px' => array( 'min' => 100, 'max' => 1000, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-body' ) => 'max-width: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'title_margin',
+			array(
+				'label' => 'Margini nume',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvg-row' ) => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'desc_margin',
+			array(
+				'label' => 'Margini descriere',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvg-desc' ) => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+				'condition' => array( 'show_desc' => 'yes' ),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -952,12 +1062,38 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->add_responsive_control(
 			'colors_size',
 			array(
-				'label'      => 'Mărime thumbnail',
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
-				'range'      => array( 'px' => array( 'min' => 10, 'max' => 80 ) ),
-				'selectors'  => array(
+				'label' => 'Mărime thumbnail (lățime = înălțime)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range' => array( 'px' => array( 'min' => 8, 'max' => 160, 'step' => 1 ) ),
+				'selectors' => array(
 					$this->sel() => '--pvg-color: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_width',
+			array(
+				'label' => 'Lățime (opțional)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range' => array( 'px' => array( 'min' => 8, 'max' => 200, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvg-color-w: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'colors_height',
+			array(
+				'label' => 'Înălțime (opțional)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range' => array( 'px' => array( 'min' => 8, 'max' => 200, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel() => '--pvg-color-h: {{SIZE}}{{UNIT}};',
 				),
 			)
 		);
@@ -1211,41 +1347,72 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->start_controls_section(
 			'section_style_arrow',
 			array(
-				'label'     => 'Săgeată',
-				'tab'       => Controls_Manager::TAB_STYLE,
-				'condition' => array( 'show_arrow' => 'yes' ),
+				'label' => 'Săgeată',
+				'tab' => Controls_Manager::TAB_STYLE,
+			)
+		);
+
+		$this->add_control(
+			'arrow_info',
+			array(
+				'label' => '',
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => 'Săgeata nu mai împinge textul: are mărimea fișierului încărcat. Setează lățimea doar dacă vrei altă mărime (înălțimea urmează proporția).',
+				'content_classes' => 'elementor-descriptor',
+			)
+		);
+
+		$this->add_responsive_control(
+			'arrow_width',
+			array(
+				'label' => 'Lățime săgeată',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range' => array( 'px' => array( 'min' => 6, 'max' => 240, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-arrow' ) => '--pvg-arrow-w: {{SIZE}}{{UNIT}};',
+				),
 			)
 		);
 
 		$this->add_responsive_control(
 			'arrow_size',
 			array(
-				'label'      => 'Mărime',
-				'type'       => Controls_Manager::SLIDER,
+				'label' => 'Mărime iconiță (doar bibliotecă)',
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => array( 'px' ),
-				'range'      => array( 'px' => array( 'min' => 8, 'max' => 60 ) ),
-				'selectors'  => array(
+				'range' => array( 'px' => array( 'min' => 8, 'max' => 80, 'step' => 1 ) ),
+				'selectors' => array(
 					$this->sel( '.pvg-arrow' ) => 'font-size: {{SIZE}}{{UNIT}};',
 				),
+				'condition' => array( 'arrow_type' => array( '', 'icon' ) ),
 			)
 		);
+
+		$this->start_controls_tabs( 'arrow_tabs' );
+
+		$this->start_controls_tab( 'arrow_tab_normal', array( 'label' => 'Normal' ) );
 
 		$this->add_control(
 			'arrow_color',
 			array(
-				'label'     => 'Culoare',
-				'type'      => Controls_Manager::COLOR,
+				'label' => 'Culoare',
+				'type' => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->sel( '.pvg-arrow' ) => 'color: {{VALUE}};',
 				),
 			)
 		);
 
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'arrow_tab_hover', array( 'label' => 'Hover pe card' ) );
+
 		$this->add_control(
 			'arrow_color_hover',
 			array(
-				'label'     => 'Culoare la hover pe card',
-				'type'      => Controls_Manager::COLOR,
+				'label' => 'Culoare',
+				'type' => Controls_Manager::COLOR,
 				'selectors' => array(
 					$this->sel( '.pvg-card:hover .pvg-arrow' ) => 'color: {{VALUE}};',
 				),
@@ -1253,17 +1420,34 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'arrow_dir',
+			array(
+				'label' => 'Direcția mișcării',
+				'type' => Controls_Manager::SELECT,
+				'options' => array( '-1' => 'Spre stânga (spre text)', '1' => 'Spre dreapta', '0' => 'Fără mișcare' ),
+				'default' => '-1',
+				'selectors' => array(
+					$this->sel() => '--pvg-arrow-dir: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
 			'arrow_shift',
 			array(
-				'label'      => 'Deplasare la hover',
-				'type'       => Controls_Manager::SLIDER,
+				'label' => 'Distanța mișcării',
+				'type' => Controls_Manager::SLIDER,
 				'size_units' => array( 'px' ),
-				'range'      => array( 'px' => array( 'min' => 0, 'max' => 30 ) ),
-				'selectors'  => array(
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 40, 'step' => 1 ) ),
+				'selectors' => array(
 					$this->sel() => '--pvg-arrow-shift: {{SIZE}}{{UNIT}};',
 				),
 			)
 		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->add_responsive_control(
 			'arrow_y',
@@ -1271,14 +1455,29 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 				'label' => 'Ajustare verticală',
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => array( 'px' ),
-				'range' => array( 'px' => array( 'min' => -20, 'max' => 20, 'step' => 1 ) ),
+				'range' => array( 'px' => array( 'min' => -30, 'max' => 30, 'step' => 1 ) ),
 				'selectors' => array(
-					$this->sel( '.pvg-arrow' ) => 'margin-top: {{SIZE}}{{UNIT}};',
+					$this->sel( '.pvg-arrow' ) => '--pvg-arrow-y: {{SIZE}}{{UNIT}};',
+				),
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'arrow_gap',
+			array(
+				'label' => 'Spațiu minim față de nume',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 80, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-row' ) => 'gap: {{SIZE}}{{UNIT}};',
 				),
 			)
 		);
 
 		$this->end_controls_section();
+
 	}
 
 	/* ================================================================
@@ -1360,7 +1559,28 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 	}
 
 	private function arrow_html( $s ) {
-		if ( ! empty( $s['arrow_icon']['value'] ) ) {
+		$type = isset( $s['arrow_type'] ) ? $s['arrow_type'] : '';
+		if ( 'upload' === $type && ! empty( $s['arrow_upload']['url'] ) ) {
+			$url  = (string) $s['arrow_upload']['url'];
+			$path = wp_parse_url( $url, PHP_URL_PATH );
+			if ( $path && 'svg' === strtolower( pathinfo( $path, PATHINFO_EXTENSION ) ) ) {
+				ob_start();
+				Icons_Manager::render_icon(
+					array(
+						'library' => 'svg',
+						'value'   => array( 'id' => ! empty( $s['arrow_upload']['id'] ) ? (int) $s['arrow_upload']['id'] : 0, 'url' => $url ),
+					),
+					array( 'aria-hidden' => 'true' )
+				);
+				$svg = trim( ob_get_clean() );
+				if ( '' !== $svg && false !== stripos( $svg, '<svg' ) ) {
+					return '<span class="pvg-arrow-upload">' . $svg . '</span>';
+				}
+			}
+			return '<img class="pvg-arrow-img" src="' . esc_url( $url ) . '" alt="" draggable="false">';
+		}
+		/* „Implicită” folosește totuși iconița, dacă ai ales una (setările existente rămân) */
+		if ( in_array( $type, array( '', 'icon' ), true ) && ! empty( $s['arrow_icon']['value'] ) ) {
 			ob_start();
 			Icons_Manager::render_icon( $s['arrow_icon'], array( 'aria-hidden' => 'true' ) );
 			$html = trim( ob_get_clean() );
@@ -1372,7 +1592,8 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 	}
 
 	private function arrow_svg() {
-		return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12h17M14 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+		/* săgeata lungă și subțire din design */
+		return '<svg class="pvg-arrow-default" width="46" height="12" viewBox="0 0 46 12" aria-hidden="true" focusable="false"><path d="M1 6h43M39 1.5 44.5 6 39 10.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 	}
 
 	/* Categoriile paginii: categoria afișată sau categoriile produsului afișat. */
