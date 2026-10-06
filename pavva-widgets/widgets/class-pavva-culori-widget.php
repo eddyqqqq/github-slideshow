@@ -269,6 +269,19 @@ class Pavva_Culori_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'single_thumb',
+			array(
+				'label'        => 'Thumbnail și la o singură culoare',
+				'description'  => 'Pentru produsele cu o singură culoare afișează thumbnail-ul sub imagine.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+			)
+		);
+
+		$this->add_control(
 			'show_thumb_labels',
 			array(
 				'label'        => 'Nume sub thumbnails',
@@ -1794,7 +1807,7 @@ class Pavva_Culori_Widget extends Widget_Base {
 					<?php endif; ?>
 				</div>
 
-				<?php if ( count( $colors ) > 1 || $show_labels ) : ?>
+				<?php if ( count( $colors ) > 1 || $show_labels || ! isset( $s['single_thumb'] ) || 'yes' === $s['single_thumb'] ) : ?>
 					<div class="pvc-thumbs">
 						<?php foreach ( $colors as $i => $c ) : ?>
 							<button type="button" class="pvc-thumb<?php echo 0 === $i ? ' is-active' : ''; ?>" data-index="<?php echo (int) $i; ?>" aria-controls="<?php echo esc_attr( $uid . '-' . $i ); ?>" aria-pressed="<?php echo 0 === $i ? 'true' : 'false'; ?>"<?php echo $show_labels ? '' : ' aria-label="' . esc_attr( '' !== $c['name'] ? $c['name'] : 'Culoarea ' . ( $i + 1 ) ) . '"'; ?>>

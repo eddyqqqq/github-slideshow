@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 3.4.0
+Versiune: 3.4.1
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 
 Widgeturi Elementor create de imagient special pentru site-ul Pavva.
@@ -58,6 +58,8 @@ Citesc automat produsul sau categoria paginii: le pui o singură dată
    Coloane din produs (3 / 4) sau alese în Elementor; alunecare / estompare,
    swipe pe telefon, tragere cu mouse-ul. Pe mobil thumbnails trec sub imagine.
    3.3.1: widgetul ocupă mereu toată lățimea containerului (și pe mobil).
+   3.4.1: thumbnail și la produsele cu o singură culoare (Content →
+   „Thumbnail și la o singură culoare”, pornit implicit).
    Săgeți: implicite, din bibliotecă (inclusiv Upload SVG) sau imagine / SVG
    din Media. Efect la selectarea culorii: chenar, inel, ridicare, linie,
    bifă, colț colorat; opțional celelalte estompate și cea activă mărită.
