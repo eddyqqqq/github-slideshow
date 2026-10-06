@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Pavva Widgets
  * Description:       Widgeturile Elementor și câmpurile de produs / categorie create special pentru site-ul Pavva. Creat de imagient.
- * Version:           3.2.3
+ * Version:           3.2.4
  * Author:            imagient
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -20,12 +20,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '3.2.3' );
+define( 'PAVVA_WIDGETS_VERSION', '3.2.4' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 
 /* Accesul la datele produselor / categoriilor (aceleași câmpuri ca pluginurile vechi). */
 require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-data.php';
+
+/* Formularul de ofertă se completează singur din linkul „Solicită ofertă”. */
+require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-quote-prefill.php';
+Pavva_W_Quote_Prefill::init();
 
 /* Verificarea widgeturilor vechi (pagina Plugins), doar în admin. */
 if ( is_admin() ) {

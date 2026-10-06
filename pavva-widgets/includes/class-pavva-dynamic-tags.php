@@ -150,32 +150,68 @@ abstract class Pavva_W_Quote_Link_Base extends \Elementor\Core\DynamicTags\Data_
 		$this->add_control(
 			'pavva_param',
 			array(
-				'label'       => 'Nume parametru',
-				'description' => 'În formular, câmpul își ia valoarea din acest parametru (ex.: produs).',
+				'label'       => 'Parametru produs',
+				'description' => 'Numele produsului ajunge în adresă ca ?produs=… (gol = nu se trimite).',
 				'type'        => Controls_Manager::TEXT,
 				'default'     => 'produs',
 			)
 		);
+		$this->add_control(
+			'pavva_cat_param',
+			array(
+				'label'       => 'Parametru categorie',
+				'description' => 'Categoria produsului (sau categoria paginii) ajunge ca ?categorie=… (gol = nu se trimite). Pavva Widgets le completează singur în formular.',
+				'type'        => Controls_Manager::TEXT,
+				'default'     => 'categorie',
+			)
+		);
+	}
+
+	/* Categoria principală a produsului: cea aleasă în Yoast, altfel prima. */
+	private static function product_category_name( $product_id ) {
+		$primary = absint( get_post_meta( $product_id, '_yoast_wpseo_primary_product_cat', true ) );
+		if ( $primary ) {
+			$term = get_term( $primary, 'product_cat' );
+			if ( $term instanceof WP_Term ) return $term->name;
+		}
+		$terms = get_the_terms( $product_id, 'product_cat' );
+		if ( is_array( $terms ) ) {
+			foreach ( $terms as $term ) {
+				if ( 'uncategorized' !== $term->slug ) return $term->name;
+			}
+		}
+		return '';
+	}
+
+	private static function clean( $text ) {
+		return rawurlencode( wp_strip_all_tags( html_entity_decode( (string) $text, ENT_QUOTES, 'UTF-8' ) ) );
 	}
 
 	public function get_value( array $options = array() ) {
-		$page  = trim( (string) $this->get_settings( 'pavva_page' ) );
-		$param = sanitize_key( (string) $this->get_settings( 'pavva_param' ) );
-		$url   = '' === $page ? home_url( '/' ) : ( preg_match( '#^https?://#i', $page ) ? $page : home_url( '/' . ltrim( $page, '/' ) ) );
+		$page      = trim( (string) $this->get_settings( 'pavva_page' ) );
+		$param     = sanitize_key( (string) $this->get_settings( 'pavva_param' ) );
+		$cat_param = $this->get_settings( 'pavva_cat_param' );
+		$cat_param = null === $cat_param ? 'categorie' : sanitize_key( (string) $cat_param );
+		$url       = '' === $page ? home_url( '/' ) : ( preg_match( '#^https?://#i', $page ) ? $page : home_url( '/' . ltrim( $page, '/' ) ) );
 
-		$name = '';
+		$args = array();
 		$pid  = (int) Pavva_W_Data::resolve_product_id();
 		if ( $pid ) {
-			$name = get_the_title( $pid );
+			if ( '' !== $param ) $args[ $param ] = self::clean( get_the_title( $pid ) );
+			$cat = self::product_category_name( $pid );
+			if ( '' !== $cat_param && '' !== $cat ) $args[ $cat_param ] = self::clean( $cat );
 		} else {
 			$tid = (int) Pavva_W_Data::current_term_id();
-			if ( $tid ) {
-				$term = get_term( $tid, 'product_cat' );
-				if ( $term instanceof WP_Term ) $name = $term->name;
+			$term = $tid ? get_term( $tid, 'product_cat' ) : null;
+			if ( $term instanceof WP_Term ) {
+				/* pe o categorie: doar categoria */
+				$key = '' !== $cat_param ? $cat_param : $param;
+				if ( '' !== $key ) $args[ $key ] = self::clean( $term->name );
 			}
 		}
-		if ( '' !== $param && '' !== $name ) {
-			$url = add_query_arg( $param, rawurlencode( wp_strip_all_tags( html_entity_decode( $name, ENT_QUOTES, 'UTF-8' ) ) ), $url );
+		$args = array_filter( $args, 'strlen' );
+		if ( $args ) {
+			$url = add_query_arg( $args, $url );
 		}
 		return esc_url_raw( $url );
 	}
