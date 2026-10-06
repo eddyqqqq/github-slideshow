@@ -92,8 +92,10 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->controls_style_grid();
 		$this->controls_style_card();
 		$this->controls_style_image();
+		$this->controls_style_boxes();
 		$this->controls_style_texts();
 		$this->controls_style_colors();
+		$this->controls_style_card_hover();
 		$this->controls_style_arrow();
 	}
 
@@ -1074,6 +1076,465 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	private function controls_style_boxes() {
+		$this->start_controls_section(
+			'section_style_boxes',
+			array(
+				'label' => 'Containere (nume / descriere / culori)',
+				'tab' => Controls_Manager::TAB_STYLE,
+			)
+		);
+
+		$this->add_control(
+			'boxes_info',
+			array(
+				'label' => '',
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => 'Fiecare element are containerul lui. „Spațiu stânga / dreapta” și „Distanța între elemente” se aplică la toate, ca să rămână aliniate; apoi poți ajusta fiecare container separat.',
+				'content_classes' => 'elementor-descriptor',
+			)
+		);
+
+		$this->add_responsive_control(
+			'boxes_inset',
+			array(
+				'label' => 'Spațiu stânga / dreapta (toate containerele)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem', 'em', '%' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 80, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-box' ) => 'padding-left: {{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'boxes_gap',
+			array(
+				'label' => 'Distanța între elemente',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem', 'em' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 80, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-body' ) => 'row-gap: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'boxes_align',
+			array(
+				'label' => 'Aliniere conținut',
+				'type' => Controls_Manager::CHOOSE,
+				'options' => array( 'left' => array( 'title' => 'Stânga', 'icon' => 'eicon-text-align-left' ), 'center' => array( 'title' => 'Centru', 'icon' => 'eicon-text-align-center' ), 'right' => array( 'title' => 'Dreapta', 'icon' => 'eicon-text-align-right' ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-box' ) => 'text-align: {{VALUE}};',
+					$this->sel( '.pvg-colors' ) => 'justify-content: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'box_head_heading',
+			array(
+				'label' => 'Container nume + săgeată',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_head_padding',
+			array(
+				'label' => 'Padding',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvg-head' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_head_margin',
+			array(
+				'label' => 'Margini',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'rem', 'em', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvg-head' ) => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_head_maxw',
+			array(
+				'label' => 'Lățime maximă',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem', 'em', '%', 'ch' ),
+				'range' => array( 'px' => array( 'min' => 40, 'max' => 1000, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-head' ) => 'max-width: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'box_head_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-head' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_head_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvg-head' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'box_head_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pvg-head' ),
+			)
+		);
+
+		$this->add_control(
+			'box_text_heading',
+			array(
+				'label' => 'Container descriere',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_text_padding',
+			array(
+				'label' => 'Padding',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvg-text' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_text_margin',
+			array(
+				'label' => 'Margini',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'rem', 'em', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvg-text' ) => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_text_maxw',
+			array(
+				'label' => 'Lățime maximă',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem', 'em', '%', 'ch' ),
+				'range' => array( 'px' => array( 'min' => 40, 'max' => 1000, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-text' ) => 'max-width: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'box_text_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-text' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_text_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvg-text' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'box_text_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pvg-text' ),
+			)
+		);
+
+		$this->add_control(
+			'box_sw_heading',
+			array(
+				'label' => 'Container culori',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_sw_padding',
+			array(
+				'label' => 'Padding',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvg-swatches' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_sw_margin',
+			array(
+				'label' => 'Margini',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'rem', 'em', '%' ),
+				'selectors' => array(
+					$this->sel( '.pvg-swatches' ) => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_sw_maxw',
+			array(
+				'label' => 'Lățime maximă',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem', 'em', '%', 'ch' ),
+				'range' => array( 'px' => array( 'min' => 40, 'max' => 1000, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-swatches' ) => 'max-width: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'box_sw_bg',
+			array(
+				'label' => 'Fundal',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-swatches' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'box_sw_radius',
+			array(
+				'label' => 'Colțuri rotunjite (fiecare colț)',
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%', 'em' ),
+				'selectors' => array(
+					$this->sel( '.pvg-swatches' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name' => 'box_sw_border',
+				'label' => 'Bordură',
+				'selector' => $this->sel( '.pvg-swatches' ),
+			)
+		);
+
+		$this->end_controls_section();
+
+	}
+
+	private function controls_style_card_hover() {
+		$this->start_controls_section(
+			'section_style_card_hover',
+			array(
+				'label' => 'Hover pe card',
+				'tab' => Controls_Manager::TAB_STYLE,
+			)
+		);
+
+		$this->add_control(
+			'hv_title',
+			array(
+				'label' => 'Culoare nume',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-title' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hv_desc',
+			array(
+				'label' => 'Culoare descriere',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-desc' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hv_arrow',
+			array(
+				'label' => 'Culoare săgeată',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-arrow' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hv_counter_heading',
+			array(
+				'label' => '+N',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'hv_counter',
+			array(
+				'label' => 'Culoare +N',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-colors-more' ) => 'color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hv_counter_bg',
+			array(
+				'label' => 'Fundal +N',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-colors-more' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hv_counter_border',
+			array(
+				'label' => 'Culoare bordură +N',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-colors-more' ) => 'border-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hv_sw_heading',
+			array(
+				'label' => 'Culori (thumbnails)',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'hv_sw_border',
+			array(
+				'label' => 'Culoare bordură culori',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-color' ) => 'border-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hv_sw_opacity',
+			array(
+				'label' => 'Opacitate culori',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range' => array( 'px' => array( 'min' => 0.2, 'max' => 1, 'step' => 0.05 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-color' ) => 'opacity: {{SIZE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hv_boxes_heading',
+			array(
+				'label' => 'Containere',
+				'type' => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_control(
+			'hv_head_bg',
+			array(
+				'label' => 'Fundal container nume',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-head' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hv_text_bg',
+			array(
+				'label' => 'Fundal container descriere',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-text' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'hv_sw_bg',
+			array(
+				'label' => 'Fundal container culori',
+				'type' => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvg-card:hover .pvg-swatches' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->end_controls_section();
+
+	}
+
 	private function controls_style_colors() {
 		$this->start_controls_section(
 			'section_style_colors',
@@ -1156,7 +1617,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 				'size_units' => array( 'px', 'em', 'rem' ),
 				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
 				'selectors'  => array(
-					$this->sel( '.pvg-body > .pvg-colors' ) => 'padding-top: {{SIZE}}{{UNIT}};',
+					$this->sel( '.pvg-swatches' ) => 'padding-top: {{SIZE}}{{UNIT}};',
 				),
 			)
 		);
@@ -1884,25 +2345,23 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 								?>
 							</div>
 							<div class="pvg-body">
-								<?php
-								if ( 'top' === $c_pos ) {
-									echo $cols; // phpcs:ignore -- generat și escapat în colors_html()
-								}
-								?>
+								<?php if ( 'top' === $c_pos && '' !== $cols ) : ?>
+									<div class="pvg-box pvg-swatches pvg-swatches-top"><?php echo $cols; // phpcs:ignore -- generat și escapat în colors_html() ?></div>
+								<?php endif; ?>
+								<div class="pvg-box pvg-head">
 								<div class="pvg-row">
 									<<?php echo $title_tag; // phpcs:ignore ?> class="pvg-title"><?php echo esc_html( wp_strip_all_tags( $name ) ); ?></<?php echo $title_tag; // phpcs:ignore ?>>
 									<?php if ( $show_arrow ) : ?>
 										<span class="pvg-arrow" aria-hidden="true"><?php echo $arrow_html; // phpcs:ignore -- generat în arrow_html() ?></span>
 									<?php endif; ?>
 								</div>
+								</div>
 								<?php if ( '' !== $desc ) : ?>
-									<p class="pvg-desc"><?php echo esc_html( $desc ); ?></p>
+									<div class="pvg-box pvg-text"><p class="pvg-desc"><?php echo esc_html( $desc ); ?></p></div>
 								<?php endif; ?>
-								<?php
-								if ( 'bottom' === $c_pos ) {
-									echo $cols; // phpcs:ignore -- generat și escapat în colors_html()
-								}
-								?>
+								<?php if ( 'bottom' === $c_pos && '' !== $cols ) : ?>
+									<div class="pvg-box pvg-swatches"><?php echo $cols; // phpcs:ignore -- generat și escapat în colors_html() ?></div>
+								<?php endif; ?>
 							</div>
 						</a>
 					</li>

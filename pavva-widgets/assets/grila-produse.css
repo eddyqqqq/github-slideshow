@@ -130,7 +130,7 @@
 }
 .pvg .pvg-desc {
 	display: block;
-	margin: 12px 0 0;
+	margin: 0;
 	padding: 0;
 	font-size: 13px;
 	line-height: 1.55;
@@ -200,9 +200,16 @@
 	gap: 6px;
 	margin-top: 0;
 }
-.pvg .pvg-body > .pvg-colors { padding-top: 14px; }
+/* containerele: nume + săgeată, descriere, culori */
+.pvg .pvg-body { row-gap: 12px; }
+.pvg .pvg-box {
+	box-sizing: border-box;
+	min-width: 0;
+	transition: background-color var(--pvg-speed) var(--pvg-ease), border-color var(--pvg-speed) var(--pvg-ease);
+}
+.pvg .pvg-swatches { padding-top: 6px; }
 /* culorile pe aceeași linie în toate cardurile (oricât de lungă e descrierea) */
-.pvg.pvg-colors-bottom .pvg-body > .pvg-colors:last-child { margin-top: auto; }
+.pvg.pvg-colors-bottom .pvg-body > .pvg-swatches:last-child { margin-top: auto; }
 .pvg .pvg-color {
 	display: block;
 	flex: none;
@@ -254,7 +261,7 @@
 	margin: 0;
 	z-index: 1;
 }
-.pvg .pvg-body > .pvg-colors:first-child { margin: 0 0 12px; }
+.pvg .pvg-swatches-top { padding-top: 0; }
 .pvg .pvg-arrow i { font-size: 1em; line-height: 1; color: inherit; }
 .pvg .pvg-arrow svg.e-font-icon-svg { fill: currentColor; } /* iconițe din bibliotecă */
 
@@ -263,3 +270,8 @@
 .pvg.pvg-recolor .pvg-arrow svg:not(.pvg-arrow-default) path:not([fill]):not([stroke]) { fill: currentColor; }
 .pvg.pvg-recolor .pvg-arrow svg:not(.pvg-arrow-default) [stroke]:not([stroke="none"]) { stroke: currentColor; }
 .pvg .pvg-arrow svg * { transition: stroke var(--pvg-speed) var(--pvg-ease), fill var(--pvg-speed) var(--pvg-ease); }
+
+/* tranziții pentru hover pe card */
+.pvg .pvg-desc,
+.pvg .pvg-colors-more { transition: color var(--pvg-speed) var(--pvg-ease), background-color var(--pvg-speed) var(--pvg-ease), border-color var(--pvg-speed) var(--pvg-ease); }
+.pvg .pvg-color { transition: transform .25s ease, opacity var(--pvg-speed) var(--pvg-ease), border-color var(--pvg-speed) var(--pvg-ease); }
