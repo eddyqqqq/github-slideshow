@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 3.2.4
+Versiune: 3.2.5
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 
 Widgeturi Elementor create de imagient special pentru site-ul Pavva.
@@ -91,6 +91,11 @@ categoria și produsul în câmpurile „Categorie produs” / „Produs solicit
 (liste sau text; recunoaște câmpurile după nume / etichetă / prima opțiune),
 inclusiv când lista de produse se încarcă după categorie.
 
+Formular Elementor Pro (din 3.2.5): la câmpurile Select pune
+Advanced → ID = categorie, respectiv produs. Listele se completează singure
+din WooCommerce (categorii / produse), iar „produs” arată doar produsele
+din categoria aleasă. Prima opțiune scrisă rămâne textul de început.
+
 ÎNAINTE DE ȘTERGEREA PLUGINURILOR VECHI
 Pe pagina Plugins, Pavva Widgets arată ce pagini / template-uri mai folosesc
 widgeturi din Pavva Products / Pavva Categories și cu ce le înlocuiești.
@@ -135,6 +140,7 @@ includes/class-pavva-dynamic-tags.php       – câmpuri selectabile în Element
 includes/class-pavva-slider-fields.php      – câmpul Imagini slider header
 includes/class-pavva-migration.php          – verificarea widgeturilor vechi
 includes/class-pavva-quote-prefill.php      – completarea formularului de ofertă
+includes/class-pavva-quote-form.php         – listele categorie / produs din formular
 assets/admin/                               – scripturi și stiluri pentru admin
 widgets/class-pavva-hero-slider-widget.php  – Slider header: setări + HTML
 widgets/class-pavva-carusel-widget.php      – Carusel produse: setări + HTML
