@@ -259,6 +259,15 @@
 	color: #6b6964;
 }
 
+/* Widgetul ocupă toată lățimea containerului (și când containerul are
+   „Align items: Start” sau e pe rând). Lățimea din Advanced → Layout o
+   suprascrie în continuare. */
+:where(.e-con, .e-con-inner, .elementor-widget-wrap) > .elementor-widget-pavva_culori_finisaje {
+	align-self: stretch;
+	width: 100%;
+	max-width: 100%;
+}
+
 /* Telefon: thumbnails sub imagine (dacă nu ai ales altceva în Elementor) */
 @media (max-width: 767px) {
 	.pvc .pvc-layout { grid-template-columns: minmax(0, 1fr); }
