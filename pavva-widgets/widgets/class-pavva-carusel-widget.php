@@ -1104,7 +1104,7 @@ class Pavva_Carusel_Widget extends Widget_Base {
 				'label'     => 'Culoare',
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					$this->sel( '.cc-arrow-wrap' ) => 'color: {{VALUE}};',
+					$this->sel() => '--cc-arrow-color: {{VALUE}};',
 				),
 			)
 		);
@@ -1115,7 +1115,7 @@ class Pavva_Carusel_Widget extends Widget_Base {
 				'label'     => 'Culoare la hover',
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					$this->sel( '.cc-card:hover .cc-arrow-wrap' ) => 'color: {{VALUE}};',
+					$this->sel() => '--cc-arrow-hover: {{VALUE}};',
 				),
 			)
 		);

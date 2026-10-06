@@ -172,7 +172,7 @@
 	flex: none;
 	font-size: 20px;
 	line-height: 1;
-	color: var(--cc-ink);
+	color: var(--cc-arrow-color, var(--cc-ink));
 	transition:
 		transform var(--cc-speed-card) var(--cc-ease),
 		color var(--cc-speed-card) var(--cc-ease);
@@ -195,7 +195,12 @@
 }
 
 /* Colorarea SVG-urilor încărcate / din bibliotecă (Style → Săgeată) */
-.cc-carousel.cc-svg-auto .cc-arrow-wrap svg:not(.cc-arrow-default) { fill: currentColor; }
+/* Automat: preia culoarea și când fișierul SVG are culorile scrise în desen (ex.: fill="#1B0F28") */
+.cc-carousel.cc-svg-auto .cc-arrow-wrap svg:not(.cc-arrow-default):not([fill="none"]),
+.cc-carousel.cc-svg-auto .cc-arrow-wrap svg:not(.cc-arrow-default) [fill]:not([fill="none"]),
+.cc-carousel.cc-svg-auto .cc-arrow-wrap svg:not(.cc-arrow-default) path:not([fill]):not([stroke]) { fill: currentColor; }
+.cc-carousel.cc-svg-auto .cc-arrow-wrap svg:not(.cc-arrow-default) [stroke]:not([stroke="none"]) { stroke: currentColor; }
+.cc-carousel .cc-arrow-wrap svg * { transition: fill var(--cc-speed-card) var(--cc-ease), stroke var(--cc-speed-card) var(--cc-ease); }
 .cc-carousel.cc-svg-fill .cc-arrow-wrap svg:not(.cc-arrow-default),
 .cc-carousel.cc-svg-fill .cc-arrow-wrap svg:not(.cc-arrow-default) * { fill: currentColor; }
 .cc-carousel.cc-svg-stroke .cc-arrow-wrap svg:not(.cc-arrow-default) * { stroke: currentColor; }
@@ -203,6 +208,9 @@
 .cc-carousel.cc-svg-both .cc-arrow-wrap svg:not(.cc-arrow-default) * { fill: currentColor; stroke: currentColor; }
 .cc-carousel .cc-arrow-wrap { transform: translate(0, var(--cc-arrow-y)); }
 .cc-carousel .cc-card:hover .cc-arrow-wrap { transform: translate(calc(var(--cc-arrow-shift) * var(--cc-arrow-dir)), var(--cc-arrow-y)); }
+/* la hover, săgeata ia culoarea brandului (se schimbă din Style → Săgeată → Culoare la hover) */
+.cc-carousel .cc-card:hover .cc-arrow-wrap,
+.cc-carousel .cc-card:focus-visible .cc-arrow-wrap { color: var(--cc-arrow-hover, #ab5525); }
 
 /* ---------- Efecte titlu la hover ---------- */
 .cc-carousel .cc-title-text {
