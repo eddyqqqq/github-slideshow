@@ -63,7 +63,8 @@
 }
 .pvg .pvg-card {
 	box-sizing: border-box;
-	display: block;
+	display: flex;
+	flex-direction: column;
 	height: 100%;
 	border: 0 solid transparent;
 	transition:
@@ -105,9 +106,12 @@
 
 /* ---------- Texte ---------- */
 .pvg .pvg-body {
-	display: block;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	flex: 1 1 auto;
 	box-sizing: border-box;
-	padding: 22px 16px 0;
+	padding: 22px 0 0;
 }
 .pvg .pvg-row {
 	display: flex;
@@ -194,8 +198,11 @@
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 6px;
-	margin-top: 14px;
+	margin-top: 0;
 }
+.pvg .pvg-body > .pvg-colors { padding-top: 14px; }
+/* culorile pe aceeași linie în toate cardurile (oricât de lungă e descrierea) */
+.pvg.pvg-colors-bottom .pvg-body > .pvg-colors:last-child { margin-top: auto; }
 .pvg .pvg-color {
 	display: block;
 	flex: none;
@@ -249,10 +256,10 @@
 }
 .pvg .pvg-body > .pvg-colors:first-child { margin: 0 0 12px; }
 .pvg .pvg-arrow i { font-size: 1em; line-height: 1; color: inherit; }
-.pvg .pvg-arrow svg { fill: currentColor; } /* iconițe din bibliotecă; săgeata implicită e doar contur */
+.pvg .pvg-arrow svg.e-font-icon-svg { fill: currentColor; } /* iconițe din bibliotecă */
 
-/* SVG încărcat ca săgeată: preia culoarea săgeții (Normal / Hover) */
-.pvg-arrow-recolor-yes .pvg .pvg-arrow-upload svg [stroke]:not([stroke="none"]) { stroke: currentColor; }
-.pvg-arrow-recolor-yes .pvg .pvg-arrow-upload svg [fill]:not([fill="none"]),
-.pvg-arrow-recolor-yes .pvg .pvg-arrow-upload svg:not([fill]) > *:not([fill]):not([stroke]) { fill: currentColor; }
+/* Săgeata SVG preia culoarea săgeții (Normal / Hover), oricum ar fi încărcată */
+.pvg.pvg-recolor .pvg-arrow svg:not(.pvg-arrow-default) [fill]:not([fill="none"]),
+.pvg.pvg-recolor .pvg-arrow svg:not(.pvg-arrow-default) path:not([fill]):not([stroke]) { fill: currentColor; }
+.pvg.pvg-recolor .pvg-arrow svg:not(.pvg-arrow-default) [stroke]:not([stroke="none"]) { stroke: currentColor; }
 .pvg .pvg-arrow svg * { transition: stroke var(--pvg-speed) var(--pvg-ease), fill var(--pvg-speed) var(--pvg-ease); }

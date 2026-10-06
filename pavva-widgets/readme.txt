@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 3.2.7
+Versiune: 3.2.8
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 
 Widgeturi Elementor create de imagient special pentru site-ul Pavva.

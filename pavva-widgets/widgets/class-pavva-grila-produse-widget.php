@@ -480,15 +480,14 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->add_control(
 			'arrow_recolor',
 			array(
-				'label' => 'Colorează SVG-ul încărcat',
+				'label' => 'Colorează săgeata (SVG)',
 				'type' => Controls_Manager::SWITCHER,
-				'description' => 'Culoarea săgeții (și cea de hover) se aplică peste culorile din fișierul SVG.',
+				'description' => 'Culoarea săgeții și cea de hover se aplică peste culorile din fișierul SVG (inclusiv „Upload SVG”).',
 				'label_on' => 'Da',
 				'label_off' => 'Nu',
 				'return_value' => 'yes',
-				'prefix_class' => 'pvg-arrow-recolor-',
 				'default' => 'yes',
-				'condition' => array( 'show_arrow' => 'yes', 'arrow_type' => 'upload' ),
+				'condition' => array( 'show_arrow' => 'yes' ),
 			)
 		);
 
@@ -608,9 +607,35 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 				'label'       => 'Padding zonă text',
 				'description' => 'Spațiul din jurul numelui și al descrierii, sub imagine.',
 				'type'        => Controls_Manager::DIMENSIONS,
-				'size_units'  => array( 'px', 'em', 'rem', '%' ),
+				'size_units' => array( 'px', 'em', 'rem', '%' ),
 				'selectors'   => array(
 					$this->sel( '.pvg-body' ) => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'body_inset',
+			array(
+				'label' => 'Spațiu stânga / dreapta (toate elementele)',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem', 'em', '%' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 80, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-body' ) => 'padding-left: {{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'body_top',
+			array(
+				'label' => 'Spațiu sub imagine',
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem', 'em' ),
+				'range' => array( 'px' => array( 'min' => 0, 'max' => 100, 'step' => 1 ) ),
+				'selectors' => array(
+					$this->sel( '.pvg-body' ) => 'padding-top: {{SIZE}}{{UNIT}};',
 				),
 			)
 		);
@@ -689,7 +714,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label'      => 'Ridicare la hover',
 				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
+				'size_units' => array( 'px', 'rem', 'em' ),
 				'range'      => array( 'px' => array( 'min' => 0, 'max' => 30 ) ),
 				'selectors'  => array(
 					$this->sel() => '--pvg-lift: {{SIZE}}{{UNIT}};',
@@ -775,7 +800,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Colțuri rotunjite (fiecare colț)',
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em' ),
+				'size_units' => array( 'px', '%', 'em', 'rem' ),
 				'selectors' => array(
 					$this->sel( '.pvg-media' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
@@ -948,7 +973,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label'      => 'Spațiu deasupra descrierii',
 				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em' ),
+				'size_units' => array( 'px', 'em', 'rem' ),
 				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
 				'condition'  => array( 'show_desc' => 'yes' ),
 				'selectors'  => array(
@@ -986,7 +1011,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Lățime maximă nume',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%', 'ch' ),
+				'size_units' => array( 'px', '%', 'ch', 'rem', 'em' ),
 				'range' => array( 'px' => array( 'min' => 40, 'max' => 800, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel( '.pvg-title' ) => 'max-width: {{SIZE}}{{UNIT}};',
@@ -999,7 +1024,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Lățime maximă descriere',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%', 'ch' ),
+				'size_units' => array( 'px', '%', 'ch', 'rem', 'em' ),
 				'range' => array( 'px' => array( 'min' => 40, 'max' => 800, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel( '.pvg-desc' ) => 'max-width: {{SIZE}}{{UNIT}};',
@@ -1013,7 +1038,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Lățime maximă zonă text',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%' ),
+				'size_units' => array( 'px', '%', 'rem', 'em' ),
 				'range' => array( 'px' => array( 'min' => 100, 'max' => 1000, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel( '.pvg-body' ) => 'max-width: {{SIZE}}{{UNIT}};',
@@ -1026,7 +1051,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Margini nume',
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', 'em', '%' ),
+				'size_units' => array( 'px', 'em', '%', 'rem' ),
 				'selectors' => array(
 					$this->sel( '.pvg-row' ) => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
@@ -1038,7 +1063,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Margini descriere',
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', 'em', '%' ),
+				'size_units' => array( 'px', 'em', '%', 'rem' ),
 				'selectors' => array(
 					$this->sel( '.pvg-desc' ) => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
@@ -1064,7 +1089,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Mărime thumbnail (lățime = înălțime)',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em' ),
+				'size_units' => array( 'px', 'em', 'rem' ),
 				'range' => array( 'px' => array( 'min' => 8, 'max' => 160, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel() => '--pvg-color: {{SIZE}}{{UNIT}};',
@@ -1077,7 +1102,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Lățime (opțional)',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em' ),
+				'size_units' => array( 'px', 'em', 'rem' ),
 				'range' => array( 'px' => array( 'min' => 8, 'max' => 200, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel() => '--pvg-color-w: {{SIZE}}{{UNIT}};',
@@ -1090,7 +1115,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Înălțime (opțional)',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em' ),
+				'size_units' => array( 'px', 'em', 'rem' ),
 				'range' => array( 'px' => array( 'min' => 8, 'max' => 200, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel() => '--pvg-color-h: {{SIZE}}{{UNIT}};',
@@ -1103,7 +1128,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label'      => 'Spațiu între thumbnails',
 				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
+				'size_units' => array( 'px', 'rem', 'em' ),
 				'range'      => array( 'px' => array( 'min' => 0, 'max' => 30 ) ),
 				'selectors'  => array(
 					$this->sel( '.pvg-colors' ) => 'gap: {{SIZE}}{{UNIT}};',
@@ -1116,7 +1141,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Colțuri rotunjite (fiecare colț)',
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em' ),
+				'size_units' => array( 'px', '%', 'em', 'rem' ),
 				'selectors' => array(
 					$this->sel( '.pvg-color, {{WRAPPER}} .pvg .pvg-colors-more.is-box' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
@@ -1128,11 +1153,24 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label'      => 'Spațiu deasupra',
 				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em' ),
+				'size_units' => array( 'px', 'em', 'rem' ),
 				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
 				'selectors'  => array(
-					$this->sel( '.pvg-colors' ) => 'margin-top: {{SIZE}}{{UNIT}};',
+					$this->sel( '.pvg-body > .pvg-colors' ) => 'padding-top: {{SIZE}}{{UNIT}};',
 				),
+			)
+		);
+
+		$this->add_control(
+			'colors_align_bottom',
+			array(
+				'label' => 'Aliniază culorile jos (la fel în toate cardurile)',
+				'type' => Controls_Manager::SWITCHER,
+				'description' => 'Culorile stau pe aceeași linie în toate cardurile, oricât de lungă e descrierea.',
+				'label_on' => 'Da',
+				'label_off' => 'Nu',
+				'return_value' => 'yes',
+				'default' => 'yes',
 			)
 		);
 
@@ -1232,7 +1270,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Colțuri rotunjite +N',
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em' ),
+				'size_units' => array( 'px', '%', 'em', 'rem' ),
 				'selectors' => array(
 					$this->sel( '.pvg-colors-more' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
@@ -1255,7 +1293,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Spațiu înainte de +N',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
+				'size_units' => array( 'px', 'rem', 'em' ),
 				'range' => array( 'px' => array( 'min' => 0, 'max' => 30, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel( '.pvg-colors-more' ) => 'margin-left: {{SIZE}}{{UNIT}};',
@@ -1279,7 +1317,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Distanță stânga',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%' ),
+				'size_units' => array( 'px', '%', 'rem', 'em' ),
 				'range' => array( 'px' => array( 'min' => 0, 'max' => 100, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel( '.pvg-media .pvg-colors' ) => 'left: {{SIZE}}{{UNIT}};',
@@ -1293,7 +1331,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Distanță jos',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%' ),
+				'size_units' => array( 'px', '%', 'rem', 'em' ),
 				'range' => array( 'px' => array( 'min' => 0, 'max' => 100, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel( '.pvg-media .pvg-colors' ) => 'bottom: {{SIZE}}{{UNIT}};',
@@ -1332,7 +1370,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Colțuri bandă culori',
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em' ),
+				'size_units' => array( 'px', '%', 'em', 'rem' ),
 				'selectors' => array(
 					$this->sel( '.pvg-media .pvg-colors' ) => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
@@ -1367,7 +1405,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Lățime săgeată',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em' ),
+				'size_units' => array( 'px', 'em', 'rem' ),
 				'range' => array( 'px' => array( 'min' => 6, 'max' => 240, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel( '.pvg-arrow' ) => '--pvg-arrow-w: {{SIZE}}{{UNIT}};',
@@ -1380,7 +1418,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Mărime iconiță (doar bibliotecă)',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
+				'size_units' => array( 'px', 'rem', 'em' ),
 				'range' => array( 'px' => array( 'min' => 8, 'max' => 80, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel( '.pvg-arrow' ) => 'font-size: {{SIZE}}{{UNIT}};',
@@ -1437,7 +1475,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Distanța mișcării',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
+				'size_units' => array( 'px', 'rem', 'em' ),
 				'range' => array( 'px' => array( 'min' => 0, 'max' => 40, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel() => '--pvg-arrow-shift: {{SIZE}}{{UNIT}};',
@@ -1454,7 +1492,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Ajustare verticală',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
+				'size_units' => array( 'px', 'rem', 'em' ),
 				'range' => array( 'px' => array( 'min' => -30, 'max' => 30, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel( '.pvg-arrow' ) => '--pvg-arrow-y: {{SIZE}}{{UNIT}};',
@@ -1468,7 +1506,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			array(
 				'label' => 'Spațiu minim față de nume',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
+				'size_units' => array( 'px', 'rem', 'em' ),
 				'range' => array( 'px' => array( 'min' => 0, 'max' => 80, 'step' => 1 ) ),
 				'selectors' => array(
 					$this->sel( '.pvg-row' ) => 'gap: {{SIZE}}{{UNIT}};',
@@ -1810,7 +1848,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 			$this->editor_notice( '<strong>Grilă produse – previzualizare:</strong> nu știu categoria paginii, așa că arăt câteva produse ca exemplu. Pentru categoria reală, alege una la <em>rotița Setări → Preview Settings</em>. Pe site apar produsele categoriei.' );
 		}
 		?>
-		<div class="pvg">
+		<div class="pvg<?php echo ( ! isset( $s['arrow_recolor'] ) || 'yes' === $s['arrow_recolor'] ) ? ' pvg-recolor' : ''; ?><?php echo ( ! isset( $s['colors_align_bottom'] ) || 'yes' === $s['colors_align_bottom'] ) ? ' pvg-colors-bottom' : ''; ?>">
 			<?php if ( isset( $s['show_heading'] ) && 'yes' === $s['show_heading'] && '' !== trim( $heading ) ) : ?>
 				<<?php echo $heading_tag; // phpcs:ignore ?> class="pvg-heading"><?php echo esc_html( $heading ); ?></<?php echo $heading_tag; // phpcs:ignore ?>>
 			<?php endif; ?>
