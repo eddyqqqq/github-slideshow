@@ -98,7 +98,7 @@
 	border: 0;
 	border-radius: 0;
 	box-shadow: none;
-	transition: transform 900ms var(--pvg-ease);
+	transition: transform var(--pvg-speed-zoom, 900ms) var(--pvg-ease);
 }
 .pvg .pvg-card:hover .pvg-media img { transform: scale(var(--pvg-zoom)); }
 .pvg .pvg-card:hover .pvg-title,
@@ -275,3 +275,74 @@
 .pvg .pvg-desc,
 .pvg .pvg-colors-more { transition: color var(--pvg-speed) var(--pvg-ease), background-color var(--pvg-speed) var(--pvg-ease), border-color var(--pvg-speed) var(--pvg-ease); }
 .pvg .pvg-color { transition: transform .25s ease, opacity var(--pvg-speed) var(--pvg-ease), border-color var(--pvg-speed) var(--pvg-ease); }
+
+/* ================================================================
+ * Efect imagine la hover (Style → Imagine → Efect imagine la hover)
+ * ================================================================ */
+.pvg .pvg-media::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity var(--pvg-speed-zoom, 900ms) var(--pvg-ease), transform var(--pvg-speed-zoom, 900ms) var(--pvg-ease);
+}
+.pvg .pvg-media { transition: transform var(--pvg-speed-zoom, 900ms) var(--pvg-ease), box-shadow var(--pvg-speed-zoom, 900ms) var(--pvg-ease); }
+
+/* Zoom invers: pornește mărită și revine la normal */
+.elementor-element.pvg-imgfx-zoom-out .pvg .pvg-media img { transform: scale(var(--pvg-zoom)); }
+.elementor-element.pvg-imgfx-zoom-out .pvg .pvg-card:hover .pvg-media img,
+.elementor-element.pvg-imgfx-zoom-out .pvg .pvg-card:focus-visible .pvg-media img { transform: scale(1); }
+
+/* Glisare ușoară */
+.elementor-element.pvg-imgfx-pan .pvg .pvg-media img { transform: scale(calc(var(--pvg-zoom) + .04)) translateX(2%); }
+.elementor-element.pvg-imgfx-pan .pvg .pvg-card:hover .pvg-media img,
+.elementor-element.pvg-imgfx-pan .pvg .pvg-card:focus-visible .pvg-media img { transform: scale(calc(var(--pvg-zoom) + .04)) translateX(-2%); }
+
+/* Zoom cu rotire ușoară */
+.elementor-element.pvg-imgfx-rotate .pvg .pvg-card:hover .pvg-media img,
+.elementor-element.pvg-imgfx-rotate .pvg .pvg-card:focus-visible .pvg-media img { transform: scale(calc(var(--pvg-zoom) + .04)) rotate(1.5deg); }
+
+/* Ridicare imagine */
+.elementor-element.pvg-imgfx-lift .pvg .pvg-card:hover .pvg-media img,
+.elementor-element.pvg-imgfx-lift .pvg .pvg-card:focus-visible .pvg-media img { transform: none; }
+.elementor-element.pvg-imgfx-lift .pvg .pvg-card:hover .pvg-media,
+.elementor-element.pvg-imgfx-lift .pvg .pvg-card:focus-visible .pvg-media { transform: translateY(-6px); box-shadow: 0 14px 28px -14px rgba(0, 0, 0, .35); }
+
+/* Întunecare / luminare */
+.elementor-element.pvg-imgfx-darken .pvg .pvg-media::after { background-color: var(--pvg-overlay, rgba(0, 0, 0, .22)); }
+.elementor-element.pvg-imgfx-lighten .pvg .pvg-media::after { background-color: var(--pvg-overlay, rgba(255, 255, 255, .22)); }
+.elementor-element.pvg-imgfx-darken .pvg .pvg-card:hover .pvg-media::after, .elementor-element.pvg-imgfx-darken .pvg .pvg-card:focus-visible .pvg-media::after,
+.elementor-element.pvg-imgfx-lighten .pvg .pvg-card:hover .pvg-media::after, .elementor-element.pvg-imgfx-lighten .pvg .pvg-card:focus-visible .pvg-media::after { opacity: 1; }
+
+/* Alb-negru → color */
+.elementor-element.pvg-imgfx-gray .pvg .pvg-media img { filter: grayscale(1); transition: filter var(--pvg-speed-zoom, 900ms) var(--pvg-ease), transform var(--pvg-speed-zoom, 900ms) var(--pvg-ease); }
+.elementor-element.pvg-imgfx-gray .pvg .pvg-card:hover .pvg-media img,
+.elementor-element.pvg-imgfx-gray .pvg .pvg-card:focus-visible .pvg-media img { filter: grayscale(0); }
+
+/* Reflexie: o dungă de lumină trece peste imagine */
+.elementor-element.pvg-imgfx-shine .pvg .pvg-media::after {
+	inset: 0 auto 0 0;
+	width: 60%;
+	opacity: 1;
+	background: linear-gradient(105deg, transparent 0%, var(--pvg-overlay, rgba(255, 255, 255, .35)) 50%, transparent 100%);
+	transform: translateX(-180%) skewX(-12deg);
+	transition: none;
+}
+.elementor-element.pvg-imgfx-shine .pvg .pvg-card:hover .pvg-media::after,
+.elementor-element.pvg-imgfx-shine .pvg .pvg-card:focus-visible .pvg-media::after {
+	transform: translateX(260%) skewX(-12deg);
+	transition: transform var(--pvg-speed-zoom, 900ms) var(--pvg-ease);
+}
+
+/* Fără zoom pentru efectele care nu măresc imaginea */
+.elementor-element.pvg-imgfx-darken .pvg .pvg-card:hover .pvg-media img, .elementor-element.pvg-imgfx-darken .pvg .pvg-card:focus-visible .pvg-media img,
+.elementor-element.pvg-imgfx-lighten .pvg .pvg-card:hover .pvg-media img, .elementor-element.pvg-imgfx-lighten .pvg .pvg-card:focus-visible .pvg-media img,
+.elementor-element.pvg-imgfx-gray .pvg .pvg-card:hover .pvg-media img, .elementor-element.pvg-imgfx-gray .pvg .pvg-card:focus-visible .pvg-media img,
+.elementor-element.pvg-imgfx-shine .pvg .pvg-card:hover .pvg-media img, .elementor-element.pvg-imgfx-shine .pvg .pvg-card:focus-visible .pvg-media img,
+.elementor-element.pvg-imgfx-none .pvg .pvg-card:hover .pvg-media img, .elementor-element.pvg-imgfx-none .pvg .pvg-card:focus-visible .pvg-media img { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+	.pvg .pvg-media, .pvg .pvg-media img, .pvg .pvg-media::after { transition: none !important; }
+}

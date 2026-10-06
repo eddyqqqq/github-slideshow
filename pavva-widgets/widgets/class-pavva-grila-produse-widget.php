@@ -821,9 +821,60 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'image_fx',
+			array(
+				'label'        => 'Efect imagine la hover',
+				'type'         => Controls_Manager::SELECT,
+				'default'      => 'zoom',
+				'options'      => array(
+					'zoom'     => 'Zoom (mărire)',
+					'zoom-out' => 'Zoom invers (micșorare)',
+					'pan'      => 'Glisare ușoară',
+					'rotate'   => 'Zoom cu rotire ușoară',
+					'lift'     => 'Ridicare imagine',
+					'darken'   => 'Întunecare',
+					'lighten'  => 'Luminare',
+					'gray'     => 'Alb-negru → color',
+					'shine'    => 'Reflexie (lumină care trece)',
+					'none'     => 'Fără efect',
+				),
+				'prefix_class' => 'pvg-imgfx-',
+				'separator'    => 'before',
+			)
+		);
+
+		$this->add_control(
+			'image_overlay',
+			array(
+				'label'     => 'Culoare efect',
+				'type'      => Controls_Manager::COLOR,
+				'condition' => array( 'image_fx' => array( 'darken', 'lighten', 'shine' ) ),
+				'selectors' => array(
+					$this->sel() => '--pvg-overlay: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'image_fx_speed',
+			array(
+				'label'     => 'Durata efect (ms)',
+				'type'      => Controls_Manager::NUMBER,
+				'min'       => 0,
+				'max'       => 3000,
+				'step'      => 50,
+				'condition' => array( 'image_fx!' => 'none' ),
+				'selectors' => array(
+					$this->sel() => '--pvg-speed-zoom: {{VALUE}}ms;',
+				),
+			)
+		);
+
+		$this->add_control(
 			'image_zoom',
 			array(
-				'label'     => 'Zoom la hover',
+				'label'     => 'Intensitate zoom',
+				'condition' => array( 'image_fx' => array( 'zoom', 'zoom-out', 'pan', 'rotate' ) ),
 				'type'      => Controls_Manager::SLIDER,
 				'range'     => array( 'px' => array( 'min' => 1, 'max' => 1.3, 'step' => 0.01 ) ),
 				'selectors' => array(

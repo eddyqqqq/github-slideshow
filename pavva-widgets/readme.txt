@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 3.3.1
+Versiune: 3.4.0
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 
 Widgeturi Elementor create de imagient special pentru site-ul Pavva.
@@ -41,6 +41,9 @@ WIDGETURI
 3) Pavva – Carusel produse
    Carusel de carduri cu drag, alunecare și bară de progres.
    (Înlocuiește vechiul plugin „Carusel Produse pentru Elementor”.)
+   3.4.0: Style → Imagine → „Efect imagine la hover”: zoom, zoom invers,
+   glisare, rotire, ridicare, întunecare, luminare, alb-negru → color,
+   reflexie sau fără efect (la fel în Grilă produse).
 
 WIDGETURI DE PRODUS / CATEGORIE (din 3.1.0)
 Citesc automat produsul sau categoria paginii: le pui o singură dată

@@ -813,15 +813,50 @@ class Pavva_Carusel_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'image_fx',
+			array(
+				'label'        => 'Efect imagine la hover',
+				'type'         => Controls_Manager::SELECT,
+				'default'      => 'zoom',
+				'options'      => array(
+					'zoom'     => 'Zoom (mărire)',
+					'zoom-out' => 'Zoom invers (micșorare)',
+					'pan'      => 'Glisare ușoară',
+					'rotate'   => 'Zoom cu rotire ușoară',
+					'lift'     => 'Ridicare imagine',
+					'darken'   => 'Întunecare',
+					'lighten'  => 'Luminare',
+					'gray'     => 'Alb-negru → color',
+					'shine'    => 'Reflexie (lumină care trece)',
+					'none'     => 'Fără efect',
+				),
+				'prefix_class' => 'cc-imgfx-',
+				'separator'    => 'before',
+			)
+		);
+
+		$this->add_control(
+			'image_overlay',
+			array(
+				'label'     => 'Culoare efect',
+				'type'      => Controls_Manager::COLOR,
+				'condition' => array( 'image_fx' => array( 'darken', 'lighten', 'shine' ) ),
+				'selectors' => array(
+					$this->sel() => '--cc-overlay: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
 			'image_zoom',
 			array(
-				'label'       => 'Zoom la hover',
+				'label'       => 'Intensitate zoom',
 				'description' => '1 = fără zoom. 1.04 = zoom ușor.',
 				'type'        => Controls_Manager::NUMBER,
 				'min'         => 1,
 				'max'         => 2,
 				'step'        => 0.01,
-				'separator'   => 'before',
+				'condition'   => array( 'image_fx' => array( 'zoom', 'zoom-out', 'pan', 'rotate' ) ),
 				'selectors'   => array(
 					$this->sel() => '--cc-zoom: {{VALUE}};',
 				),
@@ -831,8 +866,9 @@ class Pavva_Carusel_Widget extends Widget_Base {
 		$this->add_control(
 			'image_zoom_speed',
 			array(
-				'label'     => 'Durata zoom (ms)',
+				'label'     => 'Durata efect (ms)',
 				'type'      => Controls_Manager::NUMBER,
+				'condition' => array( 'image_fx!' => 'none' ),
 				'min'       => 0,
 				'max'       => 3000,
 				'step'      => 50,

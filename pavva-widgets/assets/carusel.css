@@ -291,3 +291,77 @@
 	.cc-carousel .cc-title-text,
 	.cc-carousel .cc-thumb { transition: none; }
 }
+
+/* ================================================================
+ * Efect imagine la hover (Style → Imagine → Efect imagine la hover)
+ * ================================================================ */
+.cc-carousel .cc-media::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity var(--cc-speed-zoom) var(--cc-ease), transform var(--cc-speed-zoom) var(--cc-ease);
+}
+.cc-carousel .cc-media { transition: transform var(--cc-speed-zoom) var(--cc-ease), box-shadow var(--cc-speed-zoom) var(--cc-ease); }
+
+/* Zoom invers: pornește mărită și revine la normal */
+.elementor-element.cc-imgfx-zoom-out .cc-carousel .cc-media img { transform: scale(var(--cc-zoom)); }
+.elementor-element.cc-imgfx-zoom-out .cc-carousel .cc-card:hover .cc-media img,
+.elementor-element.cc-imgfx-zoom-out .cc-carousel .cc-card:focus-visible .cc-media img { transform: scale(1); }
+
+/* Glisare ușoară */
+.elementor-element.cc-imgfx-pan .cc-carousel .cc-media img { transform: scale(calc(var(--cc-zoom) + .04)) translateX(2%); }
+.elementor-element.cc-imgfx-pan .cc-carousel .cc-card:hover .cc-media img,
+.elementor-element.cc-imgfx-pan .cc-carousel .cc-card:focus-visible .cc-media img { transform: scale(calc(var(--cc-zoom) + .04)) translateX(-2%); }
+
+/* Zoom cu rotire ușoară */
+.elementor-element.cc-imgfx-rotate .cc-carousel .cc-card:hover .cc-media img,
+.elementor-element.cc-imgfx-rotate .cc-carousel .cc-card:focus-visible .cc-media img { transform: scale(calc(var(--cc-zoom) + .04)) rotate(1.5deg); }
+
+/* Ridicare imagine */
+.elementor-element.cc-imgfx-lift .cc-carousel .cc-card:hover .cc-media img,
+.elementor-element.cc-imgfx-lift .cc-carousel .cc-card:focus-visible .cc-media img { transform: none; }
+.elementor-element.cc-imgfx-lift .cc-carousel .cc-card:hover .cc-media,
+.elementor-element.cc-imgfx-lift .cc-carousel .cc-card:focus-visible .cc-media { transform: translateY(-6px); box-shadow: 0 14px 28px -14px rgba(0, 0, 0, .35); }
+
+/* loc pentru ridicare (caruselul taie pe verticală) */
+.elementor-element.cc-imgfx-lift .cc-carousel .cc-track { padding-top: 8px; margin-top: -8px; }
+
+/* Întunecare / luminare */
+.elementor-element.cc-imgfx-darken .cc-carousel .cc-media::after { background-color: var(--cc-overlay, rgba(0, 0, 0, .22)); }
+.elementor-element.cc-imgfx-lighten .cc-carousel .cc-media::after { background-color: var(--cc-overlay, rgba(255, 255, 255, .22)); }
+.elementor-element.cc-imgfx-darken .cc-carousel .cc-card:hover .cc-media::after, .elementor-element.cc-imgfx-darken .cc-carousel .cc-card:focus-visible .cc-media::after,
+.elementor-element.cc-imgfx-lighten .cc-carousel .cc-card:hover .cc-media::after, .elementor-element.cc-imgfx-lighten .cc-carousel .cc-card:focus-visible .cc-media::after { opacity: 1; }
+
+/* Alb-negru → color */
+.elementor-element.cc-imgfx-gray .cc-carousel .cc-media img { filter: grayscale(1); transition: filter var(--cc-speed-zoom) var(--cc-ease), transform var(--cc-speed-zoom) var(--cc-ease); }
+.elementor-element.cc-imgfx-gray .cc-carousel .cc-card:hover .cc-media img,
+.elementor-element.cc-imgfx-gray .cc-carousel .cc-card:focus-visible .cc-media img { filter: grayscale(0); }
+
+/* Reflexie: o dungă de lumină trece peste imagine */
+.elementor-element.cc-imgfx-shine .cc-carousel .cc-media::after {
+	inset: 0 auto 0 0;
+	width: 60%;
+	opacity: 1;
+	background: linear-gradient(105deg, transparent 0%, var(--cc-overlay, rgba(255, 255, 255, .35)) 50%, transparent 100%);
+	transform: translateX(-180%) skewX(-12deg);
+	transition: none;
+}
+.elementor-element.cc-imgfx-shine .cc-carousel .cc-card:hover .cc-media::after,
+.elementor-element.cc-imgfx-shine .cc-carousel .cc-card:focus-visible .cc-media::after {
+	transform: translateX(260%) skewX(-12deg);
+	transition: transform var(--cc-speed-zoom) var(--cc-ease);
+}
+
+/* Fără zoom pentru efectele care nu măresc imaginea */
+.elementor-element.cc-imgfx-darken .cc-carousel .cc-card:hover .cc-media img, .elementor-element.cc-imgfx-darken .cc-carousel .cc-card:focus-visible .cc-media img,
+.elementor-element.cc-imgfx-lighten .cc-carousel .cc-card:hover .cc-media img, .elementor-element.cc-imgfx-lighten .cc-carousel .cc-card:focus-visible .cc-media img,
+.elementor-element.cc-imgfx-gray .cc-carousel .cc-card:hover .cc-media img, .elementor-element.cc-imgfx-gray .cc-carousel .cc-card:focus-visible .cc-media img,
+.elementor-element.cc-imgfx-shine .cc-carousel .cc-card:hover .cc-media img, .elementor-element.cc-imgfx-shine .cc-carousel .cc-card:focus-visible .cc-media img,
+.elementor-element.cc-imgfx-none .cc-carousel .cc-card:hover .cc-media img, .elementor-element.cc-imgfx-none .cc-carousel .cc-card:focus-visible .cc-media img { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+	.cc-carousel .cc-media, .cc-carousel .cc-media img, .cc-carousel .cc-media::after { transition: none !important; }
+}
