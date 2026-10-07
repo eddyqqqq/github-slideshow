@@ -549,11 +549,68 @@ class Pavva_Dimensiuni_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_responsive_control(
+			'image_border_width',
+			array(
+				'label'       => 'Grosime chenar',
+				'description' => 'Implicit 1px. 0 = fără chenar.',
+				'type'        => Controls_Manager::DIMENSIONS,
+				'size_units'  => array( 'px', 'em', 'rem' ),
+				'separator'   => 'before',
+				'selectors'   => array(
+					$this->sel( '.pvd-media' ) => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'image_border_style',
+			array(
+				'label'     => 'Tip linie chenar',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '',
+				'options'   => array(
+					''       => 'Implicit (continuă)',
+					'solid'  => 'Continuă',
+					'dashed' => 'Întreruptă',
+					'dotted' => 'Punctată',
+					'double' => 'Dublă',
+					'none'   => 'Fără chenar',
+				),
+				'selectors' => array(
+					$this->sel( '.pvd-media' ) => 'border-style: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'image_border_color',
+			array(
+				'label'     => 'Culoare chenar',
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvd-media' ) => 'border-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'image_border_color_hover',
+			array(
+				'label'     => 'Culoare chenar la hover pe card',
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					$this->sel( '.pvd-media' ) => 'transition: border-color .4s ease, background-color .4s ease;',
+					$this->sel( '.pvd-item:hover .pvd-media' ) => 'border-color: {{VALUE}};',
+				),
+			)
+		);
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			array(
 				'name'     => 'image_border',
-				'label'    => 'Chenar',
+				'label'    => 'Chenar (setări Elementor, avansat)',
 				'selector' => $this->sel( '.pvd-media' ),
 			)
 		);

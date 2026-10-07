@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 4.2.2
+Versiune: 4.2.3
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 Lucrează împreună cu: Pavva Products 5.1.0+ și Pavva Categories 2.0.0+
 
@@ -75,6 +75,8 @@ Citesc automat produsul sau categoria paginii: le pui o singură dată
 6) Pavva – Dimensiuni și specificații
    Câte o coloană pe dimensiune: imagine în chenar + rânduri Etichetă / Valoare.
    Un rând cu etichetă fără valoare (ex.: „Kombi 4 cm”) apare ca titlu.
+   4.2.3: Style → Imagine: Grosime chenar (pe fiecare latură), Tip linie,
+   Culoare chenar și Culoare chenar la hover pe card.
 
 7) Pavva – Acordeon produs
    Variante de amenajare (galerie cu mărire), Fișe tehnice și Declarații de
