@@ -33,7 +33,9 @@ final class Pavva_W_Empty_Dynamic {
     private static function is_editor(): bool {
         if ( ! class_exists( '\Elementor\Plugin' ) ) return false;
         $p = \Elementor\Plugin::$instance;
-        return ( isset( $p->editor ) && $p->editor->is_edit_mode() ) || ( isset( $p->preview ) && $p->preview->is_preview_mode() );
+        if ( isset( $p->editor ) && $p->editor->is_edit_mode() ) return true;
+        if ( isset( $p->preview ) && $p->preview->is_preview_mode() ) return true;
+        return wp_doing_ajax() && isset( $_REQUEST['action'] ) && 'elementor_ajax' === $_REQUEST['action']; // phpcs:ignore WordPress.Security.NonceVerification
     }
 
     /* Text gol: fără litere / cifre și fără imagini, video sau iframe. */

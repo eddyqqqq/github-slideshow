@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 4.2.0
+Versiune: 4.2.1
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 Lucrează împreună cu: Pavva Products 5.1.0+ și Pavva Categories 2.0.0+
 
@@ -128,6 +128,9 @@ La orice widget / container / secțiune / coloană: Advanced → „Pavva – Af
 condiționată”. Activezi, alegi câmpul dinamic verificat (text sau imagine) și
 regula: „Ascunde dacă e gol” sau „Afișează doar dacă e gol”. Pe site elementul
 nu mai e trimis în pagină; în editor rămâne vizibil.
+4.2.1: și la elementele Elementor V4 (Flexbox, Div block, Grid, Heading,
+Paragraph…), în tab-ul General → „Pavva – Afișare condiționată” (câmp text
+dinamic). Elementele rămân vizibile și în canvas-ul editorului.
 
 ------------------------------------------------------------
 TREI PLUGINURI (din 4.0.0)
