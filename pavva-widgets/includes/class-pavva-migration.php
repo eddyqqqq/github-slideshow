@@ -88,12 +88,14 @@ final class Pavva_W_Migration {
         $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
         if ( ! $screen || 'plugins' !== $screen->id || ! current_user_can( 'activate_plugins' ) ) return;
 
-        $old_active = class_exists( 'PAVVA_Produse' ) || class_exists( 'PAVVA_Categories' );
+        /* versiunile vechi (cu widgeturi): Products < 5.0.0, Categories < 2.0.0 */
+        $old_active = ( class_exists( 'PAVVA_Produse' ) && version_compare( PAVVA_Produse::VERSION, '5.0.0', '<' ) )
+            || ( class_exists( 'PAVVA_Categories' ) && version_compare( PAVVA_Categories::VERSION, '2.0.0', '<' ) );
         $usage      = self::usage();
 
         if ( ! $usage ) {
             if ( $old_active ) {
-                echo '<div class="notice notice-success"><p><strong>Pavva Widgets:</strong> nicio pagină și niciun template nu mai folosește widgeturile vechi din <strong>Pavva Products</strong> / <strong>Pavva Categories</strong>. Le poți dezactiva și șterge în siguranță.</p></div>';
+                echo '<div class="notice notice-success"><p><strong>Pavva Widgets:</strong> nicio pagină și niciun template nu mai folosește widgeturile vechi din <strong>Pavva Products</strong> / <strong>Pavva Categories</strong>. Le poți actualiza la Pavva Products 5.0.0 / Pavva Categories 2.0.0 (doar câmpuri, fără widgeturile vechi).</p></div>';
             }
             return;
         }
@@ -102,7 +104,7 @@ final class Pavva_W_Migration {
         $class = $old_active ? 'notice-warning' : 'notice-error';
         echo '<div class="notice ' . esc_attr( $class ) . '"><p><strong>Pavva Widgets:</strong> ';
         echo $old_active
-            ? 'înainte să ștergi <strong>Pavva Products</strong> / <strong>Pavva Categories</strong>, înlocuiește widgeturile vechi din paginile de mai jos (altfel acele secțiuni dispar):'
+            ? 'înainte să actualizezi <strong>Pavva Products</strong> / <strong>Pavva Categories</strong> la versiunile noi (doar câmpuri), înlocuiește widgeturile vechi din paginile de mai jos (altfel acele secțiuni dispar):'
             : 'paginile de mai jos folosesc widgeturi din pluginurile vechi, care nu mai sunt active, deci acele secțiuni nu apar. Înlocuiește-le:';
         echo '</p><ul style="list-style:disc;margin-left:20px">';
         foreach ( $usage as $post_id => $types ) {

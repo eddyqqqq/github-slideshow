@@ -1,24 +1,23 @@
 <?php
 /**
- * Pavva Widgets – câmpurile categoriilor de produse (admin)
+ * Pavva Categories – câmpurile categoriilor de produse (admin)
  *
- * Mutat din pluginul „Pavva Categories” 1.0.2. Metodele de afișare și salvare
- * sunt copiate identic. Se activează doar când „Pavva Categories” e dezactivat.
+ * Aceleași câmpuri și aceeași salvare ca în „Pavva Categories” 1.0.2.
  *
- * @package Pavva_Widgets
+ * @package Pavva_Categories
  * @author  imagient
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-final class Pavva_W_Category_Fields {
+final class Pavva_C_Fields {
 
-    const META_HERO_ID          = Pavva_W_Data::META_HERO_ID;
-    const META_INTRO            = Pavva_W_Data::META_INTRO;
-    const META_BENEFITS_TITLE   = Pavva_W_Data::META_BENEFITS_TITLE;
-    const META_BENEFITS_CONTENT = Pavva_W_Data::META_BENEFITS_CONTENT;
-    const META_WHY_TITLE        = Pavva_W_Data::META_WHY_TITLE;
-    const META_WHY_CONTENT      = Pavva_W_Data::META_WHY_CONTENT;
+    const META_HERO_ID          = Pavva_C_Data::META_HERO_ID;
+    const META_INTRO            = Pavva_C_Data::META_INTRO;
+    const META_BENEFITS_TITLE   = Pavva_C_Data::META_BENEFITS_TITLE;
+    const META_BENEFITS_CONTENT = Pavva_C_Data::META_BENEFITS_CONTENT;
+    const META_WHY_TITLE        = Pavva_C_Data::META_WHY_TITLE;
+    const META_WHY_CONTENT      = Pavva_C_Data::META_WHY_CONTENT;
 
     public function __construct() {
         add_action( 'product_cat_add_form_fields', array( $this, 'add_fields' ) );
@@ -36,10 +35,10 @@ final class Pavva_W_Category_Fields {
 
         wp_enqueue_media();
         wp_enqueue_script(
-            'pavva-w-categories-admin',
-            PAVVA_WIDGETS_URL . 'assets/admin/categories-admin.js',
+            'pavva-categories-admin',
+            PAVVA_Categories::url( 'assets/admin.js' ),
             array( 'jquery' ),
-            PAVVA_WIDGETS_VERSION,
+            PAVVA_Categories::VERSION,
             true
         );
     }

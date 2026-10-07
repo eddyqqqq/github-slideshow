@@ -1,28 +1,26 @@
 <?php
 /**
- * Pavva Widgets – câmpurile produselor (admin)
+ * Pavva Products – câmpurile produselor (admin)
  *
- * Mutat din pluginul „Pavva Products” 4.10.30. Metodele de afișare și salvare
- * sunt copiate identic, deci câmpurile arată și se salvează exact ca înainte.
- * Se activează doar când pluginul „Pavva Products” este dezactivat.
+ * Aceleași casete și aceeași salvare ca în „Pavva Products” 4.10.30.
  *
- * @package Pavva_Widgets
+ * @package Pavva_Produse
  * @author  imagient
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-final class Pavva_W_Product_Fields {
+final class Pavva_P_Fields {
 
-    const META_CULORI = Pavva_W_Data::META_CULORI;
-    const META_CARACT = Pavva_W_Data::META_CARACT;
-    const META_DIM    = Pavva_W_Data::META_DIM;
-    const META_AMEN   = Pavva_W_Data::META_AMEN;
-    const META_FISE   = Pavva_W_Data::META_FISE;
-    const META_DECL   = Pavva_W_Data::META_DECL;
-    const META_DIM_LABELS = Pavva_W_Data::META_DIM_LABELS;
-    const META_CULORI_COLS = Pavva_W_Data::META_CULORI_COLS;
-    const META_DESCRIERE_SINTEZA = Pavva_W_Data::META_DESCRIERE_SINTEZA;
+    const META_CULORI = Pavva_P_Data::META_CULORI;
+    const META_CARACT = Pavva_P_Data::META_CARACT;
+    const META_DIM    = Pavva_P_Data::META_DIM;
+    const META_AMEN   = Pavva_P_Data::META_AMEN;
+    const META_FISE   = Pavva_P_Data::META_FISE;
+    const META_DECL   = Pavva_P_Data::META_DECL;
+    const META_DIM_LABELS = Pavva_P_Data::META_DIM_LABELS;
+    const META_CULORI_COLS = Pavva_P_Data::META_CULORI_COLS;
+    const META_DESCRIERE_SINTEZA = Pavva_P_Data::META_DESCRIERE_SINTEZA;
 
     const NONCE_ACTION = 'pavva_produse_salvare';
     const NONCE_NAME   = 'pavva_produse_nonce';
@@ -103,9 +101,9 @@ final class Pavva_W_Product_Fields {
 
         wp_enqueue_media();
         wp_enqueue_script( 'jquery-ui-sortable' );
-        wp_enqueue_style( 'pavva-w-products-admin', PAVVA_WIDGETS_URL . 'assets/admin/products-admin.css', array(), PAVVA_WIDGETS_VERSION );
-        wp_enqueue_script( 'pavva-w-products-admin', PAVVA_WIDGETS_URL . 'assets/admin/products-admin.js', array( 'jquery', 'jquery-ui-sortable' ), PAVVA_WIDGETS_VERSION, true );
-        wp_localize_script( 'pavva-w-products-admin', 'PavvaAdmin', array(
+        wp_enqueue_style( 'pavva-produse-admin', PAVVA_Produse::url( 'assets/admin.css' ), array(), PAVVA_Produse::VERSION );
+        wp_enqueue_script( 'pavva-produse-admin', PAVVA_Produse::url( 'assets/admin.js' ), array( 'jquery', 'jquery-ui-sortable' ), PAVVA_Produse::VERSION, true );
+        wp_localize_script( 'pavva-produse-admin', 'PavvaAdmin', array(
             'mediaImageTitle' => 'Selectează imaginea',
             'mediaFileTitle'  => 'Selectează PDF-ul',
             'mediaButton'     => 'Folosește fișierul',
@@ -202,7 +200,7 @@ final class Pavva_W_Product_Fields {
     private function render_dimension_row( $index, $item, $product_id ) {
         $image_id = ! empty( $item['imagine_id'] ) ? absint( $item['imagine_id'] ) : 0;
         $image_url = $image_id ? wp_get_attachment_image_url( $image_id, 'medium' ) : '';
-        $specs = Pavva_W_Data::dimension_item_specs( $item, $product_id );
+        $specs = Pavva_P_Data::dimension_item_specs( $item, $product_id );
 
         echo '<div class="pavva-row pavva-dimension-row" data-dim-index="' . esc_attr( $index ) . '">';
         echo '<div class="pavva-row-head">';
@@ -211,7 +209,7 @@ final class Pavva_W_Product_Fields {
         $visibility_input = 'pavva_dimensiuni[' . $index . '][vizibil]';
         echo '<label class="pavva-item-visibility">';
         echo '<input type="hidden" name="' . esc_attr( $visibility_input ) . '" value="0">';
-        echo '<input type="checkbox" name="' . esc_attr( $visibility_input ) . '" value="1"' . checked( Pavva_W_Data::item_is_visible( $item ), true, false ) . '> ';
+        echo '<input type="checkbox" name="' . esc_attr( $visibility_input ) . '" value="1"' . checked( Pavva_P_Data::item_is_visible( $item ), true, false ) . '> ';
         echo '<span>Afișează în pagina produsului</span>';
         echo '</label>';
 
@@ -314,7 +312,7 @@ final class Pavva_W_Product_Fields {
 
         $visibility_repeaters = array( 'caracteristici', 'amenajare', 'fise', 'declaratii' );
         $has_visibility = in_array( $name, $visibility_repeaters, true );
-        $visible = Pavva_W_Data::item_is_visible( $item );
+        $visible = Pavva_P_Data::item_is_visible( $item );
 
         echo '<div class="pavva-row-head">';
         echo '<span class="pavva-handle">☰</span><strong>Element</strong>';

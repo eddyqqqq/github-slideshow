@@ -1,8 +1,9 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 3.4.1
+Versiune: 4.0.0
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
+Lucrează împreună cu: Pavva Products 5.0.0+ și Pavva Categories 2.0.0+
 
 Widgeturi Elementor create de imagient special pentru site-ul Pavva.
 În Elementor apar în categoria „Pavva”.
@@ -88,7 +89,7 @@ cu text propriu (ex.: „+{n} culori”), ca text sau ca pătrățel.
 CÂMPUL „IMAGINI SLIDER HEADER” (din 3.2.0)
 La produs (casetă separată) și la categorie: alegi mai multe imagini odată,
 le ordonezi prin tragere, opțional o imagine verticală pentru mobil.
-Câmpul e activ imediat, chiar dacă pluginurile vechi sunt încă active.
+De la 4.0.0 câmpul e în Pavva Products (produs) și Pavva Categories (categorie).
 
 FORMULARELE SITE-ULUI (din 3.2.6)
 În orice formular de pe site (Elementor, CF7, WPForms…), câmpurile sunt
@@ -103,10 +104,10 @@ Prima opțiune scrisă în listă rămâne textul de început.
 Linkul „Solicită ofertă” trimite ?produs=…&categorie=…, iar formularul le
 selectează singur. Listă localități: date publice (domeniu public).
 
-ÎNAINTE DE ȘTERGEREA PLUGINURILOR VECHI
+WIDGETURILE VECHI
 Pe pagina Plugins, Pavva Widgets arată ce pagini / template-uri mai folosesc
-widgeturi din Pavva Products / Pavva Categories și cu ce le înlocuiești.
-Când lista e goală, apare mesajul verde: le poți șterge în siguranță.
+widgeturi din vechile Pavva Products 4.x / Pavva Categories 1.x și cu ce
+le înlocuiești.
 
 SECȚIUNI GOALE
 Dacă produsul nu are date pentru un widget (ex.: nicio declarație), containerul
@@ -114,19 +115,19 @@ Elementor al widgetului se ascunde cu tot cu titlul pus separat (Heading),
 direct din CSS, fără salt de pagină. În editor vezi în loc un mesaj.
 
 ------------------------------------------------------------
-DATE PRODUSE / CATEGORII (din 3.0.0)
+TREI PLUGINURI (din 4.0.0)
 ------------------------------------------------------------
-- Câmpurile de produs (Caracteristici, Culori și finisaje, Dimensiuni, Variante
-  de amenajare, Fișe tehnice, Declarații, descrieri) și de categorie (Imagine,
-  Text intro, Avantaje, De ce să alegi) sunt incluse în Pavva Widgets.
-  Aceleași câmpuri ca pluginurile „Pavva Products” și „Pavva Categories”:
-  datele existente se folosesc direct, fără nimic de reintrodus.
-- Cât timp pluginurile vechi sunt active, câmpurile din Pavva Widgets stau în
-  așteptare (nu apar de două ori). Preiau automat locul la dezactivarea lor.
+- Pavva Products 5.0.0   → câmpurile produselor (Caracteristici, Culori și
+  finisaje, Dimensiuni, Variante de amenajare, Fișe tehnice, Declarații,
+  descrieri, Imagini slider header).
+- Pavva Categories 2.0.0 → câmpurile categoriilor (Imagine, Text intro,
+  Avantaje, De ce să alegi, Imagini slider header).
+- Pavva Widgets 4.0.0    → widgeturile Elementor, Dynamic Tags, formularele.
+Aceleași date ca înainte (aceleași câmpuri în baza de date): nimic de
+reintrodus. Dacă unul din pluginurile de câmpuri lipsește sau e versiunea
+veche (cu widgeturi), Pavva Widgets afișează un mesaj în admin.
 - Dynamic Tags în Elementor: grupurile „Pavva – Produs” și „Pavva – Categorie”
   (nume, descrieri, imagine categorie, Avantaje, De ce să alegi, link ofertă).
-- 3.1.0: Link „Solicită ofertă” apare acum în ambele grupuri (câte un câmp
-  separat în fiecare). Linkurile deja setate merg în continuare.
 - Slider header: iconițe din Caracteristici produs + buton „Solicită ofertă”.
 
 ------------------------------------------------------------
@@ -141,15 +142,11 @@ FIȘIERE
 ------------------------------------------------------------
 pavva-widgets.php                           – pornește pluginul
 includes/class-pavva-data.php               – citirea datelor produs / categorie
-includes/class-pavva-product-fields.php     – câmpurile produsului (admin)
-includes/class-pavva-category-fields.php    – câmpurile categoriei (admin)
 includes/class-pavva-dynamic-tags.php       – câmpuri selectabile în Elementor
-includes/class-pavva-slider-fields.php      – câmpul Imagini slider header
 includes/class-pavva-migration.php          – verificarea widgeturilor vechi
 includes/class-pavva-quote-form.php         – datele pentru formulare (categorii / produse)
 assets/oferta.js                            – completarea listelor din formulare
 assets/data/localitati.json                 – județe și localități
-assets/admin/                               – scripturi și stiluri pentru admin
 widgets/class-pavva-hero-slider-widget.php  – Slider header: setări + HTML
 widgets/class-pavva-carusel-widget.php      – Carusel produse: setări + HTML
 widgets/class-pavva-feature-tabs-widget.php – Listă interactivă: setări + HTML

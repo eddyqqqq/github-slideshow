@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Pavva Widgets
- * Description:       Widgeturile Elementor și câmpurile de produs / categorie create special pentru site-ul Pavva. Creat de imagient.
- * Version:           3.4.1
+ * Description:       Widgeturile Elementor, etichetele dinamice și formularele create special pentru site-ul Pavva. Câmpurile produselor / categoriilor sunt în „Pavva Products” și „Pavva Categories”. Creat de imagient.
+ * Version:           4.0.0
  * Author:            imagient
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '3.4.1' );
+define( 'PAVVA_WIDGETS_VERSION', '4.0.0' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -41,40 +41,39 @@ add_action( 'plugins_loaded', 'pavva_widgets_init' );
 add_action( 'plugins_loaded', 'pavva_widgets_init_fields', 20 );
 
 /*
- * Câmpurile din admin (produse + categorii).
- * Pornesc doar când pluginurile vechi „Pavva Products” / „Pavva Categories”
- * sunt dezactivate, ca să nu apară de două ori. Datele sunt aceleași.
+ * Câmpurile din admin sunt în pluginurile separate „Pavva Products” (5.0+)
+ * și „Pavva Categories” (2.0+). Aici doar anunțăm dacă lipsesc.
  */
 function pavva_widgets_init_fields() {
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		return;
 	}
-	/* Câmp nou (Imagini slider header): activ mereu, nu există în pluginurile vechi. */
-	require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-slider-fields.php';
-	new Pavva_W_Slider_Fields();
-
-	if ( ! class_exists( 'PAVVA_Produse' ) ) {
-		require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-product-fields.php';
-		new Pavva_W_Product_Fields();
-	}
-	if ( ! class_exists( 'PAVVA_Categories' ) ) {
-		require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-category-fields.php';
-		new Pavva_W_Category_Fields();
-	}
-	if ( class_exists( 'PAVVA_Produse' ) || class_exists( 'PAVVA_Categories' ) ) {
-		add_action( 'admin_notices', 'pavva_widgets_notice_fields_waiting' );
-	}
+	add_action( 'admin_notices', 'pavva_widgets_notice_fields' );
 }
 
-function pavva_widgets_notice_fields_waiting() {
-	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-	if ( ! $screen || 'plugins' !== $screen->id ) {
+function pavva_widgets_notice_fields() {
+	if ( ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
-	$old = array();
-	if ( class_exists( 'PAVVA_Produse' ) ) $old[] = '<strong>Pavva Products</strong>';
-	if ( class_exists( 'PAVVA_Categories' ) ) $old[] = '<strong>Pavva Categories</strong>';
-	echo '<div class="notice notice-info"><p><strong>Pavva Widgets:</strong> câmpurile de produs / categorie sunt pregătite și preiau automat locul pluginurilor ' . implode( ' și ', $old ) . ' (aceleași date, nimic de reintrodus). Dezactivează-le abia după ce template-urile folosesc noile widgeturi Pavva.</p></div>'; // phpcs:ignore
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( ! $screen || ! in_array( $screen->id, array( 'plugins', 'product', 'edit-product', 'edit-product_cat' ), true ) ) {
+		return;
+	}
+	$msg = array();
+	if ( ! class_exists( 'PAVVA_Produse' ) ) {
+		$msg[] = 'activează <strong>Pavva Products</strong> (câmpurile produselor: Caracteristici, Culori, Dimensiuni, Fișe tehnice…)';
+	} elseif ( version_compare( PAVVA_Produse::VERSION, '5.0.0', '<' ) ) {
+		$msg[] = 'actualizează <strong>Pavva Products</strong> la 5.0.0 (versiunea veche aduce înapoi widgeturile vechi și nu are câmpul „Imagini slider header”)';
+	}
+	if ( ! class_exists( 'PAVVA_Categories' ) ) {
+		$msg[] = 'activează <strong>Pavva Categories</strong> (câmpurile categoriilor: Imagine, Intro, Avantaje, De ce să alegi)';
+	} elseif ( version_compare( PAVVA_Categories::VERSION, '2.0.0', '<' ) ) {
+		$msg[] = 'actualizează <strong>Pavva Categories</strong> la 2.0.0 (versiunea veche aduce înapoi widgeturile vechi și nu are câmpul „Imagini slider header”)';
+	}
+	if ( ! $msg ) {
+		return;
+	}
+	echo '<div class="notice notice-warning"><p><strong>Pavva Widgets:</strong> ' . implode( '; ', $msg ) . '. Datele deja completate nu se pierd.</p></div>'; // phpcs:ignore -- text fix
 }
 
 function pavva_widgets_init() {
