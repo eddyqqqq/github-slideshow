@@ -20,8 +20,8 @@ Fiecare element are bifa „vizibil” și se poate reordona prin tragere.
 Galeria WooCommerce („Galerie produs”): sub fiecare imagine apar numele
 fișierului, Attachment ID și un link (iconiță) „Vezi în Media Library”.
 Galeria rămâne a WooCommerce (aceleași date, același selector, reordonare și
-eliminare); pluginul doar afișează informațiile. Imaginile din galerie, după
-imaginea principală, sunt slide-urile din „Pavva – Slider header” (Din produs).
+eliminare); pluginul doar afișează informațiile. Imaginile din galerie (fără
+imaginea principală) sunt slide-urile din „Pavva – Slider header” (Din produs).
 
 ------------------------------------------------------------
 DE LA 4.10.30 LA 5.0.0
@@ -36,7 +36,7 @@ DE LA 4.10.30 LA 5.0.0
 5.1.0
 ------------------------------------------------------------
 - Scoasă caseta „Imagini slider header”: slider-ul produsului folosește
-  imaginea principală + galeria WooCommerce (Pavva Widgets 4.0.1+).
+  galeria WooCommerce (Pavva Widgets 4.0.2+: doar galeria, fără imaginea principală).
   Imaginile salvate înainte în casetă nu se șterg din baza de date.
 - Galeria WooCommerce: nume fișier, ID și link Media Library la fiecare imagine.
 

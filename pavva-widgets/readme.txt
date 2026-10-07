@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 4.0.1
+Versiune: 4.0.2
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 Lucrează împreună cu: Pavva Products 5.1.0+ și Pavva Categories 2.0.0+
 
@@ -28,8 +28,8 @@ WIDGETURI
    - Toate dimensiunile, culorile, fonturile și spațierile se setează din
      Style, separat pe desktop / tabletă / mobil.
    - Sursă imagini (din 3.2.0): Alese manual (static, implicit, pentru orice
-     pagină) / Din produs / Din categorie. Din produs: imaginea principală
-     + galeria WooCommerce (din 4.0.1, singura sursă). Din categorie: câmpul
+     pagină) / Din produs / Din categorie. Din produs: doar galeria
+     WooCommerce, fără imaginea principală (din 4.0.2). Din categorie: câmpul
      „Imagini slider header”, apoi Imagine categorie; apoi slide-urile manuale.
    - 3.2.1: Style → Bloc text → „Poziție coloană descriere: Începe sub titlu”
      (iconițe + descriere + buton în coloana din dreapta, sub titlu, ca în

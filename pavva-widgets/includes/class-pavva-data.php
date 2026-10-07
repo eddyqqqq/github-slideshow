@@ -147,12 +147,10 @@ final class Pavva_W_Data {
         return $term_id ? self::clean_slider_images( get_term_meta( $term_id, self::META_CAT_SLIDER, true ) ) : array();
     }
 
-    /* Imaginea principală + galeria WooCommerce a produsului. */
+    /* Doar galeria WooCommerce a produsului (fără imaginea principală), în ordinea din galerie. */
     public static function product_gallery_images( $product_id ): array {
         if ( ! $product_id ) return array();
-        $ids   = array();
-        $thumb = absint( get_post_thumbnail_id( $product_id ) );
-        if ( $thumb ) $ids[] = $thumb;
+        $ids = array();
         foreach ( explode( ',', (string) get_post_meta( $product_id, '_product_image_gallery', true ) ) as $id ) {
             $id = absint( $id );
             if ( $id && ! in_array( $id, $ids, true ) ) $ids[] = $id;
