@@ -72,12 +72,12 @@
 	border-radius: 6px;
 	background-color: #b0552a;
 	isolation: isolate;
-	/* Safari: păstrează colțurile rotunjite în timpul animațiilor */
-	-webkit-mask-image: -webkit-radial-gradient(white, black);
 	touch-action: pan-y;
 	-webkit-user-select: none;
 	user-select: none;
 }
+/* Safari vechi: colțuri rotunjite în timpul animațiilor (opțiune; poate înmuia imaginea) */
+.ps-hero.ps-safari-mask .ps-viewport { -webkit-mask-image: -webkit-radial-gradient(white, black); }
 .ps-hero.ps-draggable .ps-viewport { cursor: grab; }
 .ps-hero.ps-draggable .ps-viewport.is-dragging { cursor: grabbing; }
 

@@ -1356,6 +1356,56 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'image_quality',
+			array(
+				'label'       => 'Calitate imagine',
+				'description' => '„Automat clar” alege varianta imaginii după mărimea reală afișată (inclusiv când imaginea e tăiată pe telefon și la ecrane Retina). „Mereu rezoluția maximă” încarcă imaginea la dimensiunea aleasă mai sus (implicit Full): cea mai clară, dar mai grea.',
+				'type'        => Controls_Manager::SELECT,
+				'default'     => 'smart',
+				'options'     => array(
+					'smart' => 'Automat clar (recomandat)',
+					'max'   => 'Mereu rezoluția maximă',
+					'wp'    => 'Standard WordPress',
+				),
+				'separator'   => 'before',
+			)
+		);
+
+		$this->add_control(
+			'image_rendering',
+			array(
+				'label'       => 'Randare imagine',
+				'description' => '„Contur mai clar” face imaginile micșorate de browser să pară mai crisp (mai ales în Safari / Chrome pe Windows).',
+				'type'        => Controls_Manager::SELECT,
+				'default'     => '',
+				'options'     => array(
+					''         => 'Implicit',
+					'contrast' => 'Contur mai clar',
+				),
+				'selectors_dictionary' => array(
+					''         => 'auto',
+					'contrast' => '-webkit-optimize-contrast',
+				),
+				'selectors'   => array(
+					$this->sel( '.ps-img' ) => 'image-rendering: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_control(
+			'safari_mask',
+			array(
+				'label'        => 'Colțuri rotunjite – corecție Safari vechi',
+				'description'  => 'Pornește doar dacă pe un iPhone / Mac mai vechi colțurile rotunjite ale slider-ului apar drepte în timpul animației. Poate face imaginea puțin mai puțin clară în Safari.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => '',
+			)
+		);
+
+		$this->add_control(
 			'overlay_color',
 			array(
 				'label'       => 'Strat de culoare peste imagini',
@@ -2559,7 +2609,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		return ! empty( $media['url'] ) ? $media['url'] : '';
 	}
 
-	private function get_picture_html( $slide, $index, $size, $bp ) {
+	private function get_picture_html( $slide, $index, $size, $bp, $quality = 'smart' ) {
 		$media = isset( $slide['slide_image'] ) ? $slide['slide_image'] : array();
 		if ( empty( $media['url'] ) && empty( $media['id'] ) ) {
 			return '';
@@ -2583,6 +2633,13 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 
 		if ( ! empty( $media['id'] ) ) {
 			$img = wp_get_attachment_image( (int) $media['id'], $size, false, $attrs );
+			if ( 'max' === $quality ) {
+				/* fără variante micșorate: browserul încarcă mereu dimensiunea aleasă */
+				$img = preg_replace( '/\s(srcset|sizes)="[^"]*"/', '', $img );
+			} elseif ( 'smart' === $quality ) {
+				/* până calculează scriptul mărimea reală: toată lățimea ecranului */
+				$img = preg_replace( '/\ssizes="[^"]*"/', ' sizes="100vw"', $img );
+			}
 		} else {
 			$img = '';
 		}
@@ -2824,6 +2881,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			'drag'       => $is_yes( 'drag' ),
 			'kenburns'   => $is_yes( 'kenburns' ),
 			'textMode'   => $mode,
+			'imgQuality' => ( isset( $s['image_quality'] ) && in_array( $s['image_quality'], array( 'smart', 'max', 'wp' ), true ) ) ? $s['image_quality'] : 'smart',
 		);
 
 		$svg_mode = isset( $s['arrows_svg_color_mode'] ) && in_array( $s['arrows_svg_color_mode'], array( 'auto', 'fill', 'stroke', 'both', 'original' ), true ) ? $s['arrows_svg_color_mode'] : 'auto';
@@ -2848,6 +2906,9 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		}
 		if ( $options['kenburns'] ) {
 			$classes[] = 'ps-kenburns';
+		}
+		if ( isset( $s['safari_mask'] ) && 'yes' === $s['safari_mask'] ) {
+			$classes[] = 'ps-safari-mask';
 		}
 		if ( $is_words ) {
 			$classes[] = 'ps-words';
@@ -2945,7 +3006,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 								<?php else : ?>
 									<div class="ps-slide-inner">
 								<?php endif; ?>
-									<?php echo $this->get_picture_html( $slide, $i, $size, $bp ); // phpcs:ignore -- generat cu funcțiile WordPress ?>
+									<?php echo $this->get_picture_html( $slide, $i, $size, $bp, $options['imgQuality'] ); // phpcs:ignore -- generat cu funcțiile WordPress ?>
 									<span class="ps-overlay" aria-hidden="true"></span>
 								<?php if ( $has_link ) : ?>
 									</a>

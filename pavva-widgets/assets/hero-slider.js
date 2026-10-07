@@ -62,6 +62,31 @@
 		/* câte un bloc de text (titlu + descriere) pentru fiecare slide */
 		var groups = Array.prototype.slice.call(root.querySelectorAll('.ps-text-groups > .ps-group'));
 
+		/* Calitate imagine „Automat clar”: îi spunem browserului lățimea reală afișată
+		   (cu tăierea „cover” și zoom-ul lent), ca să aleagă o variantă destul de mare.
+		   Densitatea ecranului (Retina) o adaugă browserul singur. */
+		function fitImageSizes() {
+			if (o.imgQuality !== 'smart') return;
+			var vw = viewport.clientWidth, vh = viewport.clientHeight;
+			if (!vw) return;
+			var kb = kenburns ? Math.max(1, parseFloat(getComputedStyle(root).getPropertyValue('--ps-kb-scale')) || 1.08) : 1;
+			Array.prototype.forEach.call(viewport.querySelectorAll('img.ps-img[srcset]'), function (img) {
+				var w = vw;
+				var iw = parseFloat(img.getAttribute('width')) || 0, ih = parseFloat(img.getAttribute('height')) || 0;
+				if (iw && ih && vh && getComputedStyle(img).objectFit === 'cover') {
+					w = Math.max(vw, vh * iw / ih);
+				}
+				w = Math.ceil(w * kb);
+				if (img.getAttribute('sizes') !== w + 'px') img.setAttribute('sizes', w + 'px');
+			});
+		}
+		fitImageSizes();
+		if (window.ResizeObserver) {
+			new ResizeObserver(fitImageSizes).observe(viewport);
+		} else {
+			window.addEventListener('resize', fitImageSizes);
+		}
+
 		var current = 0;
 		var animating = false;
 		var pending = null;
