@@ -26,7 +26,6 @@ final class Pavva_W_Data {
     const META_DESCRIERE_SINTEZA = '_pavva_descriere_sinteza';
 
     /* ---------- Imagini Slider header (noi în Pavva Widgets 3.1.0) ---------- */
-    const META_SLIDER     = '_pavva_slider_imagini';      // produs (post meta)
     const META_CAT_SLIDER = '_pavva_cat_slider_imagini';  // categorie (term meta)
 
     /* ---------- Categorie (identice cu Pavva Categories 1.0.2) ---------- */
@@ -142,10 +141,6 @@ final class Pavva_W_Data {
             );
         }
         return $out;
-    }
-
-    public static function product_slider_images( $product_id ): array {
-        return $product_id ? self::clean_slider_images( get_post_meta( $product_id, self::META_SLIDER, true ) ) : array();
     }
 
     public static function term_slider_images( $term_id ): array {

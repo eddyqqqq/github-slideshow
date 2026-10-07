@@ -1,9 +1,9 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 4.0.0
+Versiune: 4.0.1
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
-Lucrează împreună cu: Pavva Products 5.0.0+ și Pavva Categories 2.0.0+
+Lucrează împreună cu: Pavva Products 5.1.0+ și Pavva Categories 2.0.0+
 
 Widgeturi Elementor create de imagient special pentru site-ul Pavva.
 În Elementor apar în categoria „Pavva”.
@@ -28,9 +28,9 @@ WIDGETURI
    - Toate dimensiunile, culorile, fonturile și spațierile se setează din
      Style, separat pe desktop / tabletă / mobil.
    - Sursă imagini (din 3.2.0): Alese manual (static, implicit, pentru orice
-     pagină) / Din produs / Din categorie. Din produs / categorie folosesc
-     câmpul „Imagini slider header”; dacă e gol: imaginea + galeria
-     WooCommerce (produs) sau Imagine categorie; apoi slide-urile manuale.
+     pagină) / Din produs / Din categorie. Din produs: imaginea principală
+     + galeria WooCommerce (din 4.0.1, singura sursă). Din categorie: câmpul
+     „Imagini slider header”, apoi Imagine categorie; apoi slide-urile manuale.
    - 3.2.1: Style → Bloc text → „Poziție coloană descriere: Începe sub titlu”
      (iconițe + descriere + buton în coloana din dreapta, sub titlu, ca în
      designul paginii de produs). Iconițele SVG se pot colora (Style → Iconițe).
@@ -117,9 +117,9 @@ direct din CSS, fără salt de pagină. În editor vezi în loc un mesaj.
 ------------------------------------------------------------
 TREI PLUGINURI (din 4.0.0)
 ------------------------------------------------------------
-- Pavva Products 5.0.0   → câmpurile produselor (Caracteristici, Culori și
+- Pavva Products 5.1.0   → câmpurile produselor (Caracteristici, Culori și
   finisaje, Dimensiuni, Variante de amenajare, Fișe tehnice, Declarații,
-  descrieri, Imagini slider header).
+  descrieri) + informații la imaginile din galeria WooCommerce.
 - Pavva Categories 2.0.0 → câmpurile categoriilor (Imagine, Text intro,
   Avantaje, De ce să alegi, Imagini slider header).
 - Pavva Widgets 4.0.0    → widgeturile Elementor, Dynamic Tags, formularele.

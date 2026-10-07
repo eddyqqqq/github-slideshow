@@ -101,7 +101,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 					'product'  => 'Din produs (template produs)',
 					'category' => 'Din categorie (template categorie)',
 				),
-				'description' => '„Alese manual” = slide-urile de mai jos, pentru orice pagină. Din produs / categorie = imaginile din câmpul „Imagini slider header” al paginii curente.',
+				'description' => '„Alese manual” = slide-urile de mai jos, pentru orice pagină. Din produs = imaginea principală + galeria WooCommerce a produsului. Din categorie = câmpul „Imagini slider header” al categoriei.',
 			)
 		);
 
@@ -109,24 +109,12 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			'slides_source_info',
 			array(
 				'type'            => Controls_Manager::RAW_HTML,
-				'raw'             => 'Imaginile se iau din câmpul <strong>Imagini slider header</strong> al produsului / categoriei. Dacă e gol: la produs se iau imaginea + galeria WooCommerce (opțiunea de mai jos), la categorie Imagine categorie. Dacă nu există nicio imagine, apar <strong>slide-urile manuale de mai jos</strong>, ca rezervă.',
+				'raw'             => 'La produs: <strong>imaginea principală + galeria WooCommerce</strong>, în ordinea din galerie. La categorie: câmpul <strong>Imagini slider header</strong> al categoriei; dacă e gol, Imagine categorie. Dacă nu există nicio imagine, apar <strong>slide-urile manuale de mai jos</strong>, ca rezervă.',
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
 				'condition'       => array( 'slides_source!' => 'manual' ),
 			)
 		);
 
-		$this->add_control(
-			'slides_source_wc',
-			array(
-				'label'        => 'Rezervă: imaginea + galeria WooCommerce',
-				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => 'Da',
-				'label_off'    => 'Nu',
-				'return_value' => 'yes',
-				'default'      => 'yes',
-				'condition'    => array( 'slides_source' => 'product' ),
-			)
-		);
 
 		$this->add_control(
 			'slides_source_max',
@@ -2753,7 +2741,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 	 * RENDER
 	 * ===================================================================== */
 	/*
-	 * Slide-urile din produs / categorie (câmpul „Imagini slider header”), cu rezerve.
+	 * Slide-urile din produs (imaginea + galeria WooCommerce) / categorie (câmpul „Imagini slider header”), cu rezerve.
 	 * Întoarce array gol când trebuie folosite slide-urile manuale.
 	 */
 	private function dynamic_slides( $s ) {
@@ -2765,10 +2753,8 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		$images = array();
 		if ( 'product' === $source ) {
 			$pid    = (int) Pavva_W_Data::resolve_product_id();
-			$images = Pavva_W_Data::product_slider_images( $pid );
-			if ( ! $images && ( ! isset( $s['slides_source_wc'] ) || 'yes' === $s['slides_source_wc'] ) ) {
-				$images = Pavva_W_Data::product_gallery_images( $pid );
-			}
+			/* imaginea principală + galeria WooCommerce (singura sursă din produs) */
+			$images = Pavva_W_Data::product_gallery_images( $pid );
 		} else {
 			$tid    = (int) Pavva_W_Data::current_term_id();
 			$images = Pavva_W_Data::term_slider_images( $tid );

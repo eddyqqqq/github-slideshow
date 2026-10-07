@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Pavva Widgets
  * Description:       Widgeturile Elementor, etichetele dinamice și formularele create special pentru site-ul Pavva. Câmpurile produselor / categoriilor sunt în „Pavva Products” și „Pavva Categories”. Creat de imagient.
- * Version:           4.0.0
+ * Version:           4.0.1
  * Author:            imagient
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '4.0.0' );
+define( 'PAVVA_WIDGETS_VERSION', '4.0.1' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -63,7 +63,7 @@ function pavva_widgets_notice_fields() {
 	if ( ! class_exists( 'PAVVA_Produse' ) ) {
 		$msg[] = 'activează <strong>Pavva Products</strong> (câmpurile produselor: Caracteristici, Culori, Dimensiuni, Fișe tehnice…)';
 	} elseif ( version_compare( PAVVA_Produse::VERSION, '5.0.0', '<' ) ) {
-		$msg[] = 'actualizează <strong>Pavva Products</strong> la 5.0.0 (versiunea veche aduce înapoi widgeturile vechi și nu are câmpul „Imagini slider header”)';
+		$msg[] = 'actualizează <strong>Pavva Products</strong> la 5.1.0 (versiunea veche aduce înapoi widgeturile vechi)';
 	}
 	if ( ! class_exists( 'PAVVA_Categories' ) ) {
 		$msg[] = 'activează <strong>Pavva Categories</strong> (câmpurile categoriilor: Imagine, Intro, Avantaje, De ce să alegi)';

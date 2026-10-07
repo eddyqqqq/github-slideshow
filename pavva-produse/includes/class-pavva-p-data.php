@@ -20,8 +20,6 @@ final class Pavva_P_Data {
     const META_CULORI_COLS = '_pavva_culori_coloane';
     const META_DESCRIERE_SINTEZA = '_pavva_descriere_sinteza';
 
-    const META_SLIDER = '_pavva_slider_imagini';
-
     public static function items( $post_id, $key ) {
         $v = get_post_meta( $post_id, $key, true );
         return is_array( $v ) ? $v : array();
@@ -110,25 +108,6 @@ final class Pavva_P_Data {
         }
 
         return $out;
-    }
-
-    public static function clean_slider_images( $raw ): array {
-        if ( ! is_array( $raw ) ) return array();
-        $out = array();
-        foreach ( $raw as $row ) {
-            if ( ! is_array( $row ) ) continue;
-            $id = isset( $row['id'] ) ? absint( $row['id'] ) : 0;
-            if ( ! $id ) continue;
-            $out[] = array(
-                'id'     => $id,
-                'mobile' => isset( $row['mobile'] ) ? absint( $row['mobile'] ) : 0,
-            );
-        }
-        return $out;
-    }
-
-    public static function product_slider_images( $product_id ): array {
-        return $product_id ? self::clean_slider_images( get_post_meta( $product_id, self::META_SLIDER, true ) ) : array();
     }
 
     public static function resolve_product_id() {

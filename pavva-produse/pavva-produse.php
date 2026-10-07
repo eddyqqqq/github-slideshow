@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Pavva Products
- * Description:       Câmpurile produselor Pavva (Caracteristici, Culori și finisaje, Dimensiuni, Variante de amenajare, Fișe tehnice, Declarații de performanță, Imagini slider header). Afișarea pe site o fac widgeturile din „Pavva Widgets”. Creat de imagient.
- * Version:           5.0.0
+ * Description:       Câmpurile produselor Pavva (Caracteristici, Culori și finisaje, Dimensiuni, Variante de amenajare, Fișe tehnice, Declarații de performanță) și informații la imaginile din galeria WooCommerce. Afișarea pe site o fac widgeturile din „Pavva Widgets”. Creat de imagient.
+ * Version:           5.1.0
  * Author:            imagient
  * Author URI:        http://imagient.com/
  * Requires at least: 6.0
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Datele (cheile din baza de date) sunt aceleași ca în 4.10.30.
  */
 final class PAVVA_Produse {
-    const VERSION = '5.0.0';
+    const VERSION = '5.1.0';
 
     const META_CULORI = '_pavva_culori_finisaje';
     const META_CARACT = '_pavva_caracteristici';
@@ -46,12 +46,10 @@ final class PAVVA_Produse {
         }
         require_once __DIR__ . '/includes/class-pavva-p-data.php';
         require_once __DIR__ . '/includes/class-pavva-p-fields.php';
-        require_once __DIR__ . '/includes/class-pavva-p-slider.php';
+        require_once __DIR__ . '/includes/class-pavva-p-gallery-info.php';
         new Pavva_P_Fields();
-        /* „Pavva Widgets” 3.x avea încă acest câmp: îl pornim doar dacă nu e deja acolo. */
-        if ( ! class_exists( 'Pavva_W_Slider_Fields' ) ) {
-            new Pavva_P_Slider();
-        }
+        /* Galeria WooCommerce: nume fișier, ID și link Media Library la fiecare imagine. */
+        new Pavva_P_Gallery_Info();
     }
 
     public static function notice_woocommerce() {

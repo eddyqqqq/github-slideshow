@@ -1,0 +1,56 @@
+/*
+ * Pavva Products – informații la imaginile din galeria WooCommerce (admin)
+ * Creat de imagient pentru Pavva.
+ *
+ * Două rânduri compacte sub fiecare imagine (aceeași înălțime la toate,
+ * ca grila WooCommerce să rămână aliniată).
+ */
+#product_images_container ul li.image .pvp-ginfo {
+	display: block;
+	padding: 3px 4px 4px;
+	border-top: 1px solid #dcdcde;
+	background: #fff;
+	font-size: 10px;
+	line-height: 14px;
+	color: #50575e;
+	cursor: default;
+}
+#product_images_container .pvp-ginfo-name {
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	color: #1d2327;
+	font-weight: 600;
+}
+#product_images_container .pvp-ginfo-meta {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	height: 14px;
+	white-space: nowrap;
+	overflow: hidden;
+}
+#product_images_container .pvp-ginfo-id {
+	flex: 1 1 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#product_images_container .pvp-ginfo .dashicons {
+	width: 14px;
+	height: 14px;
+	font-size: 14px;
+	line-height: 14px;
+}
+#product_images_container .pvp-ginfo-link {
+	flex: 0 0 auto;
+	color: #2271b1;
+	text-decoration: none;
+	box-shadow: none;
+}
+#product_images_container .pvp-ginfo-link:hover,
+#product_images_container .pvp-ginfo-link:focus { color: #135e96; }
+#product_images_container .pvp-ginfo-note { flex: 0 0 auto; color: #dba617; }
+#product_images_container .pvp-ginfo.is-missing .pvp-ginfo-name,
+#product_images_container .pvp-ginfo.is-missing .pvp-ginfo-meta { color: #b32d2e; }
+#product_images_container .pvp-ginfo.is-loading { opacity: .6; }
