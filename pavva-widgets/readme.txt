@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 4.2.1
+Versiune: 4.2.2
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 Lucrează împreună cu: Pavva Products 5.1.0+ și Pavva Categories 2.0.0+
 
@@ -105,7 +105,8 @@ recunoscute singure după etichetă / prima opțiune / ID:
 - „Județ”             → cele 42 de județe
 - „Localitate”        → 13.857 localități (doar din județul ales; dacă alegi
                          întâi localitatea, județul se completează singur)
-- „Suprafață proiect” → câmp numeric, clientul scrie suprafața în m²
+- „Suprafață proiect” → dacă lista are opțiunile tale (ex.: „Sub 50 m²”),
+                         rămâne listă (4.2.2); altfel câmp numeric în m²
 Prima opțiune scrisă în listă rămâne textul de început.
 Linkul „Solicită ofertă” trimite ?produs=…&categorie=…, iar formularul le
 selectează singur. Listă localități: date publice (domeniu public).

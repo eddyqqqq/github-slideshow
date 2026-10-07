@@ -9,7 +9,8 @@
  *   „Județ”             → județele României
  *   „Localitate”        → localitățile (doar din județul ales; alegi întâi
  *                         localitatea → județul se completează singur)
- *   „Suprafață proiect” → câmp numeric în m² (clientul scrie suprafața)
+ *   „Suprafață proiect” → dacă lista are opțiunile tale, rămâne listă;
+ *                         altfel câmp numeric în m² (clientul scrie suprafața)
  * Prima opțiune scrisă în listă rămâne textul de început.
  * Din linkul „Solicită ofertă” (?produs=…&categorie=…) alege singur
  * categoria și produsul. Pe paginile fără aceste câmpuri nu face nimic.
@@ -196,6 +197,8 @@
 	function setupArea(el) {
 		if (el.__pvoArea) return;
 		el.__pvoArea = true;
+		/* listă cu opțiunile tale (ex.: „sub 50 m²”, „50–100 m²”): rămâne listă */
+		if (isSel(el) && Array.prototype.some.call(el.options, function (o, i) { return i > 0 && o.textContent.trim() !== ''; })) return;
 		var label = isSel(el) && el.options.length ? el.options[0].textContent : (el.getAttribute('placeholder') || 'Suprafață proiect');
 		label = label.replace(/\s*\(?m(²|2|p)\)?\s*$/i, '');
 		var input = el;
