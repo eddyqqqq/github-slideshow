@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Pavva Widgets
  * Description:       Widgeturile Elementor, etichetele dinamice și formularele create special pentru site-ul Pavva. Câmpurile produselor / categoriilor sunt în „Pavva Products” și „Pavva Categories”. Creat de imagient.
- * Version:           4.1.1
+ * Version:           4.2.0
  * Author:            imagient
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '4.1.1' );
+define( 'PAVVA_WIDGETS_VERSION', '4.2.0' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -94,6 +94,10 @@ function pavva_widgets_init() {
 	/* prioritate 20: rulează după vechiul plugin, deci caruselul Pavva are întâietate */
 	add_action( 'elementor/widgets/register', 'pavva_widgets_register_widgets', 20 );
 	add_action( 'elementor/dynamic_tags/register', 'pavva_widgets_register_dynamic_tags' );
+
+	/* Câmp dinamic gol (ex.: Descriere produs) → secțiunea lui se ascunde, cu tot cu titlul. */
+	require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-empty-dynamic.php';
+	Pavva_W_Empty_Dynamic::init();
 }
 
 /* Câmpurile Pavva selectabile în orice widget Elementor (Dynamic Tags). */
