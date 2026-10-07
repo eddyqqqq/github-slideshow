@@ -1356,6 +1356,37 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'overlay_color',
+			array(
+				'label'       => 'Strat de culoare peste imagini',
+				'description' => 'Folosește transparența din selectorul de culoare pentru o nuanță discretă.',
+				'type'        => Controls_Manager::COLOR,
+				'selectors'   => array(
+					$this->sel( '.ps-overlay' ) => 'background-color: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			array(
+				'name'     => 'image_filters',
+				'selector' => $this->sel( '.ps-img' ),
+			)
+		);
+
+		$this->end_controls_section();
+
+		/* ================= STYLE – Calitate imagine ================= */
+		$this->start_controls_section(
+			'section_style_image_quality',
+			array(
+				'label' => 'Imagine – calitate și claritate',
+				'tab'   => Controls_Manager::TAB_STYLE,
+			)
+		);
+
+		$this->add_control(
 			'image_quality',
 			array(
 				'label'       => 'Calitate imagine',
@@ -1367,7 +1398,6 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 					'max'   => 'Mereu rezoluția maximă',
 					'wp'    => 'Standard WordPress',
 				),
-				'separator'   => 'before',
 			)
 		);
 
@@ -1402,26 +1432,6 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 				'label_off'    => 'Nu',
 				'return_value' => 'yes',
 				'default'      => '',
-			)
-		);
-
-		$this->add_control(
-			'overlay_color',
-			array(
-				'label'       => 'Strat de culoare peste imagini',
-				'description' => 'Folosește transparența din selectorul de culoare pentru o nuanță discretă.',
-				'type'        => Controls_Manager::COLOR,
-				'selectors'   => array(
-					$this->sel( '.ps-overlay' ) => 'background-color: {{VALUE}};',
-				),
-			)
-		);
-
-		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			array(
-				'name'     => 'image_filters',
-				'selector' => $this->sel( '.ps-img' ),
 			)
 		);
 

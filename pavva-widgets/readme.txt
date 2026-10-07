@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 4.1.0
+Versiune: 4.1.1
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 Lucrează împreună cu: Pavva Products 5.1.0+ și Pavva Categories 2.0.0+
 
@@ -30,7 +30,7 @@ WIDGETURI
    - Sursă imagini (din 3.2.0): Alese manual (static, implicit, pentru orice
      pagină) / Din produs / Din categorie. Din produs: doar galeria
      WooCommerce, fără imaginea principală (din 4.0.2).
-   - 4.1.0: Style → Imagini → „Calitate imagine”: Automat clar (implicit;
+   - 4.1.0 (4.1.1: secțiune proprie în Style → „Imagine – calitate și claritate”): „Calitate imagine”: Automat clar (implicit;
      alege varianta după mărimea reală afișată, inclusiv imaginea tăiată pe
      telefon, zoom-ul lent și ecranele Retina) / Mereu rezoluția maximă /
      Standard WordPress. „Randare imagine: Contur mai clar”. Corecția de
