@@ -98,6 +98,10 @@ function pavva_widgets_init() {
 	/* Câmp dinamic gol (ex.: Descriere produs) → secțiunea lui se ascunde, cu tot cu titlul. */
 	require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-empty-dynamic.php';
 	Pavva_W_Empty_Dynamic::init();
+
+	/* Advanced → „Pavva – Afișare condiționată” pe orice element (ascunde dacă un câmp e gol). */
+	require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-conditional.php';
+	Pavva_W_Conditional::init();
 }
 
 /* Câmpurile Pavva selectabile în orice widget Elementor (Dynamic Tags). */

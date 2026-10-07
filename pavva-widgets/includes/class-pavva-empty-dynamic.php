@@ -65,7 +65,7 @@ final class Pavva_W_Empty_Dynamic {
             if ( empty( $dynamic ) || ! is_array( $dynamic ) ) return;
             /* doar conținutul (text, imagine); linkurile dinamice nu contează */
             $keys = array_values( array_filter( array_keys( array_filter( $dynamic ) ), function ( $k ) {
-                return false === strpos( $k, 'link' ) && false === strpos( $k, 'url' );
+                return false === strpos( $k, 'link' ) && false === strpos( $k, 'url' ) && 0 !== strpos( $k, 'pavva_cond' );
             } ) );
             if ( ! $keys ) return;
             $empty = true;

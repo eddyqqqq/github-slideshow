@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 4.1.1
+Versiune: 4.2.0
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 Lucrează împreună cu: Pavva Products 5.1.0+ și Pavva Categories 2.0.0+
 
@@ -119,6 +119,15 @@ SECȚIUNI GOALE
 Dacă produsul nu are date pentru un widget (ex.: nicio declarație), containerul
 Elementor al widgetului se ascunde cu tot cu titlul pus separat (Heading),
 direct din CSS, fără salt de pagină. În editor vezi în loc un mesaj.
+Din 4.2.0 la fel și pentru widgeturile Elementor obișnuite (Text Editor,
+Heading, Image…) care afișează un câmp dinamic gol (ex.: Descriere produs),
+plus Product Content / Short Description: secțiunea dispare cu tot cu titlul.
+
+AFIȘARE CONDIȚIONATĂ (din 4.2.0)
+La orice widget / container / secțiune / coloană: Advanced → „Pavva – Afișare
+condiționată”. Activezi, alegi câmpul dinamic verificat (text sau imagine) și
+regula: „Ascunde dacă e gol” sau „Afișează doar dacă e gol”. Pe site elementul
+nu mai e trimis în pagină; în editor rămâne vizibil.
 
 ------------------------------------------------------------
 TREI PLUGINURI (din 4.0.0)
