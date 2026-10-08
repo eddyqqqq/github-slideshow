@@ -1,0 +1,11 @@
+/* Pavva Motion – elementele animate stau ascunse până pornește animația (fără „clipire”) */
+html.pv-js :is(.pv-lines,.pv-words,.pv-blur,.pv-chars,.pv-fade-up,.pv-img-reveal,.pv-draw,.pv-count,[data-pv="lines"],[data-pv="words"],[data-pv="blur"],[data-pv="chars"],[data-pv="fade-up"],[data-pv="img-reveal"],[data-pv="draw"],[data-pv="count"]),
+html.pv-js :is(.pv-stagger,[data-pv="stagger"]) > * { visibility: hidden; }
+:is(.pv-img-reveal,[data-pv="img-reveal"]) { overflow: hidden; }
+.pv-w, .pv-c { display: inline-block; }
+html.pv-smooth { scroll-behavior: auto !important; }
+.pv-off { visibility: visible !important; }
+@media (prefers-reduced-motion: reduce) {
+	html.pv-js :is(.pv-lines,.pv-words,.pv-blur,.pv-chars,.pv-fade-up,.pv-img-reveal,.pv-draw,.pv-count,[data-pv]),
+	html.pv-js :is(.pv-stagger,[data-pv="stagger"]) > * { visibility: visible; }
+}

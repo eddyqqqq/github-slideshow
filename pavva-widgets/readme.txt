@@ -1,7 +1,7 @@
 === Pavva Widgets ===
 Creat de: imagient
 Pentru: Pavva
-Versiune: 4.2.3
+Versiune: 4.3.0
 Necesită: WordPress 6.0+, PHP 7.4+, Elementor
 Lucrează împreună cu: Pavva Products 5.1.0+ și Pavva Categories 2.0.0+
 
@@ -136,6 +136,30 @@ Paragraph…), în tab-ul General → „Pavva – Afișare condiționată” (c
 dinamic). Elementele rămân vizibile și în canvas-ul editorului.
 
 ------------------------------------------------------------
+PAVVA MOTION – ANIMAȚII LA SCROLL (din 4.3.0)
+------------------------------------------------------------
+GSAP + ScrollTrigger + SplitText și Lenis (scroll lin), incluse în plugin
+(assets/motion/vendor), încărcate doar pe paginile cu elemente animate.
+Unde alegi animația:
+- Elemente Elementor V4 (Flexbox, Div block, Heading, Paragraph, Button):
+  General → „Pavva – Animație” (animație, întârziere în ms, oprită pe telefon)
+  sau Style → Classes cu o clasă „pv-lines”, „pv-stagger” etc.
+- Widgeturi clasice, inclusiv toate widgeturile Pavva, și containere clasice:
+  Advanced → „Pavva – Animație” (animație, întârziere, durată, pauză între
+  elemente, direcție, viteză, oprită pe telefon) sau Advanced → CSS Classes.
+- Oriunde: atributul data-pv="lines" + data-pv-delay etc.
+„Cascadă” pe un widget Pavva (Grilă produse, Carusel, Culori, Dimensiuni,
+Caracteristici, Acordeon, Listă interactivă) animă pe rând cardurile lui;
+la grilele mari, rând cu rând, pe măsură ce intră în ecran.
+Setări generale: Setări → Pavva – Animații (pornit/oprit, Elegant /
+Spectaculos, scroll lin, pe telefon: simplificate / complete / oprite).
+Responsive: pe telefon mișcările sunt mai scurte, scroll-ul rămâne cel nativ,
+iar în modul „simplificate” nu rulează secțiunile fixate, galeria orizontală,
+parallax-ul și butoanele magnetice. La rotirea ecranului / redimensionare
+animațiile se refac. Cine are „reduce motion” activat vede conținutul direct.
+În editorul Elementor animațiile nu rulează.
+
+------------------------------------------------------------
 TREI PLUGINURI (din 4.0.0)
 ------------------------------------------------------------
 - Pavva Products 5.1.0   → câmpurile produselor (Caracteristici, Culori și
@@ -165,6 +189,7 @@ pavva-widgets.php                           – pornește pluginul
 includes/class-pavva-data.php               – citirea datelor produs / categorie
 includes/class-pavva-dynamic-tags.php       – câmpuri selectabile în Elementor
 includes/class-pavva-migration.php          – verificarea widgeturilor vechi
+includes/class-pavva-motion.php         – animațiile la scroll (Pavva Motion)
 includes/class-pavva-quote-form.php         – datele pentru formulare (categorii / produse)
 assets/oferta.js                            – completarea listelor din formulare
 assets/data/localitati.json                 – județe și localități
