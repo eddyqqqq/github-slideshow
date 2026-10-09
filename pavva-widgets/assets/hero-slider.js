@@ -204,6 +204,12 @@
 			var ws = toMs(cs.getPropertyValue('--ps-word-step'), 55);
 			return Math.round(wd * 0.42 + (el.__psWords || 10) * ws * 0.25 + 150);
 		}
+		/* clasa ps-anim stă pe slider doar cât timp cuvintele se mișcă (strat grafic temporar) */
+		function flagAnim() {
+			root.classList.add('ps-anim');
+			clearTimeout(root.__psAnimT);
+			root.__psAnimT = setTimeout(function () { root.classList.remove('ps-anim'); }, 3500);
+		}
 		function updateText(index) {
 			if (textMode !== 'slides' || groups.length < 2) return;
 			var next = groups[index];
@@ -212,6 +218,7 @@
 			groups.forEach(function (g) { if (g.classList.contains('is-active')) prev = g; });
 			if (prev === next) return;
 			root.classList.add('ps-changing');
+			flagAnim();
 
 			/* titlul și descrierea se schimbă fiecare în coloana lui; blocul rămâne pe loc */
 			var leaveMax = 0;
@@ -532,6 +539,7 @@
 			var play = function () {
 				if (started) return;
 				started = true;
+				flagAnim();
 				requestAnimationFrame(function () {
 					requestAnimationFrame(function () {
 						root.classList.remove('ps-pre');

@@ -145,19 +145,19 @@
 		lines: function (el) {
 			splitAnim(el, 'lines', 'lines', function (s) {
 				var b = base(el, 1.25, 0.09);
-				return w.gsap.from(s.lines, { yPercent: 115, rotate: cfg.intensity === 'bold' && !isMobile() ? 4 : 0, transformOrigin: '0% 100%', ease: 'expo.out', duration: b.duration, delay: b.delay, stagger: b.stagger, scrollTrigger: once(el) });
+				return w.gsap.from(s.lines, { yPercent: 115, rotate: cfg.intensity === 'bold' && !isMobile() ? 4 : 0, transformOrigin: '0% 100%', ease: 'expo.out', duration: b.duration, delay: b.delay, stagger: b.stagger, clearProps: 'transform', scrollTrigger: once(el) });
 			});
 		},
 		words: function (el) {
 			splitAnim(el, 'words', null, function (s) {
 				var b = base(el, 1, 0.04);
-				return w.gsap.from(s.words, { y: 26 * k(), opacity: 0, ease: 'power3.out', duration: b.duration, delay: b.delay, stagger: b.stagger, scrollTrigger: once(el) });
+				return w.gsap.from(s.words, { y: 26 * k(), opacity: 0, ease: 'power3.out', duration: b.duration, delay: b.delay, stagger: b.stagger, clearProps: 'transform,opacity', scrollTrigger: once(el) });
 			});
 		},
 		blur: function (el) {
 			splitAnim(el, 'words', null, function (s) {
 				var b = base(el, 1.1, 0.05);
-				return w.gsap.from(s.words, { filter: 'blur(' + (10 * k()) + 'px)', y: 10 * k(), opacity: 0, ease: 'power2.out', duration: b.duration, delay: b.delay, stagger: b.stagger, scrollTrigger: once(el) });
+				return w.gsap.from(s.words, { filter: 'blur(' + (10 * k()) + 'px)', y: 10 * k(), opacity: 0, ease: 'power2.out', duration: b.duration, delay: b.delay, stagger: b.stagger, clearProps: 'transform,opacity,filter', scrollTrigger: once(el) });
 			});
 		},
 		/* identic cu textul din slider-ul din header (cuvânt cu cuvânt, urcă de sub o linie invizibilă) */
@@ -168,7 +168,9 @@
 				return w.gsap.from(s.words, {
 					yPercent: 100,
 					y: function (i, t) { return (parseFloat(w.getComputedStyle(t).fontSize) || 16) * 0.32; },
-					force3D: true, ease: HERO.ease, duration: num(el, 'duration', HERO.duration), delay: num(el, 'delay', 0), stagger: step,
+					ease: HERO.ease, duration: num(el, 'duration', HERO.duration), delay: num(el, 'delay', 0), stagger: step,
+					/* la final cuvintele rămân fără transformare: altfel fiecare devine un strat grafic și scroll-ul se îngreunează */
+					clearProps: 'transform',
 					scrollTrigger: once(el)
 				});
 			});
@@ -188,7 +190,7 @@
 					l.style.backgroundPosition = '0 100%';
 				});
 				var tl = w.gsap.timeline({ delay: b.delay, scrollTrigger: once(el) });
-				tl.from(s.lines, { yPercent: 110, ease: HERO.ease, duration: b.duration, stagger: b.stagger });
+				tl.from(s.lines, { yPercent: 110, ease: HERO.ease, duration: b.duration, stagger: b.stagger, clearProps: 'transform' });
 				tl.fromTo(s.lines, { backgroundSize: '0% .07em' }, { backgroundSize: '100% .07em', ease: 'expo.inOut', duration: b.duration * 0.9, stagger: b.stagger }, b.duration * 0.45);
 				return tl;
 			});
@@ -196,7 +198,7 @@
 		chars: function (el) {
 			splitAnim(el, 'words,chars', 'words', function (s) {
 				var b = base(el, 1.1, 0.03);
-				return w.gsap.from(s.chars, { yPercent: 120, rotate: 8 * (k() - 0.5), ease: 'expo.out', duration: b.duration, delay: b.delay, stagger: b.stagger, scrollTrigger: once(el) });
+				return w.gsap.from(s.chars, { yPercent: 120, rotate: 8 * (k() - 0.5), ease: 'expo.out', duration: b.duration, delay: b.delay, stagger: b.stagger, clearProps: 'transform', scrollTrigger: once(el) });
 			});
 		},
 		scrub: function (el) {

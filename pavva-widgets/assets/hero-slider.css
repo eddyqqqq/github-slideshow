@@ -425,6 +425,9 @@
 }
 .ps-hero.ps-words .ps-wi {
 	display: inline-block;
+}
+/* strat grafic separat doar cât timp cuvintele se mișcă (în repaus ar îngreuna scroll-ul paginii) */
+.ps-hero.ps-words.ps-anim .ps-wi {
 	backface-visibility: hidden;
 }
 
