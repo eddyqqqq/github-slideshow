@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Pavva Widgets
  * Description:       Widgeturile Elementor, etichetele dinamice și formularele create special pentru site-ul Pavva. Câmpurile produselor / categoriilor sunt în „Pavva Products” și „Pavva Categories”. Creat de imagient.
- * Version:           4.4.0
+ * Version:           4.4.1
  * Author:            imagient
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '4.4.0' );
+define( 'PAVVA_WIDGETS_VERSION', '4.4.1' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 

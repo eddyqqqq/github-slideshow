@@ -359,7 +359,7 @@
 			var inner = media.tagName === 'IMG' || media.tagName === 'VIDEO' ? media : media.querySelector('img, video, .pv-inner');
 			var side = cfg.intensity === 'bold' ? 26 : 16;
 			var tl = w.gsap.timeline({
-				scrollTrigger: { trigger: el, start: 'top top', end: '+=' + num(el, 'length', 120) + '%', pin: true, scrub: 1, anticipatePin: 1 }
+				scrollTrigger: { trigger: el, start: 'top top', end: '+=' + num(el, 'length', 120) + '%', pin: true, pinSpacing: true, scrub: 1, anticipatePin: 1 }
 			});
 			tl.fromTo(media, { clipPath: 'inset(14% ' + side + '% 14% ' + side + '% round 22px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none' });
 			if (inner && inner !== media) tl.fromTo(inner, { scale: 1.25 }, { scale: 1, ease: 'none' }, 0);
@@ -370,7 +370,7 @@
 			var dist = function () { return Math.max(0, track.scrollWidth - el.clientWidth); };
 			w.gsap.to(track, {
 				x: function () { return -dist(); }, ease: 'none',
-				scrollTrigger: { trigger: el, start: 'top top', end: function () { return '+=' + dist(); }, pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1 }
+				scrollTrigger: { trigger: el, start: 'top top', end: function () { return '+=' + dist(); }, pin: true, pinSpacing: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1 }
 			});
 		},
 		marquee: function (el) {

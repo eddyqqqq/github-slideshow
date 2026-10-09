@@ -5,6 +5,11 @@ html.pv-js :is(.pv-stagger,[data-pv="stagger"],.pv-flip3d,[data-pv="flip3d"]) > 
 .pv-w, .pv-c { display: inline-block; }
 /* „ca în header”: spațiu în mască pentru diacritice (ă, î, ș, ț), ca în slider */
 .pv-w-mask { vertical-align: top; padding: .18em .06em .24em; margin: -.18em -.06em -.24em; }
+/* secțiunea fixată: cel puțin cât ecranul; imaginea din .pv-pin-media o acoperă */
+:is(.pv-pin-zoom,[data-pv="pin-zoom"]) { position: relative; min-height: 100vh; min-height: 100svh; overflow: hidden; }
+:is(.pv-pin-zoom,[data-pv="pin-zoom"]) .pv-pin-media { position: absolute; inset: 0; overflow: hidden; }
+:is(.pv-pin-zoom,[data-pv="pin-zoom"]) .pv-pin-media img { width: 100%; height: 100%; object-fit: cover; }
+:is(.pv-hscroll,[data-pv="hscroll"]) { overflow: hidden; }
 .pv-cover { position: absolute; inset: 0; z-index: 5; pointer-events: none; transform: scaleX(0); }
 .pv-tiles-grid { position: absolute; inset: -1px; z-index: 5; display: grid; pointer-events: none; }
 .pv-tiles-grid > span { display: block; margin: -.5px; }
