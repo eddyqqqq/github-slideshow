@@ -74,26 +74,27 @@
 	/* ---------- liste ---------- */
 	function isSel(el) { return !!el && el.tagName === 'SELECT'; }
 
-	function rebuild(sel, fallback, items) {
+	function esc(t) {
+		return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+	}
+
+	/* opțiunile ca un singur bloc HTML (mult mai rapid decât una câte una la mii de localități) */
+	function optionsHTML(items) {
+		var out = new Array(items.length);
+		for (var i = 0; i < items.length; i++) {
+			var it = items[i];
+			out[i] = '<option value="' + esc(it[1] !== undefined ? it[1] : it[0]) + '"' + (it[2] ? ' data-judet="' + esc(it[2]) + '"' : '') + '>' + esc(it[0]) + '</option>';
+		}
+		return out.join('');
+	}
+
+	function rebuild(sel, fallback, items, html) {
 		if (sel.__pvoPh === undefined) {
 			var first = sel.options[0];
-			var ph = document.createElement('option');
-			ph.value = '';
-			ph.textContent = first ? first.textContent : fallback;
-			sel.__pvoPh = ph;
+			sel.__pvoPh = first ? first.textContent : fallback;
 		}
 		var keep = sel.value;
-		var frag = document.createDocumentFragment();
-		frag.appendChild(sel.__pvoPh.cloneNode(true));
-		items.forEach(function (it) {
-			var o = document.createElement('option');
-			o.value = it[1] !== undefined ? it[1] : it[0];
-			o.textContent = it[0];
-			if (it[2]) o.setAttribute('data-judet', it[2]);
-			frag.appendChild(o);
-		});
-		sel.innerHTML = '';
-		sel.appendChild(frag);
+		sel.innerHTML = '<option value="">' + esc(sel.__pvoPh) + '</option>' + (html !== undefined ? html : optionsHTML(items));
 		sel.value = keep;
 		if (sel.value !== keep) sel.value = '';
 	}
@@ -158,27 +159,49 @@
 		var jud = isSel(f.judet) ? f.judet : null;
 		var loc = isSel(f.localitate) ? f.localitate : null;
 		var judete = Object.keys(L);
+		var allHTML = null;
 
-		function fillLoc() {
-			var j = jud ? jud.value : '';
-			var items = [];
-			if (j && L[j]) {
-				L[j].forEach(function (n) { items.push([n, n, j]); });
-			} else {
-				/* fără județ: toate localitățile, cu județul în paranteză */
+		/* fără județ: toate localitățile (peste 13.000), cu județul în paranteză; se calculează o singură dată */
+		function allLoc() {
+			if (allHTML === null) {
+				var items = [];
 				judete.forEach(function (jj) {
 					L[jj].forEach(function (n) { items.push([n + ' (' + jj + ')', n, jj]); });
 				});
-				items.sort(function (a, b) { return a[0].localeCompare(b[0], 'ro'); });
+				var col = window.Intl && Intl.Collator ? new Intl.Collator('ro') : null;
+				items.sort(col ? function (a, b) { return col.compare(a[0], b[0]); } : function (a, b) { return a[0].localeCompare(b[0], 'ro'); });
+				allHTML = optionsHTML(items);
 			}
-			rebuild(loc, 'Localitate', items);
+			return allHTML;
+		}
+
+		/* lista mare se pune abia când cineva deschide câmpul (nu mai blochează pagina la încărcare) */
+		function fillLoc(full) {
+			var j = jud ? jud.value : '';
+			if (j && L[j]) {
+				rebuild(loc, 'Localitate', L[j].map(function (n) { return [n, n, j]; }));
+				loc.__pvoFull = false;
+			} else if (full) {
+				if (loc.__pvoFull) return;
+				rebuild(loc, 'Localitate', null, allLoc());
+				loc.__pvoFull = true;
+			} else {
+				rebuild(loc, 'Localitate', []);
+				loc.__pvoFull = false;
+			}
 		}
 
 		if (jud) rebuild(jud, 'Județ', judete.map(function (j) { return [j]; }));
-		if (loc) fillLoc();
+		if (loc) {
+			fillLoc(false);
+			var openFull = function () { if (!(jud && jud.value)) fillLoc(true); };
+			['pointerdown', 'focus', 'keydown'].forEach(function (t) { loc.addEventListener(t, openFull); });
+			/* lista se pregătește în fundal, când browserul n-are altceva de făcut, ca deschiderea să fie instantă */
+			if (window.requestIdleCallback) window.requestIdleCallback(allLoc, { timeout: 6000 }); else setTimeout(allLoc, 3000);
+		}
 
 		if (jud && loc) {
-			jud.addEventListener('change', fillLoc);
+			jud.addEventListener('change', function () { fillLoc(false); });
 			/* alegi întâi localitatea: județul se completează singur */
 			loc.addEventListener('change', function () {
 				var o = loc.options[loc.selectedIndex];
@@ -186,8 +209,10 @@
 				if (j && jud.value !== j) {
 					var v = loc.value;
 					jud.value = j;
-					fillLoc();
+					fire(jud);
+					fillLoc(false);
 					loc.value = v;
+					fire(loc);
 				}
 			});
 		}

@@ -17,7 +17,7 @@
 	var TYPES = ['words-mask', 'lines', 'words', 'blur', 'chars', 'underline', 'scrub', 'count', 'fade-up', 'stagger', 'flip3d',
 		'img-reveal', 'curtain', 'tiles', 'parallax', 'skew', 'draw', 'pin-zoom', 'hscroll', 'marquee', 'magnetic'];
 	/* efectele grele: pe telefon, în modul „simplificat”, nu pornesc */
-	var HEAVY = { 'pin-zoom': 1, hscroll: 1, parallax: 1, magnetic: 1, skew: 1 };
+	var HEAVY = { hscroll: 1, parallax: 1, magnetic: 1, skew: 1 };
 	/* culoarea Pavva (cortină, pavaj, subliniere), dacă elementul nu are alta */
 	var BRAND = '#AB5525';
 	/* elementele care se repetă în widgeturile Pavva (pentru „cascadă”) */
@@ -452,9 +452,11 @@
 		Object.keys(map).forEach(function (id) {
 			var o = map[id];
 			Array.prototype.forEach.call(d.querySelectorAll('[data-id="' + id + '"]'), function (el) {
-				if (el.hasAttribute('data-pv') || el.classList.contains('pv-' + o.type)) return;
-				el.setAttribute('data-pv', o.type);
-				['delay', 'duration', 'stagger', 'from', 'mobile', 'color'].forEach(function (key) { if (o[key] !== undefined && o[key] !== '') el.setAttribute('data-pv-' + key, o[key]); });
+				/* tipul vine de obicei deja ca clasă; setările din panou se pun mereu */
+				if (!el.hasAttribute('data-pv') && !el.classList.contains('pv-' + o.type)) el.setAttribute('data-pv', o.type);
+				['delay', 'duration', 'stagger', 'from', 'speed', 'length', 'mobile', 'color'].forEach(function (key) {
+					if (o[key] !== undefined && o[key] !== '' && !el.hasAttribute('data-pv-' + key)) el.setAttribute('data-pv-' + key, o[key]);
+				});
 			});
 		});
 	}

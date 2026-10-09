@@ -57,6 +57,18 @@ final class Pavva_W_Motion {
         );
     }
 
+    public static function directions(): array {
+        return array(
+            'auto'   => 'Implicit',
+            'bottom' => 'De jos',
+            'top'    => 'De sus',
+            'left'   => 'Din stânga',
+            'right'  => 'Din dreapta',
+            'center' => 'Din centru',
+            'random' => 'Aleator (pavaj)',
+        );
+    }
+
     public static function defaults(): array {
         return array( 'enabled' => 1, 'intensity' => 'soft', 'smooth' => 1, 'mobile' => 'simple' );
     }
@@ -283,6 +295,19 @@ final class Pavva_W_Motion {
         );
 
         $element->add_control(
+            'pavva_anim_length',
+            array(
+                'label'       => 'Lungime efect fixat (%)',
+                'description' => 'Cât derulezi cât stă fixată secțiunea, în % din ecran (implicit 120).',
+                'type'        => Controls_Manager::NUMBER,
+                'min'         => 30,
+                'max'         => 400,
+                'step'        => 10,
+                'condition'   => array( 'pavva_anim' => array( 'pin-zoom' ) ),
+            )
+        );
+
+        $element->add_control(
             'pavva_anim_mobile',
             array(
                 'label'        => 'Oprită pe telefon',
@@ -325,8 +350,19 @@ final class Pavva_W_Motion {
             $type = (string) self::unwrap( $element->get_settings( 'pavva_anim' ) );
             if ( $type && 'none' !== $type && isset( self::types()[ $type ] ) && method_exists( $element, 'get_id' ) ) {
                 $o = array( 'type' => $type );
-                $delay = self::unwrap( $element->get_settings( 'pavva_anim_delay' ) );
-                if ( is_numeric( $delay ) && $delay > 0 ) $o['delay'] = round( $delay / 1000, 2 );
+                /* milisecunde în panou → secunde pentru animație */
+                foreach ( array( 'delay', 'duration', 'stagger' ) as $key ) {
+                    $v = self::unwrap( $element->get_settings( 'pavva_anim_' . $key ) );
+                    if ( is_numeric( $v ) && $v > 0 ) $o[ $key ] = round( $v / 1000, 3 );
+                }
+                $speed = self::unwrap( $element->get_settings( 'pavva_anim_speed' ) );
+                if ( is_numeric( $speed ) && $speed > 0 ) $o['speed'] = 'magnetic' === $type ? round( $speed / 10, 2 ) : (float) $speed;
+                $length = self::unwrap( $element->get_settings( 'pavva_anim_length' ) );
+                if ( is_numeric( $length ) && $length > 0 ) $o['length'] = (int) $length;
+                $from = (string) self::unwrap( $element->get_settings( 'pavva_anim_from' ) );
+                if ( $from && 'auto' !== $from && isset( self::directions()[ $from ] ) ) $o['from'] = $from;
+                $color = sanitize_hex_color( trim( (string) self::unwrap( $element->get_settings( 'pavva_anim_color' ) ) ) );
+                if ( $color ) $o['color'] = $color;
                 if ( self::unwrap( $element->get_settings( 'pavva_anim_mobile_off' ) ) ) $o['mobile'] = 'off';
                 self::$map[ (string) $element->get_id() ] = $o;
             }
@@ -336,7 +372,7 @@ final class Pavva_W_Motion {
         $type = (string) $element->get_settings( 'pavva_anim' );
         if ( '' === $type || ! isset( self::types()[ $type ] ) ) return;
         $attrs = array( 'data-pv' => $type );
-        foreach ( array( 'delay', 'duration', 'stagger', 'from', 'speed', 'mobile', 'color' ) as $key ) {
+        foreach ( array( 'delay', 'duration', 'stagger', 'from', 'speed', 'length', 'mobile', 'color' ) as $key ) {
             $v = $element->get_settings( 'pavva_anim_' . $key );
             if ( '' !== $v && null !== $v && false !== $v ) $attrs[ 'data-pv-' . $key ] = (string) $v;
         }
@@ -372,7 +408,15 @@ final class Pavva_W_Motion {
             $schema['pavva_anim'] = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::make()
                 ->enum( array_merge( array( 'none' ), array_keys( self::types() ) ) )
                 ->default( 'none' );
-            $schema['pavva_anim_delay']      = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type::make();
+            $num = '\Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type';
+            $str = '\Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type';
+            $schema['pavva_anim_delay']      = $num::make();
+            $schema['pavva_anim_duration']   = $num::make();
+            $schema['pavva_anim_stagger']    = $num::make();
+            $schema['pavva_anim_from']       = $str::make()->enum( array_keys( self::directions() ) )->default( 'auto' );
+            $schema['pavva_anim_speed']      = $num::make();
+            $schema['pavva_anim_length']     = $num::make();
+            $schema['pavva_anim_color']      = $str::make();
             $schema['pavva_anim_mobile_off'] = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type::make()->default( false );
         } catch ( \Throwable $e ) {
             return $schema;
@@ -384,6 +428,10 @@ final class Pavva_W_Motion {
         if ( ! is_array( $controls ) || ! self::v4_available() ) return $controls;
         foreach ( $controls as $c ) {
             if ( $c instanceof \Elementor\Modules\AtomicWidgets\Controls\Section && 'pavva_motion' === $c->get_id() ) return $controls;
+        }
+        $dirs = array();
+        foreach ( self::directions() as $value => $label ) {
+            $dirs[] = array( 'value' => $value, 'label' => $label );
         }
         $options = array( array( 'value' => 'none', 'label' => 'Fără' ) );
         foreach ( self::types() as $value => $label ) {
@@ -404,6 +452,41 @@ final class Pavva_W_Motion {
                         ->set_min( 0 )
                         ->set_max( 3000 )
                         ->set_step( 50 ),
+                    \Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control::bind_to( 'pavva_anim_duration' )
+                        ->set_label( 'Durată (ms)' )
+                        ->set_placeholder( 'recomandată' )
+                        ->set_description( 'Gol = durata recomandată. Nu contează la efectele legate de scroll.' )
+                        ->set_min( 200 )
+                        ->set_max( 4000 )
+                        ->set_step( 50 ),
+                    \Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control::bind_to( 'pavva_anim_stagger' )
+                        ->set_label( 'Pauză între elemente (ms)' )
+                        ->set_placeholder( 'recomandată' )
+                        ->set_description( 'Text: între cuvinte / rânduri. Cascadă: între carduri. Pavaj: timpul total al plăcilor.' )
+                        ->set_min( 0 )
+                        ->set_max( 1000 )
+                        ->set_step( 5 ),
+                    \Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control::bind_to( 'pavva_anim_from' )
+                        ->set_label( 'Direcție' )
+                        ->set_options( $dirs )
+                        ->set_description( 'Imagine dezvelită, Cortină, Pavaj, Linie desenată, Bandă de text.' ),
+                    \Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control::bind_to( 'pavva_anim_speed' )
+                        ->set_label( 'Viteză / forță' )
+                        ->set_placeholder( 'implicit' )
+                        ->set_description( 'Parallax 4–20 (10). Înclinare: grade 2–12 (6). Bandă: px/s (70). Magnetic: 1–8 = 0.1–0.8 (3.5).' )
+                        ->set_min( 0 )
+                        ->set_max( 400 ),
+                    \Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control::bind_to( 'pavva_anim_length' )
+                        ->set_label( 'Lungime efect fixat (%)' )
+                        ->set_placeholder( '120' )
+                        ->set_description( 'Secțiune fixată: cât derulezi cât stă fixată, în % din ecran.' )
+                        ->set_min( 30 )
+                        ->set_max( 400 )
+                        ->set_step( 10 ),
+                    \Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control::bind_to( 'pavva_anim_color' )
+                        ->set_label( 'Culoare' )
+                        ->set_placeholder( '#AB5525' )
+                        ->set_description( 'Cortină, Pavaj, Subliniere. Gol = culoarea Pavva.' ),
                     \Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control::bind_to( 'pavva_anim_mobile_off' )
                         ->set_label( 'Oprită pe telefon' ),
                 ) );
@@ -482,7 +565,7 @@ final class Pavva_W_Motion {
                     <tr>
                         <th scope="row">Pe telefon</th>
                         <td>
-                            <label><input type="radio" name="<?php echo esc_attr( $n ); ?>[mobile]" value="simple" <?php checked( 'simple', $s['mobile'] ); ?>> Simplificate (recomandat): fără secțiuni fixate, galerie orizontală, parallax și butoane magnetice; mișcări mai scurte</label><br>
+                            <label><input type="radio" name="<?php echo esc_attr( $n ); ?>[mobile]" value="simple" <?php checked( 'simple', $s['mobile'] ); ?>> Simplificate (recomandat): fără galerie orizontală, parallax, înclinare și butoane magnetice; mișcări mai scurte. Secțiunea fixată merge și pe telefon (o poți opri pe element)</label><br>
                             <label><input type="radio" name="<?php echo esc_attr( $n ); ?>[mobile]" value="full" <?php checked( 'full', $s['mobile'] ); ?>> Complete (ca pe calculator, cu mișcări mai scurte)</label><br>
                             <label><input type="radio" name="<?php echo esc_attr( $n ); ?>[mobile]" value="off" <?php checked( 'off', $s['mobile'] ); ?>> Oprite</label>
                         </td>
