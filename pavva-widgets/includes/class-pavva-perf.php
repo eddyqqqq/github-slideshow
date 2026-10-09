@@ -21,7 +21,7 @@ final class Pavva_W_Perf {
     private static $lcp_done = false;
 
     public static function defaults(): array {
-        return array( 'lcp' => 1, 'fonts_swap' => 1, 'fonts_preload' => 1, 'woo_assets' => 1, 'a11y_main' => 1 );
+        return array( 'lcp' => 1, 'fonts_swap' => 1, 'fonts_preload' => 1, 'woo_assets' => 1, 'a11y_main' => 1, 'js_cache' => 1, 'llms' => 1, 'llms_intro' => '' );
     }
 
     public static function settings(): array {
@@ -32,6 +32,14 @@ final class Pavva_W_Perf {
     public static function init() {
         add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
         add_action( 'admin_init', array( __CLASS__, 'register_setting' ) );
+        add_action( 'update_option_' . self::OPTION, function () { self::sync_htaccess(); } );
+        add_action( 'add_option_' . self::OPTION, function () { self::sync_htaccess(); } );
+        /* prima dată după instalarea versiunii (setarea e pornită implicit) */
+        add_action( 'admin_init', function () {
+            if ( get_option( 'pavva_perf_htaccess_v' ) === PAVVA_WIDGETS_VERSION || ! current_user_can( 'manage_options' ) ) return;
+            update_option( 'pavva_perf_htaccess_v', PAVVA_WIDGETS_VERSION, false );
+            self::sync_htaccess();
+        } );
         /* fonturile preîncărcate se recitesc când salvezi un font în Elementor → Custom Fonts */
         add_action( 'save_post_elementor_font', function () { delete_transient( 'pavva_perf_fonts' ); } );
 
@@ -45,6 +53,10 @@ final class Pavva_W_Perf {
         }
         if ( ! empty( $s['woo_assets'] ) ) {
             add_action( 'wp_enqueue_scripts', array( __CLASS__, 'woo_assets' ), 99 );
+        }
+        if ( ! empty( $s['llms'] ) ) {
+            require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-llms.php';
+            Pavva_W_Llms::init();
         }
         if ( ! empty( $s['a11y_main'] ) ) {
             add_action( 'wp_footer', array( __CLASS__, 'a11y_main' ), 2 );
@@ -118,17 +130,59 @@ final class Pavva_W_Perf {
 
     /* ================= accesibilitate ================= */
 
-    /* paginile construite din secțiuni Elementor nu au zonă „main”: o marcăm pe primul document de conținut
-       (nu header / footer / popup), doar dacă pagina nu are deja una; ținta link-ului „Sari la conținut” = #content */
+    /* zona „main”, nume pentru link-urile fără text, meniul Elementor: vezi assets/a11y.js */
     public static function a11y_main() {
         if ( ! self::front() ) return;
-        echo '<script id="pavva-a11y-main" data-no-defer="1" data-no-optimize="1" data-cfasync="false" nowprocket>'
-            . '(function(d){if(d.querySelector("main,[role=main]"))return;'
-            . 'var c=d.querySelectorAll("[data-elementor-type]");'
-            . 'for(var i=0;i<c.length;i++){var e=c[i],t=e.getAttribute("data-elementor-type");'
-            . 'if(/^(header|footer|popup|loop-item|kit)$/.test(t)||(e.parentElement&&e.parentElement.closest("[data-elementor-type]")))continue;'
-            . 'e.setAttribute("role","main");if(!d.getElementById("content"))e.id="content";e.setAttribute("tabindex","-1");e.style.outline="none";break;}'
-            . '})(document);</script>' . "\n";
+        $js = (string) file_get_contents( PAVVA_WIDGETS_PATH . 'assets/a11y.js' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+        echo '<script id="pavva-a11y" data-no-defer="1" data-no-optimize="1" data-cfasync="false" nowprocket>'
+            . 'window.PavvaA11y=' . wp_json_encode( array( 'site' => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ) ) . ';' . $js . '</script>' . "\n"; // phpcs:ignore -- fișier propriu
+    }
+
+    /* ================= cache în browser pentru JavaScript ================= */
+
+    const HTACCESS_MARKER = 'Pavva JS cache';
+
+    /* LiteSpeed Cache dă cache doar la application/javascript; serverul trimite text/javascript */
+    public static function htaccess_rules(): array {
+        return array(
+            '<IfModule mod_expires.c>',
+            '  ExpiresActive On',
+            '  ExpiresByType text/javascript "access plus 1 year"',
+            '  ExpiresByType application/javascript "access plus 1 year"',
+            '  ExpiresByType application/x-javascript "access plus 1 year"',
+            '</IfModule>',
+            '<IfModule mod_headers.c>',
+            '  <FilesMatch "\.(js|mjs)$">',
+            '    Header set Cache-Control "public, max-age=31536000"',
+            '  </FilesMatch>',
+            '</IfModule>',
+        );
+    }
+
+    public static function htaccess_path(): string {
+        if ( ! function_exists( 'get_home_path' ) ) require_once ABSPATH . 'wp-admin/includes/file.php';
+        return trailingslashit( get_home_path() ) . '.htaccess';
+    }
+
+    /* scrie sau scoate regulile, după setare; întoarce false dacă fișierul nu se poate scrie */
+    public static function sync_htaccess( $on = null ): bool {
+        if ( null === $on ) {
+            $s  = self::settings();
+            $on = ! empty( $s['js_cache'] );
+        }
+        $file = self::htaccess_path();
+        if ( ! file_exists( $file ) || ! wp_is_writable( $file ) ) return false;
+        if ( ! function_exists( 'insert_with_markers' ) ) require_once ABSPATH . 'wp-admin/includes/misc.php';
+        if ( $on ) return (bool) insert_with_markers( $file, self::HTACCESS_MARKER, self::htaccess_rules() );
+        $txt = (string) file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+        if ( false === strpos( $txt, '# BEGIN ' . self::HTACCESS_MARKER ) ) return true;
+        $new = preg_replace( '/\n?# BEGIN ' . preg_quote( self::HTACCESS_MARKER, '/' ) . '.*?# END ' . preg_quote( self::HTACCESS_MARKER, '/' ) . '\n?/s', "\n", $txt );
+        return null !== $new && false !== file_put_contents( $file, $new ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+    }
+
+    public static function htaccess_present(): bool {
+        $file = self::htaccess_path();
+        return file_exists( $file ) && false !== strpos( (string) file_get_contents( $file ), '# BEGIN ' . self::HTACCESS_MARKER ); // phpcs:ignore WordPress.WP.AlternativeFunctions
     }
 
     /* ================= WooCommerce ================= */
@@ -165,23 +219,31 @@ final class Pavva_W_Perf {
         foreach ( array_keys( self::defaults() ) as $k ) {
             $out[ $k ] = empty( $in[ $k ] ) ? 0 : 1;
         }
+        $out['llms_intro'] = isset( $in['llms_intro'] ) ? sanitize_textarea_field( $in['llms_intro'] ) : '';
+        if ( class_exists( 'Pavva_W_Llms' ) ) Pavva_W_Llms::flush();
         return $out;
     }
 
     public static function page() {
         if ( ! current_user_can( 'manage_options' ) ) return;
+        require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-llms.php';
         $s    = self::settings();
         $n    = self::OPTION;
         $rows = array(
             'lcp'           => array( 'Imaginea din header', 'Prima imagine din slider-ul Pavva se încarcă prima, înaintea restului paginii. Celelalte slide-uri vin după afișarea paginii.' ),
             'fonts_swap'    => array( 'Fonturi – text vizibil imediat', 'Textul apare imediat cu un font de rezervă și trece la fontul Pavva când s-a încărcat (font-display: swap). După ce schimbi: Elementor → Tools → Regenerate CSS & Data.' ),
             'fonts_preload' => array( 'Fonturi – preîncărcare', 'Fonturile din Elementor → Custom Fonts încep să se descarce din primul moment. Doar cele cu fișier WOFF2 (TTF-urile sunt prea mari).' ),
-            'a11y_main'     => array( 'Zona principală a paginii (accesibilitate)', 'Conținutul paginii (fără header și footer) e marcat ca zonă principală („main”), cu adresa #content pentru link-ul „Sari la conținut”. Ajută cititoarele de ecran, agenții AI și scorul PageSpeed. Nu se aplică dacă tema are deja o zonă main.' ),
+            'a11y_main'     => array( 'Accesibilitate automată', 'Zona principală a paginii („main”) și ținta pentru „Sari la conținut”; nume pentru link-urile fără text (iconițe sociale, logo, carduri cu imagine); eticheta pusă din Elementor pe învelișul unui widget se mută pe link; meniul Elementor fără atribute nepermise. Ajută cititoarele de ecran, agenții AI și scorul PageSpeed.' ),
+            'llms'          => array( 'llms.txt pentru asistenții AI', 'Adresa /llms.txt prezintă firma și listează paginile, categoriile și produsele, în text simplu, pentru ChatGPT, Gemini, Claude etc. Se actualizează singur. Dacă Yoast SEO creează propriul llms.txt, se folosește acela.' ),
+            'js_cache'      => array( 'Cache în browser pentru JavaScript (1 an)', 'Reguli în .htaccess din rădăcina site-ului: fișierele .js se păstrează în browser un an (au versiune în adresă, deci se reîncarcă singure când se schimbă). LiteSpeed Cache le acoperă doar pe cele trimise ca application/javascript.' ),
             'woo_assets'    => array( 'WooCommerce doar pe paginile de magazin', 'Pe Contact, Fabrica, Avantaje etc. nu se mai încarcă CSS-ul și scripturile WooCommerce. Pe produse, categorii, coș și checkout rămân.' ),
         );
         ?>
         <div class="wrap">
             <h1>Pavva – Viteză</h1>
+            <?php if ( ! empty( $s['js_cache'] ) && ! self::htaccess_present() ) : ?>
+                <div class="notice notice-warning inline"><p>Regulile de cache pentru JavaScript nu sunt în <code>.htaccess</code> (fișierul nu se poate scrie). Le poți adăuga din LiteSpeed Cache → Toolbox → Edit .htaccess:</p><pre style="white-space:pre-wrap"><?php echo esc_html( "# BEGIN " . self::HTACCESS_MARKER . "\n" . implode( "\n", self::htaccess_rules() ) . "\n# END " . self::HTACCESS_MARKER ); ?></pre></div>
+            <?php endif; ?>
             <form method="post" action="options.php">
                 <?php settings_fields( 'pavva_perf' ); ?>
                 <table class="form-table" role="presentation">
@@ -192,6 +254,11 @@ final class Pavva_W_Perf {
                                 <p class="description"><?php echo esc_html( $r[1] ); ?></p></td>
                         </tr>
                     <?php endforeach; ?>
+                    <tr>
+                        <th scope="row"><label for="pavva-llms-intro">llms.txt – prezentarea firmei</label></th>
+                        <td><textarea id="pavva-llms-intro" class="large-text" rows="4" name="<?php echo esc_attr( $n . '[llms_intro]' ); ?>" placeholder="<?php echo esc_attr( class_exists( 'Pavva_W_Llms' ) ? Pavva_W_Llms::INTRO : '' ); ?>"><?php echo esc_textarea( (string) ( $s['llms_intro'] ?? '' ) ); ?></textarea>
+                            <p class="description">Gol = textul implicit (cel gri). Vezi rezultatul: <a href="<?php echo esc_url( home_url( '/llms.txt' ) ); ?>" target="_blank" rel="noopener">/llms.txt</a></p></td>
+                    </tr>
                 </table>
                 <?php submit_button( 'Salvează' ); ?>
             </form>
