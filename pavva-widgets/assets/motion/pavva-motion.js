@@ -118,7 +118,9 @@
 		var t = textTarget(el);
 		if (!S) { return w.gsap.from(t, { opacity: 0, y: 24 * k(), duration: 1, ease: 'power3.out', scrollTrigger: once(el) }); }
 		S.create(t, {
-			type: type, mask: mask, autoSplit: true, aria: 'auto',
+			/* eticheta cu tot textul (aria-label) e permisă doar pe titluri; pe paragrafe / div-uri e interzisă,
+			   iar cititoarele de ecran și agenții AI n-ar mai vedea textul: acolo cuvintele rămân citibile normal */
+			type: type, mask: mask, autoSplit: true, aria: /^H[1-6]$/.test(t.tagName) ? 'auto' : 'none',
 			linesClass: 'pv-l', wordsClass: 'pv-w', charsClass: 'pv-c',
 			onSplit: function (self) { return build(self); }
 		});
