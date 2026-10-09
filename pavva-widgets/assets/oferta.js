@@ -261,7 +261,19 @@
 		return out;
 	}
 
+	/* câmpurile select fără etichetă (formularele cu doar „placeholder”) primesc nume din prima opțiune,
+	   ca să le poată folosi cititoarele de ecran și agenții AI */
+	function labelSelects() {
+		Array.prototype.forEach.call(document.querySelectorAll('form select'), function (el) {
+			if (el.getAttribute('aria-label') || el.getAttribute('aria-labelledby') || (el.labels && el.labels.length)) return;
+			var t = el.options.length ? (el.options[0].textContent || '').trim() : '';
+			if (!t) t = (el.name || '').replace(/[_-]+/g, ' ').trim();
+			if (t) el.setAttribute('aria-label', t);
+		});
+	}
+
 	function start() {
+		labelSelects();
 		scan().forEach(function (f) {
 			if (f.suprafata) setupArea(f.suprafata);
 

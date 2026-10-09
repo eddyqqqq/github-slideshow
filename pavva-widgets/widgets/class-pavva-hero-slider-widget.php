@@ -2632,6 +2632,23 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		return ! empty( $media['url'] ) ? $media['url'] : '';
 	}
 
+	/* numele link-ului unui slide: titlul slide-ului, textul alternativ al imaginii sau adresa */
+	private function slide_link_label( $slide ) {
+		foreach ( array( 'slide_title', 'slide_alt' ) as $k ) {
+			$t = isset( $slide[ $k ] ) ? trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( (string) $slide[ $k ] ) ) ) : '';
+			if ( '' !== $t ) return $t;
+		}
+		$id = isset( $slide['slide_image']['id'] ) ? (int) $slide['slide_image']['id'] : 0;
+		if ( $id ) {
+			$t = trim( (string) get_post_meta( $id, '_wp_attachment_image_alt', true ) );
+			if ( '' !== $t ) return $t;
+		}
+		$url  = isset( $slide['slide_link']['url'] ) ? (string) $slide['slide_link']['url'] : '';
+		$host = (string) wp_parse_url( $url, PHP_URL_HOST );
+		if ( false !== strpos( $host, 'google.' ) && false !== strpos( $url, '/maps' ) ) return 'Deschide locația în Google Maps';
+		return $host && $host !== wp_parse_url( home_url(), PHP_URL_HOST ) ? 'Deschide ' . preg_replace( '/^www\./', '', $host ) : 'Deschide';
+	}
+
 	private function get_picture_html( $slide, $index, $size, $bp, $quality = 'smart', $priority = true, $defer = false ) {
 		$media = isset( $slide['slide_image'] ) ? $slide['slide_image'] : array();
 		if ( empty( $media['url'] ) && empty( $media['id'] ) ) {
@@ -3067,6 +3084,8 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 								$this->add_link_attributes( $link_key, $slide['slide_link'] );
 								$this->add_render_attribute( $link_key, 'class', 'ps-slide-inner ps-slide-link' );
 								$this->add_render_attribute( $link_key, 'draggable', 'false' );
+								/* link fără text vizibil (doar imagine): primește un nume pentru cititoare de ecran și agenți AI */
+								$this->add_render_attribute( $link_key, 'aria-label', $this->slide_link_label( $slide ), true );
 								if ( 0 !== $i ) {
 									$this->add_render_attribute( $link_key, 'tabindex', '-1' );
 								}
