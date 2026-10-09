@@ -30,6 +30,8 @@
 	/* efectele legate de scroll rămân la scroll */
 	var SCROLL_LINKED = { scrub: 1, parallax: 1, skew: 1, 'pin-zoom': 1, hscroll: 1, marquee: 1, magnetic: 1 };
 	var FOLD_STEP = 0.12;
+	/* conexiune foarte lentă: conținutul a apărut deja fără animație (rezerva de 3 s) → primul ecran nu se mai ascunde */
+	var late = false;
 
 	function sel(type) { return '.pv-' + type + ', [data-pv="' + type + '"]'; }
 	function all(root, type) { return Array.prototype.slice.call(root.querySelectorAll(sel(type))); }
@@ -482,6 +484,7 @@
 		ctx = g.context(function () {
 			TYPES.forEach(function (t) {
 				all(d, t).forEach(function (el) {
+					if (late && fold.has(el)) return;
 					if (mobileOff(el) || (mobile && cfg.mobile === 'simple' && HEAVY[t])) { g.set(el, { visibility: 'visible' }); el.classList.add('pv-off'); return; }
 					try { builders[t](el); } catch (e) { g.set(el, { visibility: 'visible', opacity: 1, clearProps: 'transform' }); }
 				});
@@ -497,10 +500,11 @@
 		if (!w.gsap || !w.ScrollTrigger || reduced() || isEditor()) { revealAll(); return; }
 		w.gsap.registerPlugin(w.ScrollTrigger);
 		if (w.SplitText) w.gsap.registerPlugin(w.SplitText);
+		late = !d.documentElement.classList.contains('pv-js');
 		applyMap();
-		/* textul se împarte în cuvinte după ce s-au încărcat fonturile (altfel animația ar reporni), dar nu așteaptă mai mult de 0,7 s */
+		/* textul se împarte în cuvinte după ce s-au încărcat fonturile (altfel animația ar reporni), dar nu așteaptă mai mult de 0,5 s */
 		var go = function () { if (go.done) return; go.done = true; run(); w.ScrollTrigger.refresh(); };
-		if (d.fonts && d.fonts.status !== 'loaded' && d.fonts.ready) { d.fonts.ready.then(go); setTimeout(go, 700); } else go();
+		if (d.fonts && d.fonts.status !== 'loaded' && d.fonts.ready) { d.fonts.ready.then(go); setTimeout(go, 500); } else go();
 		if (!started) {
 			started = true;
 			if (d.fonts && d.fonts.ready) d.fonts.ready.then(function () { w.ScrollTrigger.refresh(); });

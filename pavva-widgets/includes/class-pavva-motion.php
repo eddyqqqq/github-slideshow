@@ -76,7 +76,8 @@ final class Pavva_W_Motion {
 
         /* pe site */
         add_action( 'wp_head', array( __CLASS__, 'head' ), 2 );
-        add_action( 'wp_footer', array( __CLASS__, 'footer' ), 50 );
+        /* înaintea scripturilor din subsol (Elementor, WooCommerce): primul ecran nu mai așteaptă după ele */
+        add_action( 'wp_footer', array( __CLASS__, 'footer' ), 1 );
 
         /* Elementor clasic: Advanced → „Pavva – Animație” */
         foreach ( self::STACKS as $stack ) {
@@ -113,8 +114,8 @@ final class Pavva_W_Motion {
                 echo '<link rel="preload" as="script" href="' . esc_url( $src ) . '">' . "\n";
             }
         }
-        /* rezervă: dacă animațiile nu pornesc în 5 s, conținutul apare oricum */
-        echo '<script id="pavva-motion-head">(function(h){h.classList.add("pv-js");setTimeout(function(){if(!h.classList.contains("pv-ready"))h.classList.remove("pv-js");},5000);})(document.documentElement);</script>' . "\n";
+        /* rezervă: dacă animațiile nu pornesc în 3 s, conținutul apare oricum */
+        echo '<script id="pavva-motion-head">(function(h){h.classList.add("pv-js");setTimeout(function(){if(!h.classList.contains("pv-ready"))h.classList.remove("pv-js");},3000);})(document.documentElement);</script>' . "\n";
     }
 
     /* În footer: scripturile se încarcă doar dacă pagina are elemente animate. */
