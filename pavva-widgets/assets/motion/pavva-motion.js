@@ -25,6 +25,11 @@
 
 	var cfg = { intensity: 'soft', smooth: false, start: 'top 88%', mobile: 'simple', bp: 767 };
 	var ctx = null, lenis = null, cleanups = [], tickerFn = null, mq = null, started = false;
+	/* elementele vizibile la încărcare → ordinea lor (pornesc imediat, în cascadă, fără să aștepte scroll-ul) */
+	var fold = null;
+	/* efectele legate de scroll rămân la scroll */
+	var SCROLL_LINKED = { scrub: 1, parallax: 1, skew: 1, 'pin-zoom': 1, hscroll: 1, marquee: 1, magnetic: 1 };
+	var FOLD_STEP = 0.12;
 
 	function sel(type) { return '.pv-' + type + ', [data-pv="' + type + '"]'; }
 	function all(root, type) { return Array.prototype.slice.call(root.querySelectorAll(sel(type))); }
@@ -36,6 +41,8 @@
 			var m = (' ' + el.className + ' ').match(new RegExp(' pv-' + name + '-(\\d+) '));
 			if (m) return String(parseInt(m[1], 10) / 10);
 		}
+		/* primul ecran: fără întârziere aleasă, elementele pornesc unul după altul, de sus în jos */
+		if (name === 'delay' && fold && fold.has(el)) return String(fold.get(el) * FOLD_STEP);
 		return null;
 	}
 	function num(el, name, def) { var v = parseFloat(attr(el, name)); return isNaN(v) ? def : v; }
@@ -50,6 +57,8 @@
 	}
 	function show(el) { w.gsap.set(el, { visibility: 'visible' }); }
 	function once(el, extra) {
+		/* primul ecran: pornește imediat, la încărcare */
+		if (fold && fold.has(el)) return undefined;
 		var o = { trigger: el, start: str(el, 'start', cfg.start), once: true };
 		for (var key in extra || {}) o[key] = extra[key];
 		return o;
@@ -359,7 +368,8 @@
 			var inner = media.tagName === 'IMG' || media.tagName === 'VIDEO' ? media : media.querySelector('img, video, .pv-inner');
 			var side = cfg.intensity === 'bold' ? 26 : 16;
 			var tl = w.gsap.timeline({
-				scrollTrigger: { trigger: el, start: 'top top', end: '+=' + num(el, 'length', 120) + '%', pin: true, pinSpacing: true, scrub: 1, anticipatePin: 1 }
+				/* secțiunea se fixează cu mijlocul ei pe mijlocul ecranului */
+				scrollTrigger: { trigger: el, start: str(el, 'start', 'center center'), end: '+=' + num(el, 'length', 120) + '%', pin: true, pinSpacing: true, scrub: 1, anticipatePin: 1 }
 			});
 			tl.fromTo(media, { clipPath: 'inset(14% ' + side + '% 14% ' + side + '% round 22px)' }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none' });
 			if (inner && inner !== media) tl.fromTo(inner, { scale: 1.25 }, { scale: 1, ease: 'none' }, 0);
@@ -447,10 +457,28 @@
 		});
 	}
 
+	/* ce se vede pe ecran la încărcare (titlu, formular, carduri) */
+	function computeFold() {
+		fold = new Map();
+		var vh = w.innerHeight || d.documentElement.clientHeight;
+		var list = [];
+		TYPES.forEach(function (t) {
+			if (SCROLL_LINKED[t]) return;
+			all(d, t).forEach(function (el) {
+				var r = el.getBoundingClientRect();
+				if (r.bottom > 0 && r.top < vh * 0.92 && (r.width || r.height)) list.push({ el: el, top: Math.round(r.top / 8), left: r.left });
+			});
+		});
+		list.sort(function (a, b) { return a.top - b.top || a.left - b.left; });
+		list.forEach(function (o, i) { fold.set(o.el, i); });
+	}
+
 	function run() {
 		var g = w.gsap;
 		var mobile = isMobile();
 		if (mobile && cfg.mobile === 'off') { revealAll(); return; }
+		/* doar la prima afișare a paginii, de sus (nu după un refresh în mijlocul paginii) */
+		if (fold === null) computeFold(); else fold = new Map();
 		ctx = g.context(function () {
 			TYPES.forEach(function (t) {
 				all(d, t).forEach(function (el) {
@@ -470,7 +498,9 @@
 		w.gsap.registerPlugin(w.ScrollTrigger);
 		if (w.SplitText) w.gsap.registerPlugin(w.SplitText);
 		applyMap();
-		run();
+		/* textul se împarte în cuvinte după ce s-au încărcat fonturile (altfel animația ar reporni), dar nu așteaptă mai mult de 0,7 s */
+		var go = function () { if (go.done) return; go.done = true; run(); w.ScrollTrigger.refresh(); };
+		if (d.fonts && d.fonts.status !== 'loaded' && d.fonts.ready) { d.fonts.ready.then(go); setTimeout(go, 700); } else go();
 		if (!started) {
 			started = true;
 			if (d.fonts && d.fonts.ready) d.fonts.ready.then(function () { w.ScrollTrigger.refresh(); });

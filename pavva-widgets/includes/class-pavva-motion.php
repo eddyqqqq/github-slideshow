@@ -107,6 +107,12 @@ final class Pavva_W_Motion {
         if ( ! self::front() ) return;
         $css = file_get_contents( PAVVA_WIDGETS_PATH . 'assets/motion/pavva-motion.css' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
         echo '<style id="pavva-motion-css">' . $css . '</style>' . "\n"; // phpcs:ignore -- fișier propriu
+        /* pagina are animații: descărcarea începe din <head>, ca primul ecran să pornească repede */
+        if ( self::page_has_animations() ) {
+            foreach ( self::scripts() as $src ) {
+                echo '<link rel="preload" as="script" href="' . esc_url( $src ) . '">' . "\n";
+            }
+        }
         /* rezervă: dacă animațiile nu pornesc în 5 s, conținutul apare oricum */
         echo '<script id="pavva-motion-head">(function(h){h.classList.add("pv-js");setTimeout(function(){if(!h.classList.contains("pv-ready"))h.classList.remove("pv-js");},5000);})(document.documentElement);</script>' . "\n";
     }
@@ -114,18 +120,8 @@ final class Pavva_W_Motion {
     /* În footer: scripturile se încarcă doar dacă pagina are elemente animate. */
     public static function footer() {
         if ( ! self::front() ) return;
-        $s    = self::settings();
-        $base = PAVVA_WIDGETS_URL . 'assets/motion/';
-        $ver  = function ( $file ) { return pavva_widgets_asset_version( 'assets/motion/' . $file ); };
-        $scripts = array(
-            $base . 'vendor/gsap.min.js?ver=' . $ver( 'vendor/gsap.min.js' ),
-            $base . 'vendor/ScrollTrigger.min.js?ver=' . $ver( 'vendor/ScrollTrigger.min.js' ),
-            $base . 'vendor/SplitText.min.js?ver=' . $ver( 'vendor/SplitText.min.js' ),
-        );
-        if ( ! empty( $s['smooth'] ) ) {
-            $scripts[] = $base . 'vendor/lenis.min.js?ver=' . $ver( 'vendor/lenis.min.js' );
-        }
-        $scripts[] = $base . 'pavva-motion.js?ver=' . $ver( 'pavva-motion.js' );
+        $s       = self::settings();
+        $scripts = self::scripts();
 
         $config = array(
             'intensity' => 'bold' === $s['intensity'] ? 'bold' : 'soft',
@@ -141,10 +137,36 @@ final class Pavva_W_Motion {
             . 'function done(){h.classList.remove("pv-js");h.classList.add("pv-ready");}'
             . 'if(w.matchMedia&&w.matchMedia("(prefers-reduced-motion: reduce)").matches){done();return;}'
             . 'if(!d.querySelector(q)&&!Object.keys(w.PavvaMotionMap||{}).length){done();return;}'
-            . 'var i=0;(function next(){if(i>=s.length){if(w.PavvaMotion){w.PavvaMotion.init(c);}else{done();}return;}'
-            . 'var t=d.createElement("script");t.src=s[i++];t.onload=next;t.onerror=done;d.body.appendChild(t);})();'
+            /* toate fișierele se descarcă deodată, dar rulează în ordine (async=false) */
+            . 's.forEach(function(u,i){var t=d.createElement("script");t.src=u;t.async=false;t.onerror=done;'
+            . 'if(i===s.length-1)t.onload=function(){if(w.PavvaMotion){w.PavvaMotion.init(c);}else{done();}};d.body.appendChild(t);});'
             . '})(document,window);';
         echo "\n</script>\n";
+    }
+
+    /* pagina curentă (Elementor) are cel puțin o animație Pavva? */
+    private static function page_has_animations(): bool {
+        if ( ! is_singular() ) return false;
+        $data = get_post_meta( get_queried_object_id(), '_elementor_data', true );
+        if ( ! is_string( $data ) || '' === $data ) return false;
+        return false !== strpos( $data, 'pavva_anim' ) || false !== strpos( $data, 'pv-' );
+    }
+
+    /* fișierele animațiilor, în ordinea în care trebuie să ruleze */
+    private static function scripts(): array {
+        $s    = self::settings();
+        $base = PAVVA_WIDGETS_URL . 'assets/motion/';
+        $ver  = function ( $file ) { return pavva_widgets_asset_version( 'assets/motion/' . $file ); };
+        $scripts = array(
+            $base . 'vendor/gsap.min.js?ver=' . $ver( 'vendor/gsap.min.js' ),
+            $base . 'vendor/ScrollTrigger.min.js?ver=' . $ver( 'vendor/ScrollTrigger.min.js' ),
+            $base . 'vendor/SplitText.min.js?ver=' . $ver( 'vendor/SplitText.min.js' ),
+        );
+        if ( ! empty( $s['smooth'] ) ) {
+            $scripts[] = $base . 'vendor/lenis.min.js?ver=' . $ver( 'vendor/lenis.min.js' );
+        }
+        $scripts[] = $base . 'pavva-motion.js?ver=' . $ver( 'pavva-motion.js' );
+        return $scripts;
     }
 
     private static function mobile_breakpoint(): int {
