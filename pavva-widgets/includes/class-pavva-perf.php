@@ -101,11 +101,10 @@ final class Pavva_W_Perf {
             $files = get_post_meta( $fid, 'elementor_font_files', true );
             if ( ! is_array( $files ) ) continue;
             foreach ( $files as $variation ) {
-                foreach ( array( 'woff2', 'woff', 'ttf' ) as $fmt ) {
-                    if ( ! empty( $variation[ $fmt ]['url'] ) ) {
-                        $out[] = $variation[ $fmt ]['url'];
-                        break 2; /* un singur fișier pe font (fonturile variabile au toate grosimile în el) */
-                    }
+                /* doar WOFF2: fișierele TTF sunt prea mari și ar concura cu imaginea din header pe mobil */
+                if ( ! empty( $variation['woff2']['url'] ) ) {
+                    $out[] = $variation['woff2']['url'];
+                    break; /* un singur fișier pe font (fonturile variabile au toate grosimile în el) */
                 }
             }
         }
@@ -158,7 +157,7 @@ final class Pavva_W_Perf {
         $rows = array(
             'lcp'           => array( 'Imaginea din header', 'Prima imagine din slider-ul Pavva se încarcă prima, înaintea restului paginii. Celelalte slide-uri vin după afișarea paginii.' ),
             'fonts_swap'    => array( 'Fonturi – text vizibil imediat', 'Textul apare imediat cu un font de rezervă și trece la fontul Pavva când s-a încărcat (font-display: swap). După ce schimbi: Elementor → Tools → Regenerate CSS & Data.' ),
-            'fonts_preload' => array( 'Fonturi – preîncărcare', 'Fonturile din Elementor → Custom Fonts încep să se descarce din primul moment.' ),
+            'fonts_preload' => array( 'Fonturi – preîncărcare', 'Fonturile din Elementor → Custom Fonts încep să se descarce din primul moment. Doar cele cu fișier WOFF2 (TTF-urile sunt prea mari).' ),
             'woo_assets'    => array( 'WooCommerce doar pe paginile de magazin', 'Pe Contact, Fabrica, Avantaje etc. nu se mai încarcă CSS-ul și scripturile WooCommerce. Pe produse, categorii, coș și checkout rămân.' ),
         );
         ?>

@@ -25,6 +25,9 @@ final class Pavva_W_Motion {
 
     const OPTION = 'pavva_motion';
     const STACKS = array( 'common', 'common-optimized', 'container', 'section', 'column' );
+    /* pluginurile de cache (LiteSpeed, WP Rocket, Autoptimize, Cloudflare) nu amână / nu combină aceste scripturi mici:
+       trebuie să ruleze imediat, altfel conținutul apare, dispare și reapare */
+    const NO_DEFER = 'data-no-defer="1" data-no-optimize="1" data-no-minify="1" data-cfasync="false" nowprocket';
 
     /** @var array elementele V4 în curs de afișare (pentru clase) */
     private static $stack = array();
@@ -127,7 +130,7 @@ final class Pavva_W_Motion {
             }
         }
         /* rezervă: dacă animațiile nu pornesc în 3 s, conținutul apare oricum */
-        echo '<script id="pavva-motion-head">(function(h){h.classList.add("pv-js");setTimeout(function(){if(!h.classList.contains("pv-ready"))h.classList.remove("pv-js");},3000);})(document.documentElement);</script>' . "\n";
+        echo '<script id="pavva-motion-head" ' . self::NO_DEFER . '>(function(h){h.classList.add("pv-js");setTimeout(function(){if(!h.classList.contains("pv-ready"))h.classList.remove("pv-js");},3000);})(document.documentElement);</script>' . "\n";
     }
 
     /* În footer: scripturile se încarcă doar dacă pagina are elemente animate. */
@@ -144,7 +147,7 @@ final class Pavva_W_Motion {
         );
         $selector = implode( ',', array_map( function ( $t ) { return '.pv-' . $t . ',[data-pv="' . $t . '"]'; }, array_keys( self::types() ) ) );
 
-        echo "<script id=\"pavva-motion\">\n";
+        echo '<script id="pavva-motion" ' . self::NO_DEFER . ">\n";
         echo 'window.PavvaMotionMap=' . wp_json_encode( (object) self::$map ) . ";\n";
         echo '(function(d,w){var h=d.documentElement,c=' . wp_json_encode( $config ) . ',s=' . wp_json_encode( $scripts ) . ',q=' . wp_json_encode( $selector ) . ';'
             . 'function done(){h.classList.remove("pv-js");h.classList.add("pv-ready");}'
