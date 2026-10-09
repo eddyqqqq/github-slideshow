@@ -21,7 +21,7 @@ final class Pavva_W_Perf {
     private static $lcp_done = false;
 
     public static function defaults(): array {
-        return array( 'lcp' => 1, 'fonts_swap' => 1, 'fonts_preload' => 1, 'woo_assets' => 1 );
+        return array( 'lcp' => 1, 'fonts_swap' => 1, 'fonts_preload' => 1, 'woo_assets' => 1, 'a11y_main' => 1 );
     }
 
     public static function settings(): array {
@@ -45,6 +45,9 @@ final class Pavva_W_Perf {
         }
         if ( ! empty( $s['woo_assets'] ) ) {
             add_action( 'wp_enqueue_scripts', array( __CLASS__, 'woo_assets' ), 99 );
+        }
+        if ( ! empty( $s['a11y_main'] ) ) {
+            add_action( 'wp_footer', array( __CLASS__, 'a11y_main' ), 2 );
         }
     }
 
@@ -113,6 +116,21 @@ final class Pavva_W_Perf {
         return $out;
     }
 
+    /* ================= accesibilitate ================= */
+
+    /* paginile construite din secțiuni Elementor nu au zonă „main”: o marcăm pe primul document de conținut
+       (nu header / footer / popup), doar dacă pagina nu are deja una; ținta link-ului „Sari la conținut” = #content */
+    public static function a11y_main() {
+        if ( ! self::front() ) return;
+        echo '<script id="pavva-a11y-main" data-no-defer="1" data-no-optimize="1" data-cfasync="false" nowprocket>'
+            . '(function(d){if(d.querySelector("main,[role=main]"))return;'
+            . 'var c=d.querySelectorAll("[data-elementor-type]");'
+            . 'for(var i=0;i<c.length;i++){var e=c[i],t=e.getAttribute("data-elementor-type");'
+            . 'if(/^(header|footer|popup|loop-item|kit)$/.test(t)||(e.parentElement&&e.parentElement.closest("[data-elementor-type]")))continue;'
+            . 'e.setAttribute("role","main");if(!d.getElementById("content"))e.id="content";e.setAttribute("tabindex","-1");e.style.outline="none";break;}'
+            . '})(document);</script>' . "\n";
+    }
+
     /* ================= WooCommerce ================= */
 
     public static function woo_assets() {
@@ -158,6 +176,7 @@ final class Pavva_W_Perf {
             'lcp'           => array( 'Imaginea din header', 'Prima imagine din slider-ul Pavva se încarcă prima, înaintea restului paginii. Celelalte slide-uri vin după afișarea paginii.' ),
             'fonts_swap'    => array( 'Fonturi – text vizibil imediat', 'Textul apare imediat cu un font de rezervă și trece la fontul Pavva când s-a încărcat (font-display: swap). După ce schimbi: Elementor → Tools → Regenerate CSS & Data.' ),
             'fonts_preload' => array( 'Fonturi – preîncărcare', 'Fonturile din Elementor → Custom Fonts încep să se descarce din primul moment. Doar cele cu fișier WOFF2 (TTF-urile sunt prea mari).' ),
+            'a11y_main'     => array( 'Zona principală a paginii (accesibilitate)', 'Conținutul paginii (fără header și footer) e marcat ca zonă principală („main”), cu adresa #content pentru link-ul „Sari la conținut”. Ajută cititoarele de ecran, agenții AI și scorul PageSpeed. Nu se aplică dacă tema are deja o zonă main.' ),
             'woo_assets'    => array( 'WooCommerce doar pe paginile de magazin', 'Pe Contact, Fabrica, Avantaje etc. nu se mai încarcă CSS-ul și scripturile WooCommerce. Pe produse, categorii, coș și checkout rămân.' ),
         );
         ?>
