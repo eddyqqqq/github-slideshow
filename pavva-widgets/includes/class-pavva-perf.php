@@ -32,6 +32,8 @@ final class Pavva_W_Perf {
     public static function init() {
         add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
         add_action( 'admin_init', array( __CLASS__, 'register_setting' ) );
+        /* fonturile preîncărcate se recitesc când salvezi un font în Elementor → Custom Fonts */
+        add_action( 'save_post_elementor_font', function () { delete_transient( 'pavva_perf_fonts' ); } );
 
         $s = self::settings();
         if ( ! empty( $s['lcp'] ) || ! empty( $s['fonts_preload'] ) ) {
