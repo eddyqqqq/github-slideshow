@@ -1523,6 +1523,10 @@ class Pavva_Carusel_Widget extends Widget_Base {
 							'image_custom_dimension' => isset( $s['image_custom_dimension'] ) ? $s['image_custom_dimension'] : array(),
 						);
 						$image_html = Group_Control_Image_Size::get_attachment_image_html( $image_settings, 'image' );
+						/* caruselul e de obicei mai jos pe pagină: imaginile se încarcă abia când ajungi la el */
+						if ( $image_html && false === strpos( $image_html, 'loading=' ) ) {
+							$image_html = preg_replace( '/<img\b/', '<img loading="lazy" decoding="async"', $image_html, 1 );
+						}
 					}
 					?>
 					<<?php echo $card_tag; // phpcs:ignore ?> <?php echo $this->get_render_attribute_string( $card_key ); // phpcs:ignore ?>>

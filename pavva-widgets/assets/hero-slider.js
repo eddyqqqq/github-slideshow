@@ -81,6 +81,24 @@
 			});
 		}
 		fitImageSizes();
+
+		/* imaginile celorlalte slide-uri vin după afișarea paginii (sau imediat, dacă se schimbă slide-ul) */
+		var deferredDone = false;
+		function loadDeferred() {
+			if (deferredDone) return;
+			deferredDone = true;
+			Array.prototype.forEach.call(root.querySelectorAll('[data-ps-srcset], [data-ps-src]'), function (el) {
+				var set = el.getAttribute('data-ps-srcset'), src = el.getAttribute('data-ps-src');
+				if (set) { el.setAttribute('srcset', set); el.removeAttribute('data-ps-srcset'); }
+				if (src) { el.setAttribute('src', src); el.removeAttribute('data-ps-src'); }
+			});
+			fitImageSizes();
+		}
+		var whenIdle = function () {
+			if (window.requestIdleCallback) window.requestIdleCallback(loadDeferred, { timeout: 2000 }); else setTimeout(loadDeferred, 300);
+		};
+		if (document.readyState === 'complete') whenIdle(); else window.addEventListener('load', whenIdle, { once: true });
+
 		if (window.ResizeObserver) {
 			new ResizeObserver(fitImageSizes).observe(viewport);
 		} else {
@@ -317,6 +335,7 @@
 				return;
 			}
 			if (!dir) dir = target > current ? 1 : -1;
+			loadDeferred();
 			stopAutoplay();
 			var from = slides[current];
 			var to = slides[target];
@@ -381,6 +400,7 @@
 				if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
 				if (Math.abs(my) > Math.abs(mx)) { down = false; return; } /* derulare verticală: nu ne băgăm */
 				dragging = true;
+				loadDeferred();
 				viewport.classList.add('is-dragging');
 				stopAutoplay();
 				try { viewport.setPointerCapture(pointerId); } catch (err) { /* nimic */ }

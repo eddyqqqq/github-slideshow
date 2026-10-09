@@ -30,6 +30,8 @@
 	/* efectele legate de scroll rămân la scroll */
 	var SCROLL_LINKED = { scrub: 1, parallax: 1, skew: 1, 'pin-zoom': 1, hscroll: 1, marquee: 1, magnetic: 1 };
 	var FOLD_STEP = 0.12;
+	/* fiecare pornire (și repornire) are numărul ei: pregătirea în bucăți a celei vechi se oprește */
+	var runId = 0;
 	/* conexiune foarte lentă: conținutul a apărut deja fără animație (rezerva de 3 s) → primul ecran nu se mai ascunde */
 	var late = false;
 
@@ -483,15 +485,32 @@
 		if (mobile && cfg.mobile === 'off') { revealAll(); return; }
 		/* doar la prima afișare a paginii, de sus (nu după un refresh în mijlocul paginii) */
 		if (fold === null) computeFold(); else fold = new Map();
-		ctx = g.context(function () {
-			TYPES.forEach(function (t) {
-				all(d, t).forEach(function (el) {
-					if (late && fold.has(el)) return;
-					if (mobileOff(el) || (mobile && cfg.mobile === 'simple' && HEAVY[t])) { g.set(el, { visibility: 'visible' }); el.classList.add('pv-off'); return; }
-					try { builders[t](el); } catch (e) { g.set(el, { visibility: 'visible', opacity: 1, clearProps: 'transform' }); }
-				});
+		function build(t, el) {
+			if (late && fold.has(el)) return;
+			if (mobileOff(el) || (mobile && cfg.mobile === 'simple' && HEAVY[t])) { g.set(el, { visibility: 'visible' }); el.classList.add('pv-off'); return; }
+			try { builders[t](el); } catch (e) { g.set(el, { visibility: 'visible', opacity: 1, clearProps: 'transform' }); }
+		}
+		/* acum: primul ecran și efectele care schimbă așezarea paginii (secțiuni fixate);
+		   restul în bucăți mici, când browserul e liber (pagina nu se mai blochează la încărcare) */
+		var now = [], later = [];
+		TYPES.forEach(function (t) {
+			all(d, t).forEach(function (el) {
+				(fold.has(el) || t === 'pin-zoom' || t === 'hscroll' ? now : later).push([t, el]);
 			});
 		});
+		ctx = g.context(function () { now.forEach(function (x) { build(x[0], x[1]); }); });
+		var gen = ++runId;
+		var pump = function (deadline) {
+			if (gen !== runId || !ctx) return;
+			var t0 = Date.now();
+			while (later.length && (deadline && deadline.timeRemaining ? deadline.timeRemaining() > 3 : Date.now() - t0 < 8)) {
+				var x = later.shift();
+				ctx.add(function () { build(x[0], x[1]); });
+			}
+			if (later.length) schedule(); else w.ScrollTrigger.refresh();
+		};
+		var schedule = function () { if (w.requestIdleCallback) w.requestIdleCallback(pump, { timeout: 250 }); else setTimeout(pump, 16); };
+		if (later.length) schedule();
 		if (cfg.smooth) startSmooth(); else stopSmooth();
 		d.documentElement.classList.add('pv-ready');
 	}
@@ -521,6 +540,7 @@
 	}
 
 	function destroy() {
+		runId++;
 		cleanups.forEach(function (fn) { try { fn(); } catch (e) {} });
 		cleanups = [];
 		if (ctx) { ctx.revert(); ctx = null; }

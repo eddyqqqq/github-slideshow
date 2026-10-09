@@ -1402,6 +1402,19 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'lcp_priority',
+			array(
+				'label'        => 'Slider sus pe pagină (încărcare prioritară)',
+				'description'  => 'Da = prima imagine se încarcă prima, înaintea restului paginii (bun pentru header). Pune Nu dacă slider-ul e mai jos pe pagină: atunci se încarcă abia când ajungi la el.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+			)
+		);
+
+		$this->add_control(
 			'image_rendering',
 			array(
 				'label'       => 'Randare imagine',
@@ -2619,7 +2632,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		return ! empty( $media['url'] ) ? $media['url'] : '';
 	}
 
-	private function get_picture_html( $slide, $index, $size, $bp, $quality = 'smart' ) {
+	private function get_picture_html( $slide, $index, $size, $bp, $quality = 'smart', $priority = true, $defer = false ) {
 		$media = isset( $slide['slide_image'] ) ? $slide['slide_image'] : array();
 		if ( empty( $media['url'] ) && empty( $media['id'] ) ) {
 			return '';
@@ -2635,9 +2648,9 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			'alt'       => $alt,
 			'decoding'  => 'async',
 			'draggable' => 'false',
-			'loading'   => 0 === $index ? 'eager' : 'lazy',
+			'loading'   => ( 0 === $index && $priority ) ? 'eager' : 'lazy',
 		);
-		if ( 0 === $index ) {
+		if ( 0 === $index && $priority ) {
 			$attrs['fetchpriority'] = 'high';
 		}
 
@@ -2671,7 +2684,49 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			$sources .= '<source media="(max-width: ' . (int) $bp['tablet'] . 'px)" srcset="' . esc_url( $tablet ) . '">';
 		}
 
-		return $sources ? '<picture class="ps-picture">' . $sources . $img . '</picture>' : $img;
+		$html = $sources ? '<picture class="ps-picture">' . $sources . $img . '</picture>' : $img;
+		if ( $defer && $index > 0 ) {
+			/* celelalte slide-uri: imaginea se încarcă după afișarea paginii (hero-slider.js), nu odată cu prima */
+			$html = preg_replace( '/\s(src|srcset)="/', ' data-ps-$1="', $html );
+			$html = preg_replace( '/<img\b/', '<img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="', $html, 1 );
+		}
+		return $html;
+	}
+
+	/* fișierele primei imagini (pentru preîncărcarea din <head>), cu variantele de telefon / tabletă */
+	private function lcp_preload( $slide, $size, $bp, $quality ) {
+		$media = isset( $slide['slide_image'] ) ? $slide['slide_image'] : array();
+		$out   = array();
+		$max   = 0;
+		$mobile = isset( $slide['slide_image_mobile'] ) ? $this->media_url( $slide['slide_image_mobile'], $size ) : '';
+		$tablet = isset( $slide['slide_image_tablet'] ) ? $this->media_url( $slide['slide_image_tablet'], $size ) : '';
+		if ( $mobile ) {
+			$out[] = array( 'href' => $mobile, 'media' => '(max-width: ' . (int) $bp['mobile'] . 'px)' );
+			$max   = (int) $bp['mobile'];
+		}
+		if ( $tablet ) {
+			$out[] = array( 'href' => $tablet, 'media' => ( $max ? '(min-width: ' . ( $max + 1 ) . 'px) and ' : '' ) . '(max-width: ' . (int) $bp['tablet'] . 'px)' );
+			$max   = (int) $bp['tablet'];
+		}
+		$main = array( 'href' => '' );
+		if ( ! empty( $media['id'] ) ) {
+			$src = wp_get_attachment_image_src( (int) $media['id'], $size );
+			if ( $src ) $main['href'] = $src[0];
+			if ( 'max' !== $quality ) {
+				$set = wp_get_attachment_image_srcset( (int) $media['id'], $size );
+				if ( $set ) {
+					$main['srcset'] = $set;
+					$main['sizes']  = '100vw';
+				}
+			}
+		} elseif ( ! empty( $media['url'] ) ) {
+			$main['href'] = $media['url'];
+		}
+		if ( $main['href'] ) {
+			if ( $max ) $main['media'] = '(min-width: ' . ( $max + 1 ) . 'px)';
+			$out[] = $main;
+		}
+		return $out;
 	}
 
 	private function default_arrow_svg( $dir ) {
@@ -2893,6 +2948,8 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			'textMode'   => $mode,
 			'imgQuality' => ( isset( $s['image_quality'] ) && in_array( $s['image_quality'], array( 'smart', 'max', 'wp' ), true ) ) ? $s['image_quality'] : 'smart',
 		);
+		$priority = ! isset( $s['lcp_priority'] ) || 'yes' === $s['lcp_priority'];
+		$editing  = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor && \Elementor\Plugin::$instance->editor->is_edit_mode();
 
 		$svg_mode = isset( $s['arrows_svg_color_mode'] ) && in_array( $s['arrows_svg_color_mode'], array( 'auto', 'fill', 'stroke', 'both', 'original' ), true ) ? $s['arrows_svg_color_mode'] : 'auto';
 		$layout   = ( isset( $s['arrows_layout'] ) && 'sides' === $s['arrows_layout'] ) ? 'sides' : 'group';
@@ -2936,6 +2993,11 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 
 		$size = ! empty( $s['image_size'] ) ? $s['image_size'] : 'full';
 		$bp   = $this->get_breakpoints();
+
+		/* prima imagine se preîncarcă din <head> la următoarea afișare a paginii (Pavva_W_Perf) */
+		if ( $priority && ! $editing && class_exists( 'Pavva_W_Perf' ) ) {
+			Pavva_W_Perf::remember_lcp( $this->lcp_preload( $slides[0], $size, $bp, $options['imgQuality'] ) );
+		}
 
 		/* ---------- texte ---------- */
 		$show_text   = $is_yes( 'show_text' );
@@ -3016,7 +3078,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 								<?php else : ?>
 									<div class="ps-slide-inner">
 								<?php endif; ?>
-									<?php echo $this->get_picture_html( $slide, $i, $size, $bp, $options['imgQuality'] ); // phpcs:ignore -- generat cu funcțiile WordPress ?>
+									<?php echo $this->get_picture_html( $slide, $i, $size, $bp, $options['imgQuality'], $priority, ! $editing ); // phpcs:ignore -- generat cu funcțiile WordPress ?>
 									<span class="ps-overlay" aria-hidden="true"></span>
 								<?php if ( $has_link ) : ?>
 									</a>
