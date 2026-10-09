@@ -1,11 +1,16 @@
 /* Pavva Motion – elementele animate stau ascunse până pornește animația (fără „clipire”) */
-html.pv-js :is(.pv-lines,.pv-words,.pv-blur,.pv-chars,.pv-fade-up,.pv-img-reveal,.pv-draw,.pv-count,[data-pv="lines"],[data-pv="words"],[data-pv="blur"],[data-pv="chars"],[data-pv="fade-up"],[data-pv="img-reveal"],[data-pv="draw"],[data-pv="count"]),
-html.pv-js :is(.pv-stagger,[data-pv="stagger"]) > * { visibility: hidden; }
-:is(.pv-img-reveal,[data-pv="img-reveal"]) { overflow: hidden; }
+html.pv-js :is(.pv-words-mask,.pv-lines,.pv-words,.pv-blur,.pv-chars,.pv-underline,.pv-fade-up,.pv-img-reveal,.pv-curtain,.pv-tiles,.pv-draw,.pv-count,[data-pv="words-mask"],[data-pv="lines"],[data-pv="words"],[data-pv="blur"],[data-pv="chars"],[data-pv="underline"],[data-pv="fade-up"],[data-pv="img-reveal"],[data-pv="curtain"],[data-pv="tiles"],[data-pv="draw"],[data-pv="count"]),
+html.pv-js :is(.pv-stagger,[data-pv="stagger"],.pv-flip3d,[data-pv="flip3d"]) > * { visibility: hidden; }
+:is(.pv-img-reveal,[data-pv="img-reveal"],.pv-curtain,[data-pv="curtain"],.pv-tiles,[data-pv="tiles"]) { overflow: hidden; }
 .pv-w, .pv-c { display: inline-block; }
+/* „ca în header”: spațiu în mască pentru diacritice (ă, î, ș, ț), ca în slider */
+.pv-w-mask { vertical-align: top; padding: .18em .06em .24em; margin: -.18em -.06em -.24em; }
+.pv-cover { position: absolute; inset: 0; z-index: 5; pointer-events: none; transform: scaleX(0); }
+.pv-tiles-grid { position: absolute; inset: -1px; z-index: 5; display: grid; pointer-events: none; }
+.pv-tiles-grid > span { display: block; margin: -.5px; }
 html.pv-smooth { scroll-behavior: auto !important; }
 .pv-off { visibility: visible !important; }
 @media (prefers-reduced-motion: reduce) {
-	html.pv-js :is(.pv-lines,.pv-words,.pv-blur,.pv-chars,.pv-fade-up,.pv-img-reveal,.pv-draw,.pv-count,[data-pv]),
-	html.pv-js :is(.pv-stagger,[data-pv="stagger"]) > * { visibility: visible; }
+	html.pv-js :is(.pv-words-mask,.pv-lines,.pv-words,.pv-blur,.pv-chars,.pv-underline,.pv-fade-up,.pv-img-reveal,.pv-curtain,.pv-tiles,.pv-draw,.pv-count,[data-pv]),
+	html.pv-js :is(.pv-stagger,[data-pv="stagger"],.pv-flip3d,[data-pv="flip3d"]) > * { visibility: visible; }
 }

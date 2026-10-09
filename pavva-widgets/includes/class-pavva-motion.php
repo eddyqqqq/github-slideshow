@@ -33,16 +33,22 @@ final class Pavva_W_Motion {
 
     public static function types(): array {
         return array(
-            'lines'      => 'Text – reveal pe rânduri',
-            'words'      => 'Text – cuvinte în cascadă',
-            'blur'       => 'Text – cuvinte din blur',
-            'chars'      => 'Text – litere în cascadă',
-            'scrub'      => 'Text – se umple la scroll',
+            'words-mask' => 'Text – Header Pavva: cuvinte cu mască (identic cu slider-ul)',
+            'lines'      => 'Text – Rânduri cu mască (paragrafe, aceeași familie)',
+            'underline'  => 'Text – Subliniere Pavva desenată',
+            'words'      => 'Text – Cuvinte în cascadă (estompare)',
+            'blur'       => 'Text – Cuvinte din blur',
+            'chars'      => 'Text – Litere cu mască',
+            'scrub'      => 'Text – Se umple la scroll',
             'count'      => 'Cifră care crește',
-            'fade-up'    => 'Apariție de jos',
-            'stagger'    => 'Cascadă (carduri, coloane, iconițe)',
-            'img-reveal' => 'Imagine dezvelită',
-            'parallax'   => 'Parallax (imagine)',
+            'fade-up'    => 'Element – Apariție de jos',
+            'stagger'    => 'Carduri – Cascadă',
+            'flip3d'     => 'Carduri – Cascadă 3D (plăci care se așază)',
+            'img-reveal' => 'Imagine – Dezvelită (direcție)',
+            'curtain'    => 'Imagine – Cortină Pavva',
+            'tiles'      => 'Imagine – Pavaj (se descoperă din plăci)',
+            'parallax'   => 'Imagine – Parallax',
+            'skew'       => 'Imagine – Înclinare la scroll rapid',
             'draw'       => 'Linie / SVG desenat',
             'pin-zoom'   => 'Secțiune fixată + imagine care crește',
             'hscroll'    => 'Galerie orizontală la scroll',
@@ -195,19 +201,20 @@ final class Pavva_W_Motion {
                 'min'         => 0.2,
                 'max'         => 4,
                 'step'        => 0.05,
-                'condition'   => array( 'pavva_anim!' => array( '', 'scrub', 'parallax', 'pin-zoom', 'hscroll', 'marquee', 'magnetic' ) ),
+                'condition'   => array( 'pavva_anim!' => array( '', 'scrub', 'parallax', 'skew', 'pin-zoom', 'hscroll', 'marquee', 'magnetic' ) ),
             )
         );
 
         $element->add_control(
             'pavva_anim_stagger',
             array(
-                'label'     => 'Pauză între elemente (secunde)',
-                'type'      => Controls_Manager::NUMBER,
-                'min'       => 0,
-                'max'       => 1,
-                'step'      => 0.01,
-                'condition' => array( 'pavva_anim' => array( 'lines', 'words', 'blur', 'chars', 'stagger', 'draw' ) ),
+                'label'       => 'Pauză între elemente (secunde)',
+                'description' => 'Pavaj: timpul total în care se strâng plăcile (implicit 0.7).',
+                'type'        => Controls_Manager::NUMBER,
+                'min'         => 0,
+                'max'         => 1,
+                'step'        => 0.005,
+                'condition'   => array( 'pavva_anim' => array( 'words-mask', 'lines', 'underline', 'words', 'blur', 'chars', 'stagger', 'flip3d', 'tiles', 'draw' ) ),
             )
         );
 
@@ -223,9 +230,20 @@ final class Pavva_W_Motion {
                     'top'    => 'De sus',
                     'left'   => 'Din stânga',
                     'right'  => 'Din dreapta',
-                    'center' => 'Din centru (linie)',
+                    'center' => 'Din centru',
+                    'random' => 'Aleator (pavaj)',
                 ),
-                'condition' => array( 'pavva_anim' => array( 'img-reveal', 'draw', 'marquee' ) ),
+                'condition' => array( 'pavva_anim' => array( 'img-reveal', 'curtain', 'tiles', 'draw', 'marquee' ) ),
+            )
+        );
+
+        $element->add_control(
+            'pavva_anim_color',
+            array(
+                'label'       => 'Culoare',
+                'description' => 'Gol = culoarea Pavva (#AB5525).',
+                'type'        => Controls_Manager::COLOR,
+                'condition'   => array( 'pavva_anim' => array( 'curtain', 'tiles', 'underline' ) ),
             )
         );
 
@@ -233,11 +251,11 @@ final class Pavva_W_Motion {
             'pavva_anim_speed',
             array(
                 'label'       => 'Viteză / forță',
-                'description' => 'Parallax: 4–20 (implicit 10). Bandă: px pe secundă (implicit 70). Magnetic: 0.1–0.8 (implicit 0.35).',
+                'description' => 'Parallax: 4–20 (implicit 10). Înclinare: grade, 2–12 (implicit 6). Bandă: px pe secundă (implicit 70). Magnetic: 0.1–0.8 (implicit 0.35).',
                 'type'        => Controls_Manager::NUMBER,
                 'min'         => 0,
                 'step'        => 0.05,
-                'condition'   => array( 'pavva_anim' => array( 'parallax', 'marquee', 'magnetic' ) ),
+                'condition'   => array( 'pavva_anim' => array( 'parallax', 'skew', 'marquee', 'magnetic' ) ),
             )
         );
 
@@ -258,7 +276,7 @@ final class Pavva_W_Motion {
             'pavva_anim_note',
             array(
                 'type'            => Controls_Manager::RAW_HTML,
-                'raw'             => 'Animația rulează pe site și în Preview, nu în editor. „Cascadă” pe un widget Pavva (Grilă, Carusel, Culori, Dimensiuni, Caracteristici, Acordeon) animă pe rând cardurile lui. Setări generale: Setări → Pavva – Animații.',
+                'raw'             => 'Animația rulează pe site și în Preview, nu în editor. Pentru titluri ca în header: „Header Pavva: cuvinte cu mască”; pentru paragrafe: „Rânduri cu mască”. „Cascadă” pe un widget Pavva (Grilă, Carusel, Culori, Dimensiuni, Caracteristici, Acordeon) animă pe rând cardurile lui. Setări generale: Setări → Pavva – Animații.',
                 'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
                 'condition'       => array( 'pavva_anim!' => '' ),
             )
@@ -295,7 +313,7 @@ final class Pavva_W_Motion {
         $type = (string) $element->get_settings( 'pavva_anim' );
         if ( '' === $type || ! isset( self::types()[ $type ] ) ) return;
         $attrs = array( 'data-pv' => $type );
-        foreach ( array( 'delay', 'duration', 'stagger', 'from', 'speed', 'mobile' ) as $key ) {
+        foreach ( array( 'delay', 'duration', 'stagger', 'from', 'speed', 'mobile', 'color' ) as $key ) {
             $v = $element->get_settings( 'pavva_anim_' . $key );
             if ( '' !== $v && null !== $v && false !== $v ) $attrs[ 'data-pv-' . $key ] = (string) $v;
         }
@@ -356,7 +374,7 @@ final class Pavva_W_Motion {
                     \Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control::bind_to( 'pavva_anim' )
                         ->set_label( 'Animație la scroll' )
                         ->set_options( $options )
-                        ->set_description( 'Rulează pe site și în Preview, nu în editor. „Cascadă” pe un container animă pe rând elementele din el (carduri, coloane).' ),
+                        ->set_description( 'Rulează pe site și în Preview, nu în editor. Titluri ca în header: „Header Pavva: cuvinte cu mască”. „Cascadă” pe un container animă pe rând elementele din el (carduri, coloane).' ),
                     \Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control::bind_to( 'pavva_anim_delay' )
                         ->set_label( 'Întârziere (ms)' )
                         ->set_placeholder( '0' )

@@ -5,7 +5,8 @@
  * Pe element: clasa „pv-lines” (sau oricare tip de mai jos) ori atributul data-pv="lines".
  * Opțiuni (atribute): data-pv-delay, data-pv-duration, data-pv-stagger, data-pv-start,
  * data-pv-from (bottom/top/left/right), data-pv-speed, data-pv-mobile="off",
- * data-pv-to / data-pv-suffix / data-pv-prefix / data-pv-decimals (cifre).
+ * data-pv-to / data-pv-suffix / data-pv-prefix / data-pv-decimals (cifre),
+ * data-pv-color (cortină, pavaj, subliniere; implicit culoarea Pavva).
  * Opțiuni ca clase (pentru Elementor V4): pv-delay-3 (= 0.3 s), pv-mobile-off.
  * La „pv-stagger” se animă pe rând: elementele cu data-pv-item, cardurile widgeturilor
  * Pavva sau, altfel, copiii direcți.
@@ -13,10 +14,12 @@
 (function (w, d) {
 	'use strict';
 
-	var TYPES = ['lines', 'words', 'blur', 'chars', 'scrub', 'count', 'fade-up', 'stagger',
-		'img-reveal', 'parallax', 'draw', 'pin-zoom', 'hscroll', 'marquee', 'magnetic'];
+	var TYPES = ['words-mask', 'lines', 'words', 'blur', 'chars', 'underline', 'scrub', 'count', 'fade-up', 'stagger', 'flip3d',
+		'img-reveal', 'curtain', 'tiles', 'parallax', 'skew', 'draw', 'pin-zoom', 'hscroll', 'marquee', 'magnetic'];
 	/* efectele grele: pe telefon, în modul „simplificat”, nu pornesc */
-	var HEAVY = { 'pin-zoom': 1, hscroll: 1, parallax: 1, magnetic: 1 };
+	var HEAVY = { 'pin-zoom': 1, hscroll: 1, parallax: 1, magnetic: 1, skew: 1 };
+	/* culoarea Pavva (cortină, pavaj, subliniere), dacă elementul nu are alta */
+	var BRAND = '#AB5525';
 	/* elementele care se repetă în widgeturile Pavva (pentru „cascadă”) */
 	var ITEMS = '[data-pv-item], .pvg-item, .cc-card, .pvc-stage, .pvc-thumb, .pvd-item, .pvk-item, .pva-item, .pf-item, .pf-media';
 
@@ -54,6 +57,36 @@
 	function base(el, dur, stg) {
 		return { duration: num(el, 'duration', dur), delay: num(el, 'delay', 0), stagger: num(el, 'stagger', stg) };
 	}
+	/* curba cubic-bezier exactă (aceeași ca în CSS), ca ease pentru GSAP */
+	function bezier(x1, y1, x2, y2) {
+		var cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+		var cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+		function sx(u) { return ((ax * u + bx) * u + cx) * u; }
+		function sy(u) { return ((ay * u + by) * u + cy) * u; }
+		function dx(u) { return (3 * ax * u + 2 * bx) * u + cx; }
+		return function (t) {
+			if (t <= 0) return 0;
+			if (t >= 1) return 1;
+			var u = t, i, e, dd;
+			for (i = 0; i < 8; i++) {
+				e = sx(u) - t;
+				if (Math.abs(e) < 1e-6) return sy(u);
+				dd = dx(u);
+				if (Math.abs(dd) < 1e-6) break;
+				u -= e / dd;
+			}
+			var lo = 0, hi = 1;
+			u = t;
+			for (i = 0; i < 30 && hi - lo > 1e-7; i++) {
+				if (sx(u) < t) lo = u; else hi = u;
+				u = (lo + hi) / 2;
+			}
+			return sy(u);
+		};
+	}
+	/* slider-ul din header: cuvintele urcă în 1100 ms, la 55 ms unul după altul, pe curba (.16, 1, .3, 1) */
+	var HERO = { duration: 1.1, step: 0.055, ease: bezier(0.16, 1, 0.3, 1) };
+	function color(el) { return str(el, 'color', '') || BRAND; }
 	function mobileOff(el) {
 		return isMobile() && (str(el, 'mobile', '') === 'off' || el.classList.contains('pv-mobile-off'));
 	}
@@ -78,6 +111,23 @@
 		});
 	}
 
+	/* cardurile animate pe rând: ale widgeturilor Pavva sau copiii direcți */
+	function staggerItems(el) {
+		var items = Array.prototype.slice.call(el.querySelectorAll(ITEMS)).filter(function (n) {
+			/* doar primul nivel de carduri (nu și elementele din interiorul lor) */
+			var p = n.parentElement;
+			while (p && p !== el) { if (p.matches && p.matches(ITEMS)) return false; p = p.parentElement; }
+			return true;
+		});
+		if (!items.length) {
+			var box = el;
+			/* coboară prin învelișurile cu un singur copil (ex. widget Elementor) */
+			while (box.children.length === 1 && box.firstElementChild.children.length) box = box.firstElementChild;
+			items = Array.prototype.slice.call(box.children);
+		}
+		return items;
+	}
+
 	var builders = {
 		lines: function (el) {
 			splitAnim(el, 'lines', 'lines', function (s) {
@@ -95,6 +145,39 @@
 			splitAnim(el, 'words', null, function (s) {
 				var b = base(el, 1.1, 0.05);
 				return w.gsap.from(s.words, { filter: 'blur(' + (10 * k()) + 'px)', y: 10 * k(), opacity: 0, ease: 'power2.out', duration: b.duration, delay: b.delay, stagger: b.stagger, scrollTrigger: once(el) });
+			});
+		},
+		/* identic cu textul din slider-ul din header (cuvânt cu cuvânt, urcă de sub o linie invizibilă) */
+		'words-mask': function (el) {
+			splitAnim(el, 'words', 'words', function (s) {
+				/* textele lungi merg mai repede, ca descrierea din slider */
+				var step = num(el, 'stagger', s.words.length > 14 ? HERO.step * 0.35 : HERO.step);
+				return w.gsap.from(s.words, {
+					yPercent: 100,
+					y: function (i, t) { return (parseFloat(w.getComputedStyle(t).fontSize) || 16) * 0.32; },
+					force3D: true, ease: HERO.ease, duration: num(el, 'duration', HERO.duration), delay: num(el, 'delay', 0), stagger: step,
+					scrollTrigger: once(el)
+				});
+			});
+		},
+		/* rândurile urcă din mască, apoi o linie în culoarea Pavva se desenează sub fiecare */
+		underline: function (el) {
+			splitAnim(el, 'lines', 'lines', function (s) {
+				var b = base(el, 1.1, 0.12);
+				var t = textTarget(el);
+				var align = w.getComputedStyle(t).textAlign;
+				s.lines.forEach(function (l) {
+					l.style.width = 'fit-content';
+					if (align === 'center') { l.style.marginLeft = 'auto'; l.style.marginRight = 'auto'; } else if (align === 'right' || align === 'end') l.style.marginLeft = 'auto';
+					l.style.paddingBottom = '.14em';
+					l.style.backgroundImage = 'linear-gradient(' + color(el) + ',' + color(el) + ')';
+					l.style.backgroundRepeat = 'no-repeat';
+					l.style.backgroundPosition = '0 100%';
+				});
+				var tl = w.gsap.timeline({ delay: b.delay, scrollTrigger: once(el) });
+				tl.from(s.lines, { yPercent: 110, ease: HERO.ease, duration: b.duration, stagger: b.stagger });
+				tl.fromTo(s.lines, { backgroundSize: '0% .07em' }, { backgroundSize: '100% .07em', ease: 'expo.inOut', duration: b.duration * 0.9, stagger: b.stagger }, b.duration * 0.45);
+				return tl;
 			});
 		},
 		chars: function (el) {
@@ -136,18 +219,7 @@
 			w.gsap.fromTo(el, { y: 42 * k(), opacity: 0 }, { y: 0, opacity: 1, ease: 'power3.out', duration: b.duration, delay: b.delay, clearProps: 'transform', scrollTrigger: once(el) });
 		},
 		stagger: function (el) {
-			var items = Array.prototype.slice.call(el.querySelectorAll(ITEMS)).filter(function (n) {
-				/* doar primul nivel de carduri (nu și elementele din interiorul lor) */
-				var p = n.parentElement;
-				while (p && p !== el) { if (p.matches && p.matches(ITEMS)) return false; p = p.parentElement; }
-				return true;
-			});
-			if (!items.length) {
-				var box = el;
-				/* coboară prin învelișurile cu un singur copil (ex. widget Elementor) */
-				while (box.children.length === 1 && box.firstElementChild.children.length) box = box.firstElementChild;
-				items = Array.prototype.slice.call(box.children);
-			}
+			var items = staggerItems(el);
 			show(el);
 			/* tot ce nu e card rămâne vizibil (titluri, butoane, paginare) */
 			w.gsap.set(el.children, { visibility: 'visible' });
@@ -162,15 +234,96 @@
 				}
 			});
 		},
+		/* cardurile se ridică pe rând și se rotesc în 3D, ca niște plăci puse pe teren */
+		flip3d: function (el) {
+			var items = staggerItems(el);
+			show(el);
+			w.gsap.set(el.children, { visibility: 'visible' });
+			if (!items.length) return;
+			var b = base(el, 1.2, 0.11);
+			w.gsap.set(items, { visibility: 'visible', opacity: 0, y: 70 * k(), rotateX: -38, transformPerspective: 1100, transformOrigin: '50% 100%' });
+			w.ScrollTrigger.batch(items, {
+				start: str(el, 'start', cfg.start), once: true,
+				onEnter: function (batch) {
+					w.gsap.to(batch, { opacity: 1, y: 0, rotateX: 0, ease: 'expo.out', duration: b.duration, delay: b.delay, stagger: b.stagger, overwrite: true, clearProps: 'transform' });
+				}
+			});
+		},
 		'img-reveal': function (el) {
 			show(el);
 			var from = str(el, 'from', 'bottom');
-			var clip = { bottom: 'inset(100% 0% 0% 0%)', top: 'inset(0% 0% 100% 0%)', left: 'inset(0% 100% 0% 0%)', right: 'inset(0% 0% 0% 100%)' }[from] || 'inset(100% 0% 0% 0%)';
+			var clip = { bottom: 'inset(100% 0% 0% 0%)', top: 'inset(0% 0% 100% 0%)', left: 'inset(0% 100% 0% 0%)', right: 'inset(0% 0% 0% 100%)', center: 'inset(0% 50% 0% 50%)' }[from] || 'inset(100% 0% 0% 0%)';
 			var inner = el.querySelector('img, video, .pv-inner');
 			var b = base(el, 1.5, 0);
 			var tl = w.gsap.timeline({ delay: b.delay, scrollTrigger: once(el) });
 			tl.fromTo(el, { clipPath: clip }, { clipPath: 'inset(0% 0% 0% 0%)', duration: b.duration, ease: 'expo.inOut', clearProps: 'clipPath' });
 			if (inner) tl.fromTo(inner, { scale: 1 + 0.18 * k() }, { scale: 1, duration: b.duration + 0.5, ease: 'expo.out', clearProps: 'transform' }, 0);
+		},
+		/* o cortină în culoarea Pavva trece peste imagine și o lasă descoperită */
+		curtain: function (el) {
+			show(el);
+			var from = str(el, 'from', 'left');
+			var vertical = from === 'top' || from === 'bottom';
+			var prop = vertical ? 'scaleY' : 'scaleX';
+			var o1 = { left: '0% 50%', right: '100% 50%', top: '50% 0%', bottom: '50% 100%' }[from] || '0% 50%';
+			var o2 = { left: '100% 50%', right: '0% 50%', top: '50% 100%', bottom: '50% 0%' }[from] || '100% 50%';
+			var kids = Array.prototype.slice.call(el.children);
+			var cover = d.createElement('span');
+			cover.className = 'pv-cover';
+			cover.style.background = color(el);
+			if (w.getComputedStyle(el).position === 'static') el.style.position = 'relative';
+			el.appendChild(cover);
+			var inner = el.querySelector('img, video, .pv-inner');
+			var b = base(el, 1.4, 0);
+			var a = {}, z = {};
+			a[prop] = 0; z[prop] = 1;
+			w.gsap.set(kids, { opacity: 0 });
+			var tl = w.gsap.timeline({ delay: b.delay, scrollTrigger: once(el) });
+			tl.fromTo(cover, Object.assign({ transformOrigin: o1 }, a), Object.assign({ duration: b.duration * 0.45, ease: 'expo.inOut' }, z));
+			tl.set(kids, { opacity: 1 });
+			tl.set(cover, { transformOrigin: o2 });
+			var out = {}; out[prop] = 0;
+			tl.to(cover, Object.assign({ duration: b.duration * 0.55, ease: 'expo.inOut' }, out));
+			if (inner) tl.fromTo(inner, { scale: 1 + 0.14 * k() }, { scale: 1, duration: b.duration, ease: 'expo.out', clearProps: 'transform' }, '<');
+			cleanups.push(function () { cover.remove(); el.style.position = ''; });
+		},
+		/* „pavaj”: imaginea e acoperită de plăci care se strâng una câte una */
+		tiles: function (el) {
+			show(el);
+			var r = el.getBoundingClientRect();
+			var cols = isMobile() ? 4 : 7;
+			var rows = Math.max(2, Math.min(8, Math.round(cols * (r.height || 1) / (r.width || 1))));
+			var grid = d.createElement('span');
+			grid.className = 'pv-tiles-grid';
+			grid.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+			grid.style.gridTemplateRows = 'repeat(' + rows + ', 1fr)';
+			for (var i = 0; i < cols * rows; i++) {
+				var c = d.createElement('span');
+				c.style.background = color(el);
+				grid.appendChild(c);
+			}
+			if (w.getComputedStyle(el).position === 'static') el.style.position = 'relative';
+			el.appendChild(grid);
+			var inner = el.querySelector('img, video, .pv-inner');
+			var f = str(el, 'from', 'random');
+			var order = { top: 'start', left: 'start', bottom: 'end', right: 'end', center: 'center', random: 'random' }[f] || 'random';
+			var b = base(el, 0.9, 0);
+			var tl = w.gsap.timeline({ delay: b.delay, scrollTrigger: once(el) });
+			tl.to(grid.children, { scale: 0, ease: 'power3.inOut', duration: b.duration, stagger: { grid: [rows, cols], from: order, amount: num(el, 'stagger', 0.7) } });
+			if (inner) tl.fromTo(inner, { scale: 1 + 0.12 * k() }, { scale: 1, duration: b.duration + 0.9, ease: 'expo.out', clearProps: 'transform' }, 0);
+			tl.add(function () { grid.style.display = 'none'; });
+			cleanups.push(function () { grid.remove(); el.style.position = ''; });
+		},
+		/* la scroll rapid imaginile se înclină puțin și revin elastic */
+		skew: function (el) {
+			var max = num(el, 'speed', 6) * k();
+			var to = w.gsap.quickTo(el, 'skewY', { duration: 0.6, ease: 'power3.out' });
+			w.ScrollTrigger.create({
+				trigger: el, start: 'top bottom', end: 'bottom top',
+				onUpdate: function (self) { to(w.gsap.utils.clamp(-max, max, self.getVelocity() / -250)); },
+				onLeave: function () { to(0); }, onLeaveBack: function () { to(0); }
+			});
+			cleanups.push(function () { w.gsap.set(el, { clearProps: 'transform' }); });
 		},
 		parallax: function (el) {
 			var inner = el.querySelector('img, video, .pv-inner') || el.firstElementChild;
@@ -289,7 +442,7 @@
 			Array.prototype.forEach.call(d.querySelectorAll('[data-id="' + id + '"]'), function (el) {
 				if (el.hasAttribute('data-pv') || el.classList.contains('pv-' + o.type)) return;
 				el.setAttribute('data-pv', o.type);
-				['delay', 'duration', 'stagger', 'from', 'mobile'].forEach(function (key) { if (o[key] !== undefined && o[key] !== '') el.setAttribute('data-pv-' + key, o[key]); });
+				['delay', 'duration', 'stagger', 'from', 'mobile', 'color'].forEach(function (key) { if (o[key] !== undefined && o[key] !== '') el.setAttribute('data-pv-' + key, o[key]); });
 			});
 		});
 	}
