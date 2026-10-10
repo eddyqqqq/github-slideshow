@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 final class Pavva_W_Llms {
 
-	const CACHE = 'pavva_llms_txt';
+	const CACHE = 'pavva_llms_txt_2';
 
 	/* textul de prezentare implicit (se poate schimba din setări) */
 	const INTRO = "Producător de pavaje și prefabricate din beton vibropresat din Constanța, pe o linie de producție complet automatizată: pavele premium și standard, dale, borduri, rigole, bolțari, garduri și elemente pentru amenajarea grădinii. Livrare direct din fabrică în 24–48 de ore, cu transport și descărcare, și consultanță pentru alegerea produselor.";
@@ -49,7 +49,14 @@ final class Pavva_W_Llms {
 	}
 
 	private static function clean( $t, int $max = 200 ): string {
-		$t = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( html_entity_decode( (string) $t, ENT_QUOTES, 'UTF-8' ) ) ) );
+		$t = (string) $t;
+		/* unele descrieri vin codate de două ori (&amp;lt;p…): decodăm până nu se mai schimbă nimic */
+		for ( $i = 0; $i < 3; $i++ ) {
+			$d = html_entity_decode( $t, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+			if ( $d === $t ) break;
+			$t = $d;
+		}
+		$t = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $t ) ) );
 		if ( mb_strlen( $t ) > $max ) $t = rtrim( mb_substr( $t, 0, $max - 1 ), " ,.;:-–" ) . '…';
 		return $t;
 	}
@@ -59,6 +66,7 @@ final class Pavva_W_Llms {
 	}
 
 	private static function line( string $title, string $url, string $desc ): string {
+		$title = html_entity_decode( $title, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 		return '- [' . str_replace( array( '[', ']' ), '', $title ) . '](' . esc_url_raw( $url ) . ')' . ( '' !== $desc ? ': ' . $desc : '' ) . "\n";
 	}
 
@@ -76,7 +84,7 @@ final class Pavva_W_Llms {
 			$id = function_exists( 'wc_get_page_id' ) ? (int) wc_get_page_id( $wc ) : 0;
 			if ( $id > 0 ) $skip[] = $id;
 		}
-		$pages = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'numberposts' => 60, 'orderby' => 'menu_order title', 'order' => 'ASC', 'exclude' => $skip ) );
+		$pages = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'menu_order title', 'order' => 'ASC', 'exclude' => $skip ) );
 		$front = (int) get_option( 'page_on_front' );
 		$main  = '';
 		$legal = '';
