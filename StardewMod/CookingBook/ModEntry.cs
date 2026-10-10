@@ -88,13 +88,15 @@ namespace CookingBook
                     {
                         Id = BookId,
                         ItemId = QualifiedBookId,
-                        Price = this.Config.CookingBookPrice
+                        Price = this.Config.CookingBookPrice,
+                        IgnoreShopPriceModifiers = true // Pierre dublează prețurile; vrem prețul exact din config
                     });
                     shop.Items.Insert(1, new ShopItemData
                     {
                         Id = "eddyqqqq.CookingBook_MahoganySeed",
                         ItemId = MahoganySeedId,
-                        Price = this.Config.MahoganySeedPrice
+                        Price = this.Config.MahoganySeedPrice,
+                        IgnoreShopPriceModifiers = true
                     });
                 });
             }
