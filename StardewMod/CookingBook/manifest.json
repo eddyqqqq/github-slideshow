@@ -1,0 +1,10 @@
+{
+  "Name": "Cooking Book",
+  "Author": "eddyqqqq",
+  "Version": "1.0.0",
+  "Description": "Cartea Cooking Book la Pierre (învață toate rețetele), cărbune mai ușor din lemn, semințe de Mahogany la magazin și mai mult lemn din copaci.",
+  "UniqueID": "eddyqqqq.CookingBook",
+  "EntryDll": "CookingBook.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": []
+}
