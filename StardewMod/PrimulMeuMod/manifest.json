@@ -1,0 +1,10 @@
+{
+  "Name": "Primul Meu Mod",
+  "Author": "eddyqqqq",
+  "Version": "1.0.0",
+  "Description": "Un mod simplu: apasă o tastă ca să-ți refaci energia și viața.",
+  "UniqueID": "eddyqqqq.PrimulMeuMod",
+  "EntryDll": "PrimulMeuMod.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": []
+}
