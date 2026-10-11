@@ -1,0 +1,124 @@
+# Toate textele din joc ale mod-ului: nume de iteme, descrieri, buff-uri, setari.
+# Terraria nu are limba romana, asa ca textele romanesti stau in fisierul de engleza (en-US).
+# Fara diacritice (a, i, s, t simple): fontul din Terraria s-ar putea sa nu aiba literele ă, ș, ț.
+# {0}, {1}, {2} sunt inlocuite automat cu numerele din cod (ca sa nu le scrii de doua ori).
+
+Items: {
+	ToiagulLicuricilor: {
+		DisplayName: Toiagul Licuricilor
+		Tooltip: Cheama un licurici care lupta pentru tine
+	}
+
+	BiciulDeSpini: {
+		DisplayName: Biciul de Spini
+		Tooltip:
+			'''
+			{0} damage de marcare pentru minioni
+			Minionii tai vor ataca inamicii loviti
+			'''
+	}
+
+	GlugaUrsitoarei: {
+		DisplayName: Gluga Ursitoarei
+		Tooltip:
+			'''
+			+{0} slot de minion
+			+{1}% damage de summon
+			'''
+		SetBonus:
+			'''
+			Stai nemiscat 2 secunde ca ursitoarele sa-ti binecuvanteze minionii:
+			+{0}% damage de summon cat timp nu te misti
+			'''
+	}
+
+	MantiaUrsitoarei: {
+		DisplayName: Mantia Ursitoarei
+		Tooltip:
+			'''
+			+{0} slot de minion
+			+{1}% damage de summon
+			'''
+	}
+
+	PantaloniiUrsitoarei: {
+		DisplayName: Pantalonii Ursitoarei
+		Tooltip:
+			'''
+			+{0} slot de minion
+			+{1}% viteza de miscare
+			'''
+	}
+
+	Martisor: {
+		DisplayName: Martisor
+		Tooltip:
+			'''
+			Loviturile minionilor au {0}% sansa sa-ti aduca Primavara:
+			regenerezi {1} viata pe secunda timp de {2} secunde
+			'''
+	}
+
+	TalismanulDeUsturoi: {
+		DisplayName: Talismanul de Usturoi
+		Tooltip:
+			'''
+			Cand esti lovit, minionii intra in Furie: +{0}% damage de summon timp de {1} secunde
+			Primesti putina invulnerabilitate in plus dupa ce esti lovit
+			+{2} aparare
+			'''
+	}
+}
+
+Projectiles: {
+	Licurici: {
+		DisplayName: Licurici
+	}
+
+	BiciulDeSpiniProiectil: {
+		DisplayName: Biciul de Spini
+	}
+}
+
+Buffs: {
+	LicuriciBuff: {
+		DisplayName: Licurici
+		Description: Licuricii lupta pentru tine
+	}
+
+	MarcaSpinilor: {
+		DisplayName: Marca Spinilor
+		Description: ""
+	}
+
+	Primavara: {
+		DisplayName: Primavara
+		Description: Iti regenerezi viata
+	}
+
+	Furie: {
+		DisplayName: Furie
+		Description: Minionii tai sunt furiosi si lovesc mai tare
+	}
+}
+
+Configs: {
+	ConfigTestare: {
+		DisplayName: Setari Renasterea Invocatorului
+
+		ModTestare: {
+			Label: Mod de testare
+			Tooltip:
+				'''
+				Cand e pornit, fiecare personaj primeste kit-ul de testare la prima intrare pe o lume.
+				Opreste-l cand vrei sa joci normal, de la zero.
+				Kit-ul il poti primi oricand si cu comanda /kittest.
+				'''
+		}
+
+		TintireAutomataBoss: {
+			Label: Minionii ataca automat boss-ul
+			Tooltip: Cand e un boss in viata si n-ai ales tu o tinta, minionii ataca boss-ul.
+		}
+	}
+}

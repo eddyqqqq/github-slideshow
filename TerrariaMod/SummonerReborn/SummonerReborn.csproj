@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Fișierul ăsta e folosit de tModLoader ca să compileze mod-ul. Nu trebuie modificat. -->
+  <Import Project="..\tModLoader.targets" />
+  <PropertyGroup>
+    <AssemblyName>SummonerReborn</AssemblyName>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+</Project>

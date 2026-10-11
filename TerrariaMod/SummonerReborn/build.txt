@@ -1,0 +1,8 @@
+displayName = Renasterea Invocatorului
+author = eddyqqqq
+version = 0.1
+homepage =
+hideCode = false
+hideResources = false
+includeSource = true
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, *.md
