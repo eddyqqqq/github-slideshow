@@ -228,7 +228,14 @@ final class Pavva_W_Perf {
             $out[ $k ] = empty( $in[ $k ] ) ? 0 : 1;
         }
         $out['llms_intro'] = isset( $in['llms_intro'] ) ? sanitize_textarea_field( $in['llms_intro'] ) : '';
-        if ( class_exists( 'Pavva_W_Llms' ) ) Pavva_W_Llms::flush();
+        require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-llms.php';
+        if ( empty( $out['llms'] ) ) {
+            Pavva_W_Llms::remove();
+        } else {
+            /* textul nou se vede imediat în fișier */
+            add_action( 'update_option_' . self::OPTION, array( 'Pavva_W_Llms', 'write' ), 20 );
+            add_action( 'add_option_' . self::OPTION, array( 'Pavva_W_Llms', 'write' ), 20 );
+        }
         return $out;
     }
 

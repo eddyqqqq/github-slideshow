@@ -20,15 +20,82 @@ final class Pavva_W_Llms {
 	/* textul de prezentare implicit (se poate schimba din setări) */
 	const INTRO = "Producător de pavaje și prefabricate din beton vibropresat din Constanța, pe o linie de producție complet automatizată: pavele premium și standard, dale, borduri, rigole, bolțari, garduri și elemente pentru amenajarea grădinii. Livrare direct din fabrică în 24–48 de ore, cu transport și descărcare, și consultanță pentru alegerea produselor.";
 
+	/* fișierul llms.txt din rădăcina site-ului e creat de noi (nu de Yoast sau de altcineva) */
+	const OWN  = 'pavva_llms_file';
+	const CRON = 'pavva_llms_write';
+	const HT   = 'Pavva llms';
+
 	public static function init() {
 		add_action( 'parse_request', array( __CLASS__, 'serve' ), 0 );
 		foreach ( array( 'save_post', 'deleted_post', 'edited_term', 'created_term', 'delete_term' ) as $h ) {
 			add_action( $h, array( __CLASS__, 'flush' ) );
 		}
+		add_action( self::CRON, array( __CLASS__, 'write' ) );
+		/* prima dată (sau dacă fișierul a fost șters): îl scriem din panoul de administrare */
+		add_action( 'admin_init', function () {
+			if ( ! current_user_can( 'manage_options' ) ) return;
+			$p = self::path();
+			if ( $p && ! file_exists( $p ) ) self::write();
+		} );
 	}
 
+	/* la orice modificare: cache-ul se golește, iar fișierul se rescrie peste un minut (o singură dată, oricâte salvări) */
 	public static function flush() {
 		delete_transient( self::CACHE );
+		if ( get_option( self::OWN ) && ! wp_next_scheduled( self::CRON ) ) wp_schedule_single_event( time() + 60, self::CRON );
+	}
+
+	private static function path(): string {
+		if ( ! function_exists( 'get_home_path' ) ) require_once ABSPATH . 'wp-admin/includes/file.php';
+		$home = get_home_path();
+		return $home ? trailingslashit( $home ) . 'llms.txt' : '';
+	}
+
+	/* fișier real în rădăcină: serverul îl trimite direct, fără să pornească WordPress (instant, chiar și sub încărcare) */
+	public static function write() {
+		$p = self::path();
+		if ( ! $p ) return false;
+		if ( file_exists( $p ) && ! get_option( self::OWN ) ) return false; // fișierul altcuiva (ex. Yoast SEO): nu-l atingem
+		$txt = self::build();
+		set_transient( self::CACHE, $txt, 12 * HOUR_IN_SECONDS );
+		if ( ! wp_is_writable( dirname( $p ) ) && ! ( file_exists( $p ) && wp_is_writable( $p ) ) ) return false;
+		if ( false === @file_put_contents( $p, $txt, LOCK_EX ) ) return false; // phpcs:ignore
+		update_option( self::OWN, 1, false );
+		self::headers( true );
+		return true;
+	}
+
+	/* la oprirea opțiunii / dezactivarea pluginului: ștergem doar fișierul creat de noi */
+	public static function remove() {
+		wp_clear_scheduled_hook( self::CRON );
+		if ( get_option( self::OWN ) ) {
+			$p = self::path();
+			if ( $p && file_exists( $p ) ) @unlink( $p ); // phpcs:ignore
+			delete_option( self::OWN );
+		}
+		self::headers( false );
+	}
+
+	/* diacriticele corecte (UTF-8) și fără indexare în Google, și pentru fișierul trimis direct de server */
+	private static function headers( bool $on ) {
+		if ( ! function_exists( 'insert_with_markers' ) ) require_once ABSPATH . 'wp-admin/includes/misc.php';
+		$ht = dirname( self::path() ) . '/.htaccess';
+		if ( ! file_exists( $ht ) || ! wp_is_writable( $ht ) ) return;
+		$rules = $on ? array(
+			'<Files "llms.txt">',
+			'AddDefaultCharset utf-8',
+			'<IfModule mod_headers.c>',
+			'Header set X-Robots-Tag "noindex"',
+			'Header set Cache-Control "public, max-age=3600"',
+			'</IfModule>',
+			'</Files>',
+		) : array();
+		insert_with_markers( $ht, self::HT, $rules );
+		if ( ! $on ) {
+			$c = (string) file_get_contents( $ht );
+			$n = preg_replace( '/\n*# BEGIN ' . preg_quote( self::HT, '/' ) . '.*?# END ' . preg_quote( self::HT, '/' ) . '\n*/s', "\n", $c );
+			if ( is_string( $n ) && $n !== $c ) file_put_contents( $ht, ltrim( $n, "\n" ) );
+		}
 	}
 
 	public static function serve( $wp ) {
