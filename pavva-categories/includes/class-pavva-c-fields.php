@@ -5,7 +5,7 @@
  * Aceleași câmpuri și aceeași salvare ca în „Pavva Categories” 1.0.2.
  *
  * @package Pavva_Categories
- * @author  Imagient <https://imagient.ro/>
+ * @author  imagient
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

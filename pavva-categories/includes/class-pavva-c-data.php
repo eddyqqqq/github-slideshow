@@ -3,7 +3,7 @@
  * Pavva Categories – citirea datelor folosite de câmpurile din admin.
  *
  * @package Pavva_Categories
- * @author  Imagient <https://imagient.ro/>
+ * @author  imagient
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

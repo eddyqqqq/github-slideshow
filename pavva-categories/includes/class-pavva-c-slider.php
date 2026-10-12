@@ -5,7 +5,7 @@
  * Folosit de widgetul „Pavva – Slider header” (din „Pavva Widgets”).
  *
  * @package Pavva_Categories
- * @author  Imagient <https://imagient.ro/>
+ * @author  imagient
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

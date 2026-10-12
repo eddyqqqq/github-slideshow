@@ -1,19 +1,18 @@
 <?php
 /**
  * Plugin Name:       Pavva Products
- * Plugin URI:        https://imagient.ro/
- * Description:       Câmpurile produselor Pavva (Caracteristici, Culori și finisaje, Dimensiuni, Variante de amenajare, Fișe tehnice, Declarații de performanță) și informații la imaginile din galeria WooCommerce. Afișarea pe site o fac widgeturile din „Pavva Widgets”. Creat de Imagient (imagient.ro).
- * Version:           5.1.1
- * Author:            Imagient
- * Author URI:        https://imagient.ro/
+ * Description:       Câmpurile produselor Pavva (Caracteristici, Culori și finisaje, Dimensiuni, Variante de amenajare, Fișe tehnice, Declarații de performanță) și informații la imaginile din galeria WooCommerce. Afișarea pe site o fac widgeturile din „Pavva Widgets”. Creat de imagient.
+ * Version:           5.1.0
+ * Author:            imagient
+ * Author URI:        http://imagient.com/
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
  * Text Domain:       pavva-produse
- * License:           Proprietar – creat de Imagient pentru Pavva.
+ * License:           Proprietar – creat de imagient pentru Pavva.
  *
  * @package Pavva_Produse
- * @author  Imagient <https://imagient.ro/>
+ * @author  imagient
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -24,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Datele (cheile din baza de date) sunt aceleași ca în 4.10.30.
  */
 final class PAVVA_Produse {
-    const VERSION = '5.1.1';
+    const VERSION = '5.1.0';
 
     const META_CULORI = '_pavva_culori_finisaje';
     const META_CARACT = '_pavva_caracteristici';

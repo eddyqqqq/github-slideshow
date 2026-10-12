@@ -5,7 +5,7 @@
  * Aceleași casete și aceeași salvare ca în „Pavva Products” 4.10.30.
  *
  * @package Pavva_Produse
- * @author  Imagient <https://imagient.ro/>
+ * @author  imagient
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
