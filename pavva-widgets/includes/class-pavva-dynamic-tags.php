@@ -195,7 +195,9 @@ abstract class Pavva_W_Quote_Link_Base extends \Elementor\Core\DynamicTags\Data_
 		$url       = '' === $page ? home_url( '/' ) : ( preg_match( '#^https?://#i', $page ) ? $page : home_url( '/' . ltrim( $page, '/' ) ) );
 
 		$args = array();
-		$pid  = (int) Pavva_W_Data::resolve_product_id();
+		/* pe pagina unei categorii, „produsul curent” ar fi doar primul produs din listă: acolo trimitem numai categoria */
+		$on_cat = is_tax( 'product_cat' );
+		$pid    = $on_cat ? 0 : (int) Pavva_W_Data::resolve_product_id();
 		if ( $pid ) {
 			if ( '' !== $param ) $args[ $param ] = self::clean( get_the_title( $pid ) );
 			$cat = self::product_category_name( $pid );
