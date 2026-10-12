@@ -46,6 +46,7 @@ final class Pavva_W_Perf {
         $s = self::settings();
         if ( ! empty( $s['lcp'] ) || ! empty( $s['fonts_preload'] ) ) {
             add_action( 'wp_head', array( __CLASS__, 'head' ), 1 );
+            add_action( 'wp_footer', array( __CLASS__, 'forget_lcp' ), 999 );
         }
         if ( ! empty( $s['fonts_swap'] ) ) {
             /* Elementor Pro → Custom Fonts (după schimbare: Elementor → Tools → Regenerate CSS) */
@@ -79,6 +80,13 @@ final class Pavva_W_Perf {
         if ( ! $id ) return;
         $old = get_post_meta( $id, self::META, true );
         if ( $old !== $list ) update_post_meta( $id, self::META, $list );
+    }
+
+    /* niciun slider cu încărcare prioritară pe pagină (ex. „Slider sus pe pagină” pus pe Nu): scoatem preîncărcarea veche */
+    public static function forget_lcp() {
+        if ( self::$lcp_done || ! self::front() || ! is_singular() ) return;
+        $id = (int) get_queried_object_id();
+        if ( $id && metadata_exists( 'post', $id, self::META ) ) delete_post_meta( $id, self::META );
     }
 
     public static function head() {

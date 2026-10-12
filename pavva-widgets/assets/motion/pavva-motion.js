@@ -112,15 +112,30 @@
 		if (t.children.length === 1 && /^(H[1-6]|P|SPAN|A|STRONG)$/.test(t.firstElementChild.tagName)) t = t.firstElementChild;
 		return t;
 	}
+	/* animație de text pe un container care are înăuntru elemente cu animația lor: împărțim doar textele
+	   care nu se animă singure (altfel titlurile ar fi împărțite de două ori și ar rămâne ascunse) */
+	var ANY = TYPES.map(sel).join(', ');
+	var BLOCKS = 'h1, h2, h3, h4, h5, h6, p, li, blockquote, figcaption';
+	function splitTargets(t) {
+		if (!t.querySelector(ANY)) return t;
+		return Array.prototype.filter.call(t.querySelectorAll(BLOCKS), function (n) {
+			var a = n.closest(ANY);
+			if (a && a !== t && t.contains(a)) return false;
+			var p = n.parentElement && n.parentElement.closest(BLOCKS);
+			return !(p && t.contains(p));
+		});
+	}
 	function splitAnim(el, type, mask, build) {
 		var S = w.SplitText;
 		show(el);
 		var t = textTarget(el);
 		if (!S) { return w.gsap.from(t, { opacity: 0, y: 24 * k(), duration: 1, ease: 'power3.out', scrollTrigger: once(el) }); }
-		S.create(t, {
+		var target = splitTargets(t);
+		if (Array.isArray(target) && !target.length) return;
+		S.create(target, {
 			/* eticheta cu tot textul (aria-label) e permisă doar pe titluri; pe paragrafe / div-uri e interzisă,
 			   iar cititoarele de ecran și agenții AI n-ar mai vedea textul: acolo cuvintele rămân citibile normal */
-			type: type, mask: mask, autoSplit: true, aria: /^H[1-6]$/.test(t.tagName) ? 'auto' : 'none',
+			type: type, mask: mask, autoSplit: true, aria: target === t && /^H[1-6]$/.test(t.tagName) ? 'auto' : 'none',
 			linesClass: 'pv-l', wordsClass: 'pv-w', charsClass: 'pv-c',
 			onSplit: function (self) { return build(self); }
 		});
