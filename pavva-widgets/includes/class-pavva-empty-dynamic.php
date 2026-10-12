@@ -15,7 +15,7 @@
  * au un câmp dinamic (textele scrise de mână nu sunt atinse).
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

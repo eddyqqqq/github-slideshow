@@ -1,17 +1,19 @@
 <?php
 /**
  * Plugin Name:       Pavva Widgets
- * Description:       Widgeturile Elementor, etichetele dinamice și formularele create special pentru site-ul Pavva. Câmpurile produselor / categoriilor sunt în „Pavva Products” și „Pavva Categories”. Creat de imagient.
- * Version:           4.7.4
- * Author:            imagient
+ * Plugin URI:        https://imagient.ro/
+ * Description:       Widgeturile Elementor, etichetele dinamice și formularele create special pentru site-ul Pavva. Câmpurile produselor / categoriilor sunt în „Pavva Products” și „Pavva Categories”. Creat de Imagient (imagient.ro).
+ * Version:           4.8.0
+ * Author:            Imagient
+ * Author URI:        https://imagient.ro/
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Requires Plugins:  elementor
  * Text Domain:       pavva-widgets
- * License:           Proprietar – creat de imagient pentru Pavva.
+ * License:           Proprietar – creat de Imagient pentru Pavva.
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  *
  * Plugin realizat de imagient pentru Pavva.
  */
@@ -20,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '4.7.4' );
+define( 'PAVVA_WIDGETS_VERSION', '4.8.0' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -218,3 +220,12 @@ function pavva_widgets_register_widgets( $widgets_manager ) {
 		}
 	}
 }
+
+/* semnătura agenției în subsolul paginilor de setări ale pluginului */
+add_filter( 'admin_footer_text', function ( $text ) {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( $screen && in_array( $screen->id, array( 'settings_page_pavva-perf', 'settings_page_pavva-motion' ), true ) ) {
+		return 'Pavva Widgets – creat de <a href="https://imagient.ro/" target="_blank" rel="noopener">Imagient</a>';
+	}
+	return $text;
+} );

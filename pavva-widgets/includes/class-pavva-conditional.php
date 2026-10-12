@@ -17,7 +17,7 @@
  * `elementor/frontend/{widget|container|section|column}/should_render`.
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

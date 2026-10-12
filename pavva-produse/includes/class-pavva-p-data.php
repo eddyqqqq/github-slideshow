@@ -3,7 +3,7 @@
  * Pavva Products – citirea datelor folosite de câmpurile din admin.
  *
  * @package Pavva_Produse
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

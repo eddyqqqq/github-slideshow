@@ -6,7 +6,7 @@
  * Citește câmpul „Culori și finisaje” al produsului curent.
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

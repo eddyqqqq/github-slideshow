@@ -7,7 +7,7 @@
  *  - CSS / JS WooCommerce doar pe paginile de magazin (produse, categorii, coș)
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

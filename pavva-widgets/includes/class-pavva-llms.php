@@ -8,7 +8,7 @@
  * trimite pe acela și codul de aici nu mai rulează.
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

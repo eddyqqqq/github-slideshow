@@ -1,18 +1,19 @@
 <?php
 /**
  * Plugin Name:       Pavva Categories
- * Description:       Câmpurile categoriilor de produse Pavva (Imagine categorie, Text intro, Avantaje, De ce să alegi, Imagini slider header). Afișarea pe site o fac widgeturile și etichetele dinamice din „Pavva Widgets”. Creat de imagient.
- * Version:           2.0.0
- * Author:            imagient
- * Author URI:        http://imagient.com/
+ * Plugin URI:        https://imagient.ro/
+ * Description:       Câmpurile categoriilor de produse Pavva (Imagine categorie, Text intro, Avantaje, De ce să alegi, Imagini slider header). Afișarea pe site o fac widgeturile și etichetele dinamice din „Pavva Widgets”. Creat de Imagient (imagient.ro).
+ * Version:           2.0.1
+ * Author:            Imagient
+ * Author URI:        https://imagient.ro/
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
  * Text Domain:       pavva-categories
- * License:           Proprietar – creat de imagient pentru Pavva.
+ * License:           Proprietar – creat de Imagient pentru Pavva.
  *
  * @package Pavva_Categories
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -23,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Datele (cheile din baza de date) sunt aceleași ca în 1.0.2.
  */
 final class PAVVA_Categories {
-    const VERSION = '2.0.0';
+    const VERSION = '2.0.1';
 
     const META_HERO_ID          = '_pavva_cat_hero_image_id';
     const META_INTRO            = '_pavva_cat_intro';

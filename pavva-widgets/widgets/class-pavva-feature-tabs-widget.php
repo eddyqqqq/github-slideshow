@@ -6,7 +6,7 @@
  * schimbă lin imaginea. Pe mobil: carduri glisante sau acordeon.
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

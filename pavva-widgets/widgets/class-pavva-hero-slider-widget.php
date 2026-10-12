@@ -6,7 +6,7 @@
  * (fix sau schimbat odată cu slide-ul).
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -13,7 +13,7 @@
  * Produsele / categoriile noi apar singure în formular.
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

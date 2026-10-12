@@ -7,7 +7,7 @@
  * Aceleași iconițe le poate afișa și Slider header, deasupra descrierii.
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

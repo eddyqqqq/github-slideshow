@@ -10,7 +10,7 @@
  * și eliminare. Aici doar se afișează informații în plus.
  *
  * @package Pavva_Produse
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

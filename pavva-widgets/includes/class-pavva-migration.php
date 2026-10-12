@@ -7,7 +7,7 @@
  * pluginurilor, acele widgeturi nu mai apar, deci trebuie înlocuite înainte.
  *
  * @package Pavva_Widgets
- * @author  imagient
+ * @author  Imagient <https://imagient.ro/>
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
