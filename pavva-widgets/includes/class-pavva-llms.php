@@ -85,6 +85,8 @@ final class Pavva_W_Llms {
 			'<Files "llms.txt">',
 			'AddDefaultCharset utf-8',
 			'<IfModule mod_headers.c>',
+			/* LiteSpeed ignoră AddDefaultCharset aici: tipul complet se trimite direct */
+			'Header set Content-Type "text/plain; charset=utf-8"',
 			'Header set X-Robots-Tag "noindex"',
 			'Header set Cache-Control "public, max-age=3600"',
 			'</IfModule>',
