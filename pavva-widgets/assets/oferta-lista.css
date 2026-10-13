@@ -335,3 +335,43 @@ html.pvl-pk-open, html.pvl-pk-open body { overflow: hidden; }
 .pvl-av-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 4px; }
 .pvl-adder-err { margin: 0; color: #b3302b; font-weight: 600; }
 .pvl-adder-err[hidden] { display: none; }
+
+/* ---------- corecturi: texte lungi, multe culori, dalele de produse (tema pune nowrap / inline-block pe butoane) ---------- */
+:is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-color, .pvl-pk-t, .pvl-tile, .pvl-chip) { white-space: normal; width: auto; max-width: 100%; }
+:is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-color, .pvl-tile) { display: flex; height: auto; min-width: 0; }
+.pvl-pk-sw, .pvl-tile-img { flex: none; height: auto; }
+.pvl-pk-sw img, .pvl-tile-img img { height: 100%; }
+.pvl-pk-cn, .pvl-tile-n { display: block; width: 100%; min-width: 0; overflow-wrap: anywhere; hyphens: auto; word-break: normal; }
+.pvl-pk-cn { font-size: 12.5px; line-height: 1.25; }
+.pvl-pk-colors { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); align-items: start; }
+.pvl-tiles { grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); grid-auto-rows: max-content; align-items: start; align-content: start; }
+.pvl-tile-n { text-align: left; }
+@media (max-width: 600px) {
+	.pvl-pk-colors { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+	.pvl-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 420px; }
+	.pvl-pk-cn { font-size: 12px; }
+}
+@media (max-width: 360px) { .pvl-pk-colors { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* „Nu m-am hotărât încă” */
+.pvl-pk-undec .pvl-pk-sw { display: flex; align-items: center; justify-content: center; background: #fff; border: 1.5px dashed #cfc6bb; color: #8a8178; }
+.pvl-pk-undec .pvl-pk-sw svg { width: 40%; height: 40%; }
+:is(.pvl-pick, .pvl-adder) button.pvl-pk-t.pvl-pk-undec { border-style: dashed; }
+/* grup fără alegere, la confirmare */
+.pvl-pk-group.is-missing .pvl-pk-label { color: #b3302b; }
+.pvl-pk-err { margin: 8px 0 0; color: #b3302b; font-size: 13.5px; font-weight: 600; }
+.pvl-pk-err[hidden] { display: none; }
+
+/* produs din listă fără culoare / grosime aleasă */
+.pvl-item.pvl-need { box-shadow: inset 3px 0 0 #AB5525; }
+.pvl-item.pvl-need .pvl-edit { text-decoration: none; }
+
+/* × pe panoul „Adaugă produs” */
+.pvl-adder-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: -6px -6px 2px 0; }
+.pvl-adder-title { margin: 0; font-size: 16px; font-weight: 700; }
+.pvl-adder button.pvl-adder-x, .pvl-adder button.pvl-adder-x:focus {
+	display: inline-flex; align-items: center; justify-content: center; flex: none; width: 38px; height: 38px; margin: 0; padding: 0; min-height: 0;
+	border: 0; border-radius: 50%; box-shadow: none; background: transparent; color: inherit; line-height: 0; cursor: pointer;
+}
+.pvl-adder button.pvl-adder-x:hover, .pvl-adder button.pvl-adder-x:focus-visible { background: #f4f1ed; color: #AB5525; }
+.pvl-adder-x svg { width: 18px; height: 18px; }

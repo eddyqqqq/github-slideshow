@@ -157,7 +157,7 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 			'pk_add'    => array( 'Buton', 'Adaugă la ofertă' ),
 			'pk_save'   => array( 'Buton la modificare', 'Salvează' ),
 			'pk_cancel' => array( 'Link anulare', 'Anulează' ),
-			'pk_note'   => array( 'Text ajutător', 'Nu ești sigur? Poți lăsa necompletat: te ajutăm noi la telefon.' ),
+			'pk_note'   => array( 'Text ajutător', 'Nu știi încă? Alege „Nu m-am hotărât încă”: te ajutăm noi la telefon.' ),
 		) as $id => $t ) {
 			$this->add_control( $id, array( 'label' => $t[0], 'type' => Controls_Manager::TEXT, 'default' => $t[1], 'label_block' => true, 'condition' => array( 'pick' => 'yes' ) ) );
 		}
