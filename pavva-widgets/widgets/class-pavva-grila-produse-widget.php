@@ -2154,9 +2154,10 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$this->start_controls_tabs( 'tabs_oferta' );
 		foreach ( array( 'normal' => array( 'Normal', '' ), 'hover' => array( 'Hover', ':hover' ), 'added' => array( 'Adăugat', '.is-added' ) ) as $k => $t ) {
 			$this->start_controls_tab( 'tab_oferta_' . $k, array( 'label' => $t[0] ) );
-			$sel = '{{WRAPPER}} .pvg-oferta' . $t[1];
-			$this->add_control( 'oferta_color_' . $k, array( 'label' => 'Iconiță / text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $sel => 'color: {{VALUE}};' ) ) );
-			$this->add_control( 'oferta_bg_' . $k, array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $sel => 'background-color: {{VALUE}};' ) ) );
+			$sel = '{{WRAPPER}} .pvg-oferta';
+			$sfx = array( 'normal' => '', 'hover' => '-h', 'added' => '-a' )[ $k ];
+			$this->add_control( 'oferta_color_' . $k, array( 'label' => 'Iconiță / text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $sel => '--pvg-of-c' . $sfx . ': {{VALUE}};' ) ) );
+			$this->add_control( 'oferta_bg_' . $k, array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $sel => '--pvg-of-bg' . $sfx . ': {{VALUE}};' ) ) );
 			$this->end_controls_tab();
 		}
 		$this->end_controls_tabs();

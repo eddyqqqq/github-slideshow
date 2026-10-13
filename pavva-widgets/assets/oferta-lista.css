@@ -94,3 +94,66 @@ a.pvl-name:hover { text-decoration: underline; }
 .pvl-nav[data-pvl-hide-empty].is-empty, li:has(> .pvl-nav[data-pvl-hide-empty].is-empty) { display: none !important; }
 .pvl-nav-icon .pvl-c-ico { font-size: 22px; }
 .pvl-nav-ico { width: 1em; height: 1em; display: block; }
+
+/* ---------- panoul lateral „Oferta ta” ---------- */
+html.pvl-dw-open, html.pvl-dw-open body { overflow: hidden; }
+.pvl-drawer { position: fixed; inset: 0; z-index: 100000; font-family: var(--e-global-typography-text-font-family, inherit), sans-serif; }
+.pvl-drawer[hidden] { display: none; }
+.pvl-dw-overlay { position: absolute; inset: 0; background: rgba(20, 18, 16, .45); opacity: 0; transition: opacity .3s ease; cursor: pointer; }
+.pvl-dw-panel {
+	--pvl-dw-pad: 24px;
+	position: absolute; top: 0; bottom: 0; right: 0; width: min(440px, 100vw);
+	display: flex; flex-direction: column; background: #fff; color: #1f1e1c;
+	box-shadow: -12px 0 40px rgba(0, 0, 0, .18); outline: none;
+	transform: translateX(100%); transition: transform .32s cubic-bezier(.16, 1, .3, 1);
+}
+.pvl-drawer-left .pvl-dw-panel { right: auto; left: 0; transform: translateX(-100%); box-shadow: 12px 0 40px rgba(0, 0, 0, .18); }
+.pvl-drawer.is-open .pvl-dw-overlay { opacity: 1; }
+.pvl-drawer.is-open .pvl-dw-panel { transform: none; }
+.pvl-dw-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 14px 18px var(--pvl-dw-pad); border-bottom: 1px solid #ebe8e3; }
+.pvl-dw-title { margin: 0; font-size: 22px; font-weight: 700; line-height: 1.2; color: inherit; }
+.pvl-dw-x { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; transition: background-color .2s, color .2s; }
+.pvl-dw-x svg { width: 20px; height: 20px; }
+.pvl-dw-x:hover { background: #f4f1ed; color: #AB5525; }
+.pvl-dw-x:focus-visible, .pvl-dw-more:focus-visible, .pvl-dw-browse:focus-visible, .pvl-dw-cta:focus-visible { outline: 2px solid #AB5525; outline-offset: 2px; }
+.pvl-dw-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 18px var(--pvl-dw-pad); }
+.pvl-dw-list .pvl-item { padding: 10px 8px 10px 10px; }
+.pvl-dw-list .pvl-media { width: 64px; height: 64px; }
+.pvl-dw-empty { display: none; text-align: center; padding: 40px 8px; }
+.pvl-dw-empty p { margin: 0 0 20px; opacity: .8; line-height: 1.5; }
+.pvl-drawer.is-empty .pvl-dw-empty { display: block; }
+.pvl-drawer.is-empty .pvl-dw-list, .pvl-drawer.is-empty .pvl-dw-cta { display: none; }
+.pvl-dw-browse { display: inline-block; padding: 12px 22px; border: 1.5px solid #AB5525; border-radius: 6px; background: transparent; color: #AB5525; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+.pvl-dw-browse:hover { background: #AB5525; color: #fff; }
+.pvl-dw-foot { display: grid; gap: 10px; padding: 16px var(--pvl-dw-pad) calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid #ebe8e3; background: inherit; }
+.pvl-dw-cta { display: flex; align-items: center; justify-content: center; min-height: 54px; padding: 14px 20px; border-radius: 6px; background: #AB5525; color: #fff; font-size: 17px; font-weight: 700; text-decoration: none; transition: background-color .2s; }
+.pvl-dw-cta:hover, .pvl-dw-cta:focus-visible { background: #8f4520; color: #fff; }
+.pvl-dw-more { justify-self: center; padding: 6px 10px; border: 0; background: none; color: inherit; font: inherit; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.pvl-dw-more:hover { color: #AB5525; }
+@media (max-width: 767px) {
+	.pvl-dw-panel { width: 100vw; --pvl-dw-pad: 18px; }
+	.pvl-dw-title { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .pvl-dw-overlay, .pvl-dw-panel { transition: none; } }
+
+/* ---------- culorile butoanelor, ferite de stilul temei ----------
+   Tema Hello colorează orice <button> în roz la focus / hover ([type="button"]:focus). Culorile de mai jos
+   au prioritate mai mare și vin din variabile, pe care le setează widgeturile din Elementor. */
+.pvl-btn-wrap button.pvl-btn { color: var(--pvl-c, #fff); background-color: var(--pvl-bg, #AB5525); border-color: var(--pvl-bd, #AB5525); }
+.pvl-btn-wrap button.pvl-btn:hover, .pvl-btn-wrap button.pvl-btn:focus-visible { color: var(--pvl-c-h, var(--pvl-c, #fff)); background-color: var(--pvl-bg-h, #8f4520); border-color: var(--pvl-bd-h, var(--pvl-bg-h, #8f4520)); }
+.pvl-btn-wrap button.pvl-btn.is-added { color: var(--pvl-c-a, var(--pvl-c, #fff)); background-color: var(--pvl-bg-a, var(--pvl-bg, #AB5525)); border-color: var(--pvl-bd-a, var(--pvl-bd, #AB5525)); }
+
+.pvl-items button.pvl-remove { color: var(--pvl-rm-c, inherit); background-color: var(--pvl-rm-bg, transparent); }
+.pvl-items button.pvl-remove:hover, .pvl-items button.pvl-remove:focus-visible { color: var(--pvl-rm-c-h, #AB5525); background-color: var(--pvl-rm-bg-h, rgba(0, 0, 0, .06)); }
+
+.pvl-list button.pvl-clear, .pvl-list button.pvl-clear:hover, .pvl-list button.pvl-clear:focus { color: inherit; background: none; }
+
+.pvl-toast button.pvl-toast-x { color: var(--pvl-tx-c, #fff); background-color: transparent; }
+.pvl-toast button.pvl-toast-x:hover, .pvl-toast button.pvl-toast-x:focus-visible { color: var(--pvl-tx-c-h, var(--pvl-tx-c, #fff)); background-color: var(--pvl-tx-bg-h, rgba(255, 255, 255, .1)); opacity: 1; }
+
+.pvl-drawer button.pvl-dw-x { color: var(--pvl-dx-c, inherit); background-color: transparent; }
+.pvl-drawer button.pvl-dw-x:hover, .pvl-drawer button.pvl-dw-x:focus-visible { color: var(--pvl-dx-c-h, #AB5525); background-color: var(--pvl-dx-bg-h, #f4f1ed); }
+.pvl-drawer button.pvl-dw-more { color: var(--pvl-more-c, inherit); background: none; }
+.pvl-drawer button.pvl-dw-more:hover, .pvl-drawer button.pvl-dw-more:focus-visible { color: var(--pvl-more-c-h, #AB5525); background: none; }
+.pvl-drawer button.pvl-dw-browse, .pvl-drawer a.pvl-dw-browse { color: #AB5525; background-color: transparent; }
+.pvl-drawer button.pvl-dw-browse:hover, .pvl-drawer a.pvl-dw-browse:hover, .pvl-drawer button.pvl-dw-browse:focus-visible, .pvl-drawer a.pvl-dw-browse:focus-visible { color: #fff; background-color: #AB5525; }

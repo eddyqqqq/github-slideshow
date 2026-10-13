@@ -42,6 +42,8 @@ final class Pavva_W_Lista {
 				'autoList' => (bool) apply_filters( 'pavva_lista_auto_list', true ),
 				/* bara de jos „Oferta ta · Vezi oferta”, cât lista are produse */
 				'bar'      => (bool) apply_filters( 'pavva_lista_bar', true ),
+				/* panoul lateral cu produsele (se deschide din iconița „Oferta ta”, meniu, bara de jos) */
+				'drawer'   => (bool) apply_filters( 'pavva_lista_drawer', true ),
 				'i18n'     => array(
 					'added'     => 'Adăugat în ofertă',
 					'removed'   => 'Scos din ofertă',
@@ -57,6 +59,11 @@ final class Pavva_W_Lista {
 					'listTitle' => 'Produsele tale',
 					'listEmpty' => 'Alege produsele dorite din lista de mai jos. Poți adăuga mai multe.',
 					'hide'      => 'Ascunde bara',
+					'close'     => 'Închide',
+					'cta'       => 'Solicită ofertă',
+					'more'      => 'Continuă să alegi',
+					'browse'    => 'Vezi produsele',
+					'dwEmpty'   => 'Nu ai adăugat încă niciun produs. Apasă „Adaugă la ofertă” pe produsele care te interesează.',
 				),
 			)
 		);

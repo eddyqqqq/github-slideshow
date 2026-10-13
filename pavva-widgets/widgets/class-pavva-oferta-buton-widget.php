@@ -234,10 +234,12 @@ class Pavva_Oferta_Buton_Widget extends Widget_Base {
 			'added'  => array( 'Adăugat', '.is-added' ),
 		) as $k => $t ) {
 			$this->start_controls_tab( 'tab_' . $k, array( 'label' => $t[0] ) );
-			$s = '{{WRAPPER}} .pvl-btn' . $t[1];
-			$this->add_control( 'color_' . $k, array( 'label' => 'Culoare text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $s => 'color: {{VALUE}};' ) ) );
-			$this->add_control( 'bg_' . $k, array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $s => 'background-color: {{VALUE}};' ) ) );
-			$this->add_control( 'bd_' . $k, array( 'label' => 'Culoare chenar', 'type' => Controls_Manager::COLOR, 'selectors' => array( $s => 'border-color: {{VALUE}};' ) ) );
+			/* variabile (vezi oferta-lista.css): așa tema nu mai poate colora butonul la click */
+			$s   = '{{WRAPPER}} .pvl-btn';
+			$sfx = array( 'normal' => '', 'hover' => '-h', 'added' => '-a' )[ $k ];
+			$this->add_control( 'color_' . $k, array( 'label' => 'Culoare text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $s => '--pvl-c' . $sfx . ': {{VALUE}};' ) ) );
+			$this->add_control( 'bg_' . $k, array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $s => '--pvl-bg' . $sfx . ': {{VALUE}};' ) ) );
+			$this->add_control( 'bd_' . $k, array( 'label' => 'Culoare chenar', 'type' => Controls_Manager::COLOR, 'selectors' => array( $s => '--pvl-bd' . $sfx . ': {{VALUE}};' ) ) );
 			$this->end_controls_tab();
 		}
 		$this->end_controls_tabs();

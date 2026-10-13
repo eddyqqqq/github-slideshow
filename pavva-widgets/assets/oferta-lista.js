@@ -125,7 +125,7 @@
 	}
 	function bar(flashName, url) {
 		var n = read().length;
-		var show = C.bar !== false && n > 0 && !onFormPage() && !barOff();
+		var show = C.bar !== false && n > 0 && !onFormPage() && !barOff() && !(dw && !dw.hidden);
 		if (!show && !toastEl) return;
 		var el = ensureBar();
 		el.querySelector('.pvl-toast-a').setAttribute('href', url || C.form || '/solicita-oferta/');
@@ -183,9 +183,11 @@
 			el.classList.toggle('is-empty', n === 0);
 			var base = el.getAttribute('data-pvl-label') || txt('title', 'Oferta ta');
 			el.setAttribute('aria-label', n ? base + ' – ' + plural(n) : base + ' – ' + txt('empty', 'niciun produs'));
+			if (dcfg().on) el.setAttribute('aria-haspopup', 'dialog');
 		});
 
-		each('[data-pvl-list]', renderList);
+		each('[data-pvl-list], [data-pvl-drawer-list]', renderList);
+		drawerSync();
 		forms.forEach(function (f) { f.sync(); });
 		bar();
 	}
@@ -259,10 +261,28 @@
 				var next = li && (li.nextElementSibling || li.previousElementSibling);
 				remove(victim);
 				announce(txt('removed', 'Scos din ofertă') + ': ' + victim.name);
-				var box = rm.closest('[data-pvl-list]') || d;
+				var box = rm.closest('[data-pvl-list], [data-pvl-drawer-list]') || d;
 				var target = next && box.querySelector('[data-pvl-remove]');
 				if (target) target.focus();
+				else if (dw && dw.contains(box)) { var x = dw.querySelector('.pvl-dw-x'); if (x) x.focus(); }
 			}
+			return;
+		}
+
+		var cls = e.target.closest('[data-pvl-close]');
+		if (cls) { e.preventDefault(); closeDrawer(); return; }
+
+		/* iconița „Oferta ta”, linkul din meniu, „Vezi oferta” din bară sau orice element cu clasa pv-oferta-open → panoul */
+		var op = e.target.closest('[data-pvl-counter], .pvl-toast-a, .pv-oferta-open');
+		if (op && !op.closest('[data-pvl-preview]') && dcfg().on) { e.preventDefault(); openDrawer(op); return; }
+
+		var cta = e.target.closest('.pvl-dw-cta');
+		if (cta && onFormPage()) {
+			/* suntem deja pe pagina formularului: închidem panoul și ducem vizitatorul la formular */
+			e.preventDefault();
+			closeDrawer(true);
+			var fm = forms[0] && forms[0].form;
+			if (fm) { fm.scrollIntoView({ behavior: 'smooth', block: 'start' }); var fld = fm.querySelector('input, select, textarea'); if (fld) setTimeout(function () { fld.focus({ preventScroll: true }); }, 500); }
 			return;
 		}
 
@@ -285,7 +305,96 @@
 		add(it);
 		if (go) { w.location.href = formUrl(el); return; }
 		announce(txt('added', 'Adăugat în ofertă') + ': ' + it.name);
+		if (dcfg().on && dcfg().auto) { openDrawer(el); return; }
 		if (el.getAttribute('data-pvl-toast') !== '0') toast(it.name, formUrl(el));
+	});
+
+	/* ---------- panoul lateral „Oferta ta” (ca un coș de cumpărături) ----------
+	   Setările vin din widgetul „Oferta ta” (atributele data-pvl-* de pe iconiță); fără widget: valorile implicite. */
+	var dw = null, dwLast = null, dwT = 0;
+	function dcfg() {
+		var el = d.querySelector('[data-pvl-counter][data-pvl-drawer]');
+		var g = function (k, def) { var v = el && el.getAttribute('data-pvl-' + k); return v === null || v === undefined || v === '' ? def : v; };
+		return {
+			on: C.drawer !== false && g('drawer', '1') !== '0',
+			side: g('side', 'right') === 'left' ? 'left' : 'right',
+			auto: g('auto', '0') === '1',
+			title: g('t-title', txt('title', 'Oferta ta')),
+			cta: g('t-cta', txt('cta', 'Solicită ofertă')),
+			more: g('t-more', txt('more', 'Continuă să alegi')),
+			empty: g('t-empty', txt('dwEmpty', 'Nu ai adăugat încă niciun produs. Apasă „Adaugă la ofertă” pe produsele care te interesează.')),
+			browse: g('t-browse', txt('browse', 'Vezi produsele')),
+			browseUrl: g('browse-url', ''),
+			form: g('form', C.form || '/solicita-oferta/')
+		};
+	}
+	function buildDrawer() {
+		if (dw) return dw;
+		var c = dcfg();
+		dw = d.createElement('div');
+		dw.className = 'pvl-drawer pvl-drawer-' + c.side;
+		dw.hidden = true;
+		dw.innerHTML =
+			'<div class="pvl-dw-overlay" data-pvl-close></div>' +
+			'<div class="pvl-dw-panel" role="dialog" aria-modal="true" aria-labelledby="pvl-dw-title" tabindex="-1" data-lenis-prevent>' +
+				'<div class="pvl-dw-head"><h2 class="pvl-dw-title" id="pvl-dw-title">' + esc(c.title) + '<span class="pvl-dw-count"></span></h2>' +
+				'<button type="button" class="pvl-dw-x" data-pvl-close aria-label="' + esc(txt('close', 'Închide')) + '">' + X + '</button></div>' +
+				'<div class="pvl-dw-body">' +
+					'<div class="pvl-list pvl-dw-list" data-pvl-drawer-list data-pvl-img="1" data-pvl-cat="1"><ul class="pvl-items"></ul></div>' +
+					'<div class="pvl-dw-empty"><p>' + esc(c.empty) + '</p>' +
+						(c.browseUrl ? '<a class="pvl-dw-browse" href="' + esc(c.browseUrl) + '">' + esc(c.browse) + '</a>' : '<button type="button" class="pvl-dw-browse" data-pvl-close>' + esc(c.browse) + '</button>') +
+					'</div>' +
+				'</div>' +
+				'<div class="pvl-dw-foot">' +
+					'<a class="pvl-dw-cta" href="' + esc(c.form) + '">' + esc(c.cta) + '</a>' +
+					'<button type="button" class="pvl-dw-more" data-pvl-close>' + esc(c.more) + '</button>' +
+				'</div>' +
+			'</div>';
+		d.body.appendChild(dw);
+		renderList(dw.querySelector('[data-pvl-drawer-list]'));
+		drawerSync();
+		return dw;
+	}
+	function drawerSync() {
+		if (!dw) return;
+		var n = read().length;
+		dw.classList.toggle('is-empty', n === 0);
+		dw.querySelector('.pvl-dw-count').textContent = n ? ' (' + n + ')' : '';
+	}
+	function focusables() {
+		return Array.prototype.filter.call(dw.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'), function (el) { return el.offsetWidth || el.offsetHeight; });
+	}
+	function openDrawer(from) {
+		buildDrawer();
+		dwLast = from || d.activeElement;
+		clearTimeout(dwT);
+		dw.hidden = false;
+		d.documentElement.classList.add('pvl-dw-open');
+		/* bara de jos nu mai are rost cât panoul e deschis */
+		if (toastEl) toastEl.classList.remove('is-on');
+		requestAnimationFrame(function () { requestAnimationFrame(function () { dw.classList.add('is-open'); }); });
+		setTimeout(function () { var x = dw.querySelector('.pvl-dw-x'); if (x) x.focus({ preventScroll: true }); }, 60);
+	}
+	function closeDrawer(noFocus) {
+		if (!dw || dw.hidden) return;
+		dw.classList.remove('is-open');
+		d.documentElement.classList.remove('pvl-dw-open');
+		var back = !noFocus && dwLast && dwLast.focus && d.contains(dwLast) ? dwLast : null;
+		/* butonul din bara de jos reapare abia după închidere: focusul revine pe el atunci */
+		var later = back && toastEl && toastEl.contains(back);
+		dwT = setTimeout(function () { dw.hidden = true; bar(); if (later) back.focus({ preventScroll: true }); }, 320);
+		if (back && !later) back.focus({ preventScroll: true });
+	}
+	d.addEventListener('keydown', function (e) {
+		if (!dw || dw.hidden) return;
+		if (e.key === 'Escape') { e.preventDefault(); closeDrawer(); return; }
+		if (e.key !== 'Tab') return;
+		/* focusul rămâne în panou cât e deschis */
+		var f = focusables();
+		if (!f.length) return;
+		var first = f[0], last = f[f.length - 1];
+		if (e.shiftKey && (d.activeElement === first || !dw.contains(d.activeElement))) { e.preventDefault(); last.focus(); }
+		else if (!e.shiftKey && (d.activeElement === last || !dw.contains(d.activeElement))) { e.preventDefault(); first.focus(); }
 	});
 
 	/* tastatura pe elementele Elementor cu clasă (care nu sunt butoane) */
@@ -462,5 +571,5 @@
 	}
 	if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', start); else start();
 
-	w.PavvaLista = { get: read, add: add, remove: remove, has: has, clear: clear, count: function () { return read().length; } };
+	w.PavvaLista = { get: read, add: add, remove: remove, has: has, clear: clear, count: function () { return read().length; }, open: function () { openDrawer(); }, close: function () { closeDrawer(); } };
 })(window, document);

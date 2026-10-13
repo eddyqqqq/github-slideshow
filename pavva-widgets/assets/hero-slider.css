@@ -579,7 +579,7 @@
 	--ps-of-bg-added: #f4ebe5;
 	--ps-of-border-added: #f4ebe5;
 }
-.ps-hero .ps-cta-oferta {
+.ps-hero button.ps-cta-oferta {
 	gap: 8px;
 	font-family: inherit;
 	cursor: pointer;
@@ -587,13 +587,13 @@
 	background-color: var(--ps-of-bg);
 	border-color: var(--ps-of-border);
 }
-.ps-hero .ps-cta-oferta:hover,
-.ps-hero .ps-cta-oferta:focus-visible {
+.ps-hero button.ps-cta-oferta:hover,
+.ps-hero button.ps-cta-oferta:focus-visible {
 	color: var(--ps-of-color-hover);
 	background-color: var(--ps-of-bg-hover);
 	border-color: var(--ps-of-border-hover);
 }
-.ps-hero .ps-cta-oferta.is-added {
+.ps-hero button.ps-cta-oferta.is-added {
 	color: var(--ps-of-color-added);
 	background-color: var(--ps-of-bg-added);
 	border-color: var(--ps-of-border-added);
