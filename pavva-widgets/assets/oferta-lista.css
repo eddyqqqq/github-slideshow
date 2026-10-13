@@ -157,3 +157,58 @@ html.pvl-dw-open, html.pvl-dw-open body { overflow: hidden; }
 .pvl-drawer button.pvl-dw-more:hover, .pvl-drawer button.pvl-dw-more:focus-visible { color: var(--pvl-more-c-h, #AB5525); background: none; }
 .pvl-drawer button.pvl-dw-browse, .pvl-drawer a.pvl-dw-browse { color: #AB5525; background-color: transparent; }
 .pvl-drawer button.pvl-dw-browse:hover, .pvl-drawer a.pvl-dw-browse:hover, .pvl-drawer button.pvl-dw-browse:focus-visible, .pvl-drawer a.pvl-dw-browse:focus-visible { color: #fff; background-color: #AB5525; }
+
+/* ---------- resetare completă față de stilul temei pentru butoane (chenar roz, padding, colțuri, umbră) ---------- */
+:is(.pvl-drawer, .pvl-toast, .pvl-items, .pvl-list) button:is(.pvl-dw-x, .pvl-dw-more, .pvl-dw-browse, .pvl-toast-x, .pvl-remove, .pvl-clear) {
+	margin: 0; min-height: 0; box-shadow: none; text-transform: none; letter-spacing: normal; font-family: inherit; -webkit-appearance: none; appearance: none;
+}
+:is(.pvl-drawer, .pvl-toast, .pvl-items) button:is(.pvl-dw-x, .pvl-toast-x, .pvl-remove) { line-height: 0; }
+.pvl-items button.pvl-remove { padding: 0; border: 0; border-radius: var(--pvl-rm-r, 50%); }
+
+/* × din panou */
+.pvl-drawer button.pvl-dw-x {
+	display: inline-flex; align-items: center; justify-content: center; flex: none;
+	width: var(--pvl-dx-size, 42px); height: var(--pvl-dx-size, 42px); padding: 0;
+	border: var(--pvl-dx-bw, 0px) solid var(--pvl-dx-bd, transparent); border-radius: var(--pvl-dx-r, 50%);
+	background-color: var(--pvl-dx-bg, transparent); color: var(--pvl-dx-c, inherit);
+}
+.pvl-drawer button.pvl-dw-x:hover, .pvl-drawer button.pvl-dw-x:focus-visible {
+	background-color: var(--pvl-dx-bg-h, #f4f1ed); color: var(--pvl-dx-c-h, #AB5525); border-color: var(--pvl-dx-bd-h, var(--pvl-dx-bd, transparent));
+}
+.pvl-drawer button.pvl-dw-x svg { width: var(--pvl-dx-i, 20px); height: var(--pvl-dx-i, 20px); display: block; }
+
+/* × din bara de jos */
+.pvl-toast button.pvl-toast-x {
+	display: inline-flex; align-items: center; justify-content: center; flex: none;
+	width: var(--pvl-tx-size, 36px); height: var(--pvl-tx-size, 36px); padding: 0;
+	border: var(--pvl-tx-bw, 0px) solid var(--pvl-tx-bd, transparent); border-radius: var(--pvl-tx-r, 50%);
+	background-color: var(--pvl-tx-bg, transparent); color: var(--pvl-tx-c, #fff); opacity: 1;
+}
+.pvl-toast button.pvl-toast-x:hover, .pvl-toast button.pvl-toast-x:focus-visible {
+	background-color: var(--pvl-tx-bg-h, rgba(255, 255, 255, .12)); color: var(--pvl-tx-c-h, var(--pvl-tx-c, #fff)); border-color: var(--pvl-tx-bd-h, var(--pvl-tx-bd, transparent));
+}
+.pvl-toast button.pvl-toast-x svg { width: var(--pvl-tx-i, 16px); height: var(--pvl-tx-i, 16px); display: block; }
+
+/* „Continuă să alegi” */
+.pvl-drawer button.pvl-dw-more {
+	justify-self: var(--pvl-mo-align, center); width: var(--pvl-mo-w, auto);
+	padding: var(--pvl-mo-p, 6px 10px); border: var(--pvl-mo-bw, 0px) solid var(--pvl-mo-bd, transparent); border-radius: var(--pvl-mo-r, 4px);
+	background-color: var(--pvl-mo-bg, transparent); color: var(--pvl-more-c, inherit);
+	text-decoration: var(--pvl-mo-u, underline); text-underline-offset: 3px; line-height: 1.3; cursor: pointer;
+}
+.pvl-drawer button.pvl-dw-more:hover, .pvl-drawer button.pvl-dw-more:focus-visible {
+	background-color: var(--pvl-mo-bg-h, var(--pvl-mo-bg, transparent)); color: var(--pvl-more-c-h, #AB5525); border-color: var(--pvl-mo-bd-h, var(--pvl-mo-bd, transparent));
+}
+
+/* „Vezi produsele” (lista goală) */
+.pvl-drawer :is(button, a).pvl-dw-browse {
+	display: inline-block; padding: var(--pvl-br-p, 12px 22px); line-height: 1.3; font-weight: 600; text-decoration: none; cursor: pointer;
+	border: var(--pvl-br-bw, 1.5px) solid var(--pvl-br-bd, #AB5525); border-radius: var(--pvl-br-r, 6px);
+	background-color: var(--pvl-br-bg, transparent); color: var(--pvl-br-c, #AB5525);
+}
+.pvl-drawer :is(button, a).pvl-dw-browse:hover, .pvl-drawer :is(button, a).pvl-dw-browse:focus-visible {
+	background-color: var(--pvl-br-bg-h, #AB5525); color: var(--pvl-br-c-h, #fff); border-color: var(--pvl-br-bd-h, var(--pvl-br-bg-h, #AB5525));
+}
+.pvl-list button.pvl-clear { border: 0; padding: 0; border-radius: 0; min-height: 0; box-shadow: none; }
+/* butonul „Adaugă la ofertă”: tema pune pe orice buton chenar roz, padding și colțuri proprii */
+.pvl-btn-wrap .pvl-btn { padding: 14px 26px; border-width: 1px; border-style: solid; border-radius: 0; font-size: inherit; line-height: 1.2; text-transform: none; box-shadow: none; }

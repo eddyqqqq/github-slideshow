@@ -314,6 +314,17 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		$this->add_control( 'bar_btn_color', array( 'label' => 'Text', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast .pvl-toast-a' => 'color: {{VALUE}};' ) ) );
 		$this->add_control( 'bar_btn_bg_h', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast .pvl-toast-a:hover, body .pvl-toast .pvl-toast-a:focus-visible' => 'background-color: {{VALUE}};' ) ) );
 		$this->add_control( 'bar_btn_color_h', array( 'label' => 'Text la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast .pvl-toast-a:hover, body .pvl-toast .pvl-toast-a:focus-visible' => 'color: {{VALUE}};' ) ) );
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'bar_btn_typo', 'label' => 'Font', 'selector' => 'body .pvl-toast .pvl-toast-a' ) );
+		$this->add_group_control( Group_Control_Border::get_type(), array( 'name' => 'bar_btn_border', 'label' => 'Chenar', 'selector' => 'body .pvl-toast .pvl-toast-a' ) );
+		$this->add_responsive_control(
+			'bar_btn_pad',
+			array(
+				'label'      => 'Padding',
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px' ),
+				'selectors'  => array( 'body .pvl-toast .pvl-toast-a' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			)
+		);
 		$this->add_responsive_control(
 			'bar_btn_radius',
 			array(
@@ -326,19 +337,7 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		);
 
 		$this->add_control( 'bar_x_heading', array( 'label' => 'Butonul × (ascunde bara)', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
-		$this->add_control( 'bar_x_color', array( 'label' => 'Culoare', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast' => '--pvl-tx-c: {{VALUE}};', 'body .pvl-toast .pvl-toast-x' => 'opacity: 1;' ) ) );
-		$this->add_control( 'bar_x_color_h', array( 'label' => 'Culoare la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast' => '--pvl-tx-c-h: {{VALUE}};' ) ) );
-		$this->add_control( 'bar_x_bg_h', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast' => '--pvl-tx-bg-h: {{VALUE}};' ) ) );
-		$this->add_responsive_control(
-			'bar_x_size',
-			array(
-				'label'      => 'Mărime ×',
-				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
-				'range'      => array( 'px' => array( 'min' => 8, 'max' => 32 ) ),
-				'selectors'  => array( 'body .pvl-toast .pvl-toast-x svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};' ),
-			)
-		);
+		$this->icon_button_controls( 'bar_x', 'body .pvl-toast', 'tx' );
 		$this->end_controls_section();
 
 		/* ---------- Stil: panoul lateral (unul pe tot site-ul) ---------- */
@@ -403,6 +402,17 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 
 		$this->add_control( 'dw_h_cta', array( 'label' => 'Butonul mare', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
 		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'dw_cta_typo', 'label' => 'Font', 'selector' => $p . ' .pvl-dw-cta' ) );
+		$this->add_group_control( Group_Control_Border::get_type(), array( 'name' => 'dw_cta_border', 'label' => 'Chenar', 'selector' => $p . ' .pvl-dw-cta' ) );
+		$this->add_responsive_control(
+			'dw_cta_pad',
+			array(
+				'label'      => 'Padding',
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px' ),
+				'selectors'  => array( $p . ' .pvl-dw-cta' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			)
+		);
+		$this->add_control( 'dw_cta_bd_h', array( 'label' => 'Culoare chenar la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-dw-cta:hover, ' . $p . ' .pvl-dw-cta:focus-visible' => 'border-color: {{VALUE}};' ) ) );
 		$this->add_control( 'dw_cta_bg', array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-dw-cta' => 'background-color: {{VALUE}};' ) ) );
 		$this->add_control( 'dw_cta_color', array( 'label' => 'Text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-dw-cta' => 'color: {{VALUE}};' ) ) );
 		$this->add_control( 'dw_cta_bg_h', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-dw-cta:hover, ' . $p . ' .pvl-dw-cta:focus-visible' => 'background-color: {{VALUE}};' ) ) );
@@ -427,13 +437,58 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 				'selectors'  => array( $p . ' .pvl-dw-cta' => 'min-height: {{SIZE}}{{UNIT}};' ),
 			)
 		);
-		$this->add_control( 'dw_more_color', array( 'label' => 'Culoare „Continuă să alegi”', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p => '--pvl-more-c: {{VALUE}};' ) ) );
+
+		$this->add_control( 'dw_h_more', array( 'label' => 'Butonul „Continuă să alegi”', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$this->text_button_controls( 'dw_more', $p, 'mo', 'body .pvl-drawer button.pvl-dw-more', true );
+
+		$this->add_control( 'dw_h_browse', array( 'label' => 'Butonul „Vezi produsele” (listă goală)', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$this->text_button_controls( 'dw_browse_btn', $p, 'br', 'body .pvl-drawer .pvl-dw-browse', false );
 
 		$this->add_control( 'dw_h_x', array( 'label' => 'Butonul × (închide)', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
-		$this->add_control( 'dw_x_color', array( 'label' => 'Culoare', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p => '--pvl-dx-c: {{VALUE}};' ) ) );
-		$this->add_control( 'dw_x_color_h', array( 'label' => 'Culoare la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p => '--pvl-dx-c-h: {{VALUE}};' ) ) );
-		$this->add_control( 'dw_x_bg_h', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p => '--pvl-dx-bg-h: {{VALUE}};' ) ) );
+		$this->icon_button_controls( 'dw_x', $p, 'dx' );
 		$this->end_controls_section();
+	}
+
+	/* buton cu iconiță (×): mărime, iconiță, chenar, colțuri, culori normal / hover — prin variabile (ferite de stilul temei) */
+	private function icon_button_controls( $id, $scope, $v ) {
+		$this->add_responsive_control( $id . '_box', array( 'label' => 'Mărime buton', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 20, 'max' => 72 ) ), 'selectors' => array( $scope => '--pvl-' . $v . '-size: {{SIZE}}{{UNIT}};' ) ) );
+		$this->add_responsive_control( $id . '_size', array( 'label' => 'Mărime ×', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 8, 'max' => 40 ) ), 'selectors' => array( $scope => '--pvl-' . $v . '-i: {{SIZE}}{{UNIT}};' ) ) );
+		$this->add_responsive_control( $id . '_bw', array( 'label' => 'Grosime chenar', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 6, 'step' => 0.5 ) ), 'selectors' => array( $scope => '--pvl-' . $v . '-bw: {{SIZE}}{{UNIT}};' ) ) );
+		$this->add_responsive_control( $id . '_r', array( 'label' => 'Colțuri', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px', '%' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 40 ), '%' => array( 'min' => 0, 'max' => 50 ) ), 'selectors' => array( $scope => '--pvl-' . $v . '-r: {{SIZE}}{{UNIT}};' ) ) );
+		$this->start_controls_tabs( $id . '_tabs' );
+		foreach ( array( '' => 'Normal', '_h' => 'Hover' ) as $k => $label ) {
+			$sfx = '' === $k ? '' : '-h';
+			$this->start_controls_tab( $id . '_tab' . $k, array( 'label' => $label ) );
+			$this->add_control( $id . '_color' . $k, array( 'label' => 'Culoare ×', 'type' => Controls_Manager::COLOR, 'selectors' => array( $scope => '--pvl-' . $v . '-c' . $sfx . ': {{VALUE}};' ) ) );
+			$this->add_control( $id . '_bg' . $k, array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $scope => '--pvl-' . $v . '-bg' . $sfx . ': {{VALUE}};' ) ) );
+			$this->add_control( $id . '_bd' . $k, array( 'label' => 'Culoare chenar', 'type' => Controls_Manager::COLOR, 'selectors' => array( $scope => '--pvl-' . $v . '-bd' . $sfx . ': {{VALUE}};' ) ) );
+			$this->end_controls_tab();
+		}
+		$this->end_controls_tabs();
+	}
+
+	/* buton cu text („Continuă să alegi”, „Vezi produsele”): font, culori, fundal, chenar, colțuri, padding, subliniere, lățime */
+	private function text_button_controls( $id, $scope, $v, $el, $more ) {
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => $id . '_typo', 'label' => 'Font', 'selector' => $el ) );
+		$color = 'mo' === $v ? 'more-c' : $v . '-c';
+		$this->start_controls_tabs( $id . '_tabs' );
+		foreach ( array( '' => 'Normal', '_h' => 'Hover' ) as $k => $label ) {
+			$sfx = '' === $k ? '' : '-h';
+			$this->start_controls_tab( $id . '_tab' . $k, array( 'label' => $label ) );
+			/* „dw_more_color” păstrează numele vechi: valoarea aleasă înainte rămâne */
+			$this->add_control( $id . '_color' . $k, array( 'label' => 'Culoare text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $scope => '--pvl-' . $color . $sfx . ': {{VALUE}};' ) ) );
+			$this->add_control( $id . '_bg' . $k, array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $scope => '--pvl-' . $v . '-bg' . $sfx . ': {{VALUE}};' ) ) );
+			$this->add_control( $id . '_bd' . $k, array( 'label' => 'Culoare chenar', 'type' => Controls_Manager::COLOR, 'selectors' => array( $scope => '--pvl-' . $v . '-bd' . $sfx . ': {{VALUE}};' ) ) );
+			$this->end_controls_tab();
+		}
+		$this->end_controls_tabs();
+		$this->add_responsive_control( $id . '_bw', array( 'label' => 'Grosime chenar', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 6, 'step' => 0.5 ) ), 'separator' => 'before', 'selectors' => array( $scope => '--pvl-' . $v . '-bw: {{SIZE}}{{UNIT}};' ) ) );
+		$this->add_responsive_control( $id . '_r', array( 'label' => 'Colțuri', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 40 ) ), 'selectors' => array( $scope => '--pvl-' . $v . '-r: {{SIZE}}{{UNIT}};' ) ) );
+		$this->add_responsive_control( $id . '_p', array( 'label' => 'Padding', 'type' => Controls_Manager::DIMENSIONS, 'size_units' => array( 'px' ), 'selectors' => array( $scope => '--pvl-' . $v . '-p: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ) ) );
+		if ( $more ) {
+			$this->add_control( $id . '_u', array( 'label' => 'Fără subliniere', 'type' => Controls_Manager::SWITCHER, 'label_on' => 'Da', 'label_off' => 'Nu', 'return_value' => 'none', 'default' => '', 'selectors' => array( $scope => '--pvl-' . $v . '-u: {{VALUE}};' ) ) );
+			$this->add_control( $id . '_full', array( 'label' => 'Toată lățimea', 'type' => Controls_Manager::SWITCHER, 'label_on' => 'Da', 'label_off' => 'Nu', 'return_value' => 'yes', 'default' => '', 'selectors_dictionary' => array( 'yes' => '--pvl-' . $v . '-w: 100%; --pvl-' . $v . '-align: stretch;' ), 'selectors' => array( $scope => '{{VALUE}}' ) ) );
+		}
 	}
 
 	/* setările panoului lateral, citite de oferta-lista.js */
