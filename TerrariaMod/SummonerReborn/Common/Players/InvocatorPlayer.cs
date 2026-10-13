@@ -32,7 +32,8 @@ namespace SummonerReborn.Common.Players
 			SetUrsitoare = false;
 		}
 
-		public override void PostUpdateEquips() {
+		// Rulează după ce jocul a verificat bonusurile de set (UpdateArmorSet), deci SetUrsitoare e corect aici.
+		public override void PostUpdateMiscEffects() {
 			// Bonusul setului Ursitoarei: stai nemișcat 2 secunde -> minionii fac +25% damage.
 			if (!SetUrsitoare) {
 				TimpNemiscat = 0;

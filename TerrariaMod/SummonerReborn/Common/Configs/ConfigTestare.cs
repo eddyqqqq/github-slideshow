@@ -17,5 +17,10 @@ namespace SummonerReborn.Common.Configs
 		// Când e pornit: dacă e un boss în viață și n-ai ales tu o țintă, minionii atacă boss-ul.
 		[DefaultValue(true)]
 		public bool TintireAutomataBoss;
+
+		// Varianta OP: summonerul devine foarte puternic, ca să poți face toți boss-ii pe Master
+		// cu itemele de început. Se aplică imediat, fără reload. Detalii în Common/Players/ModOPPlayer.cs.
+		[DefaultValue(false)]
+		public bool ModOP;
 	}
 }

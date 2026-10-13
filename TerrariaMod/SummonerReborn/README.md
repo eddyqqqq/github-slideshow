@@ -48,6 +48,27 @@ Valorile vanilla sunt verificate pe wiki-ul Terraria acolo unde l-am putut acces
 - Comanda de chat **`/kittest`** îți dă kit-ul din nou, oricând.
 - **Pentru boss-ii de Hardmode** ai nevoie de o lume de Hardmode. Cel mai simplu e să faci o lume nouă și să omori Wall of Flesh cu Guide Voodoo Doll, aruncată în lavă în Underworld.
 
+## Mod OP (Binecuvantarea Ursitoarelor)
+O variantă în care summonerul e **foarte puternic**: poți face toți boss-ii pe **Master Mode** cu itemele de început din mod.
+**Pornire:** Mods → Renasterea Invocatorului → rotița de setări → **Mod OP**. Merge imediat, fără reload, și îl poți opri oricând.
+
+| Bonus | Valoare |
+|---|---|
+| Damage de summon | +40% |
+| Minioni / santinele | +2 / +1 |
+| Apărare | +12 |
+| Damage primit | -15% |
+| Viață maximă | +60 |
+| Regenerare | +2 HP/s |
+| Viteză de mișcare / viteză bici | +10% / +20% |
+| **Armele din mod** (Toiagul Licuricilor, Biciul de Spini) | **+30% damage pentru fiecare boss învins** (x1 la început, ~x6 după Moon Lord) |
+| **Setul Ursitoarei** | +2 apărare pentru fiecare boss învins, +1 minion la fiecare 4 boss-i |
+| Furt de viață | minionii îți dau 3% din damage-ul lor ca viață (max 4 HP, de 3 ori pe secundă) |
+| Salvare de la moarte | o dată la 3 minute: în loc să mori, rămâi cu 1/3 din viață și 2 secunde de invulnerabilitate |
+
+Când intri pe lume, chat-ul îți spune cât de mult damage fac armele din mod la progresul tău.
+Toate cifrele sunt sus în `Common/Players/ModOPPlayer.cs`, dacă vrei să-l faci mai ușor sau mai greu.
+
 ## Oprirea fazei de test
 Mergi la **Mods → Renasterea Invocatorului → rotița de setări** și oprește **Mod de testare**. Nu trebuie să umbli în cod.
 Personajele care au primit deja kit-ul îl păstrează. Pentru un început curat, fă un personaj și o lume noi.
@@ -66,13 +87,14 @@ SummonerReborn/
 │  ├─ Configs/ConfigTestare.cs        setările „Mod de testare” și „țintire automată”
 │  ├─ Players/KitTestarePlayer.cs     dă kit-ul de testare
 │  ├─ Players/InvocatorPlayer.cs      efectele accesoriilor, bonusul de set, țintirea pe boss
+│  ├─ Players/ModOPPlayer.cs          varianta Mod OP (toate bonusurile și cifrele ei)
 │  └─ Commands/KitCommand.cs          comanda /kittest
 └─ Content/
    ├─ Items/Weapons/       Toiagul Licuricilor, Biciul de Spini
    ├─ Items/Armor/         cele 3 piese ale setului Ursitoarei
    ├─ Items/Accessories/   Mărțișor, Talismanul de Usturoi
    ├─ Projectiles/         Licurici (minionul), BiciulDeSpiniProiectil (biciul în zbor)
-   └─ Buffs/               LicuriciBuff, MarcaSpinilor (+ efectul ei), Primavara, Furie
+   └─ Buffs/               LicuriciBuff, MarcaSpinilor (+ efectul ei), Primavara, Furie, UrsitoareleObosite
 ```
 Cifrele de balans sunt sus, în fiecare fișier, ca `public static readonly int ...`. Le schimbi acolo și dai **Build + Reload**.
 

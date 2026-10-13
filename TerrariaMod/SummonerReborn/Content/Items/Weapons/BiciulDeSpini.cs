@@ -1,3 +1,4 @@
+using SummonerReborn.Common.Players;
 using SummonerReborn.Content.Buffs;
 using SummonerReborn.Content.Projectiles;
 using Terraria;
@@ -25,6 +26,12 @@ namespace SummonerReborn.Content.Items.Weapons
 		// Biciul primește prefixe de melee (Legendary etc.), ca biciurile din vanilla.
 		public override bool MeleePrefix() {
 			return true;
+		}
+
+		// În Mod OP, arma crește cu fiecare boss învins (vezi ModOPPlayer).
+		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
+			if (ModOPPlayer.Activ)
+				damage *= ModOPPlayer.MultiplicatorArme();
 		}
 
 		public override void AddRecipes() {
