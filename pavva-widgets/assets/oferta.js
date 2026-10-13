@@ -1,6 +1,6 @@
 /*
  * Pavva Widgets – formularele de pe site
- * Creat de imagient pentru Pavva.
+ * Creat de Imagient (imagient.ro) pentru Pavva.
  *
  * Funcționează în orice formular (Elementor, CF7, WPForms…), pe orice pagină.
  * Câmpurile sunt recunoscute după ID, nume, etichetă sau prima opțiune:
@@ -146,6 +146,11 @@
 			choose(f.categorie, want.categorie);
 			if (cat && prod) fillProds();
 		}
+		/* lista de ofertă (oferta-lista.js) preia câmpul de produs: mai multe produse într-o cerere */
+		var detail = { categorie: cat, produs: prod, data: D };
+		f.form.__pvoProducts = detail;
+		if (prod) f.form.dispatchEvent(new CustomEvent('pavva:oferta-form', { bubbles: true, detail: detail }));
+
 		if (want.produs && f.produs && !choose(f.produs, want.produs) && prod && cat && cat.value) {
 			/* produsul nu e în categoria trimisă: îl căutăm în toate */
 			cat.value = '';
@@ -222,8 +227,15 @@
 	function setupArea(el) {
 		if (el.__pvoArea) return;
 		el.__pvoArea = true;
-		/* listă cu opțiunile tale (ex.: „sub 50 m²”, „50–100 m²”): rămâne listă */
-		if (isSel(el) && Array.prototype.some.call(el.options, function (o, i) { return i > 0 && o.textContent.trim() !== ''; })) return;
+		/* listă cu opțiunile tale (ex.: „Sub 100 mp”, „Între 100-500 mp”): rămâne listă */
+		if (isSel(el) && Array.prototype.some.call(el.options, function (o, i) { return i > 0 && o.textContent.trim() !== ''; })) {
+			/* opțiunile adăugate fără valoare în Elementor: fără asta, câmpul obligatoriu nu trece niciodată
+			   de verificare și formularul nu se poate trimite. Valoarea devine textul opțiunii. */
+			Array.prototype.forEach.call(el.options, function (o, i) {
+				if (i > 0 && !o.value && o.textContent.trim()) o.value = o.textContent.trim();
+			});
+			return;
+		}
 		var label = isSel(el) && el.options.length ? el.options[0].textContent : (el.getAttribute('placeholder') || 'Suprafață proiect');
 		label = label.replace(/\s*\(?m(²|2|p)\)?\s*$/i, '');
 		var input = el;

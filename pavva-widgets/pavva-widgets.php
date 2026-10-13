@@ -3,7 +3,7 @@
  * Plugin Name:       Pavva Widgets
  * Plugin URI:        https://imagient.ro/
  * Description:       Widgeturile Elementor, etichetele dinamice și formularele create special pentru site-ul Pavva. Câmpurile produselor / categoriilor sunt în „Pavva Products” și „Pavva Categories”. Creat de Imagient (imagient.ro).
- * Version:           4.8.1
+ * Version:           4.9.0
  * Author:            Imagient
  * Author URI:        https://imagient.ro/
  * Requires at least: 6.0
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '4.8.1' );
+define( 'PAVVA_WIDGETS_VERSION', '4.9.0' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -42,6 +42,10 @@ require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-data.php';
 /* Formularul de ofertă se completează singur din linkul „Solicită ofertă”. */
 require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-quote-form.php';
 Pavva_W_Quote_Form::init();
+
+/* Lista de ofertă: clientul adaugă mai multe produse și le trimite într-o singură cerere. */
+require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-lista.php';
+Pavva_W_Lista::init();
 
 /* Verificarea widgeturilor vechi (pagina Plugins), doar în admin. */
 if ( is_admin() ) {
@@ -204,6 +208,10 @@ function pavva_widgets_register_widgets( $widgets_manager ) {
 		'widgets/class-pavva-dimensiuni-widget.php'    => 'Pavva_Dimensiuni_Widget',
 		'widgets/class-pavva-acordeon-widget.php'      => 'Pavva_Acordeon_Widget',
 		'widgets/class-pavva-grila-produse-widget.php' => 'Pavva_Grila_Produse_Widget',
+		/* lista de ofertă */
+		'widgets/class-pavva-oferta-buton-widget.php'  => 'Pavva_Oferta_Buton_Widget',
+		'widgets/class-pavva-oferta-contor-widget.php' => 'Pavva_Oferta_Contor_Widget',
+		'widgets/class-pavva-oferta-lista-widget.php'  => 'Pavva_Oferta_Lista_Widget',
 	);
 
 	/* fiecare widget separat: dacă unul are o problemă, celălalt tot apare */

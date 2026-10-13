@@ -346,3 +346,27 @@
 @media (prefers-reduced-motion: reduce) {
 	.pvg .pvg-media, .pvg .pvg-media img, .pvg .pvg-media::after { transition: none !important; }
 }
+
+/* ---------- Lista de ofertă: butonul „+” de pe card ---------- */
+.pvg .pvg-item { position: relative; }
+.pvg .pvg-oferta {
+	--pvg-of-size: 40px;
+	--pvg-of-off: 12px;
+	position: absolute; top: var(--pvg-of-off); right: var(--pvg-of-off); z-index: 3;
+	display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+	min-width: var(--pvg-of-size); height: var(--pvg-of-size); padding: 0;
+	border: 0; border-radius: 999px; background: #fff; color: #AB5525;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, .14); cursor: pointer;
+	font-size: 14px; font-weight: 600; line-height: 1;
+	transition: background-color .2s, color .2s, transform .2s;
+}
+.pvg .pvg-oferta-left { right: auto; left: var(--pvg-of-off); }
+.pvg .pvg-oferta.has-text { padding: 0 14px 0 10px; }
+.pvg .pvg-oferta svg { width: 20px; height: 20px; flex: none; }
+.pvg .pvg-oferta:hover { transform: scale(1.06); }
+.pvg .pvg-oferta:focus-visible { outline: 2px solid #AB5525; outline-offset: 2px; }
+.pvg .pvg-oferta.is-added { background: #AB5525; color: #fff; }
+.pvg .pvg-oferta .pvl-ico-added, .pvg .pvg-oferta .pvl-t-added,
+.pvg .pvg-oferta.is-added .pvl-ico-add, .pvg .pvg-oferta.is-added .pvl-t-add { display: none; }
+.pvg .pvg-oferta.is-added .pvl-ico-added, .pvg .pvg-oferta.is-added .pvl-t-added { display: inline; }
+@media (prefers-reduced-motion: reduce) { .pvg .pvg-oferta { transition: none; } .pvg .pvg-oferta:hover { transform: none; } }

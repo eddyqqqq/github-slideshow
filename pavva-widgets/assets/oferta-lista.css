@@ -1,0 +1,71 @@
+/* Pavva – lista de ofertă (stilurile de bază; culorile, fonturile și spațiile se schimbă din widgeturi) */
+/* fontul de text al site-ului (Elementor → Site Settings → Typography → Text) */
+.pvl-btn, .pvl-counter, .pvl-list, .pvl-toast, .pvg .pvg-oferta { font-family: var(--e-global-typography-text-font-family, inherit), sans-serif; }
+.pvl-sr { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- buton „Adaugă la ofertă” ---------- */
+.pvl-btn-wrap { display: flex; }
+.pvl-btn {
+	--pvl-accent: #AB5525;
+	display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+	padding: 14px 26px; border: 1px solid var(--pvl-accent); border-radius: 0;
+	background: var(--pvl-accent); color: #fff; font-size: inherit; font-weight: 600; line-height: 1.2;
+	cursor: pointer; transition: background-color .25s, color .25s, border-color .25s;
+}
+.pvl-btn:focus-visible { outline: 2px solid var(--pvl-accent); outline-offset: 3px; }
+.pvl-btn .pvl-ico { display: inline-flex; line-height: 0; }
+.pvl-btn .pvl-ico svg { width: 1em; height: 1em; fill: currentColor; }
+.pvl-btn .pvl-ico-added, .pvl-btn .pvl-t-added,
+.pvl-btn.is-added .pvl-ico-add, .pvl-btn.is-added .pvl-t-add { display: none; }
+.pvl-btn.is-added .pvl-ico-added, .pvl-btn.is-added .pvl-t-added { display: inline-flex; }
+
+/* ---------- „Oferta ta” (iconiță + număr) ---------- */
+.pvl-counter-wrap { display: flex; }
+.pvl-counter { position: relative; display: inline-flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; }
+.pvl-counter[data-pvl-hide-empty].is-empty { display: none; }
+.pvl-c-ico { position: relative; display: inline-flex; line-height: 0; font-size: 22px; }
+.pvl-c-ico svg { width: 1em; height: 1em; fill: currentColor; }
+.pvl-badge {
+	position: absolute; top: -8px; right: -10px; min-width: 18px; height: 18px; padding: 0 5px;
+	border-radius: 999px; background: #AB5525; color: #fff;
+	font-size: 11px; font-weight: 700; line-height: 18px; text-align: center; font-variant-numeric: tabular-nums;
+}
+.pvl-counter.is-empty .pvl-badge { display: none; }
+
+/* ---------- lista produselor ---------- */
+.pvl-list { display: grid; gap: 12px; }
+.pvl-list .pvl-title { margin: 0; font-weight: 600; }
+.pvl-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.pvl-item { display: flex; align-items: center; gap: 12px; padding: 8px 10px 8px 8px; background: #f6f5f3; border: 1px solid transparent; border-radius: 6px; }
+.pvl-media { flex: none; width: 52px; height: 52px; border-radius: 4px; overflow: hidden; background: #e9e6e1; }
+.pvl-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.pvl-info { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.pvl-name { font-weight: 600; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
+a.pvl-name:hover { text-decoration: underline; }
+.pvl-cat { font-size: .85em; opacity: .75; }
+.pvl-remove {
+	flex: none; display: inline-flex; align-items: center; justify-content: center;
+	width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%;
+	background: transparent; color: inherit; cursor: pointer; transition: background-color .2s, color .2s;
+}
+.pvl-remove:hover { background: rgba(0, 0, 0, .06); color: #AB5525; }
+.pvl-remove:focus-visible { outline: 2px solid #AB5525; outline-offset: 1px; }
+.pvl-empty { margin: 0; opacity: .75; }
+.pvl-list:not(.is-empty) .pvl-empty { display: none; }
+.pvl-clear { justify-self: start; padding: 0; border: 0; background: none; color: inherit; font-family: inherit; font-size: .9em; text-decoration: underline; cursor: pointer; }
+.pvl-list.is-empty .pvl-clear { display: none; }
+/* lista pusă automat în formular ocupă tot rândul */
+.pvl-list-auto { flex: 1 1 100%; width: 100%; margin-bottom: 4px; }
+
+/* ---------- mesajul scurt după adăugare ---------- */
+.pvl-toast {
+	position: fixed; left: 50%; bottom: 24px; z-index: 99999; transform: translate(-50%, 20px);
+	display: flex; align-items: center; gap: 16px; max-width: calc(100vw - 32px); padding: 12px 14px 12px 18px;
+	background: #1f1e1c; color: #fff; border-radius: 6px; box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+	font-size: 15px; line-height: 1.35; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+}
+.pvl-toast.is-on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.pvl-toast-a { flex: none; padding: 8px 12px; border-radius: 4px; background: #AB5525; color: #fff; font-weight: 600; text-decoration: none; }
+.pvl-toast-a:hover, .pvl-toast-a:focus-visible { background: #8f4520; color: #fff; }
+@media (prefers-reduced-motion: reduce) { .pvl-toast { transition: none; } }
+.pvl-list.pvl-hide-empty.is-empty { display: none; }

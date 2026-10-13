@@ -494,6 +494,79 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+
+		/* ---------- Lista de ofertă: butonul „+” pe carduri ---------- */
+		$this->start_controls_section(
+			'section_oferta',
+			array(
+				'label' => 'Buton ofertă pe carduri',
+				'tab'   => Controls_Manager::TAB_CONTENT,
+			)
+		);
+		$this->add_control(
+			'oferta_show',
+			array(
+				'label'        => 'Buton „Adaugă la ofertă”',
+				'description'  => 'Un buton mic pe poza fiecărui produs: îl pune în lista de ofertă fără să deschidă pagina produsului. Al doilea click îl scoate.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => '',
+			)
+		);
+		$this->add_control(
+			'oferta_pos',
+			array(
+				'label'     => 'Poziție',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'right',
+				'options'   => array( 'right' => 'Dreapta sus', 'left' => 'Stânga sus' ),
+				'condition' => array( 'oferta_show' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'oferta_text',
+			array(
+				'label'       => 'Text lângă iconiță',
+				'description' => 'Gol = doar iconița (textul „Adaugă la ofertă” rămâne pentru cititoarele de ecran).',
+				'type'        => Controls_Manager::TEXT,
+				'default'     => '',
+				'condition'   => array( 'oferta_show' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'oferta_text_added',
+			array(
+				'label'     => 'Text după adăugare',
+				'type'      => Controls_Manager::TEXT,
+				'default'   => '',
+				'condition' => array( 'oferta_show' => 'yes', 'oferta_text!' => '' ),
+			)
+		);
+		$this->add_control(
+			'oferta_toast',
+			array(
+				'label'        => 'Mesaj după adăugare',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+				'condition'    => array( 'oferta_show' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'oferta_form',
+			array(
+				'label'       => 'Pagina formularului',
+				'type'        => Controls_Manager::TEXT,
+				'default'     => '/solicita-oferta/',
+				'label_block' => true,
+				'condition'   => array( 'oferta_show' => 'yes' ),
+			)
+		);
+		$this->end_controls_section();
 	}
 
 	/* ================================================================
@@ -2028,11 +2101,96 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 
 		$this->end_controls_section();
 
+		/* ---------- Stil: butonul de ofertă de pe carduri ---------- */
+		$this->start_controls_section(
+			'section_style_oferta',
+			array(
+				'label'     => 'Buton ofertă',
+				'tab'       => Controls_Manager::TAB_STYLE,
+				'condition' => array( 'oferta_show' => 'yes' ),
+			)
+		);
+		$this->add_responsive_control(
+			'oferta_size',
+			array(
+				'label'      => 'Înălțime',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 24, 'max' => 72 ) ),
+				'selectors'  => array( '{{WRAPPER}} .pvg-oferta' => '--pvg-of-size: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'oferta_icon_size',
+			array(
+				'label'      => 'Mărime iconiță',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 8, 'max' => 40 ) ),
+				'selectors'  => array( '{{WRAPPER}} .pvg-oferta svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'oferta_offset',
+			array(
+				'label'      => 'Distanța față de margine',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
+				'selectors'  => array( '{{WRAPPER}} .pvg-oferta' => '--pvg-of-off: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'oferta_radius',
+			array(
+				'label'      => 'Colțuri rotunjite',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
+				'selectors'  => array( '{{WRAPPER}} .pvg-oferta' => 'border-radius: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'oferta_typo', 'label' => 'Font text', 'selector' => '{{WRAPPER}} .pvg-oferta .pvl-t', 'condition' => array( 'oferta_text!' => '' ) ) );
+		$this->start_controls_tabs( 'tabs_oferta' );
+		foreach ( array( 'normal' => array( 'Normal', '' ), 'hover' => array( 'Hover', ':hover' ), 'added' => array( 'Adăugat', '.is-added' ) ) as $k => $t ) {
+			$this->start_controls_tab( 'tab_oferta_' . $k, array( 'label' => $t[0] ) );
+			$sel = '{{WRAPPER}} .pvg-oferta' . $t[1];
+			$this->add_control( 'oferta_color_' . $k, array( 'label' => 'Iconiță / text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $sel => 'color: {{VALUE}};' ) ) );
+			$this->add_control( 'oferta_bg_' . $k, array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $sel => 'background-color: {{VALUE}};' ) ) );
+			$this->end_controls_tab();
+		}
+		$this->end_controls_tabs();
+		$this->end_controls_section();
+
 	}
 
 	/* ================================================================
 	 * Ajutătoare
 	 * ================================================================ */
+
+	/* butonul „+” al listei de ofertă (în afara linkului cardului: un buton nu are voie în interiorul unui link) */
+	private function oferta_button( $id, $s, $form ) {
+		$item = Pavva_W_Lista::item( (int) $id );
+		if ( ! $item ) return;
+		$text  = trim( (string) ( $s['oferta_text'] ?? '' ) );
+		$added = trim( (string) ( $s['oferta_text_added'] ?? '' ) );
+		$pos   = 'left' === ( $s['oferta_pos'] ?? 'right' ) ? 'left' : 'right';
+		$plus  = '<svg class="pvl-ico-add" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>';
+		$check = '<svg class="pvl-ico-added" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+		printf(
+			'<button type="button" class="pvg-oferta pvg-oferta-%1$s%2$s" aria-pressed="false" data-pvl-add data-pvl="%3$s" data-pvl-mode="add" data-pvl-again="remove" data-pvl-form="%4$s" data-pvl-toast="%5$s">%6$s%7$s%8$s</button>',
+			esc_attr( $pos ),
+			'' !== $text ? ' has-text' : '',
+			esc_attr( wp_json_encode( $item ) ),
+			esc_url( $form ),
+			'yes' === ( $s['oferta_toast'] ?? 'yes' ) ? '1' : '0',
+			$plus . $check, // phpcs:ignore -- SVG fix
+			'' !== $text
+				? '<span class="pvl-t pvl-t-add">' . esc_html( $text ) . '</span><span class="pvl-t pvl-t-added">' . esc_html( '' !== $added ? $added : $text ) . '</span>'
+				: '<span class="pvl-sr">' . esc_html( 'Adaugă la ofertă: ' . $item['name'] ) . '</span>', /* starea o spune aria-pressed */
+			''
+		);
+	}
 	private function tag_options() {
 		return array(
 			'h1'   => 'H1',
@@ -2344,6 +2502,8 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		$c_box       = isset( $s['counter_style'] ) && 'box' === $s['counter_style'];
 		$c_pos       = isset( $s['colors_position'] ) && in_array( $s['colors_position'], array( 'bottom', 'top', 'image' ), true ) ? $s['colors_position'] : 'bottom';
 		$arrow_html  = $this->arrow_html( $s );
+		$oferta      = isset( $s['oferta_show'] ) && 'yes' === $s['oferta_show'];
+		$oferta_form = $oferta && class_exists( 'Pavva_W_Lista' ) ? Pavva_W_Lista::resolve_url( $s['oferta_form'] ?? '' ) : '';
 
 		if ( ! $ids ) {
 			if ( '' !== $empty_text ) {
@@ -2415,6 +2575,11 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 								<?php endif; ?>
 							</div>
 						</a>
+						<?php
+						if ( $oferta && class_exists( 'Pavva_W_Lista' ) ) {
+							$this->oferta_button( $id, $s, $oferta_form );
+						}
+						?>
 					</li>
 				<?php endforeach; ?>
 			</ul>
