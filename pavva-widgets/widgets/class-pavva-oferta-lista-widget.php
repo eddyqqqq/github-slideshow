@@ -79,6 +79,32 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 			)
 		);
 		$this->add_control(
+			'into_form',
+			array(
+				'label'        => 'Așază în formular',
+				'description'  => 'Pe site, lista intră în formularul de ofertă, deasupra câmpului „Categorie produs” (în editor rămâne unde ai pus-o, ca s-o poți stiliza). Nu = rămâne exact unde e pusă.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+				'separator'    => 'before',
+			)
+		);
+		$this->add_control(
+			'align_fields',
+			array(
+				'label'        => 'Textul aliniat cu câmpurile',
+				'description'  => 'Titlul și textul încep la fel ca textul din câmpurile formularului.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+				'condition'    => array( 'into_form' => 'yes' ),
+			)
+		);
+		$this->add_control(
 			'show_image',
 			array(
 				'label'        => 'Poza produsului',
@@ -225,7 +251,7 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 		}
 		$classes = 'pvl-list' . ( $edit ? '' : ' is-empty' ) . ( '' === $empty ? ' pvl-hide-empty' : '' );
 		?>
-		<div class="<?php echo esc_attr( $classes ); ?>" data-pvl-list data-pvl-img="<?php echo $img ? '1' : '0'; ?>" data-pvl-cat="<?php echo $cat ? '1' : '0'; ?>"<?php echo $edit ? ' data-pvl-preview' : ''; ?>>
+		<div class="<?php echo esc_attr( $classes ); ?>" data-pvl-list data-pvl-img="<?php echo $img ? '1' : '0'; ?>" data-pvl-cat="<?php echo $cat ? '1' : '0'; ?>"<?php echo $edit ? ' data-pvl-preview' : ''; ?><?php echo ! $edit && 'yes' === ( $s['into_form'] ?? 'yes' ) ? ' data-pvl-into-form' : ''; ?> data-pvl-align="<?php echo 'yes' === ( $s['align_fields'] ?? 'yes' ) ? '1' : '0'; ?>">
 			<?php if ( '' !== $title ) : ?>
 				<<?php echo $tag; // phpcs:ignore ?> class="pvl-title"><?php echo esc_html( $title ); ?><?php if ( 'yes' === ( $s['title_count'] ?? 'yes' ) ) : ?><span class="pvl-title-count"><?php echo $edit && $sample ? ' (' . count( $sample ) . ')' : ''; ?></span><?php endif; ?></<?php echo $tag; // phpcs:ignore ?>>
 			<?php endif; ?>

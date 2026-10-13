@@ -100,17 +100,52 @@
 		live.textContent = '';
 		setTimeout(function () { live.textContent = msg; }, 30);
 	}
-	function toast(name, url) {
-		if (!toastEl) {
-			toastEl = d.createElement('div');
-			toastEl.className = 'pvl-toast';
-			d.body.appendChild(toastEl);
+	/* bara de jos „Oferta ta: 3 produse · Vezi oferta”: rămâne cât lista are produse (nu și pe pagina formularului),
+	   ca vizitatorul să ajungă ușor la formular după ce a ales; după o adăugare arată câteva secunde produsul adăugat */
+	var BAR_OFF = 'pavva_oferta_bar_off';
+	function barOff() { try { return w.sessionStorage.getItem(BAR_OFF) === '1'; } catch (e) { return false; } }
+	function onFormPage() {
+		if (forms.length) return true;
+		try { return new URL(C.form || '/solicita-oferta/', w.location.href).pathname.replace(/\/+$/, '') === w.location.pathname.replace(/\/+$/, ''); } catch (e) { return false; }
+	}
+	function ensureBar() {
+		if (toastEl) return toastEl;
+		toastEl = d.createElement('div');
+		toastEl.className = 'pvl-toast';
+		toastEl.setAttribute('role', 'region');
+		toastEl.setAttribute('aria-label', txt('title', 'Oferta ta'));
+		toastEl.innerHTML = '<span class="pvl-toast-t"></span><a class="pvl-toast-a" href="#"></a>' +
+			'<button type="button" class="pvl-toast-x" aria-label="' + esc(txt('hide', 'Ascunde bara')) + '">' + X + '</button>';
+		d.body.appendChild(toastEl);
+		toastEl.querySelector('.pvl-toast-x').addEventListener('click', function () {
+			try { w.sessionStorage.setItem(BAR_OFF, '1'); } catch (e) {}
+			toastEl.classList.remove('is-on');
+		});
+		return toastEl;
+	}
+	function bar(flashName, url) {
+		var n = read().length;
+		var show = C.bar !== false && n > 0 && !onFormPage() && !barOff();
+		if (!show && !toastEl) return;
+		var el = ensureBar();
+		el.querySelector('.pvl-toast-a').setAttribute('href', url || C.form || '/solicita-oferta/');
+		el.querySelector('.pvl-toast-a').textContent = txt('see', 'Vezi oferta');
+		var t = el.querySelector('.pvl-toast-t');
+		if (flashName) {
+			t.innerHTML = esc(txt('added', 'Adăugat în ofertă')) + ': <strong>' + esc(flashName) + '</strong>';
+			clearTimeout(toastT);
+			toastT = setTimeout(function () { toastT = 0; bar(); }, 3500);
+		} else if (!toastT) {
+			t.innerHTML = esc(txt('title', 'Oferta ta')) + ': <strong>' + esc(plural(n)) + '</strong>';
 		}
-		toastEl.innerHTML = '<span class="pvl-toast-t">' + esc(txt('added', 'Adăugat în ofertă')) + ': <strong>' + esc(name) + '</strong></span>' +
-			'<a class="pvl-toast-a" href="' + esc(url) + '">' + esc(txt('see', 'Vezi oferta')) + '</a>';
-		toastEl.classList.add('is-on');
-		clearTimeout(toastT);
-		toastT = setTimeout(function () { toastEl.classList.remove('is-on'); }, 4200);
+		el.classList.toggle('is-on', show || (!!flashName && C.bar === false));
+		d.documentElement.classList.toggle('pv-oferta-bar', show);
+	}
+	function toast(name, url) {
+		/* la adăugare, bara reapare chiar dacă a fost închisă */
+		try { w.sessionStorage.removeItem(BAR_OFF); } catch (e) {}
+		bar(name, url);
+		if (C.bar === false) { clearTimeout(toastT); toastT = setTimeout(function () { toastT = 0; if (toastEl) toastEl.classList.remove('is-on'); }, 4200); }
 	}
 
 	/* ---------- produsul unui buton ---------- */
@@ -123,6 +158,7 @@
 
 	/* ---------- afișare: butoane, contoare, liste ---------- */
 	function render() {
+		navItems();
 		var list = read();
 		var n = list.length;
 		d.documentElement.classList.toggle('pv-oferta-are', n > 0);
@@ -151,6 +187,35 @@
 
 		each('[data-pvl-list]', renderList);
 		forms.forEach(function (f) { f.sync(); });
+		bar();
+	}
+
+	/* ---------- „Oferta ta” în meniul de navigare ----------
+	   Appearance → Menus: un link (de ex. /solicita-oferta/) cu clasa CSS pv-oferta-nav
+	   (+ pv-oferta-nav-icon = doar iconiță, + pv-oferta-nav-hide = ascuns cât lista e goală) */
+	var ICON = '<svg class="pvl-nav-ico" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M336 64h-80c0-35.3-28.7-64-64-64s-64 28.7-64 64H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM96 424c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm0-96c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm0-96c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm96-192c13.3 0 24 10.7 24 24s-10.7 24-24 24-24-10.7-24-24 10.7-24 24-24zm128 368c0 4.4-3.6 8-8 8H168c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16zm0-96c0 4.4-3.6 8-8 8H168c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16zm0-96c0 4.4-3.6 8-8 8H168c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16z"/></svg>';
+	function navItems() {
+		each('.pv-oferta-nav', function (li) {
+			var a = li.tagName === 'A' ? li : li.querySelector('a');
+			if (!a || a.__pvl) return;
+			a.__pvl = true;
+			var label = (a.textContent || '').trim() || txt('title', 'Oferta ta');
+			a.classList.add('pvl-nav');
+			a.setAttribute('data-pvl-counter', '');
+			a.setAttribute('data-pvl-label', label);
+			if (li.classList.contains('pv-oferta-nav-hide')) a.setAttribute('data-pvl-hide-empty', '');
+			var iconOnly = li.classList.contains('pv-oferta-nav-icon');
+			if (iconOnly) {
+				a.innerHTML = '<span class="pvl-c-ico">' + ICON + '<span class="pvl-badge" data-pvl-count>0</span></span><span class="pvl-sr">' + esc(label) + '</span>';
+				a.classList.add('pvl-nav-icon');
+			} else {
+				var b = d.createElement('span');
+				b.className = 'pvl-badge pvl-badge-inline';
+				b.setAttribute('data-pvl-count', '');
+				b.setAttribute('aria-hidden', 'true');
+				a.appendChild(b);
+			}
+		});
 	}
 	function each(sel, fn) { Array.prototype.forEach.call(d.querySelectorAll(sel), fn); }
 
@@ -346,18 +411,33 @@
 		var api = { form: form, sync: sync, before: function () { beforeSubmit(); pending = true; } };
 		forms.push(api);
 
-		/* lista se arată deasupra câmpurilor de produs, dacă pe pagină nu e pus widgetul „Listă ofertă” */
-		if (!d.querySelector('[data-pvl-list]') && C.autoList !== false) {
-			var anchor = cat && form.contains(cat) ? cat : prod;
-			var node = anchor;
-			while (node.parentElement && node.parentElement !== form) node = node.parentElement;
-			var box = d.createElement('div');
+		/* lista se pune în formular, deasupra câmpurilor de produs:
+		   widgetul „Listă ofertă” (cu „Așază în formular”), altfel o listă automată */
+		var anchor = cat && form.contains(cat) ? cat : prod;
+		var node = anchor;
+		while (node.parentElement && node.parentElement !== form) node = node.parentElement;
+		var widget = d.querySelector('[data-pvl-list][data-pvl-into-form]');
+		var box = null;
+		if (widget && !form.contains(widget)) {
+			/* se mută tot widgetul Elementor, ca stilurile lui să rămână valabile */
+			box = widget.closest('.elementor-element') || widget;
+			form.insertBefore(box, node);
+			box = widget;
+		} else if (!d.querySelector('[data-pvl-list]') && C.autoList !== false) {
+			box = d.createElement('div');
 			box.className = 'pvl-list pvl-list-auto is-empty';
 			box.setAttribute('data-pvl-list', '');
 			box.innerHTML = '<p class="pvl-title">' + esc(txt('listTitle', 'Produsele tale')) + '<span class="pvl-title-count"></span></p>' +
 				'<ul class="pvl-items"></ul>' +
 				'<p class="pvl-empty">' + esc(txt('listEmpty', 'Alege produsele dorite din lista de mai jos. Poți adăuga mai multe.')) + '</p>';
 			form.insertBefore(box, node);
+		}
+		if (box) {
+			/* titlul și textul încep la fel ca textul din câmpuri (padding-ul + chenarul câmpului) */
+			box.classList.add('pvl-in-form');
+			var cs = getComputedStyle(anchor);
+			var pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.borderLeftWidth) || 0);
+			if (box.getAttribute('data-pvl-align') !== '0') box.style.setProperty('--pvl-field-pad', pad + 'px');
 		}
 		render();
 	}

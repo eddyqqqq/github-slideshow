@@ -70,12 +70,12 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 			'hide_empty',
 			array(
 				'label'        => 'Ascuns cât lista e goală',
-				'description'  => 'În editor se vede mereu, ca să-l poți stiliza.',
+				'description'  => 'Nu = iconița se vede mereu (fără număr cât lista e goală). În editor se vede mereu.',
 				'type'         => Controls_Manager::SWITCHER,
 				'label_on'     => 'Da',
 				'label_off'    => 'Nu',
 				'return_value' => 'yes',
-				'default'      => 'yes',
+				'default'      => '',
 			)
 		);
 		$this->add_control(
@@ -220,7 +220,7 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		$edit  = $this->is_edit_mode();
 		$label = trim( (string) ( $s['text'] ?? '' ) );
 		$url   = class_exists( 'Pavva_W_Lista' ) ? Pavva_W_Lista::resolve_url( $s['form_url'] ?? '' ) : home_url( '/solicita-oferta/' );
-		$hide  = ! $edit && 'yes' === ( $s['hide_empty'] ?? 'yes' );
+		$hide  = ! $edit && 'yes' === ( $s['hide_empty'] ?? '' );
 		?>
 		<div class="pvl-counter-wrap">
 			<a class="pvl-counter<?php echo $edit ? '' : ' is-empty'; ?>" href="<?php echo esc_url( $url ); ?>" data-pvl-counter

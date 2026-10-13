@@ -57,15 +57,40 @@ a.pvl-name:hover { text-decoration: underline; }
 /* lista pusă automat în formular ocupă tot rândul */
 .pvl-list-auto { flex: 1 1 100%; width: 100%; margin-bottom: 4px; }
 
-/* ---------- mesajul scurt după adăugare ---------- */
+/* ---------- bara de jos „Oferta ta · Vezi oferta” ---------- */
 .pvl-toast {
-	position: fixed; left: 50%; bottom: 24px; z-index: 99999; transform: translate(-50%, 20px);
-	display: flex; align-items: center; gap: 16px; max-width: calc(100vw - 32px); padding: 12px 14px 12px 18px;
-	background: #1f1e1c; color: #fff; border-radius: 6px; box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
-	font-size: 15px; line-height: 1.35; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+	position: fixed; left: 50%; bottom: 20px; z-index: 99999; transform: translate(-50%, 20px);
+	display: flex; align-items: center; gap: 14px; max-width: calc(100vw - 32px); padding: 10px 8px 10px 18px;
+	background: #1f1e1c; color: #fff; border-radius: 8px; box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+	font-size: 15px; line-height: 1.35; opacity: 0; visibility: hidden; pointer-events: none;
+	transition: opacity .25s, transform .25s, visibility 0s linear .25s;
 }
-.pvl-toast.is-on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
-.pvl-toast-a { flex: none; padding: 8px 12px; border-radius: 4px; background: #AB5525; color: #fff; font-weight: 600; text-decoration: none; }
+.pvl-toast.is-on { opacity: 1; visibility: visible; transform: translate(-50%, 0); pointer-events: auto; transition: opacity .25s, transform .25s; }
+.pvl-toast-t { min-width: 0; }
+.pvl-toast-a { flex: none; padding: 9px 14px; border-radius: 5px; background: #AB5525; color: #fff; font-weight: 600; text-decoration: none; white-space: nowrap; }
 .pvl-toast-a:hover, .pvl-toast-a:focus-visible { background: #8f4520; color: #fff; }
-@media (prefers-reduced-motion: reduce) { .pvl-toast { transition: none; } }
-.pvl-list.pvl-hide-empty.is-empty { display: none; }
+.pvl-toast-x { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #fff; opacity: .7; cursor: pointer; }
+.pvl-toast-x:hover, .pvl-toast-x:focus-visible { opacity: 1; background: rgba(255, 255, 255, .1); }
+@media (max-width: 767px) {
+	.pvl-toast { left: 12px; right: 12px; bottom: 12px; max-width: none; transform: translateY(20px); font-size: 14px; }
+	.pvl-toast.is-on { transform: none; }
+	.pvl-toast-t { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .pvl-toast, .pvl-toast.is-on { transition: none; } }
+
+/* ---------- lista în formular: titlul și textul încep ca textul din câmpuri ---------- */
+.pvl-in-form .pvl-title, .pvl-in-form .pvl-empty { padding-inline: var(--pvl-field-pad, 0); }
+.pvl-in-form { flex: 1 1 100%; width: 100%; }
+.elementor-element:has(> .elementor-widget-container > .pvl-in-form), .elementor-element:has(> .pvl-in-form) { width: 100%; flex: 1 1 100%; }
+
+/* ---------- „Oferta ta”: centrat pe verticală în header (cu meniul și butoanele) ---------- */
+.elementor-widget-pavva_oferta_contor { align-self: center; }
+.pvl-counter-wrap { align-items: center; }
+
+/* ---------- „Oferta ta” în meniul de navigare (clasa CSS pv-oferta-nav pe link) ---------- */
+.pvl-nav { position: relative; display: inline-flex !important; align-items: center; gap: 6px; }
+.pvl-badge-inline { position: static; display: inline-block; }
+.pvl-nav.is-empty .pvl-badge { display: none; }
+.pvl-nav[data-pvl-hide-empty].is-empty, li:has(> .pvl-nav[data-pvl-hide-empty].is-empty) { display: none !important; }
+.pvl-nav-icon .pvl-c-ico { font-size: 22px; }
+.pvl-nav-ico { width: 1em; height: 1em; display: block; }

@@ -40,6 +40,8 @@ final class Pavva_W_Lista {
 			array(
 				'form'     => self::form_url(),
 				'autoList' => (bool) apply_filters( 'pavva_lista_auto_list', true ),
+				/* bara de jos „Oferta ta · Vezi oferta”, cât lista are produse */
+				'bar'      => (bool) apply_filters( 'pavva_lista_bar', true ),
 				'i18n'     => array(
 					'added'     => 'Adăugat în ofertă',
 					'removed'   => 'Scos din ofertă',
@@ -54,6 +56,7 @@ final class Pavva_W_Lista {
 					'full'      => 'Lista are deja numărul maxim de produse.',
 					'listTitle' => 'Produsele tale',
 					'listEmpty' => 'Alege produsele dorite din lista de mai jos. Poți adăuga mai multe.',
+					'hide'      => 'Ascunde bara',
 				),
 			)
 		);
