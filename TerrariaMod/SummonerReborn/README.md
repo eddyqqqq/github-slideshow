@@ -9,8 +9,8 @@ Itemele sunt pe etape, ca să ai mereu ceva nou de summoner. Damage-ul e compara
 ### Early game (înainte de primul boss)
 | Item | Ce face | Rețetă |
 |---|---|---|
-| **Toiagul Licuricilor** | minion, 11 damage: un licurici luminos | 12 Wood + 3 Firefly @ Work Bench |
-| **Biciul de Spini** | bici, 13 damage, +5 tag damage | 3 Vine + 15 Cactus @ Work Bench |
+| **Toiagul Licuricilor** | minion, 11 damage: un licurici luminos. Uneori îi zăpăcește pe inamici (Confused) | 12 Wood + 3 Firefly @ Work Bench |
+| **Biciul de Spini** | bici, 13 damage, +5 tag damage, otrăvește inamicii | 3 Vine + 15 Cactus @ Work Bench |
 | **Setul Ursitoarei** (Gluga, Mantia, Pantalonii) | 14 apărare total, +1 minion pe piesă. **Set:** stai nemișcat 2 s → +25% damage summon | Silver/Tungsten Bar + Silk @ Anvil (8+5 / 12+8 / 10+6) |
 | **Mărțișor** | 25% șansă la lovitura unui minion: regenerezi 4 HP/s timp de 3 s | 3 Gold/Platinum Bar + 2 Silk + 1 Daybloom @ Anvil |
 | **Talismanul de Usturoi** | când ești lovit: minionii +20% damage 5 s, +0.5 s invulnerabilitate, +2 apărare | 3 Daybloom + 2 Chain + 2 Flinx Fur @ Anvil |
@@ -18,20 +18,20 @@ Itemele sunt pe etape, ca să ai mereu ceva nou de summoner. Damage-ul e compara
 ### Pre-Hardmode târziu
 | Item | Ce face | Cum îl obții |
 |---|---|---|
-| **Toiagul Strigoiului** | minion, 20 damage: un liliac-vampir care îți dă 2 viață la 1 din 4 mușcături | **Shadow Chests** din Underworld (în lumi noi, cam 1 din 3 cufere) sau **1/35 din Demoni / Voodoo Demoni** (merge și pe lumi vechi) |
+| **Toiagul Strigoiului** | minion, 20 damage: un liliac-vampir care îți dă 2 viață la 1 din 4 mușcături și dă Shadowflame inamicilor | **Shadow Chests** din Underworld (în lumi noi, cam 1 din 3 cufere) sau **1/35 din Demoni / Voodoo Demoni** (merge și pe lumi vechi) |
 
 ### Hardmode
 | Item | Ce face | Rețetă |
 |---|---|---|
-| **Toiagul Ielelor** | minion, 28 damage: o zână foarte rapidă, lovește des | 15 Pixie Dust + 10 Crystal Shard + 8 Soul of Light @ Mythril/Orichalcum Anvil |
-| **Biciul Zmeului** | bici, 44 damage, +8 tag damage, dă foc inamicilor (Hellfire) | 12 Hallowed Bar + 8 Soul of Fright @ Mythril/Orichalcum Anvil |
+| **Toiagul Ielelor** | minion, 28 damage: o zână foarte rapidă, lovește des și scade apărarea inamicilor (Ichor) | 15 Pixie Dust + 10 Crystal Shard + 8 Soul of Light @ Mythril/Orichalcum Anvil |
+| **Biciul Zmeului** | bici, 44 damage, +8 tag damage, dă foc inamicilor (Hellfire). La 1 din 3 lovituri: **explozie de foc** (50% damage) în jur | 12 Hallowed Bar + 8 Soul of Fright @ Mythril/Orichalcum Anvil |
 | **Cununa de Clorofită** | cască de summoner: 10 apărare, +2 minioni, +15% damage. Se poartă cu **Chlorophyte Plate Mail + Chlorophyte Greaves** din vanilla. **Set:** cristal de frunze + 1 minion | 12 Chlorophyte Bar @ Mythril/Orichalcum Anvil |
 
 ### Late game (după Lunatic Cultist)
 | Item | Ce face | Rețetă |
 |---|---|---|
-| **Toiagul Solomonarului** | minion, 52 damage: un nor de furtună care stă deasupra inamicilor și trage fulgere care trec prin 3 inamici | 18 Stardust Fragment @ Ancient Manipulator |
-| **Biciul Solomonarului** | bici, 85 damage, +14 tag damage, +10% critice pentru minioni pe ținte marcate. **Sinergie:** când lovești, minionii primesc +15% damage 5 s | 18 Stardust Fragment @ Ancient Manipulator |
+| **Toiagul Solomonarului** | minion, 52 damage: un nor de furtună care stă deasupra inamicilor și trage fulgere care trec prin 3 inamici și **explodează** la primul (50% damage) | 18 Stardust Fragment @ Ancient Manipulator |
+| **Biciul Solomonarului** | bici, 85 damage, +14 tag damage, +10% critice pentru minioni pe ținte marcate. **Sinergie:** când lovești, minionii primesc +15% damage 5 s. Fiecare lovitură cheamă un **trăsnet** (explozie mare, 75% damage) | 18 Stardust Fragment @ Ancient Manipulator |
 | **Inima Ursitoarelor** | Mărțișor + Talisman într-unul singur, +10% damage, +1 minion, +4 apărare. **Scut:** loviturile minionilor încarcă un scut de până la 60 viață, care ți-o dă înapoi când ești lovit | Mărțișor + Talismanul de Usturoi + 10 Stardust Fragment + 5 Soul of Light @ Tinkerer's Workbench |
 
 ### Pentru toți minionii (și cei din vanilla)

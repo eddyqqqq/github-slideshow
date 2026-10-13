@@ -1,6 +1,6 @@
 displayName = Renasterea Invocatorului
 author = eddyqqqq
-version = 0.3
+version = 0.4
 homepage =
 hideCode = false
 hideResources = false

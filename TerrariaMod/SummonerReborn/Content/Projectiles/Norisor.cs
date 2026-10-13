@@ -44,7 +44,7 @@ namespace SummonerReborn.Content.Projectiles
 		}
 	}
 
-	// Fulgerul tras de Norișor.
+	// Fulgerul tras de Norișor. Explodează la primul inamic lovit (explozie mică de fulger).
 	public class Fulger : ModProjectile
 	{
 		public override void SetStaticDefaults() {
@@ -63,6 +63,14 @@ namespace SummonerReborn.Content.Projectiles
 			Projectile.extraUpdates = 1;       // se mișcă de 2 ori pe frame: foarte rapid
 			Projectile.usesLocalNPCImmunity = true;
 			Projectile.localNPCHitCooldown = -1; // lovește fiecare inamic o singură dată
+		}
+
+		public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+			// Doar la prima lovitură (fulgerul trece prin până la 3 inamici).
+			if (Projectile.localAI[0] == 0) {
+				Projectile.localAI[0] = 1;
+				ExplozieBaza.Creeaza<ExplozieFulgerMica>(Projectile, target.Center, Projectile.damage / 2);
+			}
 		}
 
 		public override void AI() {

@@ -6,7 +6,11 @@
 Items: {
 	ToiagulLicuricilor: {
 		DisplayName: Toiagul Licuricilor
-		Tooltip: Cheama un licurici care lupta pentru tine
+		Tooltip:
+			'''
+			Cheama un licurici care lupta pentru tine
+			Lumina lui ii poate zapaci pe inamici
+			'''
 	}
 
 	BiciulDeSpini: {
@@ -14,6 +18,7 @@ Items: {
 		Tooltip:
 			'''
 			{0} damage de marcare pentru minioni
+			Otraveste inamicii loviti
 			Minionii tai vor ataca inamicii loviti
 			'''
 	}
@@ -74,13 +79,17 @@ Items: {
 		Tooltip:
 			'''
 			Cheama un strigoi care lupta pentru tine
-			Muscaturile lui iti dau uneori viata
+			Muscaturile lui iti dau uneori viata si blesteama inamicii cu flacari de umbra
 			'''
 	}
 
 	ToiagulIelelor: {
 		DisplayName: Toiagul Ielelor
-		Tooltip: Cheama o iele, o zana foarte rapida care loveste des
+		Tooltip:
+			'''
+			Cheama o iele, o zana foarte rapida care loveste des
+			Vraja ei scade apararea inamicilor (Ichor)
+			'''
 	}
 
 	BiciulZmeului: {
@@ -89,6 +98,7 @@ Items: {
 			'''
 			{0} damage de marcare pentru minioni
 			Inamicii loviti iau foc
+			Uneori zmeul sufla foc: o explozie care loveste inamicii din jur
 			Minionii tai vor ataca inamicii loviti
 			'''
 	}
@@ -113,7 +123,7 @@ Items: {
 		Tooltip:
 			'''
 			Cheama un norisor de furtuna care sta deasupra inamicilor
-			si trage fulgere care trec prin ei
+			si trage fulgere care trec prin ei si explodeaza
 			'''
 	}
 
@@ -124,6 +134,7 @@ Items: {
 			{0} damage de marcare pentru minioni
 			{1}% sansa de lovitura critica pentru minioni pe inamicii marcati
 			Cand lovesti, minionii tai primesc +{2}% damage cateva secunde
+			Fiecare lovitura cheama un trasnet care loveste toti inamicii din jur
 			'''
 	}
 
@@ -170,6 +181,18 @@ Projectiles: {
 
 	BiciulSolomonaruluiProiectil: {
 		DisplayName: Biciul Solomonarului
+	}
+
+	ExplozieFoc: {
+		DisplayName: Suflul Zmeului
+	}
+
+	ExplozieFulger: {
+		DisplayName: Trasnet
+	}
+
+	ExplozieFulgerMica: {
+		DisplayName: Fulger
 	}
 }
 

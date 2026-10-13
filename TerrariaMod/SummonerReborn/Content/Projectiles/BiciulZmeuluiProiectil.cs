@@ -6,7 +6,8 @@ using Terraria.ModLoader;
 
 namespace SummonerReborn.Content.Projectiles
 {
-	// Biciul Zmeului în zbor: pune Marca Zmeului și dă foc inamicului (Hellfire).
+	// Biciul Zmeului în zbor: pune Marca Zmeului, dă foc inamicului (Hellfire)
+	// și, la 1 din 3 lovituri, zmeul suflă foc: o explozie care lovește inamicii din jur.
 	public class BiciulZmeuluiProiectil : BiciProiectilBaza
 	{
 		protected override int Segmente => 22;
@@ -16,6 +17,9 @@ namespace SummonerReborn.Content.Projectiles
 		protected override void LaLovitura(NPC target) {
 			target.AddBuff(ModContent.BuffType<MarcaZmeului>(), 240);
 			target.AddBuff(BuffID.OnFire3, 180); // Hellfire, 3 secunde
+
+			if (Main.rand.NextBool(3))
+				ExplozieBaza.Creeaza<ExplozieFoc>(Projectile, target.Center, Projectile.damage / 2);
 		}
 	}
 }
