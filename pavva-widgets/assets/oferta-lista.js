@@ -31,7 +31,7 @@
 	function read() {
 		try {
 			var v = JSON.parse(w.localStorage.getItem(KEY) || '[]');
-			return Array.isArray(v) ? v.filter(function (it) { return it && it.name; }) : [];
+			return Array.isArray(v) ? v.filter(function (it) { return it && it.name; }).map(single) : [];
 		} catch (e) { return memory.slice(); }
 	}
 	function write(list) {
@@ -44,6 +44,14 @@
 	function keyOf(it) { return pkey(it) + '|' + norm(it.color) + '|' + norm(it.thick); }
 	function hasProduct(it) { var k = pkey(it); return read().some(function (x) { return pkey(x) === k; }); }
 	function hasOpts(it) { return !!(it && it.opts && ((it.opts.colors && it.opts.colors.length) || (it.opts.thick && it.opts.thick.length))); }
+	/* o singură culoare / grosime nu e o alegere: e completată automat (fereastra o arată deja bifată, fără „Nu m-am hotărât încă”) */
+	function single(it) {
+		var o = it && it.opts;
+		if (!o) return it;
+		if (o.colors && o.colors.length === 1 && !it.color) { it.color = String(o.colors[0].n); it.ct = String(o.colors[0].t || ''); }
+		if (o.thick && o.thick.length === 1 && !it.thick) it.thick = String(o.thick[0]);
+		return it;
+	}
 	function needsChoice(it) {
 		if (!hasOpts(it)) return false;
 		return (it.opts.colors && it.opts.colors.length && !it.color) || (it.opts.thick && it.opts.thick.length && !it.thick);
@@ -78,7 +86,7 @@
 			};
 			if (!o.opts.colors.length && !o.opts.thick.length) delete o.opts;
 		}
-		return o;
+		return single(o);
 	}
 	/* schimbă varianta unui rând (păstrează locul în listă; dacă varianta nouă există deja, rândurile se unesc) */
 	function replaceItem(oldKey, it) {
@@ -375,20 +383,23 @@
 	function pickerBody(it, cur) {
 		var o = it.opts || {}, h = '';
 		var Q = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 9a3 3 0 1 1 4.3 2.7c-.9.5-1.5 1.2-1.5 2.3v.5M12 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+		var val = function (v) { return v ? '· ' + esc(v) : ''; };
 		if (o.colors && o.colors.length) {
-			h += '<fieldset class="pvl-pk-group" data-pvl-group="color"><legend class="pvl-pk-label">' + esc(txt('color', 'Culoare')) + ' <span class="pvl-pk-val" data-pvl-val="color"></span></legend><div class="pvl-pk-colors">';
-			o.colors.concat([{ n: undec(), t: '', u: 1 }]).forEach(function (c) {
-				var on = cur && norm(cur.color) === norm(c.n);
+			var c1 = o.colors.length === 1, cv = cur ? cur.color : (c1 ? o.colors[0].n : '');
+			h += '<fieldset class="pvl-pk-group" data-pvl-group="color"><legend class="pvl-pk-label">' + esc(txt('color', 'Culoare')) + ' <span class="pvl-pk-val" data-pvl-val="color">' + val(cv) + '</span></legend><div class="pvl-pk-colors">';
+			(c1 ? o.colors : o.colors.concat([{ n: undec(), t: '', u: 1 }])).forEach(function (c) {
+				var on = !!cv && norm(cv) === norm(c.n);
 				h += '<button type="button" class="pvl-pk-color' + (c.u ? ' pvl-pk-undec' : '') + (on ? ' is-on' : '') + '" aria-pressed="' + (on ? 'true' : 'false') + '" data-pvl-color="' + esc(c.n) + '" data-pvl-ct="' + esc(c.t) + '">' +
 					'<span class="pvl-pk-sw">' + (c.u ? Q : (c.t ? '<img src="' + esc(c.t) + '" alt="" loading="lazy" decoding="async">' : '')) + '</span><span class="pvl-pk-cn">' + esc(c.n) + '</span></button>';
 			});
 			h += '</div><p class="pvl-pk-err" role="alert" hidden>' + esc(txt('needColor', 'Alege o culoare (sau „Nu m-am hotărât încă”).')) + '</p></fieldset>';
 		}
 		if (o.thick && o.thick.length) {
-			h += '<fieldset class="pvl-pk-group" data-pvl-group="thick"><legend class="pvl-pk-label">' + esc(txt('thick', 'Grosime')) + ' <span class="pvl-pk-val" data-pvl-val="thick"></span></legend><div class="pvl-pk-thick">';
-			o.thick.concat([undec()]).forEach(function (t, i) {
+			var t1 = o.thick.length === 1, tv = cur ? cur.thick : (t1 ? o.thick[0] : '');
+			h += '<fieldset class="pvl-pk-group" data-pvl-group="thick"><legend class="pvl-pk-label">' + esc(txt('thick', 'Grosime')) + ' <span class="pvl-pk-val" data-pvl-val="thick">' + val(tv) + '</span></legend><div class="pvl-pk-thick">';
+			(t1 ? o.thick : o.thick.concat([undec()])).forEach(function (t, i) {
 				var u = i === o.thick.length;
-				var on = cur ? norm(cur.thick) === norm(t) : (o.thick.length === 1 && !u);
+				var on = !!tv && norm(tv) === norm(t);
 				h += '<button type="button" class="pvl-pk-t' + (u ? ' pvl-pk-undec' : '') + (on ? ' is-on' : '') + '" aria-pressed="' + (on ? 'true' : 'false') + '" data-pvl-thick="' + esc(t) + '">' + esc(t) + '</button>';
 			});
 			h += '</div><p class="pvl-pk-err" role="alert" hidden>' + esc(txt('needThick', 'Alege grosimea (sau „Nu m-am hotărât încă”).')) + '</p></fieldset>';
