@@ -407,6 +407,19 @@
 	/* altă filă a browserului a schimbat lista */
 	w.addEventListener('storage', function (e) { if (e.key === KEY) render(); });
 
+	/* „Înapoi” în browser: pagina revine din memorie exact cum a fost lăsată (panou deschis, butoane vechi).
+	   Panoul se închide înainte de plecare și totul se recitește la întoarcere. */
+	function shutDrawerNow() {
+		if (!dw) return;
+		clearTimeout(dwT);
+		dw.classList.remove('is-open');
+		dw.hidden = true;
+		d.documentElement.classList.remove('pvl-dw-open');
+	}
+	w.addEventListener('pagehide', shutDrawerNow);
+	w.addEventListener('pageshow', function (e) { if (e.persisted) { shutDrawerNow(); render(); } });
+	d.addEventListener('visibilitychange', function () { if (d.visibilityState === 'visible') render(); });
+
 	/* ---------- formularul de ofertă ---------- */
 	var forms = [];
 
@@ -447,6 +460,13 @@
 			var first = prod.options[0];
 			if (ph === null) ph = prod.__pvoPh || (first && !first.value ? first.textContent : '');
 			if (first && !first.value && !first.hasAttribute('data-pvl-summary')) first.textContent = list.length ? txt('pick', '+ Adaugă alt produs') : ph;
+			/* cu produse în listă, categoria devine doar un filtru pentru „+ Adaugă alt produs” (nu mai e obligatorie);
+			   goală = toate produsele. La trimitere primește oricum categoriile produselor din listă. */
+			if (cat && cat.tagName === 'SELECT') {
+				if (cat.__pvlReq === undefined) cat.__pvlReq = cat.required;
+				cat.required = list.length ? false : cat.__pvlReq;
+				if (list.length) cat.removeAttribute('aria-required'); else if (cat.__pvlReq) cat.setAttribute('aria-required', 'true');
+			}
 			if (!list.length) {
 				if (summary.parentNode) summary.parentNode.removeChild(summary);
 				if (prod.value && prod.value === summary.value) prod.value = '';
@@ -457,12 +477,6 @@
 			if (summary.parentNode !== prod) prod.insertBefore(summary, prod.options[1] || null);
 			summary.selected = true;
 			prod.value = summary.value;
-			/* categoria e obligatorie în formular: dacă e goală, primește categoria primului produs */
-			if (cat && cat.tagName === 'SELECT' && !cat.value && list[0].cat) {
-				for (var i = 0; i < cat.options.length; i++) {
-					if (cat.options[i].value && norm(cat.options[i].value) === norm(list[0].cat)) { cat.value = cat.options[i].value; break; }
-				}
-			}
 		}
 
 		/* alegi un produs din listă → intră în ofertă, iar câmpul arată din nou rezumatul */
@@ -484,7 +498,8 @@
 			if (cat && cat.tagName === 'SELECT') {
 				var cats = [];
 				list.forEach(function (it) { if (it.cat && cats.indexOf(it.cat) === -1) cats.push(it.cat); });
-				if (cats.length > 1) {
+				/* și cu o singură categorie: câmpul (acum opțional, folosit ca filtru) poate fi gol sau pe altă categorie */
+				if (cats.length) {
 					if (!catsOpt) { catsOpt = d.createElement('option'); catsOpt.setAttribute('data-pvl-cats', ''); }
 					if (catsOpt.parentNode !== cat) { catPrev = cat.value; cat.appendChild(catsOpt); }
 					catsOpt.value = cats.join(', ');
