@@ -130,10 +130,9 @@ Configs: {
 			Label: Mod OP (Binecuvantarea Ursitoarelor)
 			Tooltip:
 				'''
-				Summonerul devine foarte puternic: poti face toti boss-ii pe Master cu itemele de inceput.
-				+40% damage summon, +2 minioni, +1 santinela, +12 aparare, -15% damage primit, +60 viata, regenerare.
-				Armele din mod cresc cu +30% damage pentru fiecare boss invins, iar setul Ursitoarei primeste aparare si minioni in plus.
-				Minionii fura putina viata pentru tine, iar ursitoarele te salveaza de la moarte o data la 3 minute.
+				Face Master Mode mai usor pentru summoner, dar progresia ramane normala.
+				+15% damage summon, +1 minion, +6 aparare, -10% damage primit, +40 viata, +1 HP/s, biciuri cu 10% mai rapide.
+				Minionii fura putina viata pentru tine, iar ursitoarele te salveaza de la moarte o data la 5 minute.
 				Se aplica imediat, fara reload.
 				'''
 		}

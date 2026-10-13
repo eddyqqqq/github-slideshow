@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using SummonerReborn.Common.Players;
 using SummonerReborn.Content.Buffs;
 using SummonerReborn.Content.Projectiles;
 using Terraria;
@@ -50,12 +49,6 @@ namespace SummonerReborn.Content.Items.Weapons
 			// Buff-ul ține minionul în viață (și îl poți da jos cu click dreapta pe el).
 			player.AddBuff(Item.buffType, 2);
 			return true;
-		}
-
-		// În Mod OP, arma crește cu fiecare boss învins (vezi ModOPPlayer).
-		public override void ModifyWeaponDamage(Player player, ref StatModifier damage) {
-			if (ModOPPlayer.Activ)
-				damage *= ModOPPlayer.MultiplicatorArme();
 		}
 
 		public override void AddRecipes() {

@@ -49,24 +49,22 @@ Valorile vanilla sunt verificate pe wiki-ul Terraria acolo unde l-am putut acces
 - **Pentru boss-ii de Hardmode** ai nevoie de o lume de Hardmode. Cel mai simplu e să faci o lume nouă și să omori Wall of Flesh cu Guide Voodoo Doll, aruncată în lavă în Underworld.
 
 ## Mod OP (Binecuvantarea Ursitoarelor)
-O variantă în care summonerul e **foarte puternic**: poți face toți boss-ii pe **Master Mode** cu itemele de început din mod.
+Face **Master Mode mai ușor** pentru summoner, dar **progresia rămâne normală**. Itemele nu cresc singure, deci tot trebuie să-ți faci echipament nou pentru fiecare etapă.
+Bonusurile sunt moderate: cam cât ți-ar da o piesă de armură și un accesoriu în plus.
 **Pornire:** Mods → Renasterea Invocatorului → rotița de setări → **Mod OP**. Merge imediat, fără reload, și îl poți opri oricând.
 
 | Bonus | Valoare |
 |---|---|
-| Damage de summon | +40% |
-| Minioni / santinele | +2 / +1 |
-| Apărare | +12 |
-| Damage primit | -15% |
-| Viață maximă | +60 |
-| Regenerare | +2 HP/s |
-| Viteză de mișcare / viteză bici | +10% / +20% |
-| **Armele din mod** (Toiagul Licuricilor, Biciul de Spini) | **+30% damage pentru fiecare boss învins** (x1 la început, ~x6 după Moon Lord) |
-| **Setul Ursitoarei** | +2 apărare pentru fiecare boss învins, +1 minion la fiecare 4 boss-i |
-| Furt de viață | minionii îți dau 3% din damage-ul lor ca viață (max 4 HP, de 3 ori pe secundă) |
-| Salvare de la moarte | o dată la 3 minute: în loc să mori, rămâi cu 1/3 din viață și 2 secunde de invulnerabilitate |
+| Damage de summon | +15% |
+| Minioni | +1 |
+| Apărare | +6 |
+| Damage primit | -10% |
+| Viață maximă | +40 |
+| Regenerare | +1 HP/s |
+| Viteză bici | +10% |
+| Furt de viață | minionii îți dau 2% din damage-ul lor ca viață (max 2 HP, de 2 ori pe secundă) |
+| Salvare de la moarte | o dată la 5 minute: în loc să mori, rămâi cu 1/4 din viață și 1.5 secunde de invulnerabilitate |
 
-Când intri pe lume, chat-ul îți spune cât de mult damage fac armele din mod la progresul tău.
 Toate cifrele sunt sus în `Common/Players/ModOPPlayer.cs`, dacă vrei să-l faci mai ușor sau mai greu.
 
 ## Oprirea fazei de test
