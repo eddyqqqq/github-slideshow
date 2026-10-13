@@ -100,7 +100,7 @@ namespace SummonerReborn.Common.Players
 			Player.QuickSpawnItem(sursa, ItemID.LifeFruit, 20);
 			Player.QuickSpawnItem(sursa, ItemID.ManaCrystal, 9);
 
-			Main.NewText("Renasterea Invocatorului: ai primit kit-ul de testare! (Ce nu incape in inventar e pe jos, langa tine.)", Color.LightGreen);
+			Main.NewText($"Renasterea Invocatorului v{Mod.Version}: ai primit kit-ul de testare! (Ce nu incape in inventar e pe jos, langa tine.)", Color.LightGreen);
 		}
 	}
 }
