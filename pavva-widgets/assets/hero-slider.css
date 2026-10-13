@@ -531,6 +531,10 @@
 
 .ps-hero .ps-cta-wrap {
 	margin-top: 40px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
 }
 .ps-hero .ps-cta {
 	display: inline-flex;
@@ -562,6 +566,45 @@
 	outline: 2px solid var(--ps-cta-border);
 	outline-offset: 3px;
 }
+
+/* „Adaugă la ofertă” (lista de ofertă): plin, ca să se deosebească de „Solicită ofertă” */
+.ps-hero {
+	--ps-of-color: #ffffff;
+	--ps-of-bg: #b0552a;
+	--ps-of-border: #b0552a;
+	--ps-of-color-hover: #ffffff;
+	--ps-of-bg-hover: #8f4520;
+	--ps-of-border-hover: #8f4520;
+	--ps-of-color-added: #b0552a;
+	--ps-of-bg-added: #f4ebe5;
+	--ps-of-border-added: #f4ebe5;
+}
+.ps-hero .ps-cta-oferta {
+	gap: 8px;
+	font-family: inherit;
+	cursor: pointer;
+	color: var(--ps-of-color);
+	background-color: var(--ps-of-bg);
+	border-color: var(--ps-of-border);
+}
+.ps-hero .ps-cta-oferta:hover,
+.ps-hero .ps-cta-oferta:focus-visible {
+	color: var(--ps-of-color-hover);
+	background-color: var(--ps-of-bg-hover);
+	border-color: var(--ps-of-border-hover);
+}
+.ps-hero .ps-cta-oferta.is-added {
+	color: var(--ps-of-color-added);
+	background-color: var(--ps-of-bg-added);
+	border-color: var(--ps-of-border-added);
+}
+.ps-hero .ps-cta-oferta svg { width: 18px; height: 18px; flex: none; }
+.ps-hero .ps-cta-oferta .pvl-ico-added,
+.ps-hero .ps-cta-oferta .pvl-t-added,
+.ps-hero .ps-cta-oferta.is-added .pvl-ico-add,
+.ps-hero .ps-cta-oferta.is-added .pvl-t-add { display: none; }
+.ps-hero .ps-cta-oferta.is-added .pvl-ico-added,
+.ps-hero .ps-cta-oferta.is-added .pvl-t-added { display: inline; }
 
 /* apar lin după text, odată cu blocul slide-ului */
 .ps-hero .ps-extra {

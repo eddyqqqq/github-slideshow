@@ -563,6 +563,114 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			)
 		);
 
+		/* lista de ofertă: al doilea buton, lângă „Solicită ofertă” */
+		$this->add_control(
+			'show_oferta',
+			array(
+				'label'        => 'Buton „Adaugă la ofertă”',
+				'description'  => 'Pune produsul paginii în lista de ofertă (clientul poate aduna mai multe produse și le trimite odată). Apare doar pe paginile de produs.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => '',
+				'separator'    => 'before',
+			)
+		);
+		$this->add_control(
+			'oferta_text',
+			array(
+				'label'     => 'Text',
+				'type'      => Controls_Manager::TEXT,
+				'default'   => 'Adaugă la ofertă',
+				'dynamic'   => array( 'active' => true ),
+				'condition' => array( 'show_oferta' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'oferta_text_added',
+			array(
+				'label'     => 'Text după adăugare',
+				'type'      => Controls_Manager::TEXT,
+				'default'   => 'Adăugat în ofertă',
+				'dynamic'   => array( 'active' => true ),
+				'condition' => array( 'show_oferta' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'oferta_icon',
+			array(
+				'label'        => 'Iconiță + / ✓',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+				'condition'    => array( 'show_oferta' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'oferta_order',
+			array(
+				'label'     => 'Poziție',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'after',
+				'options'   => array(
+					'after'  => 'După „Solicită ofertă”',
+					'before' => 'Înainte de „Solicită ofertă”',
+				),
+				'condition' => array( 'show_oferta' => 'yes', 'show_cta' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'oferta_mode',
+			array(
+				'label'     => 'La click',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'add',
+				'options'   => array(
+					'add' => 'Adaugă în listă (rămâne pe pagină)',
+					'go'  => 'Adaugă și deschide formularul',
+				),
+				'condition' => array( 'show_oferta' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'oferta_again',
+			array(
+				'label'     => 'Click pe un produs deja adăugat',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'go',
+				'options'   => array(
+					'go'     => 'Deschide formularul',
+					'remove' => 'Îl scoate din listă',
+				),
+				'condition' => array( 'show_oferta' => 'yes', 'oferta_mode' => 'add' ),
+			)
+		);
+		$this->add_control(
+			'oferta_toast',
+			array(
+				'label'        => 'Mesaj după adăugare',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+				'condition'    => array( 'show_oferta' => 'yes', 'oferta_mode' => 'add' ),
+			)
+		);
+		$this->add_control(
+			'oferta_form',
+			array(
+				'label'       => 'Pagina formularului',
+				'type'        => Controls_Manager::TEXT,
+				'default'     => '/solicita-oferta/',
+				'label_block' => true,
+				'condition'   => array( 'show_oferta' => 'yes' ),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -580,6 +688,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 					'terms'    => array(
 						array( 'name' => 'icons_source', 'operator' => '!==', 'value' => 'none' ),
 						array( 'name' => 'show_cta', 'operator' => '===', 'value' => 'yes' ),
+						array( 'name' => 'show_oferta', 'operator' => '===', 'value' => 'yes' ),
 					),
 				),
 			)
@@ -791,6 +900,50 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		$this->add_control( 'cta_bg_hover', array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--ps-cta-bg-hover: {{VALUE}};' ) ) );
 		$this->add_control( 'cta_border_hover', array( 'label' => 'Culoare bordură', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--ps-cta-border-hover: {{VALUE}};' ) ) );
 		$this->end_controls_tab();
+		$this->end_controls_tabs();
+
+		/* butonul „Adaugă la ofertă”: același font, padding și colțuri ca butonul de mai sus; culorile lui proprii */
+		$this->add_control(
+			'oferta_style_heading',
+			array(
+				'label'       => 'Buton „Adaugă la ofertă”',
+				'description' => 'Fontul, padding-ul, lățimea și colțurile sunt cele de la „Buton”, de mai sus.',
+				'type'        => Controls_Manager::HEADING,
+				'separator'   => 'before',
+				'condition'   => array( 'show_oferta' => 'yes' ),
+			)
+		);
+		$this->add_responsive_control(
+			'oferta_gap',
+			array(
+				'label'      => 'Distanța dintre butoane',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 60 ) ),
+				'condition'  => array( 'show_oferta' => 'yes' ),
+				'selectors'  => array( $this->sel( '.ps-cta-wrap' ) => 'gap: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'oferta_icon_size',
+			array(
+				'label'      => 'Mărime iconiță',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 8, 'max' => 40 ) ),
+				'condition'  => array( 'show_oferta' => 'yes', 'oferta_icon' => 'yes' ),
+				'selectors'  => array( $this->sel( '.ps-cta-oferta svg' ) => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->start_controls_tabs( 'oferta_tabs', array( 'condition' => array( 'show_oferta' => 'yes' ) ) );
+		foreach ( array( 'normal' => 'Normal', 'hover' => 'Hover', 'added' => 'Adăugat' ) as $k => $label ) {
+			$sfx = 'normal' === $k ? '' : '-' . $k;
+			$this->start_controls_tab( 'oferta_tab_' . $k, array( 'label' => $label ) );
+			$this->add_control( 'oferta_color_' . $k, array( 'label' => 'Culoare text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--ps-of-color' . $sfx . ': {{VALUE}};' ) ) );
+			$this->add_control( 'oferta_bg_' . $k, array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--ps-of-bg' . $sfx . ': {{VALUE}};' ) ) );
+			$this->add_control( 'oferta_border_' . $k, array( 'label' => 'Culoare bordură', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--ps-of-border' . $sfx . ': {{VALUE}};' ) ) );
+			$this->end_controls_tab();
+		}
 		$this->end_controls_tabs();
 
 		$this->end_controls_section();
@@ -2710,6 +2863,37 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		return $html;
 	}
 
+	/* butonul „Adaugă la ofertă” (lista de ofertă, assets/oferta-lista.js): produsul paginii */
+	private function oferta_button_html( $s ) {
+		if ( ! class_exists( 'Pavva_W_Lista' ) ) return '';
+		$pid  = class_exists( 'Pavva_W_Data' ) ? (int) Pavva_W_Data::resolve_product_id() : 0;
+		$item = Pavva_W_Lista::item( $pid );
+		$edit = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor && \Elementor\Plugin::$instance->editor->is_edit_mode();
+		if ( ! $item ) {
+			if ( ! $edit ) return '';
+			$item = array( 'id' => 0, 'name' => 'Produs exemplu', 'cat' => '', 'url' => '', 'img' => '' );
+		}
+		$text  = trim( (string) ( $s['oferta_text'] ?? '' ) );
+		$added = trim( (string) ( $s['oferta_text_added'] ?? '' ) );
+		if ( '' === $text ) $text = 'Adaugă la ofertă';
+		if ( '' === $added ) $added = $text;
+		$icons = 'yes' === ( $s['oferta_icon'] ?? 'yes' )
+			? '<svg class="pvl-ico-add" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>'
+				. '<svg class="pvl-ico-added" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'
+			: '';
+		return sprintf(
+			'<button type="button" class="ps-cta ps-cta-oferta" aria-pressed="false" data-pvl-add data-pvl="%1$s" data-pvl-mode="%2$s" data-pvl-again="%3$s" data-pvl-form="%4$s" data-pvl-toast="%5$s">%6$s<span class="pvl-t pvl-t-add">%7$s</span><span class="pvl-t pvl-t-added">%8$s</span></button>',
+			esc_attr( wp_json_encode( $item ) ),
+			'go' === ( $s['oferta_mode'] ?? 'add' ) ? 'go' : 'add',
+			'remove' === ( $s['oferta_again'] ?? 'go' ) ? 'remove' : 'go',
+			esc_url( Pavva_W_Lista::resolve_url( $s['oferta_form'] ?? '' ) ),
+			'yes' === ( $s['oferta_toast'] ?? 'yes' ) ? '1' : '0',
+			$icons, // phpcs:ignore -- SVG fix
+			esc_html( $text ),
+			esc_html( $added )
+		);
+	}
+
 	/* fișierele primei imagini (pentru preîncărcarea din <head>), cu variantele de telefon / tabletă */
 	private function lcp_preload( $slide, $size, $bp, $quality ) {
 		$media = isset( $slide['slide_image'] ) ? $slide['slide_image'] : array();
@@ -3051,7 +3235,14 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			} else {
 				$this->add_render_attribute( 'ps_cta', 'href', '#' );
 			}
-			$cta_html = '<div class="ps-extra ps-cta-wrap"><a ' . $this->get_render_attribute_string( 'ps_cta' ) . '>' . esc_html( $s['cta_text'] ) . '</a></div>';
+			$cta_html = '<a ' . $this->get_render_attribute_string( 'ps_cta' ) . '>' . esc_html( $s['cta_text'] ) . '</a>';
+		}
+		$oferta_html = $show_text && $is_yes( 'show_oferta' ) ? $this->oferta_button_html( $s ) : '';
+		if ( '' !== $oferta_html ) {
+			$cta_html = 'before' === ( $s['oferta_order'] ?? 'after' ) ? $oferta_html . $cta_html : $cta_html . $oferta_html;
+		}
+		if ( '' !== $cta_html ) {
+			$cta_html = '<div class="ps-extra ps-cta-wrap">' . $cta_html . '</div>';
 		}
 		$has_extras = '' !== $icons_html || '' !== $cta_html;
 

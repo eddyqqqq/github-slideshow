@@ -18,6 +18,8 @@
  */
 (function (w, d) {
 	'use strict';
+	/* o singură dată, chiar dacă scriptul ajunge de două ori în pagină (ex. optimizări de cache) */
+	if (w.PavvaLista) return;
 
 	var C = w.PavvaListaCfg || {};
 	var KEY = 'pavva_oferta_v1';
