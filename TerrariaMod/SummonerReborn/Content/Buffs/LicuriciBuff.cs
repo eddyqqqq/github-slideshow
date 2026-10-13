@@ -1,25 +1,26 @@
 using SummonerReborn.Content.Projectiles;
-using Terraria;
 using Terraria.ModLoader;
 
 namespace SummonerReborn.Content.Buffs
 {
-	// Iconița de buff a licuricilor. Cât timp există licurici, buff-ul rămâne; click dreapta pe el îi trimite acasă.
-	public class LicuriciBuff : ModBuff
+	// Buff-urile minionilor din mod (fiecare ține în viață minionul lui).
+	public class LicuriciBuff : MinionBuffBaza
 	{
-		public override void SetStaticDefaults() {
-			Main.buffNoSave[Type] = true;
-			Main.buffNoTimeDisplay[Type] = true;
-		}
+		protected override int Minion => ModContent.ProjectileType<Licurici>();
+	}
 
-		public override void Update(Player player, ref int buffIndex) {
-			if (player.ownedProjectileCounts[ModContent.ProjectileType<Licurici>()] > 0) {
-				player.buffTime[buffIndex] = 18000;
-			}
-			else {
-				player.DelBuff(buffIndex);
-				buffIndex--;
-			}
-		}
+	public class IeleBuff : MinionBuffBaza
+	{
+		protected override int Minion => ModContent.ProjectileType<Iele>();
+	}
+
+	public class StrigoiBuff : MinionBuffBaza
+	{
+		protected override int Minion => ModContent.ProjectileType<Strigoi>();
+	}
+
+	public class NorisorBuff : MinionBuffBaza
+	{
+		protected override int Minion => ModContent.ProjectileType<Norisor>();
 	}
 }

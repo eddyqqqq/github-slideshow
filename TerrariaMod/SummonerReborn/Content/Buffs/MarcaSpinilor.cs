@@ -4,7 +4,10 @@ using Terraria.ModLoader;
 
 namespace SummonerReborn.Content.Buffs
 {
-	// Marca pusă de Biciul de Spini pe inamici. Minionii fac TagDamage în plus pe inamicii marcați.
+	// Mărcile puse de biciurile din mod pe inamici („tag”-uri).
+	// Minionii fac TagDamage în plus pe inamicii marcați. Efectul e aplicat în Common/GlobalNPCs/MarciBiciNPC.cs.
+
+	// Biciul de Spini (early game)
 	public class MarcaSpinilor : ModBuff
 	{
 		public static readonly int TagDamage = 5;
@@ -14,18 +17,24 @@ namespace SummonerReborn.Content.Buffs
 		}
 	}
 
-	// Aplică efectul mărcii când un minion lovește un inamic marcat.
-	public class MarcaSpinilorNPC : GlobalNPC
+	// Biciul Zmeului (Hardmode, după boss-ii mecanici)
+	public class MarcaZmeului : ModBuff
 	{
-		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers) {
-			if (projectile.npcProj || projectile.trap || !projectile.IsMinionOrSentryRelated)
-				return;
+		public static readonly int TagDamage = 8;
 
-			if (npc.HasBuff<MarcaSpinilor>()) {
-				// Unii minioni din vanilla primesc doar o parte din tag damage, pentru balans.
-				float multiplicator = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
-				modifiers.FlatBonusDamage += MarcaSpinilor.TagDamage * multiplicator;
-			}
+		public override void SetStaticDefaults() {
+			BuffID.Sets.IsATagBuff[Type] = true;
+		}
+	}
+
+	// Biciul Solomonarului (late game)
+	public class MarcaFurtunii : ModBuff
+	{
+		public static readonly int TagDamage = 14;
+		public static readonly int SansaCritica = 10; // % șansă de lovitură critică în plus pentru minioni
+
+		public override void SetStaticDefaults() {
+			BuffID.Sets.IsATagBuff[Type] = true;
 		}
 	}
 }

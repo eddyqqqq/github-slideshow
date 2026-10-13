@@ -68,6 +68,75 @@ Items: {
 			+{2} aparare
 			'''
 	}
+
+	ToiagulStrigoiului: {
+		DisplayName: Toiagul Strigoiului
+		Tooltip:
+			'''
+			Cheama un strigoi care lupta pentru tine
+			Muscaturile lui iti dau uneori viata
+			'''
+	}
+
+	ToiagulIelelor: {
+		DisplayName: Toiagul Ielelor
+		Tooltip: Cheama o iele, o zana foarte rapida care loveste des
+	}
+
+	BiciulZmeului: {
+		DisplayName: Biciul Zmeului
+		Tooltip:
+			'''
+			{0} damage de marcare pentru minioni
+			Inamicii loviti iau foc
+			Minionii tai vor ataca inamicii loviti
+			'''
+	}
+
+	CununaDeClorofita: {
+		DisplayName: Cununa de Clorofita
+		Tooltip:
+			'''
+			+{0} sloturi de minion
+			+{1}% damage de summon
+			Se poarta cu Chlorophyte Plate Mail si Chlorophyte Greaves
+			'''
+		SetBonus:
+			'''
+			Un cristal de frunze trage in inamicii din apropiere
+			+{0} slot de minion
+			'''
+	}
+
+	ToiagulSolomonarului: {
+		DisplayName: Toiagul Solomonarului
+		Tooltip:
+			'''
+			Cheama un norisor de furtuna care sta deasupra inamicilor
+			si trage fulgere care trec prin ei
+			'''
+	}
+
+	BiciulSolomonarului: {
+		DisplayName: Biciul Solomonarului
+		Tooltip:
+			'''
+			{0} damage de marcare pentru minioni
+			{1}% sansa de lovitura critica pentru minioni pe inamicii marcati
+			Cand lovesti, minionii tai primesc +{2}% damage cateva secunde
+			'''
+	}
+
+	InimaUrsitoarelor: {
+		DisplayName: Inima Ursitoarelor
+		Tooltip:
+			'''
+			Are efectele Martisorului si ale Talismanului de Usturoi
+			Loviturile minionilor incarca un scut de pana la {0} viata
+			Cand esti lovit, scutul iti da inapoi viata pierduta
+			+{1}% damage de summon, +{2} slot de minion
+			'''
+	}
 }
 
 Projectiles: {
@@ -77,6 +146,30 @@ Projectiles: {
 
 	BiciulDeSpiniProiectil: {
 		DisplayName: Biciul de Spini
+	}
+
+	Iele: {
+		DisplayName: Iele
+	}
+
+	Strigoi: {
+		DisplayName: Strigoi
+	}
+
+	Norisor: {
+		DisplayName: Norisor de Furtuna
+	}
+
+	Fulger: {
+		DisplayName: Fulger
+	}
+
+	BiciulZmeuluiProiectil: {
+		DisplayName: Biciul Zmeului
+	}
+
+	BiciulSolomonaruluiProiectil: {
+		DisplayName: Biciul Solomonarului
 	}
 }
 
@@ -89,6 +182,36 @@ Buffs: {
 	MarcaSpinilor: {
 		DisplayName: Marca Spinilor
 		Description: ""
+	}
+
+	MarcaZmeului: {
+		DisplayName: Marca Zmeului
+		Description: ""
+	}
+
+	MarcaFurtunii: {
+		DisplayName: Marca Furtunii
+		Description: ""
+	}
+
+	IeleBuff: {
+		DisplayName: Iele
+		Description: Ielele lupta pentru tine
+	}
+
+	StrigoiBuff: {
+		DisplayName: Strigoi
+		Description: Strigoii lupta pentru tine
+	}
+
+	NorisorBuff: {
+		DisplayName: Norisor de Furtuna
+		Description: Norisorii trag fulgere in inamicii tai
+	}
+
+	ChemareaSolomonarului: {
+		DisplayName: Chemarea Solomonarului
+		Description: Minionii tai lovesc mai tare cat timp folosesti biciul
 	}
 
 	Primavara: {

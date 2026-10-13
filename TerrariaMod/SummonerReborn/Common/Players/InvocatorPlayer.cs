@@ -15,6 +15,11 @@ namespace SummonerReborn.Common.Players
 		public bool Martisor;
 		public bool TalismanulDeUsturoi;
 		public bool SetUrsitoare;
+		public bool InimaUrsitoarelor;
+
+		// Scutul Inimii Ursitoarelor: se încarcă din loviturile minionilor și îți dă viața înapoi când ești lovit.
+		public int Scut;
+		private int pauzaScut;
 
 		// Câte frame-uri (60 = 1 secundă) a stat jucătorul nemișcat. Folosit de bonusul de set.
 		public int TimpNemiscat;
@@ -25,11 +30,14 @@ namespace SummonerReborn.Common.Players
 		public const int DurataPrimavara = 180;           // 3 secunde
 		public const int DurataFurie = 300;               // 5 secunde
 		public const int InvulnerabilitateTalisman = 30;  // +0.5 secunde
+		public const int ScutMaxim = 60;                  // cât HP poate absorbi scutul
+		public const int PauzaScut = 6;                   // scutul crește cu 1 de maxim 10 ori pe secundă
 
 		public override void ResetEffects() {
 			Martisor = false;
 			TalismanulDeUsturoi = false;
 			SetUrsitoare = false;
+			InimaUrsitoarelor = false;
 		}
 
 		// Rulează după ce jocul a verificat bonusurile de set (UpdateArmorSet), deci SetUrsitoare e corect aici.
@@ -58,12 +66,28 @@ namespace SummonerReborn.Common.Players
 		}
 
 		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone) {
+			if (!proj.IsMinionOrSentryRelated)
+				return;
+
 			// Mărțișorul: loviturile minionilor îți dau uneori buff-ul Primăvară (regenerare).
-			if (Martisor && proj.IsMinionOrSentryRelated && Main.rand.NextBool(SansaMartisor))
+			if (Martisor && Main.rand.NextBool(SansaMartisor))
 				Player.AddBuff(ModContent.BuffType<Primavara>(), DurataPrimavara);
+
+			// Inima Ursitoarelor: fiecare lovitură de minion încarcă scutul (nu pe manechine sau creaturi inofensive).
+			if (InimaUrsitoarelor && pauzaScut <= 0 && !target.immortal && !target.friendly && target.lifeMax > 5) {
+				Scut = System.Math.Min(Scut + 1, ScutMaxim);
+				pauzaScut = PauzaScut;
+			}
 		}
 
 		public override void PostHurt(Player.HurtInfo info) {
+			// Inima Ursitoarelor: scutul îți dă înapoi viața pierdută, cât e încărcat.
+			if (InimaUrsitoarelor && Scut > 0 && !info.PvP) {
+				int vindecare = System.Math.Min(Scut, info.Damage);
+				Player.Heal(vindecare);
+				Scut = 0;
+			}
+
 			// Talismanul de Usturoi: când ești lovit, minionii intră în Furie și primești puțină invulnerabilitate în plus.
 			if (!TalismanulDeUsturoi || info.PvP)
 				return;
@@ -73,6 +97,19 @@ namespace SummonerReborn.Common.Players
 		}
 
 		public override void PreUpdate() {
+			if (pauzaScut > 0)
+				pauzaScut--;
+
+			// Fără Inima Ursitoarelor, scutul se descarcă.
+			if (!InimaUrsitoarelor)
+				Scut = 0;
+			else if (Scut >= ScutMaxim && Main.rand.NextBool(8)) {
+				// Scut plin: câteva scântei albastre în jurul tău.
+				Dust d = Dust.NewDustDirect(Player.position, Player.width, Player.height, DustID.Electric);
+				d.noGravity = true;
+				d.velocity *= 0.3f;
+			}
+
 			// Țintirea automată pe boss. Merge și pentru minionii din vanilla, pentru că folosește
 			// același mecanism ca atunci când alegi tu ținta cu click dreapta pe un toiag de summon.
 			if (Player.whoAmI != Main.myPlayer || !ModContent.GetInstance<ConfigTestare>().TintireAutomataBoss)

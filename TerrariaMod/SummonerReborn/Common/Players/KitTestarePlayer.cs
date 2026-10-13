@@ -37,7 +37,7 @@ namespace SummonerReborn.Common.Players
 		public void DaKit() {
 			var sursa = new EntitySource_Gift(Player);
 
-			// Itemele din mod (Faza 1)
+			// Toate itemele din mod, în ordinea progresiei
 			int[] iteme_mod = {
 				ModContent.ItemType<ToiagulLicuricilor>(),
 				ModContent.ItemType<BiciulDeSpini>(),
@@ -46,6 +46,14 @@ namespace SummonerReborn.Common.Players
 				ModContent.ItemType<PantaloniiUrsitoarei>(),
 				ModContent.ItemType<Martisor>(),
 				ModContent.ItemType<TalismanulDeUsturoi>(),
+				ModContent.ItemType<ToiagulStrigoiului>(),
+				ModContent.ItemType<ToiagulIelelor>(),
+				ModContent.ItemType<BiciulZmeului>(),
+				ModContent.ItemType<CununaDeClorofita>(),
+				ItemID.ChlorophytePlateMail, ItemID.ChlorophyteGreaves, // cu Cununa formează setul
+				ModContent.ItemType<ToiagulSolomonarului>(),
+				ModContent.ItemType<BiciulSolomonarului>(),
+				ModContent.ItemType<InimaUrsitoarelor>(),
 			};
 
 			// Cel mai bun build de summoner din vanilla (end-game)

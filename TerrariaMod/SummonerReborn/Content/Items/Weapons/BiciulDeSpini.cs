@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace SummonerReborn.Content.Items.Weapons
 {
-	// Bici pentru începutul jocului. Inamicii loviți primesc marca „Spini”:
+	// EARLY GAME. Bici pentru începutul jocului. Inamicii loviți primesc marca „Spini”:
 	// minionii fac damage în plus pe ei (vezi Content/Buffs/MarcaSpinilor.cs).
 	// Comparație vanilla: Leather Whip 7 damage și 4 tag damage. Snapthorn e mai puternic, dar vine mai târziu.
 	public class BiciulDeSpini : ModItem
