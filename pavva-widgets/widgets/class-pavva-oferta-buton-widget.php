@@ -271,9 +271,9 @@ class Pavva_Oferta_Buton_Widget extends Widget_Base {
 
 	private function product_item( array $s ): array {
 		if ( ! class_exists( 'Pavva_W_Lista' ) ) return array();
-		if ( 'pick' === ( $s['source'] ?? 'current' ) ) return Pavva_W_Lista::item( absint( $s['product_id'] ?? 0 ) );
+		if ( 'pick' === ( $s['source'] ?? 'current' ) ) return Pavva_W_Lista::item_full( absint( $s['product_id'] ?? 0 ) );
 		$pid = class_exists( 'Pavva_W_Data' ) ? (int) Pavva_W_Data::resolve_product_id() : 0;
-		return Pavva_W_Lista::item( $pid );
+		return Pavva_W_Lista::item_full( $pid );
 	}
 
 	private function icon( $icon, $class ) {

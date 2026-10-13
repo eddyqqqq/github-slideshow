@@ -223,36 +223,65 @@
 		}
 	}
 
-	/* ---------- suprafață în m² ---------- */
+	/* ---------- suprafață în m²: clientul scrie suprafața (doar cifre) ----------
+	   Dacă e o listă (ex. „Sub 100 mp”), lista rămâne în formular, ascunsă, și primește valoarea scrisă
+	   („120 m²”) la fiecare tastă: formularul Elementor trimite câmpul exact ca înainte. */
 	function setupArea(el) {
 		if (el.__pvoArea) return;
 		el.__pvoArea = true;
-		/* listă cu opțiunile tale (ex.: „Sub 100 mp”, „Între 100-500 mp”): rămâne listă */
-		if (isSel(el) && Array.prototype.some.call(el.options, function (o, i) { return i > 0 && o.textContent.trim() !== ''; })) {
-			/* opțiunile adăugate fără valoare în Elementor: fără asta, câmpul obligatoriu nu trece niciodată
-			   de verificare și formularul nu se poate trimite. Valoarea devine textul opțiunii. */
-			Array.prototype.forEach.call(el.options, function (o, i) {
-				if (i > 0 && !o.value && o.textContent.trim()) o.value = o.textContent.trim();
-			});
-			return;
-		}
+		var form = el.form || el.closest('form');
 		var label = isSel(el) && el.options.length ? el.options[0].textContent : (el.getAttribute('placeholder') || 'Suprafață proiect');
-		label = label.replace(/\s*\(?m(²|2|p)\)?\s*$/i, '');
+		label = label.replace(/\s*\(?m(²|2|p)\)?\s*$/i, '').trim() || 'Suprafață proiect';
 		var input = el;
 		if (isSel(el)) {
 			input = document.createElement('input');
-			['name', 'id', 'className', 'required'].forEach(function (k) { if (el[k]) input[k] = el[k]; });
-			['aria-required', 'aria-label', 'data-field'].forEach(function (a) { if (el.hasAttribute(a)) input.setAttribute(a, el.getAttribute(a)); });
-			input.classList.remove('elementor-field-textual');
-			input.classList.add('elementor-field-textual', 'pvo-area');
-			var wrap = el.closest('.elementor-select-wrapper');
-			(wrap || el).replaceWith(input);
+			input.type = 'text';
+			/* aspectul câmpurilor text din același formular (ex. Nume) */
+			var twin = form && form.querySelector('input[type="text"], input[type="email"], input[type="tel"]');
+			input.className = (twin ? twin.className + ' ' : '') + 'pvo-area';
+			input.required = el.required;
+			if (el.required) input.setAttribute('aria-required', 'true');
+			input.setAttribute('aria-label', el.getAttribute('aria-label') || label);
+			input.id = (el.id ? el.id.replace(/[^\w-]/g, '') : 'pvo') + '-m2';
+			el.required = false;
+			el.removeAttribute('aria-required');
+			el.tabIndex = -1;
+			var wrap = el;
+			while (wrap.parentElement && wrap.parentElement !== form && wrap.parentElement.querySelectorAll('input:not([type="hidden"]), select, textarea').length === 1) wrap = wrap.parentElement;
+			wrap.parentNode.insertBefore(input, wrap);
+			wrap.classList.add('pvl-field-hidden');
+			wrap.style.display = 'none';
+			var opt = null;
+			var push = function () {
+				var n = input.value;
+				if (!opt) { opt = document.createElement('option'); opt.setAttribute('data-pvo-area', ''); el.appendChild(opt); }
+				opt.value = n ? n + ' m²' : '';
+				opt.textContent = opt.value || label;
+				el.value = opt.value;
+				fire(el);
+			};
+			input.addEventListener('input', push);
+			input.__pvoPush = push;
+		} else {
+			input.type = 'text';
 		}
-		input.type = 'number';
-		input.min = '1';
-		input.step = 'any';
-		input.inputMode = 'decimal';
+		input.inputMode = 'numeric';
+		input.autocomplete = 'off';
+		input.maxLength = 7;
 		input.placeholder = label + ' (m²)';
+		input.title = 'Doar cifre (m²)';
+		/* doar cifre: orice altceva (litere, punct, minus, spații) dispare imediat, inclusiv la lipire */
+		input.addEventListener('input', function () {
+			var v = input.value.replace(/\D+/g, '').replace(/^0+/, '');
+			if (v !== input.value) {
+				input.value = v;
+				if (input.__pvoPush) input.__pvoPush();
+			}
+		}, true);
+		input.addEventListener('keydown', function (e) {
+			if (e.ctrlKey || e.metaKey || e.altKey || e.key.length > 1) return;
+			if (!/\d/.test(e.key)) e.preventDefault();
+		});
 	}
 
 	/* ---------- pornire ---------- */

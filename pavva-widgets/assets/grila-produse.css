@@ -373,3 +373,4 @@
 .pvg .pvg-oferta.is-added .pvl-ico-add, .pvg .pvg-oferta.is-added .pvl-t-add { display: none; }
 .pvg .pvg-oferta.is-added .pvl-ico-added, .pvg .pvg-oferta.is-added .pvl-t-added { display: inline; }
 @media (prefers-reduced-motion: reduce) { .pvg .pvg-oferta { transition: none; } .pvg .pvg-oferta:hover { transform: none; } }
+.pvg .pvg-oferta.no-icon { padding: 0 16px; }

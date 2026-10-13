@@ -39,20 +39,54 @@
 		try { w.localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {}
 		render();
 	}
-	function keyOf(it) { return it.id ? 'id:' + it.id : 'n:' + norm(it.name); }
+	/* produs + variantă (culoare / grosime): același produs în două culori = două rânduri în ofertă */
+	function pkey(it) { return it.id ? 'id:' + it.id : 'n:' + norm(it.name); }
+	function keyOf(it) { return pkey(it) + '|' + norm(it.color) + '|' + norm(it.thick); }
+	function hasProduct(it) { var k = pkey(it); return read().some(function (x) { return pkey(x) === k; }); }
+	function hasOpts(it) { return !!(it && it.opts && ((it.opts.colors && it.opts.colors.length) || (it.opts.thick && it.opts.thick.length))); }
+	function varText(it) {
+		var p = [];
+		if (it.color) p.push(txt('color', 'Culoare') + ': ' + it.color);
+		if (it.thick) p.push(txt('thick', 'Grosime') + ': ' + it.thick);
+		return p.join(', ');
+	}
 	function find(list, it) {
 		var k = keyOf(it);
 		for (var i = 0; i < list.length; i++) if (keyOf(list[i]) === k) return i;
 		return -1;
 	}
 	function clean(it) {
-		return {
+		var o = {
 			id: parseInt(it.id, 10) || 0,
 			name: String(it.name || '').trim(),
 			cat: String(it.cat || '').trim(),
 			url: String(it.url || ''),
-			img: String(it.img || '')
+			img: String(it.img || ''),
+			color: String(it.color || '').trim(),
+			ct: String(it.ct || ''),
+			thick: String(it.thick || '').trim()
 		};
+		/* culorile și grosimile posibile rămân în listă: varianta se poate schimba oricând („Modifică”) */
+		if (it.opts && typeof it.opts === 'object') {
+			o.opts = {
+				colors: (it.opts.colors || []).filter(function (c) { return c && c.n; }).map(function (c) { return { n: String(c.n), t: String(c.t || '') }; }),
+				thick: (it.opts.thick || []).map(String)
+			};
+			if (!o.opts.colors.length && !o.opts.thick.length) delete o.opts;
+		}
+		return o;
+	}
+	/* schimbă varianta unui rând (păstrează locul în listă; dacă varianta nouă există deja, rândurile se unesc) */
+	function replaceItem(oldKey, it) {
+		it = clean(it);
+		var list = read();
+		var i = -1, j = -1;
+		for (var n = 0; n < list.length; n++) { if (keyOf(list[n]) === oldKey) i = n; }
+		for (n = 0; n < list.length; n++) { if (n !== i && keyOf(list[n]) === keyOf(it)) j = n; }
+		if (i === -1) return add(it);
+		if (j !== -1) list.splice(i, 1); else list[i] = it;
+		write(list);
+		return true;
 	}
 	function add(it) {
 		it = clean(it);
@@ -129,14 +163,15 @@
 		if (!show && !toastEl) return;
 		var el = ensureBar();
 		el.querySelector('.pvl-toast-a').setAttribute('href', url || C.form || '/solicita-oferta/');
-		el.querySelector('.pvl-toast-a').textContent = txt('see', 'Vezi oferta');
+		var bc = dcfg();
+		el.querySelector('.pvl-toast-a').textContent = bc.barSee;
 		var t = el.querySelector('.pvl-toast-t');
 		if (flashName) {
-			t.innerHTML = esc(txt('added', 'Adăugat în ofertă')) + ': <strong>' + esc(flashName) + '</strong>';
+			t.innerHTML = esc(bc.barAdded) + ': <strong>' + esc(flashName) + '</strong>';
 			clearTimeout(toastT);
 			toastT = setTimeout(function () { toastT = 0; bar(); }, 3500);
 		} else if (!toastT) {
-			t.innerHTML = esc(txt('title', 'Oferta ta')) + ': <strong>' + esc(plural(n)) + '</strong>';
+			t.innerHTML = esc(bc.barLabel) + ': <strong>' + esc(plural(n)) + '</strong>';
 		}
 		el.classList.toggle('is-on', show || (!!flashName && C.bar === false));
 		d.documentElement.classList.toggle('pv-oferta-bar', show);
@@ -165,7 +200,7 @@
 
 		each('[data-pvl-add], .pv-oferta-add, .pv-oferta-go', function (el) {
 			var it = itemOf(el);
-			var on = !!it && find(list, it) !== -1;
+			var on = !!it && hasProduct(it);
 			el.classList.toggle('is-added', on);
 			var btn = el.matches('button, a') ? el : el.querySelector('button, a');
 			if (btn && btn.tagName === 'BUTTON') btn.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -236,12 +271,17 @@
 				'<span class="pvl-info">' +
 				(it.url ? '<a class="pvl-name" href="' + esc(it.url) + '">' + esc(it.name) + '</a>' : '<span class="pvl-name">' + esc(it.name) + '</span>') +
 				(showCat && it.cat ? '<span class="pvl-cat">' + esc(it.cat) + '</span>' : '') +
+				((it.color || it.thick) ? '<span class="pvl-var">' +
+					(it.color ? '<span class="pvl-var-c">' + (it.ct ? '<img src="' + esc(it.ct) + '" alt="" loading="lazy">' : '') + esc(it.color) + '</span>' : '') +
+					(it.thick ? '<span class="pvl-var-t">' + esc(it.thick) + '</span>' : '') + '</span>' : '') +
+				(hasOpts(it) ? '<button type="button" class="pvl-edit" data-pvl-edit="' + esc(keyOf(it)) + '" aria-label="' + esc(txt('edit', 'Modifică') + ': ' + it.name) + '">' + esc((it.color || it.thick) ? txt('edit', 'Modifică') : txt('choose', 'Alege culoarea / grosimea')) + '</button>' : '') +
 				'</span>' +
-				'<button type="button" class="pvl-remove" data-pvl-remove="' + esc(keyOf(it)) + '" aria-label="' + esc(txt('remove', 'Scoate din ofertă') + ': ' + it.name) + '">' + X + '</button>' +
+				'<button type="button" class="pvl-remove" data-pvl-remove="' + esc(keyOf(it)) + '" aria-label="' + esc(txt('remove', 'Scoate din ofertă') + ': ' + it.name + (varText(it) ? ' (' + varText(it) + ')' : '')) + '">' + X + '</button>' +
 				'</li>';
 		});
 		ul.innerHTML = html;
 		box.classList.toggle('is-empty', list.length === 0);
+		box.classList.toggle('is-multi', list.length > 1);
 		var cnt = box.querySelector('.pvl-title-count');
 		if (cnt) cnt.textContent = list.length ? ' (' + list.length + ')' : '';
 	}
@@ -266,6 +306,15 @@
 				if (target) target.focus();
 				else if (dw && dw.contains(box)) { var x = dw.querySelector('.pvl-dw-x'); if (x) x.focus(); }
 			}
+			return;
+		}
+
+		var ed = e.target.closest('[data-pvl-edit]');
+		if (ed) {
+			e.preventDefault();
+			var ek = ed.getAttribute('data-pvl-edit');
+			var cur = read().filter(function (x) { return keyOf(x) === ek; })[0];
+			if (cur) openPicker(cur, { edit: true, from: ed, done: function (v) { replaceItem(ek, v); announce(txt('saved', 'Variantă salvată') + ': ' + v.name + (varText(v) ? ', ' + varText(v) : '')); } });
 			return;
 		}
 
@@ -296,18 +345,120 @@
 		e.preventDefault();
 		var go = el.classList.contains('pv-oferta-go') || el.getAttribute('data-pvl-mode') === 'go';
 		var again = el.getAttribute('data-pvl-again') || 'go';
-		if (has(it)) {
+		var done = function (v) {
+			add(v);
+			if (go) { w.location.href = formUrl(el); return; }
+			announce(txt('added', 'Adăugat în ofertă') + ': ' + v.name + (varText(v) ? ', ' + varText(v) : ''));
+			if (dcfg().on && dcfg().auto) { openDrawer(el); return; }
+			if (el.getAttribute('data-pvl-toast') !== '0') toast(v.name, formUrl(el));
+		};
+		if (hasProduct(it)) {
 			if (go || again === 'go') { w.location.href = formUrl(el); return; }
-			remove(it);
+			/* cu culori / grosimi: încă o variantă a aceluiași produs; fără: al doilea click îl scoate */
+			if (hasOpts(it) && pickOn()) { openPicker(it, { from: el, done: done }); return; }
+			read().filter(function (x) { return pkey(x) === pkey(it); }).forEach(function (x) { remove(x); });
 			announce(txt('removed', 'Scos din ofertă') + ': ' + it.name);
 			return;
 		}
-		add(it);
-		if (go) { w.location.href = formUrl(el); return; }
-		announce(txt('added', 'Adăugat în ofertă') + ': ' + it.name);
-		if (dcfg().on && dcfg().auto) { openDrawer(el); return; }
-		if (el.getAttribute('data-pvl-toast') !== '0') toast(it.name, formUrl(el));
+		if (hasOpts(it) && pickOn()) { openPicker(it, { from: el, done: done }); return; }
+		done(it);
 	});
+
+	/* ---------- fereastra „Alege varianta” (culoare cu thumbnail + grosime) ---------- */
+	var pk = null, pkLast = null;
+	function pickOn() { return C.picker !== false && dcfg().pick; }
+	function pickerBody(it, cur) {
+		var o = it.opts || {}, h = '';
+		if (o.colors && o.colors.length) {
+			h += '<fieldset class="pvl-pk-group"><legend class="pvl-pk-label">' + esc(txt('color', 'Culoare')) + ' <span class="pvl-pk-val" data-pvl-val="color"></span></legend><div class="pvl-pk-colors">';
+			o.colors.forEach(function (c) {
+				var on = cur && norm(cur.color) === norm(c.n);
+				h += '<button type="button" class="pvl-pk-color' + (on ? ' is-on' : '') + '" aria-pressed="' + (on ? 'true' : 'false') + '" data-pvl-color="' + esc(c.n) + '" data-pvl-ct="' + esc(c.t) + '">' +
+					'<span class="pvl-pk-sw">' + (c.t ? '<img src="' + esc(c.t) + '" alt="" loading="lazy" decoding="async">' : '') + '</span><span class="pvl-pk-cn">' + esc(c.n) + '</span></button>';
+			});
+			h += '</div></fieldset>';
+		}
+		if (o.thick && o.thick.length) {
+			h += '<fieldset class="pvl-pk-group"><legend class="pvl-pk-label">' + esc(txt('thick', 'Grosime')) + ' <span class="pvl-pk-val" data-pvl-val="thick"></span></legend><div class="pvl-pk-thick">';
+			o.thick.forEach(function (t) {
+				var on = cur ? norm(cur.thick) === norm(t) : o.thick.length === 1;
+				h += '<button type="button" class="pvl-pk-t' + (on ? ' is-on' : '') + '" aria-pressed="' + (on ? 'true' : 'false') + '" data-pvl-thick="' + esc(t) + '">' + esc(t) + '</button>';
+			});
+			h += '</div></fieldset>';
+		}
+		h += '<p class="pvl-pk-note">' + esc(dcfg().pkNote) + '</p>';
+		return h;
+	}
+	/* alegerea din fereastră / din formular: un singur buton apăsat pe grup; al doilea click îl deselectează */
+	function bindChoices(root) {
+		var upd = function () {
+			['color', 'thick'].forEach(function (k) {
+				var v = root.querySelector('[data-pvl-val="' + k + '"]');
+				var on = root.querySelector('[data-pvl-' + k + '].is-on');
+				if (v) v.textContent = on ? '· ' + on.getAttribute('data-pvl-' + k) : '';
+			});
+		};
+		root.addEventListener('click', function (e) {
+			var b = e.target.closest('[data-pvl-color], [data-pvl-thick]');
+			if (!b || !root.contains(b)) return;
+			e.preventDefault();
+			var k = b.hasAttribute('data-pvl-color') ? 'color' : 'thick';
+			var was = b.classList.contains('is-on');
+			Array.prototype.forEach.call(root.querySelectorAll('[data-pvl-' + k + ']'), function (x) { x.classList.remove('is-on'); x.setAttribute('aria-pressed', 'false'); });
+			if (!was) { b.classList.add('is-on'); b.setAttribute('aria-pressed', 'true'); }
+			upd();
+		});
+		upd();
+	}
+	function chosen(root, it) {
+		var c = root.querySelector('[data-pvl-color].is-on'), t = root.querySelector('[data-pvl-thick].is-on');
+		var v = clean(it);
+		v.color = c ? c.getAttribute('data-pvl-color') : '';
+		v.ct = c ? c.getAttribute('data-pvl-ct') : '';
+		v.thick = t ? t.getAttribute('data-pvl-thick') : '';
+		return v;
+	}
+	function openPicker(it, o) {
+		closePicker(true);
+		var c = dcfg();
+		pkLast = o.from || d.activeElement;
+		pk = d.createElement('div');
+		pk.className = 'pvl-pick';
+		pk.innerHTML = '<div class="pvl-pk-overlay" data-pvl-pk-close></div>' +
+			'<div class="pvl-pk-box" role="dialog" aria-modal="true" aria-labelledby="pvl-pk-title" data-lenis-prevent>' +
+				'<div class="pvl-pk-head">' + (it.img ? '<img class="pvl-pk-img" src="' + esc(it.img) + '" alt="">' : '') +
+					'<div class="pvl-pk-titles"><p class="pvl-pk-kicker">' + esc(c.pkTitle) + '</p><h2 class="pvl-pk-title" id="pvl-pk-title">' + esc(it.name) + '</h2>' + (it.cat ? '<p class="pvl-pk-cat">' + esc(it.cat) + '</p>' : '') + '</div>' +
+					'<button type="button" class="pvl-pk-x" data-pvl-pk-close aria-label="' + esc(txt('close', 'Închide')) + '">' + X + '</button></div>' +
+				'<div class="pvl-pk-body">' + pickerBody(it, o.edit ? it : null) + '</div>' +
+				'<div class="pvl-pk-foot"><button type="button" class="pvl-pk-ok">' + esc(o.edit ? c.pkSave : c.pkAdd) + '</button>' +
+					'<button type="button" class="pvl-pk-cancel" data-pvl-pk-close>' + esc(c.pkCancel) + '</button></div>' +
+			'</div>';
+		d.body.appendChild(pk);
+		bindChoices(pk);
+		d.documentElement.classList.add('pvl-pk-open');
+		pk.addEventListener('click', function (e) {
+			if (e.target.closest('[data-pvl-pk-close]')) { e.preventDefault(); closePicker(); return; }
+			if (e.target.closest('.pvl-pk-ok')) { e.preventDefault(); var v = chosen(pk, it); closePicker(true); o.done(v); }
+		});
+		requestAnimationFrame(function () { requestAnimationFrame(function () { if (pk) pk.classList.add('is-open'); }); });
+		setTimeout(function () { var f = pk && (pk.querySelector('.pvl-pk-color, .pvl-pk-t') || pk.querySelector('.pvl-pk-ok')); if (f) f.focus({ preventScroll: true }); }, 60);
+	}
+	function closePicker(silent) {
+		if (!pk) return;
+		var el = pk; pk = null;
+		el.remove();
+		d.documentElement.classList.remove('pvl-pk-open');
+		if (!silent && pkLast && pkLast.focus && d.contains(pkLast)) pkLast.focus({ preventScroll: true });
+	}
+	d.addEventListener('keydown', function (e) {
+		if (!pk) return;
+		if (e.key === 'Escape') { e.preventDefault(); closePicker(); return; }
+		if (e.key !== 'Tab') return;
+		var f = Array.prototype.filter.call(pk.querySelectorAll('button'), function (b) { return b.offsetWidth || b.offsetHeight; });
+		if (!f.length) return;
+		if (e.shiftKey && d.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+		else if (!e.shiftKey && d.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+	}, true);
 
 	/* ---------- panoul lateral „Oferta ta” (ca un coș de cumpărături) ----------
 	   Setările vin din widgetul „Oferta ta” (atributele data-pvl-* de pe iconiță); fără widget: valorile implicite. */
@@ -325,7 +476,16 @@
 			empty: g('t-empty', txt('dwEmpty', 'Nu ai adăugat încă niciun produs. Apasă „Adaugă la ofertă” pe produsele care te interesează.')),
 			browse: g('t-browse', txt('browse', 'Vezi produsele')),
 			browseUrl: g('browse-url', ''),
-			form: g('form', C.form || '/solicita-oferta/')
+			form: g('form', C.form || '/solicita-oferta/'),
+			barLabel: g('t-bar-label', txt('title', 'Oferta ta')),
+			barSee: g('t-bar-see', txt('see', 'Vezi oferta')),
+			barAdded: g('t-bar-added', txt('added', 'Adăugat în ofertă')),
+			pick: g('pick', '1') !== '0',
+			pkTitle: g('t-pk-title', txt('pkTitle', 'Alege varianta')),
+			pkAdd: g('t-pk-add', txt('pkAdd', 'Adaugă la ofertă')),
+			pkSave: g('t-pk-save', txt('pkSave', 'Salvează')),
+			pkCancel: g('t-pk-cancel', txt('pkCancel', 'Anulează')),
+			pkNote: g('t-pk-note', txt('pkNote', 'Nu ești sigur? Poți lăsa necompletat: te ajutăm noi la telefon.'))
 		};
 	}
 	function buildDrawer() {
@@ -439,6 +599,7 @@
 				var p = it.id ? byId[it.id] : byName[norm(it.name)];
 				if (!p) { changed = true; return false; }
 				['name', 'cat', 'url', 'img'].forEach(function (k) { if (p[k] !== undefined && it[k] !== p[k]) { it[k] = p[k]; changed = true; } });
+				if (p.opts && JSON.stringify(p.opts) !== JSON.stringify(it.opts || null)) { it.opts = p.opts; changed = true; }
 				if (!it.id && p.id) { it.id = p.id; changed = true; }
 				return true;
 			});
@@ -451,7 +612,7 @@
 		var catsOpt = null, catPrev = '';
 
 		function lines(list) {
-			return list.map(function (it, i) { return (i + 1) + '. ' + it.name + (it.cat ? ' (' + it.cat + ')' : ''); }).join('\n');
+			return list.map(function (it, i) { return (i + 1) + '. ' + it.name + (it.cat ? ' (' + it.cat + ')' : '') + (varText(it) ? ' – ' + varText(it) : ''); }).join('\n');
 		}
 
 		function sync() {
@@ -462,7 +623,7 @@
 			if (first && !first.value && !first.hasAttribute('data-pvl-summary')) first.textContent = list.length ? txt('pick', '+ Adaugă alt produs') : ph;
 			/* cu produse în listă, categoria devine doar un filtru pentru „+ Adaugă alt produs” (nu mai e obligatorie);
 			   goală = toate produsele. La trimitere primește oricum categoriile produselor din listă. */
-			if (cat && cat.tagName === 'SELECT') {
+			if (cat && cat.tagName === 'SELECT' && cat.__pvlReqOrig === undefined) {
 				if (cat.__pvlReq === undefined) cat.__pvlReq = cat.required;
 				cat.required = list.length ? false : cat.__pvlReq;
 				if (list.length) cat.removeAttribute('aria-required'); else if (cat.__pvlReq) cat.setAttribute('aria-required', 'true');
@@ -532,20 +693,30 @@
 		if (w.MutationObserver) new MutationObserver(checkOk).observe(form, { attributes: true, childList: true, subtree: true });
 		if (w.jQuery) w.jQuery(form).on('submit_success', function () { pending = true; checkOk(); restoreCat(); clear(); });
 
-		var api = { form: form, sync: sync, before: function () { beforeSubmit(); pending = true; } };
+		var api = { form: form, sync: function () { sync(); if (api.adderLabel) api.adderLabel(); }, before: function () { beforeSubmit(); pending = true; } };
 		forms.push(api);
 
-		/* lista se pune în formular, deasupra câmpurilor de produs:
-		   widgetul „Listă ofertă” (cu „Așază în formular”), altfel o listă automată */
+		/* lista se pune în formular: widgetul „Listă ofertă” (cu „Așază în formular”), altfel o listă automată */
+		var widget = d.querySelector('[data-pvl-list][data-pvl-into-form]');
+		var picker = C.formPicker !== false && !(widget && widget.getAttribute('data-pvl-picker') === '0');
 		var anchor = cat && form.contains(cat) ? cat : prod;
+		/* cu selectorul nou, lista + „Adaugă produs” stau sus, la începutul formularului */
 		var node = anchor;
 		while (node.parentElement && node.parentElement !== form) node = node.parentElement;
-		var widget = d.querySelector('[data-pvl-list][data-pvl-into-form]');
+		if (picker && (!widget || widget.getAttribute('data-pvl-pos') !== 'fields')) {
+			var firstField = form.querySelector('input:not([type="hidden"]), select, textarea');
+			if (firstField) { node = firstField; while (node.parentElement && node.parentElement !== form) node = node.parentElement; }
+		}
 		var box = null;
-		if (widget && !form.contains(widget)) {
+		/* widgetul pus direct în formular (formularul V4 e un container): rămâne exact unde e */
+		var inside = form.querySelector('[data-pvl-list]');
+		if (inside) {
+			box = inside;
+			picker = C.formPicker !== false && inside.getAttribute('data-pvl-picker') !== '0';
+		} else if (widget && !form.contains(widget)) {
 			/* se mută tot widgetul Elementor, ca stilurile lui să rămână valabile */
-			box = widget.closest('.elementor-element') || widget;
-			form.insertBefore(box, node);
+			var wrap = widget.closest('.elementor-element') || widget;
+			form.insertBefore(wrap, node);
 			box = widget;
 		} else if (!d.querySelector('[data-pvl-list]') && C.autoList !== false) {
 			box = d.createElement('div');
@@ -553,7 +724,7 @@
 			box.setAttribute('data-pvl-list', '');
 			box.innerHTML = '<p class="pvl-title">' + esc(txt('listTitle', 'Produsele tale')) + '<span class="pvl-title-count"></span></p>' +
 				'<ul class="pvl-items"></ul>' +
-				'<p class="pvl-empty">' + esc(txt('listEmpty', 'Alege produsele dorite din lista de mai jos. Poți adăuga mai multe.')) + '</p>';
+				'<p class="pvl-empty">' + esc(picker ? txt('listEmptyPick', 'Adaugă produsele care te interesează. Poți alege mai multe, fiecare cu culoarea și grosimea dorită.') : txt('listEmpty', 'Alege produsele dorite din lista de mai jos. Poți adăuga mai multe.')) + '</p>';
 			form.insertBefore(box, node);
 		}
 		if (box) {
@@ -563,12 +734,118 @@
 			var pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.borderLeftWidth) || 0);
 			if (box.getAttribute('data-pvl-align') !== '0') box.style.setProperty('--pvl-field-pad', pad + 'px');
 		}
+		if (picker && box) buildAdder(form, box, cat, prod, D, api);
 		render();
+	}
+
+	/* câmpul cu tot învelișul lui (eticheta, săgeata listei), ca să-l putem ascunde */
+	function fieldWrap(el, form) {
+		var n = el;
+		while (n.parentElement && n.parentElement !== form && n.parentElement.querySelectorAll('input:not([type="hidden"]), select, textarea').length === 1) n = n.parentElement;
+		return n;
+	}
+
+	/* ---------- „Adaugă produs” în formular: categorie → produs (cu poză) → culoare → grosime ---------- */
+	function buildAdder(form, box, cat, prod, D, api) {
+		var prods = (D && D.prods) || [], cats = (D && D.cats) || [];
+		if (!prods.length) return;
+		/* listele vechi „Categorie produs” / „Produs solicitat” rămân în formular (duc datele), dar nu se mai văd */
+		[cat, prod].forEach(function (el) {
+			if (!el) return;
+			el.__pvlReqOrig = el.__pvlReq !== undefined ? el.__pvlReq : el.required;
+			el.required = false; el.removeAttribute('aria-required');
+			el.tabIndex = -1;
+			fieldWrap(el, form).classList.add('pvl-field-hidden');
+		});
+		api.picker = true;
+		var uid = 'pvl-adder-' + Math.random().toString(36).slice(2, 8);
+		var ad = d.createElement('div');
+		ad.className = 'pvl-adder';
+		ad.innerHTML =
+			'<button type="button" class="pvl-add-btn" aria-expanded="false" aria-controls="' + uid + '"><span class="pvl-add-plus" aria-hidden="true">+</span><span class="pvl-add-t"></span></button>' +
+			'<div class="pvl-adder-panel" id="' + uid + '" hidden>' +
+				'<p class="pvl-step">' + esc(txt('step1', 'Categorie')) + '</p><div class="pvl-chips" role="group" aria-label="' + esc(txt('step1', 'Categorie')) + '"></div>' +
+				'<p class="pvl-step">' + esc(txt('step2', 'Produs')) + '</p><div class="pvl-tiles"></div>' +
+				'<div class="pvl-adder-var" hidden></div>' +
+			'</div>' +
+			'<p class="pvl-adder-err" role="alert" hidden>' + esc(txt('needOne', 'Adaugă cel puțin un produs în ofertă.')) + '</p>';
+		box.appendChild(ad);
+		var btn = ad.querySelector('.pvl-add-btn'), panel = ad.querySelector('.pvl-adder-panel'), chips = ad.querySelector('.pvl-chips'),
+			tiles = ad.querySelector('.pvl-tiles'), vbox = ad.querySelector('.pvl-adder-var'), err = ad.querySelector('.pvl-adder-err');
+		var curCat = '';
+		var label = function () { btn.querySelector('.pvl-add-t').textContent = read().length ? txt('addMore', 'Adaugă alt produs') : txt('addFirst', 'Adaugă produs'); };
+		var chipsHTML = '<button type="button" class="pvl-chip is-on" aria-pressed="true" data-pvl-cat="">' + esc(txt('all', 'Toate')) + '</button>';
+		cats.forEach(function (c) { if (!c.depth) chipsHTML += '<button type="button" class="pvl-chip" aria-pressed="false" data-pvl-cat="' + esc(c.name) + '">' + esc(c.name) + '</button>'; });
+		chips.innerHTML = chipsHTML;
+		function drawTiles() {
+			var h = '';
+			prods.forEach(function (p, i) {
+				if (curCat && !(p.cats || []).some(function (n) { return norm(n) === norm(curCat); })) return;
+				h += '<button type="button" class="pvl-tile" data-pvl-i="' + i + '">' +
+					'<span class="pvl-tile-img">' + (p.img ? '<img src="' + esc(p.img) + '" alt="" loading="lazy" decoding="async">' : '') + '</span>' +
+					'<span class="pvl-tile-n">' + esc(p.name) + '</span></button>';
+			});
+			tiles.innerHTML = h || '<p class="pvl-none">' + esc(txt('none', 'Nu sunt produse în această categorie.')) + '</p>';
+		}
+		function openPanel(on) {
+			panel.hidden = !on;
+			btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+			ad.classList.toggle('is-open', on);
+			if (on) { vbox.hidden = true; tiles.hidden = false; drawTiles(); }
+		}
+		function chooseProduct(p) {
+			var it = clean(p);
+			if (!hasOpts(it)) { finish(it); return; }
+			tiles.hidden = true;
+			vbox.hidden = false;
+			vbox.innerHTML = '<div class="pvl-av-head">' + (it.img ? '<img src="' + esc(it.img) + '" alt="">' : '') + '<div><p class="pvl-av-name">' + esc(it.name) + '</p>' + (it.cat ? '<p class="pvl-av-cat">' + esc(it.cat) + '</p>' : '') + '</div></div>' +
+				pickerBody(it, null) +
+				'<div class="pvl-av-foot"><button type="button" class="pvl-av-ok">' + esc(txt('addThis', 'Adaugă produsul')) + '</button><button type="button" class="pvl-av-back">' + esc(txt('back', 'Înapoi la produse')) + '</button></div>';
+			if (!vbox.__bound) { bindChoices(vbox); vbox.__bound = true; }
+			vbox.__it = it;
+			var f = vbox.querySelector('.pvl-pk-color, .pvl-pk-t, .pvl-av-ok'); if (f) f.focus({ preventScroll: true });
+			vbox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		}
+		function finish(v) {
+			add(v);
+			announce(txt('added', 'Adăugat în ofertă') + ': ' + v.name + (varText(v) ? ', ' + varText(v) : ''));
+			err.hidden = true;
+			openPanel(false);
+			label();
+			btn.focus({ preventScroll: true });
+		}
+		btn.addEventListener('click', function () { openPanel(panel.hidden); });
+		chips.addEventListener('click', function (e) {
+			var c = e.target.closest('[data-pvl-cat]'); if (!c) return;
+			curCat = c.getAttribute('data-pvl-cat');
+			Array.prototype.forEach.call(chips.children, function (x) { var on = x === c; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+			vbox.hidden = true; tiles.hidden = false; drawTiles();
+		});
+		tiles.addEventListener('click', function (e) { var t = e.target.closest('[data-pvl-i]'); if (t) chooseProduct(prods[+t.getAttribute('data-pvl-i')]); });
+		vbox.addEventListener('click', function (e) {
+			if (e.target.closest('.pvl-av-ok')) { e.preventDefault(); finish(chosen(vbox, vbox.__it)); }
+			else if (e.target.closest('.pvl-av-back')) { e.preventDefault(); vbox.hidden = true; tiles.hidden = false; var t = tiles.querySelector('.pvl-tile'); if (t) t.focus(); }
+		});
+		label();
+		api.adderLabel = label;
+		/* fără produse, formularul nu pleacă: mesaj lângă „Adaugă produs” */
+		api.validate = function () {
+			if (read().length) return true;
+			err.hidden = false;
+			openPanel(true);
+			btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			btn.focus({ preventScroll: true });
+			return false;
+		};
 	}
 
 	/* capturăm trimiterea înaintea scriptului formularului (Elementor citește câmpurile în același moment) */
 	d.addEventListener('submit', function (e) {
-		forms.forEach(function (f) { if (f.form === e.target) f.before(); });
+		forms.forEach(function (f) {
+			if (f.form !== e.target) return;
+			if (f.validate && !f.validate()) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+			f.before();
+		});
 	}, true);
 
 	/* oferta.js anunță formularele cu categorie / produs (după ce le-a completat) */

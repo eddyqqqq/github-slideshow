@@ -92,6 +92,29 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 			)
 		);
 		$this->add_control(
+			'picker',
+			array(
+				'label'        => 'Selector „Adaugă produs”',
+				'description'  => 'În formular: categorie → produs (cu poză) → culoare → grosime. Listele „Categorie produs” și „Produs solicitat” se ascund (datele lor se trimit în continuare). Nu = rămân listele.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+				'condition'    => array( 'into_form' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'pos',
+			array(
+				'label'     => 'Poziție în formular',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'top',
+				'options'   => array( 'top' => 'Sus, la începutul formularului', 'fields' => 'În locul câmpurilor Categorie / Produs' ),
+				'condition' => array( 'into_form' => 'yes', 'picker' => 'yes' ),
+			)
+		);
+		$this->add_control(
 			'align_fields',
 			array(
 				'label'        => 'Textul aliniat cu câmpurile',
@@ -228,6 +251,13 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 		$this->add_control( 'cat_color', array( 'label' => 'Culoare categorie', 'type' => Controls_Manager::COLOR, 'condition' => array( 'show_cat' => 'yes' ), 'selectors' => array( $this->sel( '.pvl-cat' ) => 'color: {{VALUE}}; opacity: 1;' ) ) );
 		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'cat_typo', 'label' => 'Font categorie', 'condition' => array( 'show_cat' => 'yes' ), 'selector' => $this->sel( '.pvl-cat' ) ) );
 
+		$this->add_control( 'add_heading', array( 'label' => 'Butonul „Adaugă produs”', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$this->add_control( 'add_c', array( 'label' => 'Culoare text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--pvl-add-c: {{VALUE}};' ) ) );
+		$this->add_control( 'add_bg', array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--pvl-add-bg: {{VALUE}};' ) ) );
+		$this->add_control( 'add_bd', array( 'label' => 'Culoare chenar', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--pvl-add-bd: {{VALUE}};' ) ) );
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'add_typo', 'label' => 'Font', 'selector' => '{{WRAPPER}} .pvl-in-form button.pvl-add-btn' ) );
+		$this->add_control( 'edit_c', array( 'label' => 'Culoare „Modifică”', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--pvl-edit-c: {{VALUE}};' ) ) );
+
 		$this->add_control( 'rm_heading', array( 'label' => 'Butonul de ștergere', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
 		$this->add_control( 'rm_color', array( 'label' => 'Culoare', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--pvl-rm-c: {{VALUE}};' ) ) );
 		$this->add_control( 'rm_color_hover', array( 'label' => 'Culoare la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel() => '--pvl-rm-c-h: {{VALUE}};' ) ) );
@@ -290,7 +320,7 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 		}
 		$classes = 'pvl-list' . ( $edit ? '' : ' is-empty' ) . ( '' === $empty ? ' pvl-hide-empty' : '' );
 		?>
-		<div class="<?php echo esc_attr( $classes ); ?>" data-pvl-list data-pvl-img="<?php echo $img ? '1' : '0'; ?>" data-pvl-cat="<?php echo $cat ? '1' : '0'; ?>"<?php echo $edit ? ' data-pvl-preview' : ''; ?><?php echo ! $edit && 'yes' === ( $s['into_form'] ?? 'yes' ) ? ' data-pvl-into-form' : ''; ?> data-pvl-align="<?php echo 'yes' === ( $s['align_fields'] ?? 'yes' ) ? '1' : '0'; ?>">
+		<div class="<?php echo esc_attr( $classes ); ?>" data-pvl-list data-pvl-img="<?php echo $img ? '1' : '0'; ?>" data-pvl-cat="<?php echo $cat ? '1' : '0'; ?>"<?php echo $edit ? ' data-pvl-preview' : ''; ?><?php echo ! $edit && 'yes' === ( $s['into_form'] ?? 'yes' ) ? ' data-pvl-into-form' : ''; ?> data-pvl-align="<?php echo 'yes' === ( $s['align_fields'] ?? 'yes' ) ? '1' : '0'; ?>" data-pvl-picker="<?php echo 'yes' === ( $s['picker'] ?? 'yes' ) ? '1' : '0'; ?>" data-pvl-pos="<?php echo 'fields' === ( $s['pos'] ?? 'top' ) ? 'fields' : 'top'; ?>">
 			<?php if ( '' !== $title ) : ?>
 				<<?php echo $tag; // phpcs:ignore ?> class="pvl-title"><?php echo esc_html( $title ); ?><?php if ( 'yes' === ( $s['title_count'] ?? 'yes' ) ) : ?><span class="pvl-title-count"><?php echo $edit && $sample ? ' (' . count( $sample ) . ')' : ''; ?></span><?php endif; ?></<?php echo $tag; // phpcs:ignore ?>>
 			<?php endif; ?>

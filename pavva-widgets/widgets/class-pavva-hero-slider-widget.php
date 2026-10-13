@@ -2867,7 +2867,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 	private function oferta_button_html( $s ) {
 		if ( ! class_exists( 'Pavva_W_Lista' ) ) return '';
 		$pid  = class_exists( 'Pavva_W_Data' ) ? (int) Pavva_W_Data::resolve_product_id() : 0;
-		$item = Pavva_W_Lista::item( $pid );
+		$item = Pavva_W_Lista::item_full( $pid );
 		$edit = class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor && \Elementor\Plugin::$instance->editor->is_edit_mode();
 		if ( ! $item ) {
 			if ( ! $edit ) return '';

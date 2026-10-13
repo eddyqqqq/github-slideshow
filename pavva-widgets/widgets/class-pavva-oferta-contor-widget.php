@@ -139,6 +139,30 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		);
 		$this->end_controls_section();
 
+		$this->start_controls_section( 'section_pick', array( 'label' => 'Alegerea culorii / grosimii' ) );
+		$this->add_control(
+			'pick',
+			array(
+				'label'        => 'Fereastră la „Adaugă la ofertă”',
+				'description'  => 'Pentru produsele cu culori (Culori și finisaje) sau grosimi (Dimensiuni): clientul alege culoarea cu thumbnail și grosimea. Produsele fără variante se adaugă direct. Se aplică pe tot site-ul.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+			)
+		);
+		foreach ( array(
+			'pk_title'  => array( 'Titlu mic', 'Alege varianta' ),
+			'pk_add'    => array( 'Buton', 'Adaugă la ofertă' ),
+			'pk_save'   => array( 'Buton la modificare', 'Salvează' ),
+			'pk_cancel' => array( 'Link anulare', 'Anulează' ),
+			'pk_note'   => array( 'Text ajutător', 'Nu ești sigur? Poți lăsa necompletat: te ajutăm noi la telefon.' ),
+		) as $id => $t ) {
+			$this->add_control( $id, array( 'label' => $t[0], 'type' => Controls_Manager::TEXT, 'default' => $t[1], 'label_block' => true, 'condition' => array( 'pick' => 'yes' ) ) );
+		}
+		$this->end_controls_section();
+
 		$this->start_controls_section( 'section_drawer', array( 'label' => 'Panoul cu produse' ) );
 		$this->add_control(
 			'drawer',
@@ -191,6 +215,14 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 					'condition'   => array( 'drawer' => 'yes' ),
 				)
 			);
+		}
+		$this->add_control( 'bar_texts_h', array( 'label' => 'Bara de jos', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		foreach ( array(
+			'bar_label' => array( 'Text bară', 'Oferta ta' ),
+			'bar_see'   => array( 'Buton bară', 'Vezi oferta' ),
+			'bar_added' => array( 'Text după adăugare', 'Adăugat în ofertă' ),
+		) as $id => $t ) {
+			$this->add_control( $id, array( 'label' => $t[0], 'type' => Controls_Manager::TEXT, 'default' => $t[1], 'label_block' => true ) );
 		}
 		$this->add_control(
 			'dw_browse_url',
@@ -494,6 +526,28 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		$this->add_control( 'dw_h_x', array( 'label' => 'Butonul × (închide)', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
 		$this->icon_button_controls( 'dw_x', $p, 'dx' );
 		$this->end_controls_section();
+
+		$this->picker_style_controls();
+	}
+
+	/* stilul ferestrei „Alege varianta” (una pe tot site-ul) */
+	private function picker_style_controls() {
+		$p = 'body .pvl-pick';
+		$this->start_controls_section( 'section_style_pick', array( 'label' => 'Fereastra culoare / grosime (pe tot site-ul)', 'tab' => Controls_Manager::TAB_STYLE, 'condition' => array( 'pick' => 'yes' ) ) );
+		$this->add_control( 'pk_accent', array( 'label' => 'Culoare de accent (selecție, buton)', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p => '--pvl-pk-accent: {{VALUE}};', 'body .pvl-adder-var' => '--pvl-pk-accent: {{VALUE}};' ) ) );
+		$this->add_control( 'pk_bg', array( 'label' => 'Fundal fereastră', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-pk-box' => 'background-color: {{VALUE}};' ) ) );
+		$this->add_control( 'pk_color', array( 'label' => 'Culoare text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-pk-box' => 'color: {{VALUE}};' ) ) );
+		$this->add_control( 'pk_overlay', array( 'label' => 'Fundal întunecat', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-pk-overlay' => 'background-color: {{VALUE}};' ) ) );
+		$this->add_responsive_control( 'pk_radius', array( 'label' => 'Colțuri fereastră', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 32 ) ), 'selectors' => array( $p . ' .pvl-pk-box' => 'border-radius: {{SIZE}}{{UNIT}};' ) ) );
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'pk_title_typo', 'label' => 'Font titlu', 'selector' => $p . ' .pvl-pk-title' ) );
+		$this->add_control( 'pk_sw_bg', array( 'label' => 'Fundal culori', 'type' => Controls_Manager::COLOR, 'separator' => 'before', 'selectors' => array( $p . ' button.pvl-pk-color, body .pvl-adder button.pvl-pk-color' => 'background-color: {{VALUE}};' ) ) );
+		$this->add_responsive_control( 'pk_sw_min', array( 'label' => 'Mărime culori', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 60, 'max' => 180 ) ), 'selectors' => array( $p . ' .pvl-pk-colors, body .pvl-adder .pvl-pk-colors' => 'grid-template-columns: repeat(auto-fill, minmax({{SIZE}}{{UNIT}}, 1fr));' ) ) );
+		$this->add_control( 'pk_btn_h', array( 'label' => 'Butonul principal', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'pk_btn_typo', 'label' => 'Font', 'selector' => $p . ' button.pvl-pk-ok' ) );
+		$this->add_control( 'pk_btn_bg_h', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' button.pvl-pk-ok:hover, body .pvl-adder button.pvl-av-ok:hover' => 'background-color: {{VALUE}};' ) ) );
+		$this->add_control( 'pk_btn_color', array( 'label' => 'Text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' button.pvl-pk-ok, ' . $p . ' button.pvl-pk-ok:hover, body .pvl-adder button.pvl-av-ok' => 'color: {{VALUE}};' ) ) );
+		$this->add_responsive_control( 'pk_btn_r', array( 'label' => 'Colțuri', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 40 ) ), 'selectors' => array( $p . ' button.pvl-pk-ok, body .pvl-adder button.pvl-av-ok' => 'border-radius: {{SIZE}}{{UNIT}};' ) ) );
+		$this->end_controls_section();
 	}
 
 	/* buton cu iconiță (×): mărime, iconiță, chenar, colțuri, culori normal / hover — prin variabile (ferite de stilul temei) */
@@ -551,6 +605,15 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 			't-browse'   => (string) ( $s['dw_browse'] ?? '' ),
 			'browse-url' => '' !== trim( (string) ( $s['dw_browse_url'] ?? '' ) ) ? Pavva_W_Lista::resolve_url( $s['dw_browse_url'] ) : '',
 			'form'       => $form,
+			't-bar-label' => (string) ( $s['bar_label'] ?? '' ),
+			't-bar-see'   => (string) ( $s['bar_see'] ?? '' ),
+			't-bar-added' => (string) ( $s['bar_added'] ?? '' ),
+			'pick'        => 'yes' === ( $s['pick'] ?? 'yes' ) ? '1' : '0',
+			't-pk-title'  => (string) ( $s['pk_title'] ?? '' ),
+			't-pk-add'    => (string) ( $s['pk_add'] ?? '' ),
+			't-pk-save'   => (string) ( $s['pk_save'] ?? '' ),
+			't-pk-cancel' => (string) ( $s['pk_cancel'] ?? '' ),
+			't-pk-note'   => (string) ( $s['pk_note'] ?? '' ),
 		);
 		$out = '';
 		foreach ( $a as $k => $v ) $out .= ' data-pvl-' . $k . '="' . esc_attr( $v ) . '"';

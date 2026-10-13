@@ -103,10 +103,49 @@ final class Pavva_W_Lista {
 		);
 	}
 
+	/* variantele pe care clientul le poate alege la adăugare: culorile (cu thumbnail) și grosimile (din Dimensiuni) */
+	public static function variants( int $pid ): array {
+		$out = array( 'colors' => array(), 'thick' => array() );
+		if ( ! $pid || ! class_exists( 'Pavva_W_Data' ) ) return $out;
+		foreach ( Pavva_W_Data::visible_items( Pavva_W_Data::items( $pid, Pavva_W_Data::META_CULORI ) ) as $c ) {
+			$name = self::txt( $c['denumire'] ?? '' );
+			if ( '' === $name ) continue;
+			$tid   = absint( $c['thumbnail_id'] ?? 0 );
+			$thumb = $tid ? wp_get_attachment_image_url( $tid, 'thumbnail' ) : '';
+			$out['colors'][] = array( 'n' => $name, 't' => $thumb ? (string) $thumb : '' );
+		}
+		$seen = array();
+		foreach ( Pavva_W_Data::visible_items( Pavva_W_Data::items( $pid, Pavva_W_Data::META_DIM ) ) as $row ) {
+			foreach ( Pavva_W_Data::dimension_item_specs( $row, $pid ) as $spec ) {
+				$label = (string) ( $spec['eticheta'] ?? '' );
+				if ( ! preg_match( '/grosim/i', remove_accents( $label ) ) ) continue;
+				$val = self::txt( $spec['valoare'] ?? '' );
+				if ( '' === $val ) continue;
+				/* „4” cu eticheta „Grosime (cm)” → „4 cm” */
+				if ( preg_match( '/^[\d.,]+$/', $val ) && preg_match( '/\((cm|mm)\)/i', $label, $u ) ) $val .= ' ' . strtolower( $u[1] );
+				$k = strtolower( $val );
+				if ( isset( $seen[ $k ] ) ) continue;
+				$seen[ $k ]       = true;
+				$out['thick'][] = $val;
+			}
+		}
+		usort( $out['thick'], function ( $a, $b ) { return floatval( str_replace( ',', '.', $a ) ) <=> floatval( str_replace( ',', '.', $b ) ); } );
+		return $out;
+	}
+
+	/* datele produsului + variantele (pentru butoanele „Adaugă la ofertă”) */
+	public static function item_full( int $pid ): array {
+		$it = self::item( $pid );
+		if ( ! $it ) return $it;
+		$v = self::variants( $pid );
+		if ( $v['colors'] || $v['thick'] ) $it['opts'] = $v;
+		return $it;
+	}
+
 	/* pe pagina unui produs: datele lui, pentru elementele cu clasa pv-oferta-add / pv-oferta-go */
 	public static function current_product() {
 		if ( ! function_exists( 'is_product' ) || ! is_product() ) return;
-		$item = self::item( (int) get_queried_object_id() );
+		$item = self::item_full( (int) get_queried_object_id() );
 		if ( ! $item ) return;
 		echo '<script id="pavva-lista-produs">window.PavvaListaCurrent=' . wp_json_encode( $item ) . ';</script>' . "\n"; // phpcs:ignore
 	}
