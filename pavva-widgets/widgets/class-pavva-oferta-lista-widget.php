@@ -231,7 +231,46 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 		$this->add_control( 'rm_heading', array( 'label' => 'Butonul de ștergere', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
 		$this->add_control( 'rm_color', array( 'label' => 'Culoare', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel( '.pvl-remove' ) => 'color: {{VALUE}};' ) ) );
 		$this->add_control( 'rm_color_hover', array( 'label' => 'Culoare la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel( '.pvl-remove:hover' ) => 'color: {{VALUE}};' ) ) );
+		$this->add_control( 'rm_bg', array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel( '.pvl-remove' ) => 'background-color: {{VALUE}};' ) ) );
 		$this->add_control( 'rm_bg_hover', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $this->sel( '.pvl-remove:hover' ) => 'background-color: {{VALUE}};' ) ) );
+		$this->add_responsive_control(
+			'rm_size',
+			array(
+				'label'      => 'Mărime buton',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 20, 'max' => 64 ) ),
+				'selectors'  => array( $this->sel( '.pvl-remove' ) => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'rm_icon',
+			array(
+				'label'      => 'Mărime ×',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 8, 'max' => 32 ) ),
+				'selectors'  => array( $this->sel( '.pvl-remove svg' ) => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_control(
+			'rm_stroke',
+			array(
+				'label'     => 'Grosime linie ×',
+				'type'      => Controls_Manager::SLIDER,
+				'range'     => array( 'px' => array( 'min' => 1, 'max' => 4, 'step' => 0.5 ) ),
+				'selectors' => array( $this->sel( '.pvl-remove svg path' ) => 'stroke-width: {{SIZE}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'rm_radius',
+			array(
+				'label'      => 'Colțuri',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%' ),
+				'selectors'  => array( $this->sel( '.pvl-remove' ) => 'border-radius: {{SIZE}}{{UNIT}};' ),
+			)
+		);
 		$this->end_controls_section();
 	}
 

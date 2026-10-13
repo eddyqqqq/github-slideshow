@@ -213,6 +213,66 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+
+		/* ---------- bara de jos „Oferta ta · Vezi oferta” (e una pe tot site-ul: se stilizează de aici, din header) ---------- */
+		$bar = 'body .pvl-toast';
+		$this->start_controls_section( 'section_style_bar', array( 'label' => 'Bara de jos (pe tot site-ul)', 'tab' => Controls_Manager::TAB_STYLE ) );
+		$this->add_control( 'bar_note', array( 'type' => Controls_Manager::RAW_HTML, 'raw' => 'Bara apare jos pe ecran cât lista de ofertă are produse. Stilul de aici se aplică pe toate paginile cu acest header.', 'content_classes' => 'elementor-descriptor' ) );
+		$this->add_control( 'bar_bg', array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $bar => 'background-color: {{VALUE}};' ) ) );
+		$this->add_control( 'bar_color', array( 'label' => 'Culoare text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $bar => 'color: {{VALUE}};' ) ) );
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'bar_typo', 'label' => 'Font', 'selector' => $bar ) );
+		$this->add_responsive_control(
+			'bar_radius',
+			array(
+				'label'      => 'Colțuri rotunjite',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
+				'selectors'  => array( $bar => 'border-radius: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'bar_bottom',
+			array(
+				'label'      => 'Distanța de jos',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 80 ) ),
+				'selectors'  => array( $bar => 'bottom: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+
+		$this->add_control( 'bar_btn_heading', array( 'label' => 'Butonul „Vezi oferta”', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$this->add_control( 'bar_btn_bg', array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast .pvl-toast-a' => 'background-color: {{VALUE}};' ) ) );
+		$this->add_control( 'bar_btn_color', array( 'label' => 'Text', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast .pvl-toast-a' => 'color: {{VALUE}};' ) ) );
+		$this->add_control( 'bar_btn_bg_h', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast .pvl-toast-a:hover, body .pvl-toast .pvl-toast-a:focus-visible' => 'background-color: {{VALUE}};' ) ) );
+		$this->add_control( 'bar_btn_color_h', array( 'label' => 'Text la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast .pvl-toast-a:hover, body .pvl-toast .pvl-toast-a:focus-visible' => 'color: {{VALUE}};' ) ) );
+		$this->add_responsive_control(
+			'bar_btn_radius',
+			array(
+				'label'      => 'Colțuri buton',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
+				'selectors'  => array( 'body .pvl-toast .pvl-toast-a' => 'border-radius: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+
+		$this->add_control( 'bar_x_heading', array( 'label' => 'Butonul × (ascunde bara)', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$this->add_control( 'bar_x_color', array( 'label' => 'Culoare', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast .pvl-toast-x' => 'color: {{VALUE}}; opacity: 1;' ) ) );
+		$this->add_control( 'bar_x_color_h', array( 'label' => 'Culoare la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast .pvl-toast-x:hover, body .pvl-toast .pvl-toast-x:focus-visible' => 'color: {{VALUE}};' ) ) );
+		$this->add_control( 'bar_x_bg_h', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( 'body .pvl-toast .pvl-toast-x:hover, body .pvl-toast .pvl-toast-x:focus-visible' => 'background-color: {{VALUE}};' ) ) );
+		$this->add_responsive_control(
+			'bar_x_size',
+			array(
+				'label'      => 'Mărime ×',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 8, 'max' => 32 ) ),
+				'selectors'  => array( 'body .pvl-toast .pvl-toast-x svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->end_controls_section();
 	}
 
 	protected function render() {
