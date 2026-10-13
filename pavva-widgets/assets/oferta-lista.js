@@ -804,13 +804,32 @@
 		var chipsHTML = '<button type="button" class="pvl-chip is-on" aria-pressed="true" data-pvl-cat="">' + esc(txt('all', 'Toate')) + '</button>';
 		cats.forEach(function (c) { if (!c.depth) chipsHTML += '<button type="button" class="pvl-chip" aria-pressed="false" data-pvl-cat="' + esc(c.name) + '">' + esc(c.name) + '</button>'; });
 		chips.innerHTML = chipsHTML;
+		/* ordinea categoriilor din site (Pavele Premium → … → Bolțari): „Toate” arată produsele grupate așa */
+		var catOrder = {};
+		cats.forEach(function (c, i) { if (catOrder[norm(c.name)] === undefined) catOrder[norm(c.name)] = i; });
+		var rank = function (p) {
+			var r = catOrder[norm(p.cat)];
+			if (r === undefined) (p.cats || []).forEach(function (n) { var x = catOrder[norm(n)]; if (x !== undefined && (r === undefined || x < r)) r = x; });
+			return r === undefined ? 9999 : r;
+		};
+		var ordered = prods.map(function (p, i) { return { p: p, i: i, r: rank(p) }; })
+			.sort(function (a, b) { return a.r - b.r || a.i - b.i; });
+		function tile(x) {
+			return '<button type="button" class="pvl-tile" data-pvl-i="' + x.i + '">' +
+				'<span class="pvl-tile-img">' + (x.p.img ? '<img src="' + esc(x.p.img) + '" alt="" loading="lazy" decoding="async">' : '') + '</span>' +
+				'<span class="pvl-tile-n">' + esc(x.p.name) + '</span></button>';
+		}
 		function drawTiles() {
-			var h = '';
-			prods.forEach(function (p, i) {
-				if (curCat && !(p.cats || []).some(function (n) { return norm(n) === norm(curCat); })) return;
-				h += '<button type="button" class="pvl-tile" data-pvl-i="' + i + '">' +
-					'<span class="pvl-tile-img">' + (p.img ? '<img src="' + esc(p.img) + '" alt="" loading="lazy" decoding="async">' : '') + '</span>' +
-					'<span class="pvl-tile-n">' + esc(p.name) + '</span></button>';
+			var h = '', last = null;
+			ordered.forEach(function (x) {
+				if (curCat && !(x.p.cats || []).some(function (n) { return norm(n) === norm(curCat); })) return;
+				/* la „Toate”: titlul categoriei înaintea fiecărui grup */
+				if (!curCat && x.r !== last) {
+					last = x.r;
+					var name = x.r < cats.length ? cats[x.r].name : txt('other', 'Alte produse');
+					h += '<p class="pvl-tiles-cat">' + esc(name) + '</p>';
+				}
+				h += tile(x);
 			});
 			tiles.innerHTML = h || '<p class="pvl-none">' + esc(txt('none', 'Nu sunt produse în această categorie.')) + '</p>';
 		}

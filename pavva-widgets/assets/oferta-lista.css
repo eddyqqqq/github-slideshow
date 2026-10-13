@@ -375,3 +375,6 @@ html.pvl-pk-open, html.pvl-pk-open body { overflow: hidden; }
 }
 .pvl-adder button.pvl-adder-x:hover, .pvl-adder button.pvl-adder-x:focus-visible { background: #f4f1ed; color: #AB5525; }
 .pvl-adder-x svg { width: 18px; height: 18px; }
+/* „Toate”: titlul fiecărei categorii ocupă tot rândul din grilă */
+.pvl-tiles-cat { grid-column: 1 / -1; margin: 8px 0 0; font-size: 14px; font-weight: 700; color: #AB5525; }
+.pvl-tiles-cat:first-child { margin-top: 0; }
