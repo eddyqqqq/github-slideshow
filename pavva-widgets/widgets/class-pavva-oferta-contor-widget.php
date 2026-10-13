@@ -92,6 +92,53 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		$this->end_controls_section();
 
 		/* ---------- Panoul lateral cu produsele ---------- */
+		/* previzualizare în editor: bara și panoul apar direct pe pagină, ca să le poți stiliza pe loc */
+		$this->start_controls_section( 'section_preview', array( 'label' => 'Previzualizare în editor' ) );
+		$this->add_control(
+			'preview_note',
+			array(
+				'type'            => Controls_Manager::RAW_HTML,
+				'raw'             => 'Doar în editorul Elementor: arată bara de jos și panoul cu produse (cu produse reale ca exemplu), ca să vezi pe loc ce schimbi în Style. Pe site nu apar decât când vizitatorul are produse în listă.',
+				'content_classes' => 'elementor-descriptor',
+			)
+		);
+		$this->add_control(
+			'preview_bar',
+			array(
+				'label'        => 'Arată bara de jos',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => '',
+			)
+		);
+		$this->add_control(
+			'preview_drawer',
+			array(
+				'label'        => 'Arată panoul cu produse',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => '',
+			)
+		);
+		$this->add_control(
+			'preview_empty',
+			array(
+				'label'        => 'Panoul cu lista goală',
+				'description'  => 'Ca să stilizezi textul și butonul „Vezi produsele”.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => '',
+				'condition'    => array( 'preview_drawer' => 'yes' ),
+			)
+		);
+		$this->end_controls_section();
+
 		$this->start_controls_section( 'section_drawer', array( 'label' => 'Panoul cu produse' ) );
 		$this->add_control(
 			'drawer',
@@ -533,5 +580,44 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 			</a>
 		</div>
 		<?php
+		if ( $edit ) $this->editor_preview( $s, $url );
+	}
+
+	/* bara de jos și panoul, doar în editor (aceleași clase ca pe site: stilurile din Style se văd imediat) */
+	private function editor_preview( $s, $url ) {
+		$bar    = 'yes' === ( $s['preview_bar'] ?? '' );
+		$drawer = 'yes' === ( $s['preview_drawer'] ?? '' ) && 'yes' === ( $s['drawer'] ?? 'yes' );
+		if ( ! $bar && ! $drawer ) return;
+		$x     = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+		$items = array();
+		foreach ( array_slice( array_keys( Pavva_W_Lista::product_options() ), 0, 3 ) as $pid ) {
+			$it = Pavva_W_Lista::item( (int) $pid );
+			if ( $it ) $items[] = $it;
+		}
+		$t = function ( $k, $def ) use ( $s ) { $v = trim( (string) ( $s[ $k ] ?? '' ) ); return '' !== $v ? $v : $def; };
+		echo '<div class="pvl-editor-preview" data-pvl-preview>';
+		if ( $bar ) {
+			echo '<div class="pvl-toast is-on pvl-toast-preview"><span class="pvl-toast-t">' . esc_html( $t( 'dw_title', 'Oferta ta' ) ) . ': <strong>' . esc_html( count( $items ) . ' produse' ) . '</strong></span>'
+				. '<a class="pvl-toast-a" href="' . esc_url( $url ) . '">Vezi oferta</a>'
+				. '<button type="button" class="pvl-toast-x" aria-label="Ascunde bara">' . $x . '</button></div>'; // phpcs:ignore -- SVG fix
+		}
+		if ( $drawer ) {
+			$empty = 'yes' === ( $s['preview_empty'] ?? '' );
+			$side  = 'left' === ( $s['drawer_side'] ?? 'right' ) ? 'left' : 'right';
+			echo '<div class="pvl-drawer pvl-drawer-' . esc_attr( $side ) . ' is-open pvl-drawer-preview' . ( $empty ? ' is-empty' : '' ) . '">';
+			echo '<div class="pvl-dw-overlay"></div><div class="pvl-dw-panel">';
+			echo '<div class="pvl-dw-head"><h2 class="pvl-dw-title">' . esc_html( $t( 'dw_title', 'Oferta ta' ) ) . '<span class="pvl-dw-count">' . ( $empty ? '' : ' (' . count( $items ) . ')' ) . '</span></h2><button type="button" class="pvl-dw-x" aria-label="Închide">' . $x . '</button></div>'; // phpcs:ignore -- SVG fix
+			echo '<div class="pvl-dw-body"><div class="pvl-list pvl-dw-list" data-pvl-drawer-list data-pvl-preview><ul class="pvl-items">';
+			foreach ( $items as $it ) {
+				echo '<li class="pvl-item"><span class="pvl-media">' . ( $it['img'] ? '<img src="' . esc_url( $it['img'] ) . '" alt="">' : '' ) . '</span>'
+					. '<span class="pvl-info"><a class="pvl-name" href="' . esc_url( $it['url'] ) . '">' . esc_html( $it['name'] ) . '</a>' . ( $it['cat'] ? '<span class="pvl-cat">' . esc_html( $it['cat'] ) . '</span>' : '' ) . '</span>'
+					. '<button type="button" class="pvl-remove" aria-label="Scoate din ofertă">' . $x . '</button></li>'; // phpcs:ignore -- SVG fix
+			}
+			echo '</ul></div>';
+			echo '<div class="pvl-dw-empty"><p>' . esc_html( $t( 'dw_empty', 'Nu ai adăugat încă niciun produs. Apasă „Adaugă la ofertă” pe produsele care te interesează.' ) ) . '</p><button type="button" class="pvl-dw-browse">' . esc_html( $t( 'dw_browse', 'Vezi produsele' ) ) . '</button></div></div>';
+			echo '<div class="pvl-dw-foot"><a class="pvl-dw-cta" href="' . esc_url( $url ) . '">' . esc_html( $t( 'dw_cta', 'Solicită ofertă' ) ) . '</a><button type="button" class="pvl-dw-more">' . esc_html( $t( 'dw_more', 'Continuă să alegi' ) ) . '</button></div>';
+			echo '</div></div>';
+		}
+		echo '</div>';
 	}
 }
