@@ -151,6 +151,35 @@ final class Pavva_W_Lista {
 	}
 
 	/* toate produsele (pentru alegerea din widgetul Buton ofertă) */
+	/* editorul Elementor: etichetele de variantă pentru produsele de exemplu (prima culoare + prima grosime, sau „nehotărâtă”) */
+	public static function preview_tags( int $pid, bool $undec = false ): string {
+		$v = self::variants( $pid );
+		$h = '';
+		if ( $undec ) {
+			if ( $v['colors'] ) $h .= '<span class="pvl-var-c is-undec">Culoare: nehotărâtă</span>';
+			if ( $v['thick'] ) $h .= '<span class="pvl-var-t is-undec">Grosime: nehotărâtă</span>';
+		} else {
+			if ( $v['colors'] ) {
+				$c  = $v['colors'][0];
+				$h .= '<span class="pvl-var-c' . ( $c['t'] ? ' has-sw' : '' ) . '">' . ( $c['t'] ? '<img src="' . esc_url( $c['t'] ) . '" alt="">' : '' ) . esc_html( $c['n'] ) . '</span>';
+			}
+			if ( $v['thick'] ) $h .= '<span class="pvl-var-t">' . esc_html( $v['thick'][0] ) . '</span>';
+		}
+		return '' !== $h ? '<span class="pvl-var">' . $h . '</span>' : '';
+	}
+
+	/* produse de exemplu pentru editor: întâi cele cu culori, ca etichetele să se vadă */
+	public static function preview_ids( int $n ): array {
+		$all  = array_map( 'intval', array_keys( self::product_options() ) );
+		$with = array();
+		foreach ( $all as $id ) {
+			$v = self::variants( $id );
+			if ( $v['colors'] && $v['thick'] ) $with[] = $id;
+			if ( count( $with ) >= $n ) break;
+		}
+		return array_slice( array_merge( $with, array_diff( $all, $with ) ), 0, $n );
+	}
+
 	public static function product_options(): array {
 		$out = array();
 		$ids = get_posts( array( 'post_type' => 'product', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC', 'fields' => 'ids' ) );

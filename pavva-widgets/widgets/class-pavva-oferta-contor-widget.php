@@ -17,7 +17,10 @@ use Elementor\Icons_Manager;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 
+require_once __DIR__ . '/trait-pavva-oferta-stil.php';
+
 class Pavva_Oferta_Contor_Widget extends Widget_Base {
+	use Pavva_Oferta_Stil;
 
 	public function get_name() { return 'pavva_oferta_contor'; }
 	public function get_title() { return 'Pavva – Oferta ta'; }
@@ -527,6 +530,10 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		$this->icon_button_controls( 'dw_x', $p, 'dx' );
 		$this->end_controls_section();
 
+		$this->start_controls_section( 'section_style_dw_tags', array( 'label' => 'Panoul cu produse: etichete culoare / grosime', 'tab' => Controls_Manager::TAB_STYLE, 'condition' => array( 'drawer' => 'yes' ) ) );
+		$this->pvl_tag_controls( 'dw_tag', $p );
+		$this->end_controls_section();
+
 		$this->picker_style_controls();
 	}
 
@@ -540,8 +547,9 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		$this->add_control( 'pk_overlay', array( 'label' => 'Fundal întunecat', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-pk-overlay' => 'background-color: {{VALUE}};' ) ) );
 		$this->add_responsive_control( 'pk_radius', array( 'label' => 'Colțuri fereastră', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 32 ) ), 'selectors' => array( $p . ' .pvl-pk-box' => 'border-radius: {{SIZE}}{{UNIT}};' ) ) );
 		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'pk_title_typo', 'label' => 'Font titlu', 'selector' => $p . ' .pvl-pk-title' ) );
-		$this->add_control( 'pk_sw_bg', array( 'label' => 'Fundal culori', 'type' => Controls_Manager::COLOR, 'separator' => 'before', 'selectors' => array( $p . ' button.pvl-pk-color, body .pvl-adder button.pvl-pk-color' => 'background-color: {{VALUE}};' ) ) );
-		$this->add_responsive_control( 'pk_sw_min', array( 'label' => 'Mărime culori', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 60, 'max' => 180 ) ), 'selectors' => array( $p . ' .pvl-pk-colors, body .pvl-adder .pvl-pk-colors' => 'grid-template-columns: repeat(auto-fill, minmax({{SIZE}}{{UNIT}}, 1fr));' ) ) );
+		$this->add_responsive_control( 'pk_sw_min', array( 'label' => 'Mărime culori', 'separator' => 'before', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 60, 'max' => 180 ) ), 'selectors' => array( $p . ' .pvl-pk-colors, body .pvl-adder .pvl-pk-colors' => 'grid-template-columns: repeat(auto-fill, minmax({{SIZE}}{{UNIT}}, 1fr));' ) ) );
+		/* culori + grosimi: același stil în fereastră și în formular („Adaugă produs”) */
+		$this->pvl_choice_controls( 'pk', $p . ', body .pvl-adder', function ( $x ) use ( $p ) { return $p . ' ' . $x . ', body .pvl-adder ' . $x; } );
 		$this->add_control( 'pk_btn_h', array( 'label' => 'Butonul principal', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
 		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'pk_btn_typo', 'label' => 'Font', 'selector' => $p . ' button.pvl-pk-ok' ) );
 		$this->add_control( 'pk_btn_bg_h', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' button.pvl-pk-ok:hover, body .pvl-adder button.pvl-av-ok:hover' => 'background-color: {{VALUE}};' ) ) );
@@ -653,9 +661,9 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		if ( ! $bar && ! $drawer ) return;
 		$x     = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
 		$items = array();
-		foreach ( array_slice( array_keys( Pavva_W_Lista::product_options() ), 0, 3 ) as $pid ) {
+		foreach ( Pavva_W_Lista::preview_ids( 3 ) as $i => $pid ) {
 			$it = Pavva_W_Lista::item( (int) $pid );
-			if ( $it ) $items[] = $it;
+			if ( $it ) $items[] = $it + array( 'tags' => Pavva_W_Lista::preview_tags( (int) $pid, 1 === $i ) );
 		}
 		$t = function ( $k, $def ) use ( $s ) { $v = trim( (string) ( $s[ $k ] ?? '' ) ); return '' !== $v ? $v : $def; };
 		echo '<div class="pvl-editor-preview" data-pvl-preview>';
@@ -673,7 +681,7 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 			echo '<div class="pvl-dw-body"><div class="pvl-list pvl-dw-list" data-pvl-drawer-list data-pvl-preview><ul class="pvl-items">';
 			foreach ( $items as $it ) {
 				echo '<li class="pvl-item"><span class="pvl-media">' . ( $it['img'] ? '<img src="' . esc_url( $it['img'] ) . '" alt="">' : '' ) . '</span>'
-					. '<span class="pvl-info"><a class="pvl-name" href="' . esc_url( $it['url'] ) . '">' . esc_html( $it['name'] ) . '</a>' . ( $it['cat'] ? '<span class="pvl-cat">' . esc_html( $it['cat'] ) . '</span>' : '' ) . '</span>'
+					. '<span class="pvl-info"><a class="pvl-name" href="' . esc_url( $it['url'] ) . '">' . esc_html( $it['name'] ) . '</a>' . ( $it['cat'] ? '<span class="pvl-cat">' . esc_html( $it['cat'] ) . '</span>' : '' ) . $it['tags'] . '</span>'
 					. '<button type="button" class="pvl-remove" aria-label="Scoate din ofertă">' . $x . '</button></li>'; // phpcs:ignore -- SVG fix
 			}
 			echo '</ul></div>';

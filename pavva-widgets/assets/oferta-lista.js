@@ -269,6 +269,13 @@
 	function each(sel, fn) { Array.prototype.forEach.call(d.querySelectorAll(sel), fn); }
 
 	var X = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+	/* eticheta unei variante în listă; „Nu m-am hotărât încă” apare scurt, cu numele criteriului („Culoare: nehotărâtă”) */
+	function tag(v, k, img) {
+		if (!v) return '';
+		var cls = 'pvl-var-' + k;
+		if (norm(v) === norm(undec())) return '<span class="' + cls + ' is-undec" title="' + esc(v) + '">' + esc((k === 'c' ? txt('color', 'Culoare') : txt('thick', 'Grosime')) + ': ' + txt('undecShort', 'nehotărâtă')) + '</span>';
+		return '<span class="' + cls + (img ? ' has-sw' : '') + '">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : '') + esc(v) + '</span>';
+	}
 	function renderList(box) {
 		if (box.hasAttribute('data-pvl-preview')) return; /* în editorul Elementor rămân produsele de exemplu */
 		var list = read();
@@ -283,9 +290,7 @@
 				'<span class="pvl-info">' +
 				(it.url ? '<a class="pvl-name" href="' + esc(it.url) + '">' + esc(it.name) + '</a>' : '<span class="pvl-name">' + esc(it.name) + '</span>') +
 				(showCat && it.cat ? '<span class="pvl-cat">' + esc(it.cat) + '</span>' : '') +
-				((it.color || it.thick) ? '<span class="pvl-var">' +
-					(it.color ? '<span class="pvl-var-c">' + (it.ct ? '<img src="' + esc(it.ct) + '" alt="" loading="lazy">' : '') + esc(it.color) + '</span>' : '') +
-					(it.thick ? '<span class="pvl-var-t">' + esc(it.thick) + '</span>' : '') + '</span>' : '') +
+				((it.color || it.thick) ? '<span class="pvl-var">' + tag(it.color, 'c', it.ct) + tag(it.thick, 't') + '</span>' : '') +
 				(hasOpts(it) ? '<button type="button" class="pvl-edit" data-pvl-edit="' + esc(keyOf(it)) + '" aria-label="' + esc(txt('edit', 'Modifică') + ': ' + it.name) + '">' + esc(needsChoice(it) ? txt('choose', 'Alege culoarea / grosimea') : txt('edit', 'Modifică')) + '</button>' : '') +
 				'</span>' +
 				'<button type="button" class="pvl-remove" data-pvl-remove="' + esc(keyOf(it)) + '" aria-label="' + esc(txt('remove', 'Scoate din ofertă') + ': ' + it.name + (varText(it) ? ' (' + varText(it) + ')' : '')) + '">' + X + '</button>' +
@@ -803,7 +808,7 @@
 				'<div class="pvl-adder-head"><p class="pvl-adder-title">' + esc(txt('pickTitle', 'Alege produsul')) + '</p>' +
 				'<button type="button" class="pvl-adder-x" aria-label="' + esc(txt('close', 'Închide')) + '">' + X + '</button></div>' +
 				'<p class="pvl-step">' + esc(txt('step1', 'Categorie')) + '</p><div class="pvl-chips" role="group" aria-label="' + esc(txt('step1', 'Categorie')) + '"></div>' +
-				'<p class="pvl-step">' + esc(txt('step2', 'Produs')) + '</p><div class="pvl-tiles"></div>' +
+				'<p class="pvl-step">' + esc(txt('step2', 'Produs')) + '</p><div class="pvl-tiles" data-lenis-prevent></div>' +
 				'<div class="pvl-adder-var" hidden></div>' +
 			'</div>' +
 			'<p class="pvl-adder-err" role="alert" hidden>' + esc(txt('needOne', 'Adaugă cel puțin un produs în ofertă.')) + '</p>';

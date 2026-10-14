@@ -18,7 +18,10 @@ use Elementor\Utils;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 
+require_once __DIR__ . '/trait-pavva-oferta-stil.php';
+
 class Pavva_Oferta_Lista_Widget extends Widget_Base {
+	use Pavva_Oferta_Stil;
 
 	public function get_name() { return 'pavva_oferta_lista'; }
 	public function get_title() { return 'Pavva – Listă ofertă'; }
@@ -125,6 +128,19 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 				'return_value' => 'yes',
 				'default'      => 'yes',
 				'condition'    => array( 'into_form' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'preview_adder',
+			array(
+				'label'        => 'Arată panoul „Adaugă produs” în editor',
+				'description'  => 'Doar în editor, ca să poți stiliza categoriile, produsele și etichetele.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => 'yes',
+				'condition'    => array( 'into_form' => 'yes', 'picker' => 'yes' ),
 			)
 		);
 		$this->add_control(
@@ -302,6 +318,45 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 			)
 		);
 		$this->end_controls_section();
+
+		/* ---------- Stil: etichetele de variantă („Portocaliu”, „6 cm”) ---------- */
+		$this->start_controls_section( 'section_style_tags', array( 'label' => 'Etichete culoare / grosime', 'tab' => Controls_Manager::TAB_STYLE ) );
+		$this->pvl_tag_controls( 'tag', $this->sel() );
+		$this->end_controls_section();
+
+		/* ---------- Stil: panoul „Adaugă produs” din formular ---------- */
+		$a = $this->sel( '.pvl-adder' );
+		$this->start_controls_section( 'section_style_adder', array( 'label' => 'Panoul „Adaugă produs”', 'tab' => Controls_Manager::TAB_STYLE, 'condition' => array( 'into_form' => 'yes', 'picker' => 'yes' ) ) );
+		$this->add_control( 'ad_bg', array( 'label' => 'Fundal panou', 'type' => Controls_Manager::COLOR, 'selectors' => array( $a . ' .pvl-adder-panel' => 'background-color: {{VALUE}};' ) ) );
+		$this->add_control( 'ad_bd', array( 'label' => 'Culoare chenar panou', 'type' => Controls_Manager::COLOR, 'selectors' => array( $a . ' .pvl-adder-panel' => 'border-color: {{VALUE}};' ) ) );
+		$this->add_responsive_control( 'ad_bw', array( 'label' => 'Grosime chenar panou', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 6 ) ), 'selectors' => array( $a . ' .pvl-adder-panel' => 'border-width: {{SIZE}}{{UNIT}}; border-style: solid;' ) ) );
+		$this->add_responsive_control( 'ad_r', array( 'label' => 'Colțuri panou', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 30 ) ), 'selectors' => array( $a . ' .pvl-adder-panel' => 'border-radius: {{SIZE}}{{UNIT}};' ) ) );
+		$this->add_responsive_control( 'ad_p', array( 'label' => 'Padding panou', 'type' => Controls_Manager::DIMENSIONS, 'size_units' => array( 'px' ), 'selectors' => array( $a . ' .pvl-adder-panel' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ) ) );
+		$this->add_control( 'ad_title_c', array( 'label' => 'Culoare titlu „Alege produsul”', 'type' => Controls_Manager::COLOR, 'separator' => 'before', 'selectors' => array( $a . ' .pvl-adder-title' => 'color: {{VALUE}};' ) ) );
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'ad_title_typo', 'label' => 'Font titlu', 'selector' => $a . ' .pvl-adder-title' ) );
+		$this->add_control( 'ad_step_c', array( 'label' => 'Culoare „Categorie” / „Produs”', 'type' => Controls_Manager::COLOR, 'selectors' => array( $a . ' .pvl-step' => 'color: {{VALUE}}; opacity: 1;' ) ) );
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'ad_step_typo', 'label' => 'Font „Categorie” / „Produs”', 'selector' => $a . ' .pvl-step' ) );
+
+		$this->add_control( 'ad_h_ch', array( 'label' => 'Categorii (butoane)', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$this->pvl_state_tabs( 'ad_ch', $a, 'ch', array( '' => 'Normal', '-h' => 'Hover', '-on' => 'Selectat' ) );
+		$this->pvl_size( 'ad_ch_bw', 'Grosime chenar', $a, 'ch-bw', 6, array( 'px' ), array( 'separator' => 'before' ) );
+		$this->pvl_size( 'ad_ch_r', 'Colțuri', $a, 'ch-r', 40, array( 'px', '%' ) );
+		$this->pvl_pad( 'ad_ch_p', 'Padding', $a, 'ch-p' );
+		$this->pvl_size( 'ad_ch_fs', 'Mărime text', $a, 'ch-fs', 24 );
+
+		$this->add_control( 'ad_h_ti', array( 'label' => 'Produse (carduri cu poză)', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$this->pvl_state_tabs( 'ad_ti', $a, 'ti', array( '' => 'Normal', '-h' => 'Hover' ) );
+		$this->pvl_size( 'ad_ti_bw', 'Grosime chenar', $a, 'ti-bw', 6, array( 'px' ), array( 'separator' => 'before' ) );
+		$this->pvl_size( 'ad_ti_r', 'Colțuri card', $a, 'ti-r', 30 );
+		$this->pvl_size( 'ad_ti_img_r', 'Colțuri poză', $a, 'ti-img-r', 30 );
+		$this->pvl_pad( 'ad_ti_p', 'Padding card', $a, 'ti-p' );
+		$this->pvl_size( 'ad_ti_gap', 'Spațiu între carduri', $a, 'ti-gap', 40 );
+		$this->pvl_size( 'ad_ti_mh', 'Înălțime listă (apoi scroll)', $a, 'ti-mh', 900, array( 'px', 'vh' ), array( 'range' => array( 'px' => array( 'min' => 200, 'max' => 900 ), 'vh' => array( 'min' => 20, 'max' => 90 ) ) ) );
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'ad_ti_typo', 'label' => 'Font nume produs', 'selector' => $a . ' .pvl-tile-n' ) );
+		$this->add_control( 'ad_tc_c', array( 'label' => 'Culoare titlu categorie (la „Toate”)', 'type' => Controls_Manager::COLOR, 'separator' => 'before', 'selectors' => array( $a . ' .pvl-tiles-cat' => 'color: {{VALUE}};' ) ) );
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'ad_tc_typo', 'label' => 'Font titlu categorie', 'selector' => $a . ' .pvl-tiles-cat' ) );
+		$this->add_control( 'ad_note', array( 'type' => Controls_Manager::RAW_HTML, 'separator' => 'before', 'raw' => 'Culorile și grosimile de alegere (cardurile cu poză, butoanele de grosime) se stilizează din widgetul <strong>Oferta ta</strong> → Stil → <em>Fereastra culoare / grosime</em>: același stil e folosit și în fereastra de pe pagina produsului, și aici.', 'content_classes' => 'elementor-descriptor' ) );
+		$this->end_controls_section();
 	}
 
 	protected function render() {
@@ -316,9 +371,11 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 		/* în editor: câteva produse reale ca exemplu, ca să se poată stiliza */
 		$sample = array();
 		if ( $edit && class_exists( 'Pavva_W_Lista' ) ) {
-			foreach ( array_slice( array_keys( Pavva_W_Lista::product_options() ), 0, 2 ) as $pid ) $sample[] = Pavva_W_Lista::item( (int) $pid );
+			foreach ( Pavva_W_Lista::preview_ids( 2 ) as $i => $pid ) $sample[] = Pavva_W_Lista::item( (int) $pid ) + array( 'tags' => Pavva_W_Lista::preview_tags( (int) $pid, 1 === $i ) );
 		}
 		$classes = 'pvl-list' . ( $edit ? '' : ' is-empty' ) . ( '' === $empty ? ' pvl-hide-empty' : '' );
+		/* în editor arată ca în formular (butonul „Adaugă produs”, două coloane) */
+		if ( $edit && 'yes' === ( $s['into_form'] ?? 'yes' ) && 'yes' === ( $s['picker'] ?? 'yes' ) ) $classes .= ' pvl-in-form is-multi';
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" data-pvl-list data-pvl-img="<?php echo $img ? '1' : '0'; ?>" data-pvl-cat="<?php echo $cat ? '1' : '0'; ?>"<?php echo $edit ? ' data-pvl-preview' : ''; ?><?php echo ! $edit && 'yes' === ( $s['into_form'] ?? 'yes' ) ? ' data-pvl-into-form' : ''; ?> data-pvl-align="<?php echo 'yes' === ( $s['align_fields'] ?? 'yes' ) ? '1' : '0'; ?>" data-pvl-picker="<?php echo 'yes' === ( $s['picker'] ?? 'yes' ) ? '1' : '0'; ?>" data-pvl-pos="<?php echo 'fields' === ( $s['pos'] ?? 'top' ) ? 'fields' : 'top'; ?>">
 			<?php if ( '' !== $title ) : ?>
@@ -328,14 +385,41 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 				<?php foreach ( $sample as $it ) : ?>
 					<li class="pvl-item">
 						<?php if ( $img ) : ?><span class="pvl-media"><?php if ( $it['img'] ) : ?><img src="<?php echo esc_url( $it['img'] ); ?>" alt=""><?php endif; ?></span><?php endif; ?>
-						<span class="pvl-info"><span class="pvl-name"><?php echo esc_html( $it['name'] ); ?></span><?php if ( $cat && $it['cat'] ) : ?><span class="pvl-cat"><?php echo esc_html( $it['cat'] ); ?></span><?php endif; ?></span>
+						<span class="pvl-info"><span class="pvl-name"><?php echo esc_html( $it['name'] ); ?></span><?php if ( $cat && $it['cat'] ) : ?><span class="pvl-cat"><?php echo esc_html( $it['cat'] ); ?></span><?php endif; ?><?php echo $it['tags']; // phpcs:ignore -- HTML escapat în preview_tags ?></span>
 						<button type="button" class="pvl-remove" aria-label="Scoate din ofertă"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button>
 					</li>
 				<?php endforeach; ?>
 			</ul>
 			<?php if ( '' !== $empty ) : ?><p class="pvl-empty"><?php echo esc_html( $empty ); ?></p><?php endif; ?>
 			<?php if ( 'yes' === ( $s['show_clear'] ?? '' ) ) : ?><button type="button" class="pvl-clear" data-pvl-clear><?php echo esc_html( $s['clear_text'] ?? 'Golește lista' ); ?></button><?php endif; ?>
+			<?php if ( $edit && 'yes' === ( $s['into_form'] ?? 'yes' ) && 'yes' === ( $s['picker'] ?? 'yes' ) && 'yes' === ( $s['preview_adder'] ?? 'yes' ) ) $this->adder_preview(); ?>
 		</div>
 		<?php
+	}
+
+	/* editorul Elementor: panoul „Adaugă produs” deschis, cu categorii și câteva produse reale (pe site îl face oferta-lista.js) */
+	private function adder_preview() {
+		if ( ! class_exists( 'Pavva_W_Lista' ) ) return;
+		$items = array();
+		foreach ( array_slice( array_keys( Pavva_W_Lista::product_options() ), 0, 8 ) as $pid ) {
+			$it = Pavva_W_Lista::item( (int) $pid );
+			if ( $it ) $items[] = $it;
+		}
+		$cats = array();
+		foreach ( get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => true, 'parent' => 0 ) ) as $t ) {
+			if ( ! is_wp_error( $t ) && 'uncategorized' !== $t->slug ) $cats[] = $t->name;
+		}
+		$x = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+		echo '<div class="pvl-adder is-open">';
+		echo '<button type="button" class="pvl-add-btn" aria-expanded="true"><span class="pvl-add-plus" aria-hidden="true">+</span><span class="pvl-add-t">Adaugă încă un produs</span></button>';
+		echo '<div class="pvl-adder-panel"><div class="pvl-adder-head"><p class="pvl-adder-title">Alege produsul</p><button type="button" class="pvl-adder-x" aria-label="Închide">' . $x . '</button></div>'; // phpcs:ignore -- SVG fix
+		echo '<p class="pvl-step">Categorie</p><div class="pvl-chips"><button type="button" class="pvl-chip is-on">Toate</button>';
+		foreach ( array_slice( $cats, 0, 6 ) as $c ) echo '<button type="button" class="pvl-chip">' . esc_html( $c ) . '</button>';
+		echo '</div><p class="pvl-step">Produs</p><div class="pvl-tiles">';
+		if ( $items ) echo '<p class="pvl-tiles-cat">' . esc_html( $items[0]['cat'] ?: 'Produse' ) . '</p>';
+		foreach ( $items as $it ) {
+			echo '<button type="button" class="pvl-tile"><span class="pvl-tile-img">' . ( $it['img'] ? '<img src="' . esc_url( $it['img'] ) . '" alt="">' : '' ) . '</span><span class="pvl-tile-n">' . esc_html( $it['name'] ) . '</span></button>';
+		}
+		echo '</div></div></div>';
 	}
 }

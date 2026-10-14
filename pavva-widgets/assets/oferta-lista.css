@@ -221,10 +221,20 @@ html.pvl-dw-open, html.pvl-dw-open body { overflow: hidden; }
 .pvl-editor-preview .pvl-dw-panel { transition: none; }
 
 /* ---------- varianta în listă (culoare + grosime) și „Modifică” ---------- */
-.pvl-var { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 4px; font-size: .85em; }
-.pvl-var-c, .pvl-var-t { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px 2px 2px; border-radius: 999px; background: rgba(171, 85, 37, .08); color: inherit; }
-.pvl-var-t { padding: 2px 8px; }
-.pvl-var-c img { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; }
+/* etichetele se stilizează din widgeturi prin variabile (--pvl-tag-*) */
+.pvl-var { display: flex; flex-wrap: wrap; align-items: center; gap: var(--pvl-tag-gap, 6px); margin-top: 4px; font-size: var(--pvl-tag-fs, .85em); }
+.pvl-var .pvl-var-c, .pvl-var .pvl-var-t {
+	display: inline-flex; align-items: center; gap: 6px; max-width: 100%; box-sizing: border-box; line-height: 1.3;
+	padding: var(--pvl-tag-p, 3px 10px); border: var(--pvl-tag-bw, 0px) solid var(--pvl-tag-bd, transparent); border-radius: var(--pvl-tag-r, 999px);
+	background: var(--pvl-tag-bg, rgba(171, 85, 37, .08)); color: var(--pvl-tag-c, inherit); font-weight: var(--pvl-tag-fw, inherit);
+}
+.pvl-var .pvl-var-c.has-sw { padding-left: var(--pvl-tag-p-sw, 3px); }
+.pvl-var .pvl-var-c img {
+	flex: none; display: block; width: var(--pvl-tag-sw, 18px); height: var(--pvl-tag-sw, 18px); margin: 0; box-sizing: border-box; object-fit: cover;
+	border: var(--pvl-tag-sw-bw, 0px) solid var(--pvl-tag-sw-bd, transparent); border-radius: var(--pvl-tag-sw-r, 50%); box-shadow: none;
+}
+/* „Nu m-am hotărât încă”: chenar punctat, cu numele criteriului în față */
+.pvl-var .is-undec { border: max(var(--pvl-tag-bw, 0px), 1px) dashed var(--pvl-tag-un-bd, #cfc6bb); background: var(--pvl-tag-un-bg, transparent); color: var(--pvl-tag-un-c, inherit); }
 .pvl-items button.pvl-edit, .pvl-items button.pvl-edit:hover, .pvl-items button.pvl-edit:focus {
 	justify-self: start; margin: 4px 0 0; padding: 0; border: 0; border-radius: 0; min-height: 0; box-shadow: none; background: none;
 	color: var(--pvl-edit-c, #AB5525); font-family: inherit; font-size: .85em; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
@@ -263,19 +273,28 @@ html.pvl-pk-open, html.pvl-pk-open body { overflow: hidden; }
 .pvl-pk-val { font-weight: 400; opacity: .75; }
 .pvl-pk-colors { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; }
 :is(.pvl-pick, .pvl-adder) button.pvl-pk-color, :is(.pvl-pick, .pvl-adder) button.pvl-pk-color:hover, :is(.pvl-pick, .pvl-adder) button.pvl-pk-color:focus {
-	display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 0; padding: 6px 4px 8px; min-height: 0;
-	border: 2px solid transparent; border-radius: 10px; background: #f6f5f3; color: inherit; box-shadow: none; text-transform: none; font-family: inherit; cursor: pointer;
+	display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 0; padding: var(--pvl-cc-p, 6px 4px 8px); min-height: 0;
+	border: var(--pvl-cc-bw, 2px) solid var(--pvl-cc-bd, transparent); border-radius: var(--pvl-cc-r, 10px); background: var(--pvl-cc-bg, #f6f5f3);
+	color: var(--pvl-cc-c, inherit); box-shadow: none; text-transform: none; font-family: inherit; cursor: pointer;
 }
-:is(.pvl-pick, .pvl-adder) button.pvl-pk-color.is-on { border-color: var(--pvl-pk-accent); background: #fff; }
-.pvl-pk-sw { display: block; width: 100%; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: #e9e6e1; }
-.pvl-pk-sw img { display: block; width: 100%; height: 100%; object-fit: cover; }
+:is(.pvl-pick, .pvl-adder) button.pvl-pk-color:hover { border-color: var(--pvl-cc-bd-h, #e2d6cc); background: var(--pvl-cc-bg-h, var(--pvl-cc-bg, #f6f5f3)); color: var(--pvl-cc-c-h, var(--pvl-cc-c, inherit)); }
+:is(.pvl-pick, .pvl-adder) button.pvl-pk-color.is-on { border-color: var(--pvl-cc-bd-on, var(--pvl-pk-accent)); background: var(--pvl-cc-bg-on, #fff); color: var(--pvl-cc-c-on, var(--pvl-cc-c, inherit)); }
+/* miniatura culorii: forma (colțuri) și chenarul se aleg din widget (--pvl-sw-*) */
+:is(.pvl-pick, .pvl-adder) .pvl-pk-sw {
+	display: block; width: 100%; aspect-ratio: 1; box-sizing: border-box; overflow: hidden; background: #e9e6e1;
+	border: var(--pvl-sw-bw, 0px) solid var(--pvl-sw-bd, transparent); border-radius: var(--pvl-sw-r, 6px);
+}
+:is(.pvl-pick, .pvl-adder) .is-on .pvl-pk-sw { border-color: var(--pvl-sw-bd-on, var(--pvl-sw-bd, transparent)); }
+:is(.pvl-pick, .pvl-adder) .pvl-pk-sw img { display: block; width: 100%; height: 100%; margin: 0; border: 0; border-radius: 0; object-fit: cover; box-shadow: none; }
 .pvl-pk-cn { font-size: 13px; line-height: 1.25; text-align: center; overflow-wrap: anywhere; }
 .pvl-pk-thick { display: flex; flex-wrap: wrap; gap: 8px; }
 :is(.pvl-pick, .pvl-adder) button.pvl-pk-t, :is(.pvl-pick, .pvl-adder) button.pvl-pk-t:hover, :is(.pvl-pick, .pvl-adder) button.pvl-pk-t:focus {
-	margin: 0; padding: 9px 16px; min-height: 0; border: 1.5px solid #d9d4cd; border-radius: 999px; background: #fff; color: inherit;
-	box-shadow: none; text-transform: none; font-family: inherit; font-size: 15px; font-weight: 600; line-height: 1.2; cursor: pointer;
+	margin: 0; padding: var(--pvl-tp-p, 9px 16px); min-height: 0; border: var(--pvl-tp-bw, 1.5px) solid var(--pvl-tp-bd, #d9d4cd); border-radius: var(--pvl-tp-r, 999px);
+	background: var(--pvl-tp-bg, #fff); color: var(--pvl-tp-c, inherit);
+	box-shadow: none; text-transform: none; font-family: inherit; font-size: var(--pvl-tp-fs, 15px); font-weight: 600; line-height: 1.2; cursor: pointer;
 }
-:is(.pvl-pick, .pvl-adder) button.pvl-pk-t.is-on { border-color: var(--pvl-pk-accent); background: var(--pvl-pk-accent); color: #fff; }
+:is(.pvl-pick, .pvl-adder) button.pvl-pk-t:hover { border-color: var(--pvl-tp-bd-h, #bfb3a7); background: var(--pvl-tp-bg-h, var(--pvl-tp-bg, #fff)); color: var(--pvl-tp-c-h, var(--pvl-tp-c, inherit)); }
+:is(.pvl-pick, .pvl-adder) button.pvl-pk-t.is-on { border-color: var(--pvl-tp-bd-on, var(--pvl-pk-accent)); background: var(--pvl-tp-bg-on, var(--pvl-pk-accent)); color: var(--pvl-tp-c-on, #fff); }
 :is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-color, .pvl-pk-t):focus-visible { outline: 2px solid var(--pvl-pk-accent); outline-offset: 2px; }
 .pvl-pk-note { margin: 0 0 8px; font-size: 13px; opacity: .7; }
 .pvl-pk-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 14px 20px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid #ebe8e3; }
@@ -311,19 +330,22 @@ html.pvl-pk-open, html.pvl-pk-open body { overflow: hidden; }
 .pvl-step { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; opacity: .7; }
 .pvl-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .pvl-adder button.pvl-chip, .pvl-adder button.pvl-chip:hover, .pvl-adder button.pvl-chip:focus {
-	margin: 0; padding: 8px 14px; min-height: 0; border: 1.5px solid #d9d4cd; border-radius: 999px; background: #fff; color: inherit;
-	box-shadow: none; text-transform: none; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; cursor: pointer;
+	margin: 0; padding: var(--pvl-ch-p, 8px 14px); min-height: 0; border: var(--pvl-ch-bw, 1.5px) solid var(--pvl-ch-bd, #d9d4cd); border-radius: var(--pvl-ch-r, 999px);
+	background: var(--pvl-ch-bg, #fff); color: var(--pvl-ch-c, inherit);
+	box-shadow: none; text-transform: none; font-family: inherit; font-size: var(--pvl-ch-fs, 14px); font-weight: 600; line-height: 1.2; cursor: pointer;
 }
-.pvl-adder button.pvl-chip.is-on { border-color: #AB5525; background: #AB5525; color: #fff; }
-.pvl-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; max-height: 360px; overflow-y: auto; overscroll-behavior: contain; padding: 2px; }
+.pvl-adder button.pvl-chip:hover { border-color: var(--pvl-ch-bd-h, #bfb3a7); background: var(--pvl-ch-bg-h, var(--pvl-ch-bg, #fff)); color: var(--pvl-ch-c-h, var(--pvl-ch-c, inherit)); }
+.pvl-adder button.pvl-chip.is-on { border-color: var(--pvl-ch-bd-on, #AB5525); background: var(--pvl-ch-bg-on, #AB5525); color: var(--pvl-ch-c-on, #fff); }
+.pvl-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: var(--pvl-ti-gap, 10px); max-height: var(--pvl-ti-mh, 360px); overflow-y: auto; overscroll-behavior: contain; padding: 2px; }
 .pvl-tiles[hidden], .pvl-adder-var[hidden] { display: none; }
 .pvl-adder button.pvl-tile, .pvl-adder button.pvl-tile:hover, .pvl-adder button.pvl-tile:focus {
-	display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 6px 6px 10px; min-height: 0; border: 2px solid transparent; border-radius: 10px;
-	background: #f6f5f3; color: inherit; box-shadow: none; text-transform: none; font-family: inherit; text-align: left; cursor: pointer;
+	display: flex; flex-direction: column; gap: 6px; margin: 0; padding: var(--pvl-ti-p, 6px 6px 10px); min-height: 0;
+	border: var(--pvl-ti-bw, 2px) solid var(--pvl-ti-bd, transparent); border-radius: var(--pvl-ti-r, 10px);
+	background: var(--pvl-ti-bg, #f6f5f3); color: var(--pvl-ti-c, inherit); box-shadow: none; text-transform: none; font-family: inherit; text-align: left; cursor: pointer;
 }
-.pvl-adder button.pvl-tile:hover { border-color: #e2d6cc; }
+.pvl-adder button.pvl-tile:hover { border-color: var(--pvl-ti-bd-h, #e2d6cc); background: var(--pvl-ti-bg-h, var(--pvl-ti-bg, #f6f5f3)); color: var(--pvl-ti-c-h, var(--pvl-ti-c, inherit)); }
 .pvl-adder button:is(.pvl-tile, .pvl-chip):focus-visible { outline: 2px solid #AB5525; outline-offset: 2px; }
-.pvl-tile-img { display: block; width: 100%; aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden; background: #e9e6e1; }
+.pvl-tile-img { display: block; width: 100%; aspect-ratio: 4 / 3; border-radius: var(--pvl-ti-img-r, 6px); overflow: hidden; background: #e9e6e1; }
 .pvl-tile-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .pvl-tile-n { font-size: 14px; font-weight: 600; line-height: 1.25; }
 .pvl-none { margin: 0; opacity: .7; }
@@ -348,15 +370,16 @@ html.pvl-pk-open, html.pvl-pk-open body { overflow: hidden; }
 .pvl-tile-n { text-align: left; }
 @media (max-width: 600px) {
 	.pvl-pk-colors { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-	.pvl-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 420px; }
+	.pvl-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: var(--pvl-ti-mh, 420px); }
 	.pvl-pk-cn { font-size: 12px; }
 }
 @media (max-width: 360px) { .pvl-pk-colors { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* „Nu m-am hotărât încă” */
-.pvl-pk-undec .pvl-pk-sw { display: flex; align-items: center; justify-content: center; background: #fff; border: 1.5px dashed #cfc6bb; color: #8a8178; }
+:is(.pvl-pick, .pvl-adder) .pvl-pk-undec .pvl-pk-sw { display: flex; align-items: center; justify-content: center; background: #fff; border: 1.5px dashed var(--pvl-un-bd, #cfc6bb); color: #8a8178; }
 .pvl-pk-undec .pvl-pk-sw svg { width: 40%; height: 40%; }
 :is(.pvl-pick, .pvl-adder) button.pvl-pk-t.pvl-pk-undec { border-style: dashed; }
+:is(.pvl-pick, .pvl-adder) button.pvl-pk-t.pvl-pk-undec:not(.is-on) { border-color: var(--pvl-un-bd, var(--pvl-tp-bd, #d9d4cd)); }
 /* grup fără alegere, la confirmare */
 .pvl-pk-group.is-missing .pvl-pk-label { color: #b3302b; }
 .pvl-pk-err { margin: 8px 0 0; color: #b3302b; font-size: 13.5px; font-weight: 600; }
