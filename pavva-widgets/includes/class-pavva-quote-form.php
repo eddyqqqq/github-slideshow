@@ -35,8 +35,8 @@ final class Pavva_W_Quote_Form {
         /* datele pentru script (funcționează și cu pagini din cache) */
         add_action( 'rest_api_init', array( __CLASS__, 'register_route' ) );
         add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
-        /* lista se recalculează când se schimbă produsele / categoriile */
-        foreach ( array( 'save_post_product', 'deleted_post', 'created_product_cat', 'edited_product_cat', 'delete_product_cat' ) as $hook ) {
+        /* lista se recalculează când se schimbă produsele / categoriile (și la sortarea drag & drop din WooCommerce, care nu trece prin save_post) */
+        foreach ( array( 'save_post_product', 'deleted_post', 'created_product_cat', 'edited_product_cat', 'delete_product_cat', 'woocommerce_after_product_ordering' ) as $hook ) {
             add_action( $hook, array( __CLASS__, 'flush' ) );
         }
     }
