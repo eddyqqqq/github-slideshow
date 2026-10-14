@@ -202,8 +202,8 @@
 	function bar(flashName, url) {
 		var n = read().length;
 		var cur = prodPast ? curProduct() : null;
-		/* „Adaugă” în bară: produsul nu e încă în listă sau are variante (încă o culoare / grosime) */
-		var canAdd = !!cur && (!hasProduct(cur) || (hasOpts(cur) && pickOn()));
+		/* „Adaugă în listă” rămâne în bară cât vizitatorul e sub butonul principal (și după ce a adăugat produsul) */
+		var canAdd = !!cur;
 		var show = C.bar !== false && (n > 0 || canAdd) && !onFormPage() && !barOff() && !(dw && !dw.hidden);
 		if (!show && !toastEl) return;
 		var el = ensureBar();
@@ -214,7 +214,7 @@
 		a.hidden = n === 0;
 		var ab = el.querySelector('.pvl-toast-add');
 		ab.hidden = !canAdd;
-		if (canAdd) ab.querySelector('.pvl-toast-add-t').textContent = hasProduct(cur) ? bc.barAddMore : bc.barAdd;
+		if (canAdd) ab.querySelector('.pvl-toast-add-t').textContent = bc.barAdd;
 		el.classList.toggle('has-add', canAdd);
 		var t = el.querySelector('.pvl-toast-t');
 		if (flashName) {
@@ -409,6 +409,8 @@
 			if (el.getAttribute('data-pvl-toast') !== '0') toast(v.name, formUrl(el));
 		};
 		if (hasProduct(it)) {
+			/* din bară, la un produs fără variante deja adăugat: arătăm lista (nu îl scoatem) */
+			if (el.classList.contains('pvl-toast-add') && !(hasOpts(it) && pickOn())) { if (dcfg().on) openDrawer(el); else toast(it.name, formUrl(el)); return; }
 			if (go || again === 'go') { w.location.href = formUrl(el); return; }
 			/* cu culori / grosimi: încă o variantă a aceluiași produs; fără: al doilea click îl scoate */
 			if (hasOpts(it) && pickOn()) { openPicker(it, { from: el, done: done }); return; }
@@ -563,7 +565,6 @@
 			barSee: g('t-bar-see', txt('see', 'Vezi oferta')),
 			barAdded: g('t-bar-added', txt('added', 'Adăugat în ofertă')),
 			barAdd: g('t-bar-add', txt('barAdd', 'Adaugă în listă')),
-			barAddMore: g('t-bar-add-more', txt('barAddMore', 'Altă variantă')),
 			barAddOn: g('bar-add', '1') !== '0',
 			pick: g('pick', '1') !== '0',
 			pkTitle: g('t-pk-title', txt('pkTitle', 'Alege varianta')),

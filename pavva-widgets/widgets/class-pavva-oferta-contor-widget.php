@@ -252,7 +252,6 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 			'bar_see'   => array( 'Buton bară', 'Vezi oferta' ),
 			'bar_added' => array( 'Text după adăugare', 'Adăugat în ofertă' ),
 			'bar_add'   => array( 'Buton „Adaugă” (pagina de produs)', 'Adaugă în listă' ),
-			'bar_add_more' => array( 'Buton „Adaugă” când produsul e deja în listă (cu variante)', 'Altă variantă' ),
 		) as $id => $t ) {
 			$this->add_control( $id, array( 'label' => $t[0], 'type' => Controls_Manager::TEXT, 'default' => $t[1], 'label_block' => true ) );
 		}
@@ -720,7 +719,6 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 			't-bar-see'   => (string) ( $s['bar_see'] ?? '' ),
 			't-bar-added' => (string) ( $s['bar_added'] ?? '' ),
 			't-bar-add'   => (string) ( $s['bar_add'] ?? '' ),
-			't-bar-add-more' => (string) ( $s['bar_add_more'] ?? '' ),
 			'bar-add'     => 'yes' === ( $s['bar_add_on'] ?? 'yes' ) ? '1' : '0',
 			'pick'        => 'yes' === ( $s['pick'] ?? 'yes' ) ? '1' : '0',
 			't-pk-title'  => (string) ( $s['pk_title'] ?? '' ),
