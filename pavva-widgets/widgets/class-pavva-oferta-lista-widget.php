@@ -333,10 +333,16 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 		$this->add_responsive_control( 'ad_p', array( 'label' => 'Padding panou', 'type' => Controls_Manager::DIMENSIONS, 'size_units' => array( 'px' ), 'selectors' => array( $a . ' .pvl-adder-panel' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ) ) );
 		$this->add_control( 'ad_title_c', array( 'label' => 'Culoare titlu „Alege produsul”', 'type' => Controls_Manager::COLOR, 'separator' => 'before', 'selectors' => array( $a . ' .pvl-adder-title' => 'color: {{VALUE}};' ) ) );
 		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'ad_title_typo', 'label' => 'Font titlu', 'selector' => $a . ' .pvl-adder-title' ) );
-		$this->add_control( 'ad_step_c', array( 'label' => 'Culoare „Categorie” / „Produs”', 'type' => Controls_Manager::COLOR, 'selectors' => array( $a . ' .pvl-step' => 'color: {{VALUE}}; opacity: 1;' ) ) );
+		$this->add_control( 'ad_step_c', array( 'label' => 'Culoare „Categorie” / „Produs”', 'type' => Controls_Manager::COLOR, 'selectors' => array( $a => '--pvl-step-c: {{VALUE}}; --pvl-step-o: 1;' ) ) );
+		$this->add_control( 'ad_step_o', array( 'label' => 'Transparență „Categorie” / „Produs” (1 = plin)', 'type' => Controls_Manager::SLIDER, 'range' => array( 'px' => array( 'min' => 0.2, 'max' => 1, 'step' => 0.05 ) ), 'selectors' => array( $a => '--pvl-step-o: {{SIZE}};' ) ) );
 		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'ad_step_typo', 'label' => 'Font „Categorie” / „Produs”', 'selector' => $a . ' .pvl-step' ) );
 
+		$this->pvl_size( 'ad_step_mt', 'Spațiu deasupra „Categorie” / „Produs”', $a, 'step-mt', 60 );
+		$this->pvl_size( 'ad_step_mb', 'Spațiu sub „Categorie” / „Produs”', $a, 'step-mb', 60 );
+		$this->pvl_size( 'ad_gap', 'Spațiu între rândurile panoului', $a, 'ad-gap', 60 );
 		$this->add_control( 'ad_h_ch', array( 'label' => 'Categorii (butoane)', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$this->pvl_size( 'ad_ch_gap', 'Spațiu între categorii (orizontal)', $a, 'ch-gap', 40 );
+		$this->pvl_size( 'ad_ch_gap_y', 'Spațiu între rânduri de categorii (vertical)', $a, 'ch-gap-y', 40 );
 		$this->pvl_state_tabs( 'ad_ch', $a, 'ch', array( '' => 'Normal', '-h' => 'Hover', '-on' => 'Selectat' ) );
 		$this->pvl_size( 'ad_ch_bw', 'Grosime chenar', $a, 'ch-bw', 6, array( 'px' ), array( 'separator' => 'before' ) );
 		$this->pvl_size( 'ad_ch_r', 'Colțuri', $a, 'ch-r', 40, array( 'px', '%' ) );

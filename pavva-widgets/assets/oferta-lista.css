@@ -344,10 +344,10 @@ html.pvl-pk-open, html.pvl-pk-open body { overflow: hidden; }
 .pvl-in-form button.pvl-add-btn:focus-visible { outline: 2px solid #AB5525; outline-offset: 2px; }
 .pvl-add-plus { font-size: 22px; line-height: 1; }
 .pvl-adder.is-open .pvl-add-btn { border-style: solid; }
-.pvl-adder-panel { display: grid; gap: 10px; padding: 16px; border: 1px solid #ebe8e3; border-radius: 8px; background: #fff; }
+.pvl-adder-panel { display: grid; gap: var(--pvl-ad-gap, 10px); padding: 16px; border: 1px solid #ebe8e3; border-radius: 8px; background: #fff; }
 .pvl-adder-panel[hidden] { display: none; }
-.pvl-step { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; opacity: .7; }
-.pvl-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pvl-step { margin: var(--pvl-step-mt, 0px) 0 var(--pvl-step-mb, 0px); font-size: 13px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--pvl-step-c, inherit); opacity: var(--pvl-step-o, .7); }
+.pvl-chips { display: flex; flex-wrap: wrap; gap: var(--pvl-ch-gap-y, var(--pvl-ch-gap, 8px)) var(--pvl-ch-gap, 8px); }
 .pvl-adder button.pvl-chip, .pvl-adder button.pvl-chip:hover, .pvl-adder button.pvl-chip:focus {
 	margin: 0; padding: var(--pvl-ch-p, 8px 14px); min-height: 0; border: var(--pvl-ch-bw, 1.5px) solid var(--pvl-ch-bd, #d9d4cd); border-radius: var(--pvl-ch-r, 999px);
 	background: var(--pvl-ch-bg, #fff); color: var(--pvl-ch-c, inherit);
