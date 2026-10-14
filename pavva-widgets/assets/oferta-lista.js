@@ -844,7 +844,10 @@
 			});
 			tiles.innerHTML = h || '<p class="pvl-none">' + esc(txt('none', 'Nu sunt produse în această categorie.')) + '</p>';
 		}
+		/* unde era butonul „Adaugă produs” pe ecran când s-a deschis panoul (după adăugare revenim acolo) */
+		var anchorTop = null;
 		function openPanel(on) {
+			if (on && panel.hidden) anchorTop = btn.getBoundingClientRect().top;
 			panel.hidden = !on;
 			btn.setAttribute('aria-expanded', on ? 'true' : 'false');
 			ad.classList.toggle('is-open', on);
@@ -869,7 +872,16 @@
 			err.hidden = true;
 			openPanel(false);
 			label();
+			restoreView();
 			btn.focus({ preventScroll: true });
+		}
+		/* pe telefon panoul e lung: după închidere pagina se scurtează și lista rămâne deasupra ecranului.
+		   Dacă butonul nu se mai vede, îl readucem unde era când s-a apăsat „Adaugă produs” (pe desktop nu se schimbă nimic). */
+		function restoreView() {
+			var r = btn.getBoundingClientRect(), vh = w.innerHeight || d.documentElement.clientHeight;
+			if (r.top >= 0 && r.bottom <= vh) return;
+			var to = anchorTop !== null && anchorTop >= 0 && anchorTop + r.height <= vh ? anchorTop : Math.max(16, (vh - r.height) / 2);
+			w.scrollTo(0, Math.max(0, w.pageYOffset + r.top - to));
 		}
 		btn.addEventListener('click', function () { openPanel(panel.hidden); });
 		ad.querySelector('.pvl-adder-x').addEventListener('click', function () { openPanel(false); btn.focus({ preventScroll: true }); });
