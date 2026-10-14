@@ -145,8 +145,15 @@ html.pvl-dw-open, html.pvl-dw-open body { overflow: hidden; }
 .pvl-dw-browse { display: inline-block; padding: 12px 22px; border: 1.5px solid #AB5525; border-radius: 6px; background: transparent; color: #AB5525; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
 .pvl-dw-browse:hover { background: #AB5525; color: #fff; }
 .pvl-dw-foot { display: grid; gap: 10px; padding: 16px var(--pvl-dw-pad) calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid #ebe8e3; background: inherit; }
-.pvl-dw-cta { display: flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: 54px; padding: 14px 20px; border: 0 solid transparent; border-radius: 6px; background: #AB5525; color: #fff; font-size: 17px; font-weight: 700; text-align: center; text-decoration: none; transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s; }
-.pvl-dw-cta:hover, .pvl-dw-cta:focus-visible { background: #8f4520; color: #fff; }
+/* „Solicită ofertă” din panou: ca restul butoanelor site-ului (contur 2px #AB5525, colțuri 8px, SUSE bold); la hover se umple */
+.pvl-dw-cta {
+	display: flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: 54px; padding: 14px 20px;
+	border: 2px solid #AB5525; border-radius: 8px; background: transparent; color: #AB5525;
+	font-family: "SUSE", var(--e-global-typography-text-font-family, inherit), sans-serif; font-size: 18px; font-weight: 700; line-height: 1.2;
+	text-align: center; text-decoration: none; transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s;
+}
+/* la hover: mai puternic decât culoarea normală setată din widget, dar mai slab decât culorile „Hover” din widget */
+.pvl-drawer a.pvl-dw-cta:hover, .pvl-drawer a.pvl-dw-cta:focus-visible { background: #AB5525; color: #fff; border-color: #AB5525; }
 .pvl-dw-more { justify-self: center; padding: 6px 10px; border: 0; background: none; color: inherit; font: inherit; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .pvl-dw-more:hover { color: #AB5525; }
 @media (max-width: 767px) {
