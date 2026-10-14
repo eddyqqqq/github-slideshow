@@ -245,6 +245,10 @@ html.pvl-dw-open, html.pvl-dw-open body { overflow: hidden; }
 /* fundalul întunecat nu blochează click-urile pe pagină: poți selecta în continuare alte elemente */
 .pvl-editor-preview .pvl-dw-overlay { pointer-events: none; transition: none; }
 .pvl-editor-preview .pvl-dw-panel { transition: none; }
+/* fereastra de alegere în editor: deasupra panoului, fundalul nu blochează click-urile pe pagină */
+.pvl-editor-preview .pvl-pick-preview { z-index: 9995; }
+.pvl-editor-preview .pvl-pick-preview .pvl-pk-overlay { pointer-events: none; transition: none; }
+.pvl-editor-preview .pvl-pick-preview .pvl-pk-box { transition: none; }
 
 /* ---------- varianta în listă (culoare + grosime) și „Modifică” ---------- */
 /* etichetele se stilizează din widgeturi prin variabile (--pvl-tag-*) */

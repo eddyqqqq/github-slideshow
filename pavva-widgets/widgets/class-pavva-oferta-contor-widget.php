@@ -154,6 +154,19 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 				'condition'    => array( 'preview_drawer' => 'yes' ),
 			)
 		);
+		$this->add_control(
+			'preview_pick',
+			array(
+				'label'        => 'Arată fereastra de alegere (culoare / grosime)',
+				'description'  => 'Cu un produs real: o culoare și o grosime apar selectate, ca să vezi și starea „Selectat”. Oprește panoul cu produse cât lucrezi la fereastră, ca să nu se suprapună.',
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => 'Da',
+				'label_off'    => 'Nu',
+				'return_value' => 'yes',
+				'default'      => '',
+				'separator'    => 'before',
+			)
+		);
 		$this->end_controls_section();
 
 		$this->start_controls_section( 'section_pick', array( 'label' => 'Alegerea culorii / grosimii' ) );
@@ -740,7 +753,8 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 	private function editor_preview( $s, $url ) {
 		$bar    = 'yes' === ( $s['preview_bar'] ?? '' );
 		$drawer = 'yes' === ( $s['preview_drawer'] ?? '' ) && 'yes' === ( $s['drawer'] ?? 'yes' );
-		if ( ! $bar && ! $drawer ) return;
+		$pick   = 'yes' === ( $s['preview_pick'] ?? '' );
+		if ( ! $bar && ! $drawer && ! $pick ) return;
 		$x     = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
 		$items = array();
 		foreach ( Pavva_W_Lista::preview_ids( 3 ) as $i => $pid ) {
@@ -771,6 +785,41 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 			echo '<div class="pvl-dw-foot"><a class="pvl-dw-cta" href="' . esc_url( $url ) . '">' . esc_html( $t( 'dw_cta', 'Solicită ofertă' ) ) . '</a><button type="button" class="pvl-dw-more">' . esc_html( $t( 'dw_more', 'Continuă să alegi' ) ) . '</button></div>';
 			echo '</div></div>';
 		}
+		if ( $pick ) $this->pick_preview( $s, $x, $t );
 		echo '</div>';
+	}
+
+	/* fereastra „Alege varianta” în editor: aceleași clase ca pe site (assets/oferta-lista.js), cu un produs real */
+	private function pick_preview( $s, $x, $t ) {
+		$ids = Pavva_W_Lista::preview_ids( 1 );
+		$pid = $ids ? (int) $ids[0] : 0;
+		$it  = $pid ? Pavva_W_Lista::item( $pid ) : array();
+		$v   = $pid ? Pavva_W_Lista::variants( $pid ) : array( 'colors' => array(), 'thick' => array() );
+		if ( ! $it ) $it = array( 'name' => 'Produs exemplu', 'cat' => 'Categorie', 'img' => '' );
+		if ( ! $v['colors'] ) $v['colors'] = array( array( 'n' => 'Gri', 't' => '' ), array( 'n' => 'Roșu', 't' => '' ), array( 'n' => 'Antracit', 't' => '' ) );
+		if ( ! $v['thick'] ) $v['thick'] = array( '6 cm', '8 cm' );
+		$q = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 9a3 3 0 1 1 4.3 2.7c-.9.5-1.5 1.2-1.5 2.3v.5M12 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+		$colors = array_slice( $v['colors'], 0, 5 );
+		$c0     = $colors[0]['n'];
+		$t0     = $v['thick'][0];
+		echo '<div class="pvl-pick is-open pvl-pick-preview"><div class="pvl-pk-overlay"></div>';
+		echo '<div class="pvl-pk-box" role="dialog" aria-label="Previzualizare"><div class="pvl-pk-head">' . ( $it['img'] ? '<img class="pvl-pk-img" src="' . esc_url( $it['img'] ) . '" alt="">' : '' )
+			. '<div class="pvl-pk-titles"><p class="pvl-pk-kicker">' . esc_html( $t( 'pk_title', 'Alege varianta' ) ) . '</p><h2 class="pvl-pk-title">' . esc_html( $it['name'] ) . '</h2>' . ( $it['cat'] ? '<p class="pvl-pk-cat">' . esc_html( $it['cat'] ) . '</p>' : '' ) . '</div>'
+			. '<button type="button" class="pvl-pk-x" aria-label="Închide">' . $x . '</button></div>'; // phpcs:ignore -- SVG fix
+		echo '<div class="pvl-pk-body">';
+		echo '<fieldset class="pvl-pk-group"><legend class="pvl-pk-label">Culoare <span class="pvl-pk-val">· ' . esc_html( $c0 ) . '</span></legend><div class="pvl-pk-colors">';
+		foreach ( $colors as $i => $c ) {
+			echo '<button type="button" class="pvl-pk-color' . ( 0 === $i ? ' is-on' : '' ) . '"><span class="pvl-pk-sw">' . ( $c['t'] ? '<img src="' . esc_url( $c['t'] ) . '" alt="">' : '' ) . '</span><span class="pvl-pk-cn">' . esc_html( $c['n'] ) . '</span></button>';
+		}
+		if ( count( $v['colors'] ) > 1 ) echo '<button type="button" class="pvl-pk-color pvl-pk-undec"><span class="pvl-pk-sw">' . $q . '</span><span class="pvl-pk-cn">Nu am decis</span></button>'; // phpcs:ignore -- SVG fix
+		echo '</div></fieldset>';
+		echo '<fieldset class="pvl-pk-group"><legend class="pvl-pk-label">Grosime <span class="pvl-pk-val">· ' . esc_html( $t0 ) . '</span></legend><div class="pvl-pk-thick">';
+		foreach ( $v['thick'] as $i => $th ) echo '<button type="button" class="pvl-pk-t' . ( 0 === $i ? ' is-on' : '' ) . '">' . esc_html( $th ) . '</button>';
+		if ( count( $v['thick'] ) > 1 ) echo '<button type="button" class="pvl-pk-t pvl-pk-undec">Nu am decis</button>';
+		echo '</div></fieldset>';
+		$note = trim( (string) ( $s['pk_note'] ?? '' ) );
+		if ( '' !== $note && false === stripos( $note, 'm-am hot' ) ) echo '<p class="pvl-pk-note">' . esc_html( $note ) . '</p>';
+		echo '</div><div class="pvl-pk-foot"><button type="button" class="pvl-pk-ok">' . esc_html( $t( 'pk_add', 'Adaugă la ofertă' ) ) . '</button><button type="button" class="pvl-pk-cancel">' . esc_html( $t( 'pk_cancel', 'Anulează' ) ) . '</button></div>';
+		echo '</div></div>';
 	}
 }
