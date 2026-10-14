@@ -907,7 +907,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 			'oferta_style_heading',
 			array(
 				'label'       => 'Buton „Adaugă la ofertă”',
-				'description' => 'Fontul, padding-ul, lățimea și colțurile sunt cele de la „Buton”, de mai sus.',
+				'description' => 'Fontul, bordura, colțurile și padding-ul de mai jos sunt doar pentru acest buton. Lăsate goale, rămân ca la „Buton”, de mai sus.',
 				'type'        => Controls_Manager::HEADING,
 				'separator'   => 'before',
 				'condition'   => array( 'show_oferta' => 'yes' ),
@@ -935,6 +935,63 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 				'selectors'  => array( $this->sel( '.ps-cta-oferta svg' ) => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};' ),
 			)
 		);
+		/* stil propriu (gol = ca butonul de mai sus) */
+		$of = $this->sel( 'button.ps-cta-oferta' );
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'oferta_typo', 'label' => 'Font', 'selector' => $of, 'condition' => array( 'show_oferta' => 'yes' ) ) );
+		$this->add_responsive_control(
+			'oferta_bw',
+			array(
+				'label'      => 'Grosime bordură',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 8, 'step' => 0.5 ) ),
+				'condition'  => array( 'show_oferta' => 'yes' ),
+				'selectors'  => array( $of => 'border-width: {{SIZE}}{{UNIT}}; border-style: solid;' ),
+			)
+		);
+		$this->add_control(
+			'oferta_bs',
+			array(
+				'label'     => 'Tip bordură',
+				'type'      => Controls_Manager::SELECT,
+				'default'   => '',
+				'options'   => array( '' => 'Implicit', 'solid' => 'Linie', 'dashed' => 'Linie întreruptă', 'dotted' => 'Puncte', 'double' => 'Dublă', 'none' => 'Fără' ),
+				'condition' => array( 'show_oferta' => 'yes' ),
+				'selectors' => array( $of => 'border-style: {{VALUE}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'oferta_radius',
+			array(
+				'label'      => 'Colțuri',
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%' ),
+				'condition'  => array( 'show_oferta' => 'yes' ),
+				'selectors'  => array( $of => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'oferta_pad',
+			array(
+				'label'      => 'Padding',
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em' ),
+				'condition'  => array( 'show_oferta' => 'yes' ),
+				'selectors'  => array( $of => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'oferta_minh',
+			array(
+				'label'      => 'Înălțime minimă',
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 20, 'max' => 100 ) ),
+				'condition'  => array( 'show_oferta' => 'yes' ),
+				'selectors'  => array( $of => 'min-height: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_group_control( Group_Control_Box_Shadow::get_type(), array( 'name' => 'oferta_shadow', 'label' => 'Umbră', 'selector' => $of, 'condition' => array( 'show_oferta' => 'yes' ) ) );
 		$this->start_controls_tabs( 'oferta_tabs', array( 'condition' => array( 'show_oferta' => 'yes' ) ) );
 		foreach ( array( 'normal' => 'Normal', 'hover' => 'Hover', 'added' => 'Adăugat' ) as $k => $label ) {
 			$sfx = 'normal' === $k ? '' : '-' . $k;
