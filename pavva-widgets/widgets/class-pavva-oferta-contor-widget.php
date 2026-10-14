@@ -16,6 +16,7 @@ use Elementor\Controls_Manager;
 use Elementor\Icons_Manager;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Box_Shadow;
 
 require_once __DIR__ . '/trait-pavva-oferta-stil.php';
 
@@ -550,31 +551,28 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		$this->add_control( 'dw_rm_color', array( 'label' => 'Culoare ×', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p => '--pvl-rm-c: {{VALUE}};' ) ) );
 		$this->add_control( 'dw_rm_color_h', array( 'label' => 'Culoare × la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p => '--pvl-rm-c-h: {{VALUE}};' ) ) );
 
-		$this->add_control( 'dw_h_cta', array( 'label' => 'Butonul mare', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
-		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'dw_cta_typo', 'label' => 'Font', 'selector' => $p . ' .pvl-dw-cta' ) );
-		$this->add_group_control( Group_Control_Border::get_type(), array( 'name' => 'dw_cta_border', 'label' => 'Chenar', 'selector' => $p . ' .pvl-dw-cta' ) );
-		$this->add_responsive_control(
-			'dw_cta_pad',
-			array(
-				'label'      => 'Padding',
-				'type'       => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px' ),
-				'selectors'  => array( $p . ' .pvl-dw-cta' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
-			)
-		);
-		$this->add_control( 'dw_cta_bd_h', array( 'label' => 'Culoare chenar la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-dw-cta:hover, ' . $p . ' .pvl-dw-cta:focus-visible' => 'border-color: {{VALUE}};' ) ) );
-		$this->add_control( 'dw_cta_bg', array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-dw-cta' => 'background-color: {{VALUE}};' ) ) );
-		$this->add_control( 'dw_cta_color', array( 'label' => 'Text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-dw-cta' => 'color: {{VALUE}};' ) ) );
-		$this->add_control( 'dw_cta_bg_h', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-dw-cta:hover, ' . $p . ' .pvl-dw-cta:focus-visible' => 'background-color: {{VALUE}};' ) ) );
-		$this->add_control( 'dw_cta_color_h', array( 'label' => 'Text la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' .pvl-dw-cta:hover, ' . $p . ' .pvl-dw-cta:focus-visible' => 'color: {{VALUE}};' ) ) );
+		$this->add_control( 'dw_h_cta', array( 'label' => 'Butonul mare „Solicită ofertă”', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$cta  = $p . ' a.pvl-dw-cta';
+		$ctah = $p . ' a.pvl-dw-cta:hover, ' . $p . ' a.pvl-dw-cta:focus-visible';
+		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'dw_cta_typo', 'label' => 'Font', 'selector' => $cta ) );
+		$this->add_group_control( Group_Control_Border::get_type(), array( 'name' => 'dw_cta_border', 'label' => 'Bordură (tip, grosime, culoare)', 'selector' => $cta ) );
 		$this->add_responsive_control(
 			'dw_cta_radius',
 			array(
 				'label'      => 'Colțuri',
 				'type'       => Controls_Manager::SLIDER,
-				'size_units' => array( 'px' ),
-				'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ) ),
-				'selectors'  => array( $p . ' .pvl-dw-cta, ' . $p . ' .pvl-dw-browse' => 'border-radius: {{SIZE}}{{UNIT}};' ),
+				'size_units' => array( 'px', '%' ),
+				'range'      => array( 'px' => array( 'min' => 0, 'max' => 40 ), '%' => array( 'min' => 0, 'max' => 50 ) ),
+				'selectors'  => array( $cta . ', ' . $p . ' .pvl-dw-browse' => 'border-radius: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'dw_cta_pad',
+			array(
+				'label'      => 'Padding',
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em' ),
+				'selectors'  => array( $cta => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
 			)
 		);
 		$this->add_responsive_control(
@@ -583,10 +581,23 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 				'label'      => 'Înălțime',
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => array( 'px' ),
-				'range'      => array( 'px' => array( 'min' => 40, 'max' => 80 ) ),
-				'selectors'  => array( $p . ' .pvl-dw-cta' => 'min-height: {{SIZE}}{{UNIT}};' ),
+				'range'      => array( 'px' => array( 'min' => 32, 'max' => 100 ) ),
+				'selectors'  => array( $cta => 'min-height: {{SIZE}}{{UNIT}};' ),
 			)
 		);
+		$this->add_group_control( Group_Control_Box_Shadow::get_type(), array( 'name' => 'dw_cta_shadow', 'label' => 'Umbră', 'selector' => $cta ) );
+		$this->start_controls_tabs( 'dw_cta_tabs' );
+		$this->start_controls_tab( 'dw_cta_tab_n', array( 'label' => 'Normal' ) );
+		$this->add_control( 'dw_cta_color', array( 'label' => 'Text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $cta => 'color: {{VALUE}};' ) ) );
+		$this->add_control( 'dw_cta_bg', array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $cta => 'background-color: {{VALUE}};' ) ) );
+		$this->end_controls_tab();
+		$this->start_controls_tab( 'dw_cta_tab_h', array( 'label' => 'Hover' ) );
+		$this->add_control( 'dw_cta_color_h', array( 'label' => 'Text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $ctah => 'color: {{VALUE}};' ) ) );
+		$this->add_control( 'dw_cta_bg_h', array( 'label' => 'Fundal', 'type' => Controls_Manager::COLOR, 'selectors' => array( $ctah => 'background-color: {{VALUE}};' ) ) );
+		$this->add_control( 'dw_cta_bd_h', array( 'label' => 'Culoare bordură', 'type' => Controls_Manager::COLOR, 'selectors' => array( $ctah => 'border-color: {{VALUE}};' ) ) );
+		$this->add_group_control( Group_Control_Box_Shadow::get_type(), array( 'name' => 'dw_cta_shadow_h', 'label' => 'Umbră', 'selector' => $ctah ) );
+		$this->end_controls_tab();
+		$this->end_controls_tabs();
 
 		$this->add_control( 'dw_h_more', array( 'label' => 'Butonul „Continuă să alegi”', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
 		$this->text_button_controls( 'dw_more', $p, 'mo', 'body .pvl-drawer button.pvl-dw-more', true );
