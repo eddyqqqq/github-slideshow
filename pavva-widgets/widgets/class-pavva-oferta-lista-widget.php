@@ -140,7 +140,6 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 				'label_off'    => 'Nu',
 				'return_value' => 'yes',
 				'default'      => 'yes',
-				'condition'    => array( 'into_form' => 'yes', 'picker' => 'yes' ),
 			)
 		);
 		$this->add_control(
@@ -326,7 +325,7 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 
 		/* ---------- Stil: panoul „Adaugă produs” din formular ---------- */
 		$a = $this->sel( '.pvl-adder' );
-		$this->start_controls_section( 'section_style_adder', array( 'label' => 'Panoul „Adaugă produs”', 'tab' => Controls_Manager::TAB_STYLE, 'condition' => array( 'into_form' => 'yes', 'picker' => 'yes' ) ) );
+		$this->start_controls_section( 'section_style_adder', array( 'label' => 'Panoul „Adaugă produs” (categorii, produse)', 'tab' => Controls_Manager::TAB_STYLE ) );
 		$this->add_control( 'ad_bg', array( 'label' => 'Fundal panou', 'type' => Controls_Manager::COLOR, 'selectors' => array( $a . ' .pvl-adder-panel' => 'background-color: {{VALUE}};' ) ) );
 		$this->add_control( 'ad_bd', array( 'label' => 'Culoare chenar panou', 'type' => Controls_Manager::COLOR, 'selectors' => array( $a . ' .pvl-adder-panel' => 'border-color: {{VALUE}};' ) ) );
 		$this->add_responsive_control( 'ad_bw', array( 'label' => 'Grosime chenar panou', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 6 ) ), 'selectors' => array( $a . ' .pvl-adder-panel' => 'border-width: {{SIZE}}{{UNIT}}; border-style: solid;' ) ) );
@@ -342,7 +341,8 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 		$this->pvl_size( 'ad_ch_bw', 'Grosime chenar', $a, 'ch-bw', 6, array( 'px' ), array( 'separator' => 'before' ) );
 		$this->pvl_size( 'ad_ch_r', 'Colțuri', $a, 'ch-r', 40, array( 'px', '%' ) );
 		$this->pvl_pad( 'ad_ch_p', 'Padding', $a, 'ch-p' );
-		$this->pvl_size( 'ad_ch_fs', 'Mărime text', $a, 'ch-fs', 24 );
+		$this->pvl_fs( 'ad_ch_fs', 'Mărime text', $a, 'ch-fs' );
+		$this->pvl_typo( 'ad_ch_typo', 'Font categorii (complet)', $a . ' button.pvl-chip', true );
 
 		$this->add_control( 'ad_h_ti', array( 'label' => 'Produse (carduri cu poză)', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
 		$this->pvl_state_tabs( 'ad_ti', $a, 'ti', array( '' => 'Normal', '-h' => 'Hover' ) );
@@ -352,6 +352,7 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 		$this->pvl_pad( 'ad_ti_p', 'Padding card', $a, 'ti-p' );
 		$this->pvl_size( 'ad_ti_gap', 'Spațiu între carduri', $a, 'ti-gap', 40 );
 		$this->pvl_size( 'ad_ti_mh', 'Înălțime listă (apoi scroll)', $a, 'ti-mh', 900, array( 'px', 'vh' ), array( 'range' => array( 'px' => array( 'min' => 200, 'max' => 900 ), 'vh' => array( 'min' => 20, 'max' => 90 ) ) ) );
+		$this->add_control( 'ad_ti_name_c', array( 'label' => 'Culoare nume produs', 'type' => Controls_Manager::COLOR, 'selectors' => array( $a . ' .pvl-tile-n' => 'color: {{VALUE}};' ) ) );
 		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'ad_ti_typo', 'label' => 'Font nume produs', 'selector' => $a . ' .pvl-tile-n' ) );
 		$this->add_control( 'ad_tc_c', array( 'label' => 'Culoare titlu categorie (la „Toate”)', 'type' => Controls_Manager::COLOR, 'separator' => 'before', 'selectors' => array( $a . ' .pvl-tiles-cat' => 'color: {{VALUE}};' ) ) );
 		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'ad_tc_typo', 'label' => 'Font titlu categorie', 'selector' => $a . ' .pvl-tiles-cat' ) );
@@ -375,7 +376,7 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 		}
 		$classes = 'pvl-list' . ( $edit ? '' : ' is-empty' ) . ( '' === $empty ? ' pvl-hide-empty' : '' );
 		/* în editor arată ca în formular (butonul „Adaugă produs”, două coloane) */
-		if ( $edit && 'yes' === ( $s['into_form'] ?? 'yes' ) && 'yes' === ( $s['picker'] ?? 'yes' ) ) $classes .= ' pvl-in-form is-multi';
+		if ( $edit && 'yes' === ( $s['picker'] ?? 'yes' ) ) $classes .= ' pvl-in-form is-multi';
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" data-pvl-list data-pvl-img="<?php echo $img ? '1' : '0'; ?>" data-pvl-cat="<?php echo $cat ? '1' : '0'; ?>"<?php echo $edit ? ' data-pvl-preview' : ''; ?><?php echo ! $edit && 'yes' === ( $s['into_form'] ?? 'yes' ) ? ' data-pvl-into-form' : ''; ?> data-pvl-align="<?php echo 'yes' === ( $s['align_fields'] ?? 'yes' ) ? '1' : '0'; ?>" data-pvl-picker="<?php echo 'yes' === ( $s['picker'] ?? 'yes' ) ? '1' : '0'; ?>" data-pvl-pos="<?php echo 'fields' === ( $s['pos'] ?? 'top' ) ? 'fields' : 'top'; ?>">
 			<?php if ( '' !== $title ) : ?>
@@ -392,7 +393,7 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 			</ul>
 			<?php if ( '' !== $empty ) : ?><p class="pvl-empty"><?php echo esc_html( $empty ); ?></p><?php endif; ?>
 			<?php if ( 'yes' === ( $s['show_clear'] ?? '' ) ) : ?><button type="button" class="pvl-clear" data-pvl-clear><?php echo esc_html( $s['clear_text'] ?? 'Golește lista' ); ?></button><?php endif; ?>
-			<?php if ( $edit && 'yes' === ( $s['into_form'] ?? 'yes' ) && 'yes' === ( $s['picker'] ?? 'yes' ) && 'yes' === ( $s['preview_adder'] ?? 'yes' ) ) $this->adder_preview(); ?>
+			<?php if ( $edit && 'yes' === ( $s['picker'] ?? 'yes' ) && 'yes' === ( $s['preview_adder'] ?? 'yes' ) ) $this->adder_preview(); ?>
 		</div>
 		<?php
 	}

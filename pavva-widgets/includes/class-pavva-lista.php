@@ -151,13 +151,13 @@ final class Pavva_W_Lista {
 	}
 
 	/* toate produsele (pentru alegerea din widgetul Buton ofertă) */
-	/* editorul Elementor: etichetele de variantă pentru produsele de exemplu (prima culoare + prima grosime, sau „nehotărâtă”) */
+	/* editorul Elementor: etichetele de variantă pentru produsele de exemplu (prima culoare + prima grosime, sau „Nu am decis”) */
 	public static function preview_tags( int $pid, bool $undec = false ): string {
 		$v = self::variants( $pid );
 		$h = '';
 		if ( $undec ) {
-			if ( $v['colors'] ) $h .= '<span class="pvl-var-c is-undec">Culoare: nehotărâtă</span>';
-			if ( $v['thick'] ) $h .= '<span class="pvl-var-t is-undec">Grosime: nehotărâtă</span>';
+			if ( $v['colors'] ) $h .= '<span class="pvl-var-c is-undec">Culoare: Nu am decis</span>';
+			if ( $v['thick'] ) $h .= '<span class="pvl-var-t is-undec">Grosime: Nu am decis</span>';
 		} else {
 			if ( $v['colors'] ) {
 				$c  = $v['colors'][0];

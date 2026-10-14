@@ -44,12 +44,14 @@
 	function keyOf(it) { return pkey(it) + '|' + norm(it.color) + '|' + norm(it.thick); }
 	function hasProduct(it) { var k = pkey(it); return read().some(function (x) { return pkey(x) === k; }); }
 	function hasOpts(it) { return !!(it && it.opts && ((it.opts.colors && it.opts.colors.length) || (it.opts.thick && it.opts.thick.length))); }
-	/* o singură culoare / grosime nu e o alegere: e completată automat (fereastra o arată deja bifată, fără „Nu m-am hotărât încă”) */
+	/* o singură culoare / grosime nu e o alegere: e completată automat (fereastra o arată deja bifată, fără „Nu am decis”) */
 	function single(it) {
 		var o = it && it.opts;
 		if (!o) return it;
 		if (o.colors && o.colors.length === 1 && !it.color) { it.color = String(o.colors[0].n); it.ct = String(o.colors[0].t || ''); }
 		if (o.thick && o.thick.length === 1 && !it.thick) it.thick = String(o.thick[0]);
+		if (isUndec(it.color)) it.color = undec();
+		if (isUndec(it.thick)) it.thick = undec();
 		return it;
 	}
 	function needsChoice(it) {
@@ -160,7 +162,9 @@
 		toastEl.className = 'pvl-toast';
 		toastEl.setAttribute('role', 'region');
 		toastEl.setAttribute('aria-label', txt('title', 'Oferta ta'));
-		toastEl.innerHTML = '<span class="pvl-toast-t"></span><a class="pvl-toast-a" href="#"></a>' +
+		toastEl.innerHTML = '<span class="pvl-toast-t"></span>' +
+			'<button type="button" class="pvl-toast-add" data-pvl-add data-pvl-mode="add" data-pvl-again="remove" hidden><span class="pvl-toast-plus" aria-hidden="true">+</span><span class="pvl-toast-add-t"></span></button>' +
+			'<a class="pvl-toast-a" href="#"></a>' +
 			'<button type="button" class="pvl-toast-x" aria-label="' + esc(txt('hide', 'Ascunde bara')) + '">' + X + '</button>';
 		d.body.appendChild(toastEl);
 		toastEl.querySelector('.pvl-toast-x').addEventListener('click', function () {
@@ -169,21 +173,56 @@
 		});
 		return toastEl;
 	}
+	/* pagina de produs: după ce butonul principal „Adaugă în listă” iese din ecran (în sus), bara apare și cu acest buton,
+	   ca vizitatorul să poată adăuga produsul fără să urce înapoi */
+	var prodPast = false;
+	function curProduct() { return w.PavvaListaCurrent && w.PavvaListaCurrent.name ? clean(w.PavvaListaCurrent) : null; }
+	function watchProduct() {
+		var cur = curProduct();
+		if (!cur || C.barAdd === false || !dcfg().barAddOn) return;
+		var main = null;
+		each('[data-pvl-add], .pv-oferta-add', function (el) {
+			if (main || el.closest('.pvl-toast, .pvl-drawer, .pvg, [data-pvl-preview]')) return;
+			var it = itemOf(el);
+			if (it && pkey(it) === pkey(cur) && el.getBoundingClientRect().height > 0) main = el;
+		});
+		var upd = function (past) { if (past !== prodPast) { prodPast = past; bar(); } };
+		if (main && 'IntersectionObserver' in w) {
+			new IntersectionObserver(function (en) {
+				var e = en[en.length - 1];
+				upd(!e.isIntersecting && e.boundingClientRect.bottom < 0);
+			}).observe(main);
+		} else {
+			/* fără buton principal pe pagină: bara cu „Adaugă” apare după primul ecran */
+			var chk = function () { upd(w.pageYOffset > (w.innerHeight || 700) * 0.8); };
+			w.addEventListener('scroll', chk, { passive: true });
+			chk();
+		}
+	}
 	function bar(flashName, url) {
 		var n = read().length;
-		var show = C.bar !== false && n > 0 && !onFormPage() && !barOff() && !(dw && !dw.hidden);
+		var cur = prodPast ? curProduct() : null;
+		/* „Adaugă” în bară: produsul nu e încă în listă sau are variante (încă o culoare / grosime) */
+		var canAdd = !!cur && (!hasProduct(cur) || (hasOpts(cur) && pickOn()));
+		var show = C.bar !== false && (n > 0 || canAdd) && !onFormPage() && !barOff() && !(dw && !dw.hidden);
 		if (!show && !toastEl) return;
 		var el = ensureBar();
-		el.querySelector('.pvl-toast-a').setAttribute('href', url || C.form || '/solicita-oferta/');
 		var bc = dcfg();
-		el.querySelector('.pvl-toast-a').textContent = bc.barSee;
+		var a = el.querySelector('.pvl-toast-a');
+		a.setAttribute('href', url || C.form || '/solicita-oferta/');
+		a.textContent = bc.barSee;
+		a.hidden = n === 0;
+		var ab = el.querySelector('.pvl-toast-add');
+		ab.hidden = !canAdd;
+		if (canAdd) ab.querySelector('.pvl-toast-add-t').textContent = hasProduct(cur) ? bc.barAddMore : bc.barAdd;
+		el.classList.toggle('has-add', canAdd);
 		var t = el.querySelector('.pvl-toast-t');
 		if (flashName) {
 			t.innerHTML = esc(bc.barAdded) + ': <strong>' + esc(flashName) + '</strong>';
 			clearTimeout(toastT);
 			toastT = setTimeout(function () { toastT = 0; bar(); }, 3500);
 		} else if (!toastT) {
-			t.innerHTML = esc(bc.barLabel) + ': <strong>' + esc(plural(n)) + '</strong>';
+			t.innerHTML = n ? esc(bc.barLabel) + ': <strong>' + esc(plural(n)) + '</strong>' : '<strong>' + esc(cur ? cur.name : '') + '</strong>';
 		}
 		el.classList.toggle('is-on', show || (!!flashName && C.bar === false));
 		d.documentElement.classList.toggle('pv-oferta-bar', show);
@@ -242,7 +281,7 @@
 	/* ---------- „Oferta ta” în meniul de navigare ----------
 	   Appearance → Menus: un link (de ex. /solicita-oferta/) cu clasa CSS pv-oferta-nav
 	   (+ pv-oferta-nav-icon = doar iconiță, + pv-oferta-nav-hide = ascuns cât lista e goală) */
-	var ICON = '<svg class="pvl-nav-ico" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path fill="currentColor" d="M336 64h-80c0-35.3-28.7-64-64-64s-64 28.7-64 64H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM96 424c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm0-96c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm0-96c-13.3 0-24-10.7-24-24s10.7-24 24-24 24 10.7 24 24-10.7 24-24 24zm96-192c13.3 0 24 10.7 24 24s-10.7 24-24 24-24-10.7-24-24 10.7-24 24-24zm128 368c0 4.4-3.6 8-8 8H168c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16zm0-96c0 4.4-3.6 8-8 8H168c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16zm0-96c0 4.4-3.6 8-8 8H168c-4.4 0-8-3.6-8-8v-16c0-4.4 3.6-8 8-8h144c4.4 0 8 3.6 8 8v16z"/></svg>';
+	var ICON = '<svg class="pvl-nav-ico pvl-ico-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8.5 4.5H7A2.5 2.5 0 0 0 4.5 7v12A2.5 2.5 0 0 0 7 21.5h10a2.5 2.5 0 0 0 2.5-2.5V7A2.5 2.5 0 0 0 17 4.5h-1.5"/><rect x="8.5" y="2.5" width="7" height="4" rx="1.2"/><path d="M8.5 11.5h7M8.5 15.5h4.5"/></svg>';
 	function navItems() {
 		each('.pv-oferta-nav', function (li) {
 			var a = li.tagName === 'A' ? li : li.querySelector('a');
@@ -269,11 +308,11 @@
 	function each(sel, fn) { Array.prototype.forEach.call(d.querySelectorAll(sel), fn); }
 
 	var X = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
-	/* eticheta unei variante în listă; „Nu m-am hotărât încă” apare scurt, cu numele criteriului („Culoare: nehotărâtă”) */
+	/* eticheta unei variante în listă; „Nu am decis” apare cu numele criteriului („Culoare: Nu am decis”) */
 	function tag(v, k, img) {
 		if (!v) return '';
 		var cls = 'pvl-var-' + k;
-		if (norm(v) === norm(undec())) return '<span class="' + cls + ' is-undec" title="' + esc(v) + '">' + esc((k === 'c' ? txt('color', 'Culoare') : txt('thick', 'Grosime')) + ': ' + txt('undecShort', 'nehotărâtă')) + '</span>';
+		if (isUndec(v)) return '<span class="' + cls + ' is-undec">' + esc((k === 'c' ? txt('color', 'Culoare') : txt('thick', 'Grosime')) + ': ' + undec()) + '</span>';
 		return '<span class="' + cls + (img ? ' has-sw' : '') + '">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : '') + esc(v) + '</span>';
 	}
 	function renderList(box) {
@@ -384,7 +423,9 @@
 	/* ---------- fereastra „Alege varianta” (culoare cu thumbnail + grosime) ---------- */
 	var pk = null, pkLast = null;
 	function pickOn() { return C.picker !== false && dcfg().pick; }
-	function undec() { return txt('undecided', 'Nu m-am hotărât încă'); }
+	function undec() { return txt('undecided', 'Nu am decis'); }
+	/* textul vechi („Nu m-am hotărât încă”) din listele salvate înainte e tratat la fel */
+	function isUndec(v) { var n = norm(v); return !!n && (n === norm(undec()) || n === norm('Nu m-am hotărât încă')); }
 	function pickerBody(it, cur) {
 		var o = it.opts || {}, h = '';
 		var Q = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 9a3 3 0 1 1 4.3 2.7c-.9.5-1.5 1.2-1.5 2.3v.5M12 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
@@ -397,7 +438,7 @@
 				h += '<button type="button" class="pvl-pk-color' + (c.u ? ' pvl-pk-undec' : '') + (on ? ' is-on' : '') + '" aria-pressed="' + (on ? 'true' : 'false') + '" data-pvl-color="' + esc(c.n) + '" data-pvl-ct="' + esc(c.t) + '">' +
 					'<span class="pvl-pk-sw">' + (c.u ? Q : (c.t ? '<img src="' + esc(c.t) + '" alt="" loading="lazy" decoding="async">' : '')) + '</span><span class="pvl-pk-cn">' + esc(c.n) + '</span></button>';
 			});
-			h += '</div><p class="pvl-pk-err" role="alert" hidden>' + esc(txt('needColor', 'Alege o culoare (sau „Nu m-am hotărât încă”).')) + '</p></fieldset>';
+			h += '</div><p class="pvl-pk-err" role="alert" hidden>' + esc(txt('needColor', 'Alege o culoare (sau „Nu am decis”).')) + '</p></fieldset>';
 		}
 		if (o.thick && o.thick.length) {
 			var t1 = o.thick.length === 1, tv = cur ? cur.thick : (t1 ? o.thick[0] : '');
@@ -407,12 +448,12 @@
 				var on = !!tv && norm(tv) === norm(t);
 				h += '<button type="button" class="pvl-pk-t' + (u ? ' pvl-pk-undec' : '') + (on ? ' is-on' : '') + '" aria-pressed="' + (on ? 'true' : 'false') + '" data-pvl-thick="' + esc(t) + '">' + esc(t) + '</button>';
 			});
-			h += '</div><p class="pvl-pk-err" role="alert" hidden>' + esc(txt('needThick', 'Alege grosimea (sau „Nu m-am hotărât încă”).')) + '</p></fieldset>';
+			h += '</div><p class="pvl-pk-err" role="alert" hidden>' + esc(txt('needThick', 'Alege grosimea (sau „Nu am decis”).')) + '</p></fieldset>';
 		}
-		h += '<p class="pvl-pk-note">' + esc(dcfg().pkNote) + '</p>';
+		if (dcfg().pkNote) h += '<p class="pvl-pk-note">' + esc(dcfg().pkNote) + '</p>';
 		return h;
 	}
-	/* fiecare grup trebuie ales (o culoare / o grosime sau „Nu m-am hotărât încă”); altfel mesaj lângă grup */
+	/* fiecare grup trebuie ales (o culoare / o grosime sau „Nu am decis”); altfel mesaj lângă grup */
 	function pickerValid(root) {
 		var first = null;
 		Array.prototype.forEach.call(root.querySelectorAll('[data-pvl-group]'), function (g) {
@@ -521,12 +562,16 @@
 			barLabel: g('t-bar-label', txt('title', 'Oferta ta')),
 			barSee: g('t-bar-see', txt('see', 'Vezi oferta')),
 			barAdded: g('t-bar-added', txt('added', 'Adăugat în ofertă')),
+			barAdd: g('t-bar-add', txt('barAdd', 'Adaugă în listă')),
+			barAddMore: g('t-bar-add-more', txt('barAddMore', 'Altă variantă')),
+			barAddOn: g('bar-add', '1') !== '0',
 			pick: g('pick', '1') !== '0',
 			pkTitle: g('t-pk-title', txt('pkTitle', 'Alege varianta')),
 			pkAdd: g('t-pk-add', txt('pkAdd', 'Adaugă la ofertă')),
 			pkSave: g('t-pk-save', txt('pkSave', 'Salvează')),
 			pkCancel: g('t-pk-cancel', txt('pkCancel', 'Anulează')),
-			pkNote: g('t-pk-note', txt('pkNote', 'Nu știi încă? Alege „Nu m-am hotărât încă”: te ajutăm noi la telefon.'))
+			/* nota de sub alegere e opțională (gol = nu apare); vechiul text implicit nu mai apare */
+			pkNote: (function (v) { return /m-am hot/i.test(v) ? '' : v; })(g('t-pk-note', ''))
 		};
 	}
 	function buildDrawer() {
@@ -946,6 +991,7 @@
 			if (x) bindForm(form, x.categorie, x.produs, x.data);
 		});
 		render();
+		watchProduct();
 	}
 	if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', start); else start();
 
