@@ -438,3 +438,5 @@ html.pvl-pk-open, html.pvl-pk-open body { overflow: hidden; }
 
 /* iconița Pavva (listă desenată cu linie): fără umplere, linie de max. 2 */
 .pvl-c-ico svg.pvl-ico-list, svg.pvl-ico-list { fill: none; stroke: currentColor; stroke-width: 1.8; overflow: visible; }
+/* „cât butonul”: desenul decupat ocupă toată înălțimea; lățimea urmează proporția */
+.pvl-c-ico svg.pvl-ico-fit { width: auto; height: 1em; aspect-ratio: 16.8 / 20.8; stroke-width: 2; }

@@ -31,6 +31,8 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 
 	/* iconița Pavva: o listă (clipboard) desenată cu linie, grosimea liniei se alege din Stil (max. 2) */
 	const ICON = '<svg class="pvl-ico-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8.5 4.5H7A2.5 2.5 0 0 0 4.5 7v12A2.5 2.5 0 0 0 7 21.5h10a2.5 2.5 0 0 0 2.5-2.5V7A2.5 2.5 0 0 0 17 4.5h-1.5"/><rect x="8.5" y="2.5" width="7" height="4" rx="1.2"/><path d="M8.5 11.5h7M8.5 15.5h4.5"/></svg>';
+	/* aceeași iconiță, decupată pe desen (ocupă toată înălțimea) și cu linie fixă în pixeli, pentru „cât butonul” */
+	const ICON_FIT = '<svg class="pvl-ico-list pvl-ico-fit" viewBox="3.6 1.6 16.8 20.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" aria-hidden="true" focusable="false"><path vector-effect="non-scaling-stroke" d="M8.5 4.5H7A2.5 2.5 0 0 0 4.5 7v12A2.5 2.5 0 0 0 7 21.5h10a2.5 2.5 0 0 0 2.5-2.5V7A2.5 2.5 0 0 0 17 4.5h-1.5"/><rect vector-effect="non-scaling-stroke" x="8.5" y="2.5" width="7" height="4" rx="1.2"/><path vector-effect="non-scaling-stroke" d="M8.5 11.5h7M8.5 15.5h4.5"/></svg>';
 
 	private function is_edit_mode() {
 		return class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor && \Elementor\Plugin::$instance->editor->is_edit_mode();
@@ -360,6 +362,17 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 				'range'      => array( 'px' => array( 'min' => 10, 'max' => 80 ) ),
 				'separator'  => 'before',
 				'selectors'  => array( $this->sel( '.pvl-c-ico' ) => 'font-size: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_control(
+			'icon_fit',
+			array(
+				'label'       => 'Înălțime iconiță',
+				'type'        => Controls_Manager::SELECT,
+				'default'     => '',
+				'options'     => array( '' => 'Ca acum (mărime din „Mărime iconiță”)', 'button' => 'Cât butonul de lângă (automat)' ),
+				'description' => 'Automat: iconița ia exact înălțimea butonului din același rând al header-ului (ex. „Solicită ofertă”). Numărul poate ieși puțin peste.',
+				'condition'   => array( 'icon_style' => 'pavva' ),
 			)
 		);
 		$this->add_responsive_control(
@@ -742,9 +755,10 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		<div class="pvl-counter-wrap">
 			<a class="pvl-counter<?php echo $edit ? '' : ' is-empty'; ?>" href="<?php echo esc_url( $url ); ?>" data-pvl-counter
 				data-pvl-label="<?php echo esc_attr( '' !== $label ? $label : 'Oferta ta' ); ?>"<?php echo $hide ? ' data-pvl-hide-empty' : ''; ?><?php echo $edit ? ' data-pvl-preview' : ''; ?><?php echo $this->drawer_attrs( $s, $url ); // phpcs:ignore -- escapat în drawer_attrs ?>
+				<?php echo 'pavva' === ( $s['icon_style'] ?? 'pavva' ) && 'button' === ( $s['icon_fit'] ?? '' ) ? 'data-pvl-fit="button"' : ''; ?>
 				aria-label="<?php echo esc_attr( '' !== $label ? $label : 'Oferta ta' ); ?>">
 				<span class="pvl-c-ico" aria-hidden="true">
-					<?php if ( 'library' === ( $s['icon_style'] ?? 'pavva' ) ) : Icons_Manager::render_icon( $s['icon'] ?? array(), array( 'aria-hidden' => 'true' ) ); else : echo self::ICON; endif; // phpcs:ignore -- SVG fix ?>
+					<?php if ( 'library' === ( $s['icon_style'] ?? 'pavva' ) ) : Icons_Manager::render_icon( $s['icon'] ?? array(), array( 'aria-hidden' => 'true' ) ); else : echo 'button' === ( $s['icon_fit'] ?? '' ) ? self::ICON_FIT : self::ICON; endif; // phpcs:ignore -- SVG fix ?>
 					<?php if ( 'yes' === ( $s['show_count'] ?? 'yes' ) ) : ?>
 						<span class="pvl-badge" data-pvl-count><?php echo $edit ? '3' : '0'; ?></span>
 					<?php endif; ?>

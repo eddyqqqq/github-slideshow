@@ -313,8 +313,44 @@
 		});
 	}
 
+	/* listele (Județ, Localitate...) fără valoare aleasă au aceeași culoare ca placeholder-ul câmpurilor text
+	   („Nume”, „Email”); după alegere, aceeași culoare ca textul scris. Culorile se iau din câmpurile formularului. */
+	function toneSelects() {
+		if (!document.getElementById('pvo-tone-css')) {
+			var st = document.createElement('style');
+			st.id = 'pvo-tone-css';
+			st.textContent = 'form select.pvo-empty{color:var(--pvo-ph)!important}form select.pvo-empty option{color:var(--pvo-tx)}' +
+				'form select.pvo-filled{color:var(--pvo-tx)!important}';
+			document.head.appendChild(st);
+		}
+		Array.prototype.forEach.call(document.querySelectorAll('form'), function (form) {
+			var sels = form.querySelectorAll('select');
+			if (!sels.length) return;
+			var inp = form.querySelector('input[type="text"], input[type="email"], input[type="tel"], input:not([type]), textarea');
+			if (!inp) return;
+			var ph = '', tx = '';
+			try { ph = getComputedStyle(inp, '::placeholder').color; } catch (e) {}
+			tx = getComputedStyle(inp).color;
+			if (ph) form.style.setProperty('--pvo-ph', ph);
+			if (tx) form.style.setProperty('--pvo-tx', tx);
+			var upd = function (el) {
+				var empty = !el.value || (el.selectedIndex >= 0 && el.options[el.selectedIndex] && el.options[el.selectedIndex].disabled);
+				el.classList.toggle('pvo-empty', !!empty);
+				el.classList.toggle('pvo-filled', !empty);
+			};
+			Array.prototype.forEach.call(sels, function (el) {
+				upd(el);
+				if (!el.__pvoTone) { el.__pvoTone = true; el.addEventListener('change', function () { upd(el); }); }
+			});
+		});
+	}
+
 	function start() {
 		labelSelects();
+		toneSelects();
+		/* listele se mai completează după pornire (localități, produse): recalculăm */
+		setTimeout(toneSelects, 800);
+		setTimeout(toneSelects, 2500);
 		scan().forEach(function (f) {
 			if (f.suprafata) setupArea(f.suprafata);
 

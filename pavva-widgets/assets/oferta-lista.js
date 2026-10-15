@@ -986,6 +986,30 @@
 		bindForm(e.target, x.categorie, x.produs, x.data);
 	});
 
+	/* iconița „Oferta ta” cât butonul de lângă (ex. „Solicită ofertă” din header): caută cel mai apropiat buton
+	   din același rând (până la 4 containere mai sus) și îi ia înălțimea */
+	function fitIcons() {
+		each('.pvl-counter[data-pvl-fit="button"]', function (el) {
+			var r = el.getBoundingClientRect(), cy = r.top + r.height / 2, best = null, bd = 1e9;
+			var n = (el.closest('.elementor-widget') || el).parentElement;
+			for (var i = 0; n && i < 4 && !best; i++, n = n.parentElement) {
+				Array.prototype.forEach.call(n.querySelectorAll('a.elementor-button, .elementor-button, .e-button-base, a.e-button, .elementor-nav-menu a.elementor-item, button'), function (b) {
+					if (el.contains(b) || b.closest('.pvl-drawer, .pvl-toast, .pvl-pick')) return;
+					var q = b.getBoundingClientRect();
+					if (q.height < 20 || q.height > 140 || q.width < 40) return;
+					var dist = Math.abs(q.top + q.height / 2 - cy) * 4 + Math.min(Math.abs(q.left - r.right), Math.abs(r.left - q.right));
+					if (dist < bd) { bd = dist; best = q; }
+				});
+			}
+			var ico = el.querySelector('.pvl-c-ico');
+			/* direct pe iconiță: are prioritate față de „Mărime iconiță” din widget */
+			if (best && ico) ico.style.fontSize = Math.round(best.height) + 'px';
+		});
+	}
+	var fitT = 0;
+	w.addEventListener('resize', function () { clearTimeout(fitT); fitT = setTimeout(fitIcons, 150); });
+	w.addEventListener('load', fitIcons);
+
 	function start() {
 		each('form', function (form) {
 			var x = form.__pvoProducts;
@@ -993,6 +1017,7 @@
 		});
 		render();
 		watchProduct();
+		fitIcons();
 	}
 	if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', start); else start();
 
