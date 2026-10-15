@@ -328,11 +328,17 @@ html.pvl-pk-open, html.pvl-pk-open body { overflow: hidden; }
 :is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-color, .pvl-pk-t):focus-visible { outline: 2px solid var(--pvl-pk-accent); outline-offset: 2px; }
 .pvl-pk-note { margin: 0 0 8px; font-size: 13px; opacity: .7; }
 .pvl-pk-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 14px 20px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid #ebe8e3; }
+/* butonul principal: ca restul butoanelor site-ului (contur 2px, colțuri 8px, SUSE bold, se umple la hover); totul din widget (--pvl-ok-*) */
 :is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-ok, .pvl-av-ok), :is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-ok, .pvl-av-ok):focus {
-	flex: 1; margin: 0; min-height: 50px; padding: 12px 20px; border: 0; border-radius: 6px; box-shadow: none;
-	background: var(--pvl-pk-accent); color: #fff; font-family: inherit; font-size: 16px; font-weight: 700; text-transform: none; cursor: pointer;
+	flex: 1; margin: 0; box-sizing: border-box; min-height: var(--pvl-ok-h, 50px); padding: var(--pvl-ok-p, 12px 20px);
+	border: var(--pvl-ok-bw, 2px) var(--pvl-ok-bs, solid) var(--pvl-ok-bd, var(--pvl-pk-accent)); border-radius: var(--pvl-ok-r, 8px); box-shadow: none;
+	background: var(--pvl-ok-bg, transparent); color: var(--pvl-ok-c, var(--pvl-pk-accent));
+	font-family: "SUSE", var(--e-global-typography-text-font-family, inherit), sans-serif; font-size: 17px; font-weight: 700; line-height: 1.2; text-transform: none; cursor: pointer;
+	transition: background-color .2s, color .2s, border-color .2s;
 }
-:is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-ok, .pvl-av-ok):hover { background: #8f4520; color: #fff; }
+:is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-ok, .pvl-av-ok):hover, :is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-ok, .pvl-av-ok):focus-visible {
+	background: var(--pvl-ok-bg-h, var(--pvl-pk-accent)); color: var(--pvl-ok-c-h, #fff); border-color: var(--pvl-ok-bd-h, var(--pvl-ok-bd, var(--pvl-pk-accent)));
+}
 :is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-cancel, .pvl-av-back), :is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-cancel, .pvl-av-back):hover, :is(.pvl-pick, .pvl-adder) button:is(.pvl-pk-cancel, .pvl-av-back):focus {
 	margin: 0; padding: 6px 4px; min-height: 0; border: 0; border-radius: 0; box-shadow: none; background: none; color: inherit;
 	font-family: inherit; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;

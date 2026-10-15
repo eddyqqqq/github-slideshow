@@ -665,11 +665,26 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		$this->add_responsive_control( 'pk_sw_min', array( 'label' => 'Mărime culori', 'separator' => 'before', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 60, 'max' => 180 ) ), 'selectors' => array( $p . ' .pvl-pk-colors, body .pvl-adder .pvl-pk-colors' => 'grid-template-columns: repeat(auto-fill, minmax({{SIZE}}{{UNIT}}, 1fr));' ) ) );
 		/* culori + grosimi: același stil în fereastră și în formular („Adaugă produs”) */
 		$this->pvl_choice_controls( 'pk', $p . ', body .pvl-adder', function ( $x ) use ( $p ) { return $p . ' ' . $x . ', body .pvl-adder ' . $x; } );
-		$this->add_control( 'pk_btn_h', array( 'label' => 'Butonul principal', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
-		$this->add_group_control( Group_Control_Typography::get_type(), array( 'name' => 'pk_btn_typo', 'label' => 'Font', 'selector' => $p . ' button.pvl-pk-ok' ) );
-		$this->add_control( 'pk_btn_bg_h', array( 'label' => 'Fundal la hover', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' button.pvl-pk-ok:hover, body .pvl-adder button.pvl-av-ok:hover' => 'background-color: {{VALUE}};' ) ) );
-		$this->add_control( 'pk_btn_color', array( 'label' => 'Text', 'type' => Controls_Manager::COLOR, 'selectors' => array( $p . ' button.pvl-pk-ok, ' . $p . ' button.pvl-pk-ok:hover, body .pvl-adder button.pvl-av-ok' => 'color: {{VALUE}};' ) ) );
-		$this->add_responsive_control( 'pk_btn_r', array( 'label' => 'Colțuri', 'type' => Controls_Manager::SLIDER, 'size_units' => array( 'px' ), 'range' => array( 'px' => array( 'min' => 0, 'max' => 40 ) ), 'selectors' => array( $p . ' button.pvl-pk-ok, body .pvl-adder button.pvl-av-ok' => 'border-radius: {{SIZE}}{{UNIT}};' ) ) );
+		$this->add_control( 'pk_btn_h', array( 'label' => 'Butonul principal („Adaugă în listă” / „Adaugă produsul”)', 'type' => Controls_Manager::HEADING, 'separator' => 'before' ) );
+		$ok = $p . ', body .pvl-adder';
+		$this->pvl_typo( 'pk_btn_typo', 'Font', array( $p . ' button.pvl-pk-ok', 'body .pvl-adder button.pvl-av-ok' ), true );
+		$this->pvl_size( 'pk_btn_bw', 'Grosime bordură', $ok, 'ok-bw', 8 );
+		$this->add_control( 'pk_btn_bs', array( 'label' => 'Tip bordură', 'type' => Controls_Manager::SELECT, 'default' => '', 'options' => array( '' => 'Implicit (linie)', 'solid' => 'Linie', 'dashed' => 'Linie întreruptă', 'dotted' => 'Puncte', 'double' => 'Dublă', 'none' => 'Fără' ), 'selectors' => array( $ok => '--pvl-ok-bs: {{VALUE}};' ) ) );
+		$this->pvl_size( 'pk_btn_r', 'Colțuri', $ok, 'ok-r', 40, array( 'px', '%' ) );
+		$this->pvl_pad( 'pk_btn_p', 'Padding', $ok, 'ok-p' );
+		$this->pvl_size( 'pk_btn_hh', 'Înălțime', $ok, 'ok-h', 90 );
+		$this->start_controls_tabs( 'pk_btn_tabs' );
+		$this->start_controls_tab( 'pk_btn_tab_n', array( 'label' => 'Normal' ) );
+		$this->pvl_color( 'pk_btn_color', 'Text', $ok, 'ok-c' );
+		$this->pvl_color( 'pk_btn_bg', 'Fundal', $ok, 'ok-bg' );
+		$this->pvl_color( 'pk_btn_bd', 'Culoare bordură', $ok, 'ok-bd' );
+		$this->end_controls_tab();
+		$this->start_controls_tab( 'pk_btn_tab_h', array( 'label' => 'Hover' ) );
+		$this->pvl_color( 'pk_btn_color_h', 'Text', $ok, 'ok-c-h' );
+		$this->pvl_color( 'pk_btn_bg_h', 'Fundal', $ok, 'ok-bg-h' );
+		$this->pvl_color( 'pk_btn_bd_h', 'Culoare bordură', $ok, 'ok-bd-h' );
+		$this->end_controls_tab();
+		$this->end_controls_tabs();
 		$this->end_controls_section();
 	}
 
