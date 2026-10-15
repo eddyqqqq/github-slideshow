@@ -202,8 +202,8 @@
 	function bar(flashName, url) {
 		var n = read().length;
 		var cur = prodPast ? curProduct() : null;
-		/* „Adaugă în listă” rămâne în bară cât vizitatorul e sub butonul principal (și după ce a adăugat produsul) */
-		var canAdd = !!cur;
+		/* „Adaugă în listă” apare doar cât produsul paginii nu e încă în listă; după adăugare rămâne doar „Vezi lista” */
+		var canAdd = !!cur && !hasProduct(cur);
 		var show = C.bar !== false && (n > 0 || canAdd) && !onFormPage() && !barOff() && !(dw && !dw.hidden);
 		if (!show && !toastEl) return;
 		var el = ensureBar();
