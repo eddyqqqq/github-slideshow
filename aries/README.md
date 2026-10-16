@@ -46,3 +46,31 @@ python3 -c "s=open('tools/template.html').read(); open('index.html','w').write(s
 ```
 
 `extract_shapes.py` maps each brochure page to its clip paths (ribbons, cover bands, cut shapes). If a new brochure version moves shapes, update the page/clip ids in the `R` table and the `add(...)` calls.
+
+## Performance (PageSpeed / Lighthouse)
+
+Measured locally with Lighthouse 12 (libraries served locally, fonts unavailable in the test environment):
+
+| | Before | After |
+|---|---|---|
+| Mobile performance | 67 | 88–97 |
+| Mobile FCP / LCP | 4.1 s / 4.3 s | 1.4 s / 2.4 s |
+| Desktop performance | 98 | 100 |
+| Best practices / SEO | 96 / 90 | 100 / 100 |
+| CLS | 0 | 0 |
+
+What was done, and what to keep when porting:
+
+- **Nothing blocks first paint.** GSAP, ScrollTrigger and Lenis load with `defer`; the page script runs on `DOMContentLoaded`. Google Fonts are injected by script (non-blocking) with only the weights in use (Figtree 300/400/600, IBM Plex Mono 500).
+- **No font shift.** A metric-matched local fallback (`Figtree Fallback`, `size-adjust` + ascent/descent overrides) keeps text in place when the web font arrives.
+- **Hero text paints at once.** It is the LCP element, so it is never hidden; only the shapes animate in.
+- **Smaller, simpler shape data.** `tools/build.py` joins the spreads and simplifies every band with Ramer–Douglas–Peucker (0.06 pt tolerance): 4,776 → 1,740 ribbon points, shape data 67 → 35 KB.
+- **Idle start-up.** Only the hero is set up immediately; every other section's animation is created in 12 ms slices with `requestIdleCallback`, then one sorted ScrollTrigger refresh.
+- **Draw only what is seen.** Ribbons are measured on layout but redrawn only when on screen (IntersectionObserver gate), batched to one render per frame on the GSAP ticker.
+- **Fewer triggers.** The nav colour uses an IntersectionObserver instead of a ScrollTrigger per section; numbers are static (no counters).
+- **Cheaper paint.** No `will-change` on split words; lighter nav blur, none on phones; the logo mask is inlined as a data URI (no extra request).
+- **Accessibility.** Darker ink shades (`--agency-ink`, `--interlink-ink`, `--logistics-ink`) for small coloured text on white; darker placeholder captions; meta description.
+
+Still open, by design: white text on the Interlink sky blue (`#50abdc`) is 2.6:1, below WCAG AA. It is the brand colour from the brochure; fix it in the final design (darker band shade or navy text) if accessibility score matters.
+
+For production (WordPress): self-host GSAP/ScrollTrigger/Lenis and the fonts (one less DNS/TLS each), serve with Brotli/gzip and long cache headers, and use `srcset` + `loading="lazy"` for the real photos (the hero stripes should get `fetchpriority="high"`).
