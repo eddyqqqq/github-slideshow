@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1190.55 303.96">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient-2);
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="0" y1="179.56" x2="1190.55" y2="179.56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity=".9"/>
+      <stop offset=".09" stop-color="#fff" stop-opacity=".73"/>
+      <stop offset=".19" stop-color="#fff" stop-opacity=".57"/>
+      <stop offset=".3" stop-color="#fff" stop-opacity=".42"/>
+      <stop offset=".42" stop-color="#fff" stop-opacity=".31"/>
+      <stop offset=".54" stop-color="#fff" stop-opacity=".21"/>
+      <stop offset=".67" stop-color="#fff" stop-opacity=".15"/>
+      <stop offset=".81" stop-color="#fff" stop-opacity=".11"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".1"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="0" y1="125.65" x2="1190.55" y2="125.65" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity=".1"/>
+      <stop offset=".15" stop-color="#fff" stop-opacity=".11"/>
+      <stop offset=".29" stop-color="#fff" stop-opacity=".16"/>
+      <stop offset=".43" stop-color="#fff" stop-opacity=".23"/>
+      <stop offset=".56" stop-color="#fff" stop-opacity=".34"/>
+      <stop offset=".7" stop-color="#fff" stop-opacity=".47"/>
+      <stop offset=".83" stop-color="#fff" stop-opacity=".64"/>
+      <stop offset=".96" stop-color="#fff" stop-opacity=".83"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".9"/>
+    </linearGradient>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <polygon class="cls-2" points="1190.55 122.84 1190.55 175.26 841.61 303.96 363.46 107.83 0 232.35 0 180.18 365.19 55.17 842.59 251.3 1190.55 122.84"/>
+      <path class="cls-1" d="M1190.55,70.96v52.41c-115.99,42.64-231.97,85.28-347.96,127.92-159.13-65.38-318.27-130.75-477.4-196.13C243.46,96.93,121.73,138.7,0,180.46v-52.17C123.68,85.53,247.36,42.77,371.04,0c158.77,64.93,317.53,129.87,476.3,194.8,114.4-41.28,228.81-82.56,343.21-123.84Z"/>
+    </g>
+  </g>
+</svg>

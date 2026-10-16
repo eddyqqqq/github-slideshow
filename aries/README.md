@@ -9,13 +9,13 @@ One-page animated concept built from the Aries Group brochure. This is a referen
 ## Ideas to keep
 
 1. **Exact brochure shapes.** Shapes are not redrawn by hand. They are extracted from the PDF vectors and sampled as `y(x)` edges on a shared grid (A4 page width = 594.55 pt). This makes every shape morphable and resolution-independent.
-2. **Identity ribbons (the white gradient bands).** Two ribbons per company, continuous across each two-page spread:
+2. **Identity ribbons (the white gradient bands).** Drawn from the designer's SVGs in `tools/ribbons/` (`group`, `agency`, `interlink`, `logistics`), with their exact gradients. The two bands of a ribbon share one edge exactly (no overlap, no seam). Two ribbons per company, continuous across each two-page spread:
    - Group: arc + peak (pages 3–4)
    - Shipping Agency: wave (pages 7–8)
    - Interlink: zigzag (pages 11–12)
    - Logistics: shallow peak (pages 17–18)
    Lower ribbon fades white → transparent left to right; upper ribbon the reverse.
-3. **Ribbon motion.** Ribbons draw along their length, pan across the spread and drift apart slightly with scroll. Between companies the old shape leaves to the right while the new one draws in behind it — no in-between morphs, so only real shapes are ever shown.
+3. **Ribbon motion.** Ribbons draw along their length and pan across the spread with scroll (the two bands never move apart). Between companies the old shape leaves to the right while the new one draws in behind it — no in-between morphs, so only real shapes are ever shown.
 4. **Hero = brochure cover.** Exact cover band (top and bottom bands, three diagonal image stripes for road / sea / rail at the brochure's 20.75° angle). Opening sequence: bands draw, stripes slide in, title rises. On scroll the hero pins and the band opens to full screen.
 5. **Identity section.** Pinned scene where one ribbon pair moves through the four company shapes while the background colour changes.
 6. **Figures as a tile grid** (chosen over the horizontal strip). Company-coloured tiles; large tiles carry their company's ribbons. Numbers are static — no scroll counters.
@@ -42,6 +42,7 @@ for p in $(seq 1 20); do pdftocairo -svg -f $p -l $p Brosura.pdf svg/p$p.svg; do
 # 2. sample every shape onto the shared grid
 python3 tools/extract_shapes.py svg tools/shapes.json
 # 3. simplify the data and build index.html from tools/template.html
+#    (identity ribbons are read from tools/ribbons/*.svg — replace those files to change them)
 python3 tools/build.py
 ```
 

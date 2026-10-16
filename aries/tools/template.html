@@ -599,8 +599,8 @@ document.addEventListener('DOMContentLoaded', () => {
      Each shape is y(x) on a shared grid; ribbons have a top (t) and bottom (b) edge.
      ===================================================================== */
   const DATA = /*SHAPES*/;
-  const PW = 594.551, SW = 2 * PW;
-  const SPREAD = DATA.spreads;          // { company: { lo: {x, t, b}, up: {x, t, b} } }, simplified at build time
+  const PW = 594.551, SW = DATA.w;
+  const SPREAD = DATA.spreads;          // { company: { lo/up: {x, t, b}, gl/gu: gradient } } from tools/ribbons/*.svg
 
   // polygon for a band between two edges, visible between fractions q0..q1 of its length (left to right)
   function bandD(xs, t, b, q1, dyT, dyB, q0 = 0) {
@@ -629,17 +629,18 @@ document.addEventListener('DOMContentLoaded', () => {
       let lo = 1e9, hi = -1e9;
       keys.forEach(k => { const s = SPREAD[k]; lo = Math.min(lo, ...s.up.t); hi = Math.max(hi, ...s.lo.b); });
       this.yc = (lo + hi) / 2; this.span = hi - lo + 24;
-      this.st = { q: 1, pan: 0.5, m: 0, par: 0 };
+      this.st = { q: 1, pan: 0.5, m: 0 };
       const id = 'rb' + (uid++);
       const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); parent.appendChild(e); return e; };
       const defs = mk('defs', {}, svg);
-      const grad = (gid, stops) => { const g = mk('linearGradient', { id: gid, gradientUnits: 'userSpaceOnUse', x1: 0, y1: 0, x2: SW, y2: 0 }, defs); stops.forEach(([o, a]) => mk('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': a * this.op }, g)); };
-      grad(id + 'u', [[0, .1], [.5, .3], [1, .92]]);
-      grad(id + 'l', [[0, .95], [.5, .34], [1, .08]]);
-      this.pu = mk('path', { fill: `url(#${id}u)`, d: 'M0 0Z' }, svg);
-      this.pl = mk('path', { fill: `url(#${id}l)`, d: 'M0 0Z' }, svg);
-      this.pu2 = mk('path', { fill: `url(#${id}u)`, d: 'M0 0Z' }, svg);
-      this.pl2 = mk('path', { fill: `url(#${id}l)`, d: 'M0 0Z' }, svg);
+      // the designer's own gradients, one pair per company (Group's runs diagonally)
+      const grad = (gid, g) => { const e = mk('linearGradient', { id: gid, gradientUnits: 'userSpaceOnUse', x1: g.c[0], y1: g.c[1], x2: g.c[2], y2: g.c[3] }, defs); g.s.forEach(([o, a]) => mk('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': +(a * this.op).toFixed(3) }, e)); };
+      this.gid = id;
+      keys.forEach(k => { grad(id + k + 'u', SPREAD[k].gu); grad(id + k + 'l', SPREAD[k].gl); });
+      this.pu = mk('path', { d: 'M0 0Z' }, svg);
+      this.pl = mk('path', { d: 'M0 0Z' }, svg);
+      this.pu2 = mk('path', { d: 'M0 0Z' }, svg);
+      this.pl2 = mk('path', { d: 'M0 0Z' }, svg);
       svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
     }
     layout() {
@@ -652,10 +653,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // one ribbon pair, visible between q0 and q1; the upper ribbon trails the lower one slightly
     pair(key, q0, q1, pl, pu) {
-      const sp = SPREAD[key], st = this.st, dl = st.par * 9, du = -st.par * 9;
+      const sp = SPREAD[key];
+      if (pl._k !== key) { pl._k = pu._k = key; pl.setAttribute('fill', `url(#${this.gid}${key}l)`); pu.setAttribute('fill', `url(#${this.gid}${key}u)`); }
       const lo0 = q0 <= 0 ? 0 : clamp01(q0 * 1.08), up0 = q0 <= 0 ? 0 : clamp01(q0 * 1.12 - 0.12);
-      pl.setAttribute('d', bandD(sp.lo.x, sp.lo.t, sp.lo.b, clamp01(q1 * 1.08), dl, dl, lo0));
-      pu.setAttribute('d', bandD(sp.up.x, sp.up.t, sp.up.b, clamp01(q1 * 1.12 - 0.12), du, du, up0));
+      pl.setAttribute('d', bandD(sp.lo.x, sp.lo.t, sp.lo.b, clamp01(q1 * 1.08), 0, 0, lo0));
+      pu.setAttribute('d', bandD(sp.up.x, sp.up.t, sp.up.b, clamp01(q1 * 1.12 - 0.12), 0, 0, up0));
     }
     render() {
       if (!this.s) return;
@@ -876,7 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
     r.st.q = 0; r.render();
     const R = () => touch(r);
     gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: drawStart, end: drawEnd, scrub: 0.8 } });
-    gsap.fromTo(r.st, { pan: 0, par: -1 }, { pan: 1, par: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
+    gsap.fromTo(r.st, { pan: 0 }, { pan: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
   }
   later(() => ribbonScroll(ribs.group, '#group'));
   ['agency', 'interlink', 'logistics'].forEach(k => later(() => {

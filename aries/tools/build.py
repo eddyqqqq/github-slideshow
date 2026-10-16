@@ -1,14 +1,17 @@
 """Build aries/index.html from tools/template.html and tools/shapes.json.
 
 The shape data is compacted for the page:
-- page shapes are joined into two-page spreads (lower ribbon = left page bright + right page faint);
+- identity ribbons are read from the designer's SVGs in tools/ribbons/ (see ribbons_svg.py);
+- the hero cover bands come from the brochure PDF (shapes.json, see extract_shapes.py);
 - every band is simplified with Ramer-Douglas-Peucker (straight runs collapse to their end points,
-  curves keep enough points to stay within TOL pt), so the page ships and redraws far fewer points.
+  curves keep enough points to stay within the tolerance), so the page ships and redraws fewer points.
 
 Usage: python3 tools/build.py
 """
 import json
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PW = 594.551
@@ -45,15 +48,10 @@ def band(xs, t, b):
 def main():
     data = json.load(open(os.path.join(HERE, 'shapes.json')))
     G, S = data['grid'], data['shapes']
-    GS = G + [x + PW for x in G[1:]]
-    cat = lambda a, b: a + b[1:]
-    spreads = {}
-    for key, (L, R) in {'group': ('p3', 'p4'), 'agency': ('p7', 'p8'),
-                        'interlink': ('p11', 'p12'), 'logistics': ('p17', 'p18')}.items():
-        lo = band(GS, cat(S[L + 'hi']['t'], S[R + 'lo']['t']), cat(S[L + 'hi']['b'], S[R + 'lo']['b']))
-        up = band(GS, cat(S[L + 'lo']['t'], S[R + 'hi']['t']), cat(S[L + 'lo']['b'], S[R + 'hi']['b']))
-        spreads[key] = {'lo': lo, 'up': up}
-    out = {'spreads': spreads}
+    # identity ribbons come from the designer's SVGs (tools/ribbons/*.svg)
+    import ribbons_svg
+    w, spreads = ribbons_svg.spreads()
+    out = {'w': w, 'spreads': spreads}
     for k in ('tb', 'bb'):
         e = band(G, S[k]['t'], S[k]['b'])
         e.update({s: S[k][s] for s in ('tsl', 'tsr', 'bsl', 'bsr')})
@@ -64,8 +62,8 @@ def main():
     import base64
     html = tpl.replace('/*SHAPES*/', payload).replace('/*MARK*/', 'data:image/png;base64,' + base64.b64encode(mark).decode())
     open(os.path.join(HERE, '..', 'index.html'), 'w').write(html)
-    pts = sum(len(v['lo']['x']) + len(v['up']['x']) for v in spreads.values())
-    print(f'shape data {len(payload) // 1024} KB, ribbon points {pts} (was {len(GS) * 8})')
+    pts = sum(len(v['lo']['x']) * 2 for v in spreads.values())
+    print(f'shape data {len(payload) // 1024} KB, ribbon points {pts}')
 
 
 if __name__ == '__main__':
