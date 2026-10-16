@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aries Group</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: the brochure as one scroll. The white-gradient ribbons (drawn from the brochure's own vectors,
+   continuous across each two-page spread) carry every chapter; the cover band opens the page;
+   images are grey placeholders until real photography is supplied. */
+:root {
+  --group: #2c59b0;
+  --agency: #4388ac;
+  --interlink: #50abdc;
+  --logistics: #49989a;
+  --ink: #0f1d38;
+  --muted: #56647d;
+  --paper: #ffffff;
+  --mist: #eef3fa;
+  --line: #d7e0ee;
+  --on: #ffffff;
+  --dummy: #e5e8ed;
+  --dummy-2: #dadfe6;
+  --dummy-3: #ced4dd;
+  --dummy-ink: #8a93a3;
+  --display: "Figtree", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gut: max(clamp(16px, 5vw, 64px), env(safe-area-inset-left, 0px));
+  --gut-r: max(clamp(16px, 5vw, 64px), env(safe-area-inset-right, 0px));
+  --accent: var(--group);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.6 var(--body); overflow-x: clip; -webkit-font-smoothing: antialiased; }
+img, svg { max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+h1, h2, h3, p, figure { margin: 0; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: -0.02em; text-wrap: balance; }
+.wrap { width: 100%; max-width: 1280px; margin-inline: auto; padding-left: var(--gut); padding-right: var(--gut-r); }
+.eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; }
+.sq { display: inline-block; width: 0.9em; height: 0.9em; background: currentColor; flex: none; }
+.mark { display: inline-block; aspect-ratio: 256 / 302; background: currentColor; -webkit-mask: url(img/mark.png) center / contain no-repeat; mask: url(img/mark.png) center / contain no-repeat; }
+.w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.wi { display: inline-block; will-change: transform; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ---------- nav ---------- */
+.nav { position: fixed; inset: 0 0 auto; z-index: 50; padding-top: env(safe-area-inset-top, 0px);
+  background: color-mix(in srgb, var(--paper) 80%, transparent); -webkit-backdrop-filter: saturate(1.6) blur(18px); backdrop-filter: saturate(1.6) blur(18px);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 58px; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--accent); transition: color .6s; }
+.brand .mark { height: 28px; }
+.brand b { font: 600 14px/1 var(--display); letter-spacing: 0.24em; color: var(--ink); }
+.brand b span { font-weight: 400; color: var(--muted); }
+.nav ul { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+.nav ul a { display: block; padding: 7px 12px; border-radius: 999px; text-decoration: none; font-size: 13.5px; color: var(--muted); transition: color .3s, background .3s; }
+.nav ul a:hover, .nav ul a.on { color: var(--ink); background: var(--mist); }
+.nav .cta { color: var(--on); background: var(--group); }
+.nav .cta:hover { color: var(--on); background: var(--ink); }
+@media (max-width: 760px) { .nav ul li:not(:last-child) { display: none; } }
+
+/* ---------- hero: the cover band ---------- */
+.hero { position: relative; height: 100vh; height: 100svh; min-height: 580px; overflow: hidden; background: var(--paper); }
+.hero-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hband { fill: var(--group); }
+.s-road { fill: var(--dummy-2); } .s-ship { fill: var(--dummy); } .s-rail { fill: var(--dummy-3); }
+.ph-ico use { color: var(--dummy-ink); }
+.ph-cap { font: 500 6.5px var(--mono); letter-spacing: .12em; fill: var(--dummy-ink); text-transform: uppercase; }
+.hero-layout { position: absolute; inset: 0; display: flex; flex-direction: column; padding-top: calc(58px + env(safe-area-inset-top, 0px) + 10px); pointer-events: none; }
+.hero-layout > * { pointer-events: auto; }
+.hero-slot { flex: 1 1 auto; min-height: 0; }
+.hero-foot { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding-block: 10px clamp(24px, 5.5vh, 60px); }
+.hero-meta { display: grid; gap: 12px; }
+.hero-meta .divlist { display: none; }
+.hero-meta .eyebrow { color: var(--group); }
+.divlist { list-style: none; margin: 0; padding: 0; display: flex; gap: 22px; }
+.divlist li { display: grid; justify-items: center; gap: 6px; font: 600 9.5px/1.2 var(--display); letter-spacing: .22em; color: var(--group); text-align: center; }
+.divlist li span { font-weight: 400; font-size: 7px; letter-spacing: .26em; }
+.divlist .mark { height: 34px; color: var(--group); }
+.hero-title { display: grid; justify-items: start; gap: 4px; }
+.hero-title small { font-size: clamp(15px, 1.5vw, 20px); color: var(--ink); }
+.hero-title h1 { color: var(--group); font-size: clamp(38px, 5.6vw, 88px); line-height: 1; }
+.hero-end { position: absolute; left: 0; right: 0; bottom: clamp(28px, 8vh, 80px); z-index: 2; display: none; }
+.anim .hero-end { display: block; opacity: 0; }
+.hero-end p { font: 300 clamp(28px, 3.8vw, 56px)/1.1 var(--display); max-width: 17ch; letter-spacing: -0.02em; color: var(--ink); }
+.hero-end .eyebrow { display: block; margin-bottom: 14px; color: var(--group); }
+.pre #hTB, .pre #hBB, .pre #hStripes, .pre #hIcons, .pre .hero-title h1, .pre .hero-meta { opacity: 0; }
+@media (max-width: 760px) {
+  .hero-layout { justify-content: center; }
+  .hero-slot { flex: none; aspect-ratio: 594.55 / 474; order: 1; }
+  .hero-foot { display: contents; }
+  .hero-meta { order: 0; padding: 0 var(--gut-r) 16px var(--gut); }
+  .hero-meta .divlist { display: flex; }
+  .hero-title { order: 2; padding: 16px var(--gut-r) 0 var(--gut); justify-items: end; text-align: right; }
+  .divlist { gap: 16px; }
+  .ph-cap { display: none; }
+}
+
+/* ---------- ribbons (identity) ---------- */
+.band { position: relative; overflow: hidden; color: var(--on); }
+.band.group { background: var(--group); }
+.band.agency { background: var(--agency); }
+.band.interlink { background: var(--interlink); }
+.band.logistics { background: var(--logistics); }
+.rib-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+
+.chapter { min-height: 120vh; min-height: 120svh; display: grid; align-content: end; }
+.chapter .chap-text { position: relative; padding-block: 0 clamp(48px, 9vh, 96px); display: grid; gap: 18px; }
+.chapter h2 { font: 300 clamp(30px, 4.6vw, 66px)/1.08 var(--display); max-width: 20ch; letter-spacing: -0.025em; }
+.chapter .eyebrow { opacity: .85; }
+.chap-mark { position: absolute; top: calc(58px + env(safe-area-inset-top, 0px) + 28px); right: var(--gut-r); display: grid; justify-items: center; gap: 9px; text-align: center; z-index: 1; }
+.chap-mark .mark { height: clamp(62px, 8vw, 104px); color: var(--on); }
+.chap-mark b { font: 600 clamp(14px, 1.4vw, 19px)/1 var(--display); letter-spacing: .26em; }
+.chap-mark span { font: 400 10.5px/1.45 var(--display); letter-spacing: .32em; text-transform: uppercase; }
+
+.intro { min-height: 130vh; min-height: 130svh; display: grid; align-content: end; }
+.intro .chap-text { padding-block: 0 clamp(56px, 10vh, 110px); display: grid; gap: clamp(22px, 3vw, 36px); }
+.statement { font: 300 clamp(32px, 4.8vw, 70px)/1.08 var(--display); letter-spacing: -0.025em; max-width: 18ch; }
+.lede { max-width: 46ch; font-size: clamp(16px, 1.4vw, 19px); opacity: .9; }
+
+/* identity showcase */
+.identity { height: 100vh; height: 100svh; position: relative; overflow: hidden; color: var(--on); background: var(--group); }
+.id-bg { position: absolute; inset: 0; background: var(--group); }
+.id-head { position: absolute; top: calc(58px + env(safe-area-inset-top, 0px) + 28px); left: 0; right: 0; }
+.id-head .wrap { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.id-tabs { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; flex-wrap: wrap; }
+.id-tabs li { font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 9px 13px; border-radius: 999px; color: color-mix(in srgb, var(--on) 70%, transparent); transition: background .4s, color .4s; }
+.id-tabs li.on { background: color-mix(in srgb, var(--on) 18%, transparent); color: var(--on); }
+.id-foot { position: absolute; left: 0; right: 0; bottom: clamp(40px, 9vh, 96px); }
+.id-items { display: grid; }
+.id-item { grid-area: 1 / 1; display: grid; gap: 12px; }
+.id-item h2 { font: 300 clamp(36px, 6vw, 92px)/1 var(--display); letter-spacing: -0.035em; }
+.id-item p { font-size: clamp(16px, 1.5vw, 20px); opacity: .9; max-width: 40ch; }
+.anim .id-item:not(:first-child) { opacity: 0; }
+
+/* ---------- services ---------- */
+.services { padding-top: clamp(80px, 12vw, 160px); background: var(--paper); }
+.services .wrap { display: grid; gap: 40px; }
+.svc-list { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--line); }
+.svc-list li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: clamp(14px, 2.4vw, 28px); padding-block: clamp(18px, 2.6vw, 30px); border-bottom: 1px solid var(--line); font: 300 clamp(22px, 3.4vw, 46px)/1.15 var(--display); letter-spacing: -0.02em; }
+.svc-list li > span:nth-child(2) { min-width: 0; }
+.svc-list .sq { color: var(--group); width: clamp(14px, 1.6vw, 22px); height: clamp(14px, 1.6vw, 22px); }
+.svc-list em { font: 500 11px/1 var(--mono); letter-spacing: .12em; font-style: normal; color: var(--muted); text-transform: uppercase; }
+@media (max-width: 600px) { .svc-list em { display: none; } .svc-list li { grid-template-columns: auto 1fr; } }
+
+/* ---------- images: one rounded frame that opens to full width; colour bands stay straight ---------- */
+.media { padding-top: clamp(60px, 8vw, 120px); }
+.media-frame { position: relative; height: clamp(320px, 50vw, 760px); background: var(--dummy); overflow: hidden; clip-path: inset(0% 5% 0% 5% round 24px); }
+.media-in { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; color: var(--dummy-ink); }
+.media-in svg { width: clamp(44px, 5vw, 68px); height: clamp(44px, 5vw, 68px); }
+.media-in figcaption { font: 500 11.5px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; text-align: center; padding-inline: 16px; }
+.block { padding-block: clamp(100px, 13vw, 180px); color: var(--on); }
+.media + .block, .grid-svc + section .block { margin-top: 0; }
+.block.group { background: var(--group); } .block.agency { background: var(--agency); } .block.interlink { background: var(--interlink); } .block.logistics { background: var(--logistics); }
+.block .wrap { display: grid; gap: 28px; }
+.block h2 { font: 300 clamp(30px, 4.6vw, 66px)/1.1 var(--display); max-width: 19ch; letter-spacing: -0.025em; }
+.block .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px 48px; max-width: 980px; }
+.block .cols p { opacity: .9; font-size: 16px; max-width: 48ch; }
+.block .eyebrow { opacity: .85; }
+.grid-svc, .facility, .services { padding-bottom: clamp(80px, 11vw, 150px); }
+
+/* ---------- figures: grid of tiles ---------- */
+.figs { background: var(--paper); padding-block: clamp(80px, 11vw, 150px); }
+.figs .wrap { display: grid; gap: clamp(32px, 4vw, 56px); }
+.figs-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+.figs-head h2 { font-size: clamp(30px, 4.4vw, 60px); line-height: 1.05; max-width: 14ch; }
+.figs-head p { color: var(--muted); max-width: 36ch; font-size: 15px; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+.tile { position: relative; overflow: hidden; border-radius: 22px; background: var(--mist); color: var(--ink); padding: clamp(20px, 2.2vw, 30px); display: grid; align-content: space-between; gap: 22px; min-height: clamp(220px, 22vw, 300px); }
+.tile.w2 { grid-column: span 2; }
+.tile.c-group { background: var(--group); color: var(--on); } .tile.c-agency { background: var(--agency); color: var(--on); }
+.tile.c-interlink { background: var(--interlink); color: var(--on); } .tile.c-logistics { background: var(--logistics); color: var(--on); }
+.tile .rib-svg { opacity: .9; }
+.tile .who { position: relative; display: flex; align-items: center; gap: 10px; }
+.tile .who .eyebrow { opacity: .8; }
+.tile strong { position: relative; display: block; font: 300 clamp(48px, 5.6vw, 96px)/0.9 var(--display); letter-spacing: -0.045em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tile strong.long { font-size: clamp(40px, 3.9vw, 66px); }
+.tile strong sup { font-size: .38em; vertical-align: top; margin-left: 4px; font-weight: 400; letter-spacing: 0; }
+.tile p { position: relative; font-size: 15px; max-width: 30ch; opacity: .85; }
+.tile:not([class*="c-"]) strong { color: var(--agency); }
+@media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .tiles { grid-template-columns: minmax(0, 1fr); } .tile.w2 { grid-column: auto; } }
+
+/* ---------- layout variant: contained panels ---------- */
+:root { --side: 0px; --rad: 0px; }
+[data-layout="contained"] { --side: max(12px, calc((100vw - 1440px) / 2)); --rad: 28px; }
+/* panels are drawn with a clip, not margins, so pinned sections keep their geometry */
+[data-layout="contained"] .band, [data-layout="contained"] .block, [data-layout="contained"] .identity {
+  clip-path: inset(6px var(--side) 6px var(--side) round var(--rad)); }
+[data-layout="contained"] .hero { clip-path: inset(calc(58px + env(safe-area-inset-top, 0px) + 8px) var(--side) 0 var(--side) round var(--rad)); }
+[data-layout="contained"] .media { padding-inline: var(--side); }
+[data-layout="contained"] .chap-mark { right: calc(var(--side) + var(--gut-r)); top: calc(58px + env(safe-area-inset-top, 0px) + 40px); }
+[data-layout="contained"] .wrap { max-width: min(1280px, calc(100vw - 2 * var(--side))); }
+
+/* ---------- variant switcher (concept review only) ---------- */
+.variants { position: fixed; z-index: 60; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  display: flex; gap: 10px; align-items: center; padding: 6px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 86%, transparent);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 8px 30px rgba(15, 29, 56, .25); max-width: calc(100vw - 24px); }
+.variants .seg { display: flex; gap: 2px; align-items: center; }
+.variants .lbl { font: 500 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--on) 60%, transparent); padding: 0 6px 0 8px; }
+.variants button { font: 500 12.5px/1 var(--body); color: var(--on); background: transparent; border: 0; border-radius: 999px; padding: 8px 12px; cursor: pointer; }
+.variants button[aria-pressed="true"] { background: var(--on); color: var(--ink); }
+@media (max-width: 560px) { .variants .lbl { display: none; } .variants button { padding: 8px 10px; } }
+
+/* ---------- cards ---------- */
+.grid-svc { padding-top: clamp(80px, 11vw, 150px); background: var(--paper); }
+.grid-svc .wrap { display: grid; gap: clamp(36px, 5vw, 64px); }
+.grid-svc .head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+.grid-svc .head h2 { font-size: clamp(28px, 3.8vw, 52px); line-height: 1.08; max-width: 16ch; }
+.grid-svc .head .eyebrow { color: var(--c); }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: clamp(28px, 3.4vw, 48px) clamp(24px, 3vw, 48px); }
+.card { display: grid; gap: 12px; align-content: start; padding-top: 22px; border-top: 1px solid var(--line); min-width: 0; }
+.card .sq { color: var(--c); width: 14px; height: 14px; }
+.card h3 { font-size: clamp(21px, 1.9vw, 26px); line-height: 1.15; }
+.card p { color: var(--muted); font-size: 15.5px; }
+.card .fig { font: 500 12px/1.3 var(--mono); letter-spacing: .06em; color: var(--c); }
+
+.facility { padding-top: clamp(80px, 11vw, 150px); background: var(--paper); }
+.facility .wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: clamp(36px, 6vw, 96px); align-items: start; }
+.facility .txt { display: grid; gap: 18px; color: var(--muted); max-width: 52ch; }
+.facility .txt h2 { color: var(--ink); font: 400 clamp(28px, 3.6vw, 48px)/1.12 var(--display); }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.checks li { display: flex; align-items: center; gap: 16px; font-size: 16px; }
+.checks .sq { color: var(--group); width: 16px; height: 16px; }
+
+/* ---------- contact ---------- */
+.contact { padding-block: clamp(150px, 24vw, 320px) clamp(48px, 7vw, 80px); }
+.contact .wrap { position: relative; display: grid; gap: clamp(48px, 8vw, 110px); }
+.contact h2 { font: 300 clamp(48px, 9vw, 150px)/0.95 var(--display); letter-spacing: -0.045em; max-width: 12ch; }
+.contact-row { display: flex; justify-content: space-between; align-items: end; gap: 40px; flex-wrap: wrap; }
+.contacts { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; font-size: clamp(15px, 1.4vw, 18px); }
+.contacts li { display: flex; align-items: center; gap: 16px; }
+.contacts .sq { width: 18px; height: 18px; color: var(--on); }
+.contacts a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--on) 40%, transparent); }
+.copy { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--on); background: color-mix(in srgb, var(--on) 14%, transparent); border: 0; border-radius: 999px; padding: 7px 11px; cursor: pointer; }
+.copy:hover { background: color-mix(in srgb, var(--on) 26%, transparent); }
+.marks { display: flex; gap: clamp(20px, 3vw, 36px); align-items: end; }
+.marks div { display: grid; justify-items: center; gap: 8px; font: 600 11px/1.25 var(--display); letter-spacing: .2em; text-align: center; }
+.marks div span { font-weight: 400; font-size: 8.5px; letter-spacing: .24em; }
+.marks .mark { height: 46px; color: var(--on); }
+.foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid color-mix(in srgb, var(--on) 22%, transparent); font-size: 13px; opacity: .8; }
+</style>
+</head>
+<body>
+<script>(function () { var h = (location.hash || '').slice(1), d = document.documentElement;
+  d.dataset.layout = /contained/.test(h) ? 'contained' : 'full'; })();</script>
+<script>document.documentElement.classList.add('pre'); setTimeout(function () { document.documentElement.classList.remove('pre'); }, 4000);</script>
+
+<svg class="sprite" aria-hidden="true">
+  <symbol id="imgIcon" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><rect x="2.5" y="4" width="19" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M3 17.5l5.2-5 3.6 3.4 3.2-3 5.5 5.1"/></g></symbol>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#hero" aria-label="Aries Group, back to top"><span class="mark"></span><b>ARIES <span>GROUP</span></b></a>
+    <nav aria-label="Sections">
+      <ul>
+        <li><a href="#agency" data-nav="agency">Shipping Agency</a></li>
+        <li><a href="#interlink" data-nav="interlink">Interlink</a></li>
+        <li><a href="#logistics" data-nav="logistics">Logistics</a></li>
+        <li><a class="cta" href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- HERO: brochure cover band with three image placeholders (road, sea, rail) -->
+<section class="hero" id="hero" data-accent="group">
+  <svg class="hero-svg" id="heroSvg" viewBox="-300 150 1194 750" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><clipPath id="hRegion"><path id="hRegionPath" d="M0 0Z"/></clipPath></defs>
+    <g clip-path="url(#hRegion)">
+      <g id="hZoom">
+        <g id="hStripes" transform="rotate(20.7552)">
+          <rect class="s-road" id="sRoad" x="0" y="0" width="0" height="0"/>
+          <rect class="s-ship" id="sShip" x="0" y="0" width="0" height="0"/>
+          <rect class="s-rail" id="sRail" x="0" y="0" width="0" height="0"/>
+        </g>
+        <g id="hIcons">
+          <g class="ph-ico" transform="translate(480 360)"><use href="#imgIcon" x="-13" y="-17" width="26" height="26"/><text class="ph-cap" text-anchor="middle" y="20">Image · Road</text></g>
+          <g class="ph-ico" transform="translate(205 425)"><use href="#imgIcon" x="-13" y="-17" width="26" height="26"/><text class="ph-cap" text-anchor="middle" y="20">Image · Sea</text></g>
+          <g class="ph-ico" transform="translate(84 548)"><use href="#imgIcon" x="-13" y="-17" width="26" height="26"/><text class="ph-cap" text-anchor="middle" y="20">Image · Rail</text></g>
+        </g>
+      </g>
+    </g>
+    <path class="hband" id="hTB" d="M0 0Z"/>
+    <path class="hband" id="hBB" d="M0 0Z"/>
+  </svg>
+
+  <div class="hero-layout">
+    <div class="hero-slot" id="heroSlot"></div>
+    <div class="hero-foot wrap">
+      <div class="hero-meta">
+        <span class="eyebrow">Est. 2003 · Constanța, Romania</span>
+        <ul class="divlist" aria-label="Group companies">
+          <li><span class="mark"></span>ARIES<span>SHIPPING<br>AGENCY</span></li>
+          <li><span class="mark"></span>ARIES<span>INTERLINK</span></li>
+          <li><span class="mark"></span>ARIES<span>LOGISTICS</span></li>
+        </ul>
+      </div>
+      <div class="hero-title">
+        <small>aries-group.ro</small>
+        <h1 id="heroH1">Where possibilities arise</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-end"><div class="wrap"><span class="eyebrow">Sea · River · Rail · Road</span><p>One partner across the entire transport chain.</p></div></div>
+</section>
+
+<!-- GROUP: spread p3–p4 -->
+<section class="band group intro" id="group" data-accent="group">
+  <svg class="rib-svg" data-rib="group" aria-hidden="true"></svg>
+  <div class="chap-mark"><span class="mark" role="img" aria-label="Aries Group mark"></span><b>ARIES</b><span>Group</span></div>
+  <div class="wrap chap-text">
+    <span class="eyebrow">Aries Group · 44.17° N, 28.65° E</span>
+    <h2 class="statement" data-scrub>Integrated maritime and logistics solutions covering the entire transport chain.</h2>
+    <p class="lede" data-fade>Established in 2003, Aries Group is among Romania’s leading transport and logistics providers, headquartered in Constanța and operating across the Black Sea and Danube region.</p>
+  </div>
+</section>
+
+<!-- SERVICES + arc-cut placeholder (p5) -->
+<section class="services" data-accent="group" aria-labelledby="svc-h">
+  <div class="wrap">
+    <span class="eyebrow" id="svc-h" style="color:var(--group)">What we do</span>
+    <ul class="svc-list" data-list>
+      <li><span class="sq"></span><span>Multimodal transport, stevedoring and warehousing</span><em>Logistics</em></li>
+      <li><span class="sq"></span><span>Port agency and all related services</span><em>Shipping Agency</em></li>
+      <li><span class="sq"></span><span>Freight forwarding and full-service logistics</span><em>Logistics</em></li>
+      <li><span class="sq"></span><span>Cargo chartering and brokerage</span><em>Shipping Agency</em></li>
+    </ul>
+  </div>
+  <figure class="media"><div class="media-frame"><div class="media-in"><svg aria-hidden="true"><use href="#imgIcon"/></svg><figcaption>Image placeholder · Container terminal at night, aerial</figcaption></div></div></figure>
+</section>
+
+<!-- PARTNER: blue peak block (p6) -->
+<section data-accent="group" aria-labelledby="partner-h">
+  <div class="block group">
+    <div class="wrap">
+      <h2 id="partner-h" data-split>The partner of choice when you need a ship agent, liner agent, shipbroker, rail freight operator or logistics provider in Romania.</h2>
+      <div class="cols" data-fade>
+        <p>We integrate maritime, rail and road transport capabilities to create flexible supply chain solutions tailored to the specific needs of each customer.</p>
+        <p>With specialized divisions, each focused on a specific area of expertise, we reduce operational friction and give our customers greater predictability and operational control, regardless of project complexity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IDENTITY: one ribbon pair moving through the four spreads -->
+<section class="identity" id="identity" data-accent="group" aria-labelledby="id-h">
+  <div class="id-bg"></div>
+  <svg class="rib-svg" data-rib="identity" aria-hidden="true"></svg>
+  <div class="id-head"><div class="wrap">
+    <span class="eyebrow" id="id-h">Four companies, one line</span>
+    <ul class="id-tabs" aria-hidden="true"><li class="on">Group</li><li>Shipping Agency</li><li>Interlink</li><li>Logistics</li></ul>
+  </div></div>
+  <div class="id-foot"><div class="wrap id-items">
+    <div class="id-item"><h2>Aries Group</h2><p>Integrated maritime and logistics solutions, headquartered in Constanța.</p></div>
+    <div class="id-item"><h2>Shipping Agency</h2><p>Comprehensive agency services in all Romanian Black Sea and Danube ports.</p></div>
+    <div class="id-item"><h2>Interlink</h2><p>Rail transport and operations for grains, steel products and fertilizers.</p></div>
+    <div class="id-item"><h2>Logistics</h2><p>Bulk and break-bulk cargo, from stevedoring to door-to-door delivery.</p></div>
+  </div></div>
+</section>
+
+<!-- FIGURES -->
+<section class="figs" id="figs" data-accent="group" aria-labelledby="figs-h">
+  <div class="wrap">
+    <div class="figs-head">
+      <h2 id="figs-h" data-split>The group in figures</h2>
+      <p>Annual volumes and market shares across the three companies of Aries Group.</p>
+    </div>
+    <div class="tiles" data-tiles>
+      <article class="tile w2 c-group"><svg class="rib-svg" data-rib="t-group" aria-hidden="true"></svg><div class="who"><span class="sq"></span><span class="eyebrow">Aries Group</span></div><strong>2003</strong><p>Founded in Constanța, Romania’s largest port city.</p></article>
+      <article class="tile c-agency"><div class="who"><span class="sq"></span><span class="eyebrow">Shipping Agency</span></div><strong>600<sup>+</sup></strong><p>Maritime port calls every year.</p></article>
+      <article class="tile c-agency"><div class="who"><span class="sq"></span><span class="eyebrow">Shipping Agency</span></div><strong>800<sup>+</sup></strong><p>Inland waterway port calls every year.</p></article>
+      <article class="tile"><div class="who"><span class="sq" style="color:var(--agency)"></span><span class="eyebrow">Fertilizers</span></div><strong>50<sup>%+</sup></strong><p>Of fertilizer traffic through Romanian ports.</p></article>
+      <article class="tile"><div class="who"><span class="sq" style="color:var(--agency)"></span><span class="eyebrow">Agri commodities</span></div><strong>25<sup>%</sup></strong><p>Of agricultural products exported and imported via Romanian ports.</p></article>
+      <article class="tile"><div class="who"><span class="sq" style="color:var(--agency)"></span><span class="eyebrow">Tankers</span></div><strong>20<sup>%</sup></strong><p>Of tanker traffic in Romanian ports.</p></article>
+      <article class="tile"><div class="who"><span class="sq" style="color:var(--interlink)"></span><span class="eyebrow">Grain facility</span></div><strong class="long" style="color:var(--interlink)">1,500<sup>t/day</sup></strong><p>Stuffing capacity, or 60 × 20′ containers a day.</p></article>
+      <article class="tile w2 c-interlink"><svg class="rib-svg" data-rib="t-interlink" aria-hidden="true"></svg><div class="who"><span class="sq"></span><span class="eyebrow">Interlink · Rail</span></div><strong>800,000<sup>t</sup></strong><p>Bulk grain moved by rail each year.</p></article>
+      <article class="tile w2 c-logistics"><svg class="rib-svg" data-rib="t-logistics" aria-hidden="true"></svg><div class="who"><span class="sq"></span><span class="eyebrow">Logistics</span></div><strong>300,000<sup>t</sup></strong><p>Bulk, general, unit and project cargo managed each year.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SHIPPING AGENCY (spread p7–p8) ================= -->
+<section class="band agency chapter" id="agency" data-accent="agency">
+  <svg class="rib-svg" data-rib="agency" aria-hidden="true"></svg>
+  <div class="chap-mark"><span class="mark" role="img" aria-label="Aries Shipping Agency mark"></span><b>ARIES</b><span>Shipping<br>Agency</span></div>
+  <div class="wrap chap-text">
+    <span class="eyebrow">Aries Shipping Agency</span>
+    <h2 data-split>Maritime and river agency providing comprehensive agency services in all Romanian Black Sea and Danube ports.</h2>
+  </div>
+</section>
+
+<section class="grid-svc" data-accent="agency" style="--c:var(--agency)" aria-label="Shipping Agency services">
+  <div class="wrap">
+    <div class="head"><h2 data-split>Six agency desks, one port team.</h2><span class="eyebrow">Black Sea · Danube</span></div>
+    <div class="cards" data-cards>
+      <article class="card"><span class="sq"></span><span class="fig">25% of Romanian agri trade</span><h3>Agricultural Commodities Agency</h3><p>We handle ships which load or discharge 25% of all agricultural products exported and imported via Romanian ports, including grain, oil seeds, meals, edible oils and sugar.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Tramp &amp; break-bulk liner</span><h3>Agency for Steel Products and General Cargo</h3><p>Tramp and break-bulk liner vessels, with parceling services between the Black Sea and North/Central America, Middle East, Indian Subcontinent and Far East, plus cargo supervision, port captain and customs services.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">20% of tanker traffic</span><h3>Tanker Agency</h3><p>Crude oil, petroleum products and liquid chemicals, on behalf of Romania’s largest petroleum company and other major traders.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Passenger · naval · auxiliary</span><h3>Agency for Passenger and Naval Vessels</h3><p>Intra-group expertise in ship agency, bunkering, logistics, procurement, storage, chandling, supply and transport to meet the requirements of shipowners and operators.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">50%+ of fertilizer traffic</span><h3>Fertilizers Agency</h3><p>Imports, exports and transit cargoes, on behalf of Romania’s largest fertilizer producer and major local and international traders.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Vessels · barges · pushers</span><h3>River Ships Agency</h3><p>Channel transit formalities, pilotage and towage coordination, customs transit procedures and brokerage for cargo transported via inland waterways.</p></article>
+    </div>
+  </div>
+  <figure class="media"><div class="media-frame"><div class="media-in"><svg aria-hidden="true"><use href="#imgIcon"/></svg><figcaption>Image placeholder · Vessel loading under a gantry crane</figcaption></div></div></figure>
+</section>
+
+<section data-accent="agency" aria-labelledby="ag-stat">
+  <div class="block agency">
+    <div class="wrap">
+      <h2 id="ag-stat">Handling over <span>600</span> maritime port calls and over <span>800</span> inland waterway port calls annually.</h2>
+      <div class="cols" data-fade>
+        <p>Our maritime division handles a wide variety of vessel types and cargoes: agricultural commodities, fertilizers, petroleum and liquid products, steel products, project cargo, Ro-Ro vessels, cruise ships and military vessels.</p>
+        <p>Beyond traditional ship agency, we provide cargo operation supervision, port captain services, customs formalities and operational consultancy, to the highest standards of efficiency and compliance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INTERLINK (spread p11–p12) ================= -->
+<section class="band interlink chapter" id="interlink" data-accent="interlink">
+  <svg class="rib-svg" data-rib="interlink" aria-hidden="true"></svg>
+  <div class="chap-mark"><span class="mark" role="img" aria-label="Aries Interlink mark"></span><b>ARIES</b><span>Interlink</span></div>
+  <div class="wrap chap-text">
+    <span class="eyebrow">Aries Interlink</span>
+    <h2 data-split>Supply chain support across Romania, with expertise in rail transport for grains, steel products and fertilizers.</h2>
+  </div>
+</section>
+
+<section class="grid-svc" data-accent="interlink" style="--c:var(--interlink)" aria-label="Interlink services">
+  <div class="wrap">
+    <div class="head"><h2 data-split>Rail, in sync with the ship.</h2><span class="eyebrow">Inland loading points → ports</span></div>
+    <div class="cards" data-cards>
+      <article class="card"><span class="sq"></span><span class="fig">Grains · steel · fertilizers</span><h3>Rail Freight</h3><p>Specialized rail transport across Romania, connecting inland loading points with ports and other destinations.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Capacity per shipment</span><h3>Wagon Capacity Management</h3><p>We secure wagon availability so cargo reaches terminal operations and vessel loading on schedule.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Loading → unloading</span><h3>Rail Operations Coordination</h3><p>Loading, dispatch, arrival and unloading, with continuous operational follow-up at every stage.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Terminal &amp; vessel windows</span><h3>Train Schedule Optimization</h3><p>Train movements planned around terminal availability and vessel loading schedules.</p></article>
+    </div>
+  </div>
+  <figure class="media"><div class="media-frame"><div class="media-in"><svg aria-hidden="true"><use href="#imgIcon"/></svg><figcaption>Image placeholder · Train in motion</figcaption></div></div></figure>
+</section>
+
+<section data-accent="interlink" aria-labelledby="in-stat">
+  <div class="block interlink">
+    <div class="wrap">
+      <h2 id="in-stat">Managing annual rail transport volumes of around <span>800,000</span> tons of bulk grain.</h2>
+      <div class="cols" data-fade>
+        <p>Aries Interlink coordinates end-to-end rail operations, securing wagon capacity, planning train movements and keeping clients, railway operators, infrastructure managers and loading points in constant contact.</p>
+        <p>During the grain harvest, limited rail capacity and tight vessel loading schedules call for precise coordination and fast decisions. We keep cargo moving, minimize delays and support export commitments.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="facility" data-accent="interlink" aria-labelledby="fac-h">
+  <div class="wrap">
+    <div class="txt">
+      <span class="eyebrow" style="color:var(--interlink)">Grain Containerization Facility</span>
+      <h2 id="fac-h" data-split>A dedicated bulk grain facility inside the Black Sea’s largest container terminal, DP World Constanța.</h2>
+      <p data-fade>Handling annual bulk grain volumes that reach 100,000 tons. Grain goes straight into containers from ships, barges, trucks or trains, with a stuffing capacity of 1,500 tons, or 60 × 20′ containers, per day. The facility sits in the port’s free zone, so every export and transit service is in one place.</p>
+    </div>
+    <ul class="checks" data-list>
+      <li><span class="sq"></span>Cargo Handling &amp; Stuffing</li>
+      <li><span class="sq"></span>Container Handling &amp; Preparation</li>
+      <li><span class="sq"></span>Customs Formalities for Export &amp; Transit</li>
+      <li><span class="sq"></span>Cargo Fumigation</li>
+      <li><span class="sq"></span>Phytosanitary, Veterinary &amp; Origin Certificates</li>
+      <li><span class="sq"></span>Container Sea Freight</li>
+      <li><span class="sq"></span>Cargo Storage within the Bonded Area</li>
+    </ul>
+  </div>
+  <figure class="media"><div class="media-frame"><div class="media-in"><svg aria-hidden="true"><use href="#imgIcon"/></svg><figcaption>Image placeholder · Rail freight yard</figcaption></div></div></figure>
+</section>
+
+<!-- ================= LOGISTICS (spread p17–p18) ================= -->
+<section class="band logistics chapter" id="logistics" data-accent="logistics">
+  <svg class="rib-svg" data-rib="logistics" aria-hidden="true"></svg>
+  <div class="chap-mark"><span class="mark" role="img" aria-label="Aries Logistics mark"></span><b>ARIES</b><span>Logistics</span></div>
+  <div class="wrap chap-text">
+    <span class="eyebrow">Aries Logistics</span>
+    <h2 data-split>Bulk and break-bulk logistics delivering stevedoring, inland transport, customs brokerage, warehousing and door-to-door delivery.</h2>
+  </div>
+</section>
+
+<section class="grid-svc" data-accent="logistics" style="--c:var(--logistics)" aria-label="Logistics services">
+  <div class="wrap">
+    <div class="head"><h2 data-split>From the quay to the hinterland.</h2><span class="eyebrow">Port · road · river · storage</span></div>
+    <div class="cards" data-cards>
+      <article class="card"><span class="sq"></span><span class="fig">Bulk · general · project</span><h3>Cargo Handling</h3><p>Complete cargo handling across Romanian ports for bulk, general, unitized and project cargo, with a strong focus on speed and efficiency.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Hinterland ↔ ports</span><h3>Road Transport &amp; Door-to-Door</h3><p>Collection and delivery between the hinterland and Romanian ports: steel products, general cargo, grains and project cargo.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Bonded &amp; free circulation</span><h3>Warehousing</h3><p>Short and long-term storage in port and inland, tailored to the requirements of each project.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Constanța → Central Europe</span><h3>Danube Transport</h3><p>Barge transport along the Danube, with transshipment between seagoing vessels and barges and intermodal options along the corridor.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Conventional &amp; containers</span><h3>Freight Forwarding</h3><p>Forwarding and logistics solutions for conventional and containerized cargo, built around each shipment.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Faster clearance</span><h3>Customs Brokerage</h3><p>A specialized customs team manages clearance procedures, cutting processing time and keeping the process transparent.</p></article>
+    </div>
+  </div>
+  <figure class="media"><div class="media-frame"><div class="media-in"><svg aria-hidden="true"><use href="#imgIcon"/></svg><figcaption>Image placeholder · Truck on a bridge at sunset</figcaption></div></div></figure>
+</section>
+
+<section data-accent="logistics" aria-labelledby="lo-stat">
+  <div class="block logistics">
+    <div class="wrap">
+      <h2 id="lo-stat">Managing annual cargo volumes reaching <span>300,000</span> tons.</h2>
+      <div class="cols" data-fade>
+        <p>Aries Logistics manages cargo flows across Romanian ports and the hinterland, connecting port operations with transport, storage and customs support.</p>
+        <p>We handle bulk, general, unit and project cargo, with a complete range of logistics capabilities under one roof.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT (back cover) -->
+<section class="band group contact" id="contact" data-accent="group" aria-labelledby="ct-h">
+  <svg class="rib-svg" data-rib="contact" aria-hidden="true"></svg>
+  <div class="wrap">
+    <h2 id="ct-h" data-split>Where possibilities arise</h2>
+    <div class="contact-row">
+      <ul class="contacts" data-list>
+        <li><span class="sq"></span><span>+40 241 550 871</span></li>
+        <li><span class="sq"></span><span>+40 241 550 898 (Fax)</span></li>
+        <li><span class="sq"></span><a href="mailto:office@aries-group.ro" id="mail">office@aries-group.ro</a><button class="copy" type="button" id="copyMail">Copy</button></li>
+        <li><span class="sq"></span><span>175 Mamaia Blvd., 900565 Constanța, Romania</span></li>
+      </ul>
+      <div class="marks">
+        <div><span class="mark"></span>ARIES<span>SHIPPING<br>AGENCY</span></div>
+        <div><span class="mark"></span>ARIES<span>INTERLINK</span></div>
+        <div><span class="mark"></span>ARIES<span>LOGISTICS</span></div>
+      </div>
+    </div>
+    <div class="foot"><span>© Aries Group · aries-group.ro</span><span>Concept site based on brochure draft 2 · images are placeholders</span></div>
+  </div>
+</section>
+
+</main>
+
+<div class="variants" role="group" aria-label="Concept variants">
+  <div class="seg"><span class="lbl">Layout</span><button type="button" data-v="layout" data-val="full">Full width</button><button type="button" data-v="layout" data-val="contained">Contained</button></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const $ = (s, c = document) => c.querySelector(s);
+  const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+  const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+  const f1 = v => (Math.round(v * 10) / 10).toString();
+
+  // copy email
+  const copyBtn = $('#copyMail');
+  copyBtn.addEventListener('click', () => {
+    const done = () => { copyBtn.textContent = 'Copied'; setTimeout(() => copyBtn.textContent = 'Copy', 1600); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents($('#mail')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    try { navigator.clipboard.writeText('office@aries-group.ro').then(done, fallback); } catch (e) { fallback(); }
+  });
+
+  // layout switcher: the choice lives in the link (#contained) so it can be shared
+  const root = document.documentElement;
+  $$('.variants button').forEach(b => {
+    b.setAttribute('aria-pressed', String(root.dataset[b.dataset.v] === b.dataset.val));
+    b.addEventListener('click', () => {
+      const tok = b.dataset.val === 'contained' ? 'contained' : '';
+      history.replaceState(null, '', tok ? '#' + tok : location.pathname + location.search);
+      location.reload();
+    });
+  });
+
+  /* =====================================================================
+     SHAPE DATA — sampled from the brochure PDF vectors (pt units, A4 page width 594.55)
+     Each shape is y(x) on a shared grid; ribbons have a top (t) and bottom (b) edge.
+     ===================================================================== */
+  const DATA = /*SHAPES*/;
+  const PW = 594.551, G = DATA.grid, S = DATA.shapes, NG = G.length;
+
+  // two-page spreads: lower ribbon = left page bright + right page faint, upper = the reverse
+  const GS = G.concat(G.slice(1).map(x => x + PW));
+  const SW = GS[GS.length - 1];
+  const cat = (a, b) => a.concat(b.slice(1));
+  function spread(L, R) {
+    const Lh = S[L + 'hi'], Ll = S[L + 'lo'], Rh = S[R + 'hi'], Rl = S[R + 'lo'];
+    return { lo: { t: cat(Lh.t, Rl.t), b: cat(Lh.b, Rl.b) }, up: { t: cat(Ll.t, Rh.t), b: cat(Ll.b, Rh.b) } };
+  }
+  const SPREAD = { group: spread('p3', 'p4'), agency: spread('p7', 'p8'), interlink: spread('p11', 'p12'), logistics: spread('p17', 'p18') };
+
+  // polygon for a band between two edges, visible between fractions q0..q1 of its length (left to right)
+  function bandD(xs, t, b, q1, dyT, dyB, q0 = 0) {
+    const n = xs.length;
+    q0 = clamp01(q0); q1 = clamp01(q1);
+    if (q1 - q0 <= 0.0005) return 'M0 0Z';
+    const span = xs[n - 1] - xs[0], xa = xs[0] + span * q0, xb = xs[0] + span * q1;
+    const T = [], B = [];
+    const at = (x, k, arr) => arr[k - 1] + (arr[k] - arr[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]);
+    let k = 0;
+    while (k < n && xs[k] < xa) k++;
+    if (k > 0 && k < n && xs[k] > xa) { T.push(f1(xa) + ' ' + f1(at(xa, k, t) + dyT)); B.push(f1(xa) + ' ' + f1(at(xa, k, b) + dyB)); }
+    for (; k < n && xs[k] <= xb; k++) { T.push(f1(xs[k]) + ' ' + f1(t[k] + dyT)); B.push(f1(xs[k]) + ' ' + f1(b[k] + dyB)); }
+    if (k < n && k > 0) { T.push(f1(xb) + ' ' + f1(at(xb, k, t) + dyT)); B.push(f1(xb) + ' ' + f1(at(xb, k, b) + dyB)); }
+    if (T.length < 2) return 'M0 0Z';
+    return 'M' + T.join('L') + 'L' + B.reverse().join('L') + 'Z';
+  }
+
+  /* ---------------- ribbons (identity spreads) ---------------- */
+  const NS = 'http://www.w3.org/2000/svg';
+  let uid = 0;
+  class Ribbons {
+    constructor(svg, keys, o = {}) {
+      this.svg = svg; this.keys = keys; this.n = GS.length;
+      this.fill = o.fill || 0.42; this.ay = o.ay || 0.42; this.op = o.op || 1;
+      let lo = 1e9, hi = -1e9;
+      keys.forEach(k => { const s = SPREAD[k]; lo = Math.min(lo, ...s.up.t); hi = Math.max(hi, ...s.lo.b); });
+      this.yc = (lo + hi) / 2; this.span = hi - lo + 24;
+      this.st = { q: 1, pan: 0.5, m: 0, par: 0 };
+      const id = 'rb' + (uid++);
+      const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); parent.appendChild(e); return e; };
+      const defs = mk('defs', {}, svg);
+      const grad = (gid, stops) => { const g = mk('linearGradient', { id: gid, gradientUnits: 'userSpaceOnUse', x1: 0, y1: 0, x2: SW, y2: 0 }, defs); stops.forEach(([o, a]) => mk('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': a * this.op }, g)); };
+      grad(id + 'u', [[0, .1], [.5, .3], [1, .92]]);
+      grad(id + 'l', [[0, .95], [.5, .34], [1, .08]]);
+      this.pu = mk('path', { fill: `url(#${id}u)`, d: 'M0 0Z' }, svg);
+      this.pl = mk('path', { fill: `url(#${id}l)`, d: 'M0 0Z' }, svg);
+      this.pu2 = mk('path', { fill: `url(#${id}u)`, d: 'M0 0Z' }, svg);
+      this.pl2 = mk('path', { fill: `url(#${id}l)`, d: 'M0 0Z' }, svg);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    }
+    layout() {
+      const r = this.svg.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      this.W = r.width; this.H = r.height;
+      this.s = Math.max(this.W / SW, (this.H * this.fill) / this.span);
+      this.vbW = this.W / this.s; this.vbH = this.H / this.s;
+      this.render();
+    }
+    // one ribbon pair, visible between q0 and q1; the upper ribbon trails the lower one slightly
+    pair(key, q0, q1, pl, pu) {
+      const sp = SPREAD[key], st = this.st, dl = st.par * 9, du = -st.par * 9;
+      const lo0 = q0 <= 0 ? 0 : clamp01(q0 * 1.08), up0 = q0 <= 0 ? 0 : clamp01(q0 * 1.12 - 0.12);
+      pl.setAttribute('d', bandD(GS, sp.lo.t, sp.lo.b, clamp01(q1 * 1.08), dl, dl, lo0));
+      pu.setAttribute('d', bandD(GS, sp.up.t, sp.up.b, clamp01(q1 * 1.12 - 0.12), du, du, up0));
+    }
+    render() {
+      if (!this.s) return;
+      const st = this.st, last = this.keys.length - 1;
+      const vbX = (SW - this.vbW) * clamp01(st.pan), vbY = this.yc - this.vbH * this.ay;
+      this.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(this.vbW)} ${f1(this.vbH)}`);
+      const m = Math.max(0, Math.min(st.m, last));
+      const i = Math.min(Math.floor(m), last), t = m - i;
+      const ease = v => { v = clamp01(v); return v * v * (3 - 2 * v); };
+      if (t < 0.001 || i >= last) {
+        this.pair(this.keys[i], 0, st.q, this.pl, this.pu);
+        this.pl2.setAttribute('d', 'M0 0Z'); this.pu2.setAttribute('d', 'M0 0Z');
+      } else {
+        // the current shape leaves to the right while the next one is drawn in behind it
+        this.pair(this.keys[i], ease(t / 0.86), 1, this.pl, this.pu);
+        this.pair(this.keys[i + 1], 0, ease((t - 0.14) / 0.86), this.pl2, this.pu2);
+      }
+    }
+  }
+
+  /* ---------------- hero: the cover band ---------------- */
+  const TH = Math.atan(0.378965), CO = Math.cos(TH), SI = Math.sin(TH);
+  const V1 = 263.582 * CO, V2 = 433.307 * CO;   // stripe dividers (brochure image edges) in rotated space
+  const hero = {
+    el: $('#hero'), svg: $('#heroSvg'), slot: $('#heroSlot'),
+    tb: $('#hTB'), bb: $('#hBB'), region: $('#hRegionPath'), zoom: $('#hZoom'),
+    rects: [$('#sRoad'), $('#sShip'), $('#sRail')], icons: $$('#hIcons .ph-ico'),
+    R: [0, 208, PW, 474],
+    st: { dT: 1, dB: 1, w0: 1, w1: 1, w2: 1, ic: 1, eT: 0, eB: 0, z: 1 },
+    eTmax: -400, eBmax: 400
+  };
+  function heroEdge(arr, sl, sr, xa, xb) {
+    const xs = [], ys = [];
+    if (xa < 0) { const x0 = Math.floor(xa / 5) * 5 - 5; xs.push(x0); ys.push(arr[0] + sl * x0); }
+    for (let k = 0; k < NG; k++) { xs.push(G[k]); ys.push(arr[k]); }
+    if (xb > PW) for (let x = PW + 5; x <= xb + 10; x += 5) { xs.push(x); ys.push(arr[NG - 1] + sr * (x - PW)); }
+    return { xs, ys };
+  }
+  function heroLayout() {
+    const H = hero.el.getBoundingClientRect(), Sl = hero.slot.getBoundingClientRect();
+    if (!H.width || !Sl.height) return;
+    const [rx, ry, rw, rh] = hero.R;
+    const s = Math.min(Sl.width / rw, Sl.height / rh);
+    const sl = Sl.left - H.left, stp = Sl.top - H.top;
+    const vbX = rx + rw / 2 - (sl + Sl.width / 2) / s;
+    const vbY = ry + rh / 2 - (stp + Sl.height / 2) / s;
+    const vbW = H.width / s, vbH = H.height / s;
+    hero.vb = [vbX, vbY, vbW, vbH];
+    hero.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(vbW)} ${f1(vbH)}`);
+    const xa = vbX - vbW * 0.3, xb = vbX + vbW * 1.3;   // generous overdraw so a late resize never shows a cut edge
+    const T = S.tb, B = S.bb;
+    const sT = (T.tsl + T.bsl) / 2, sB = (B.tsl + B.bsl) / 2;   // extend along the band's centre line
+    hero.tT = heroEdge(T.t, sT, T.tsr, xa, xb);
+    hero.tB = heroEdge(T.b, sT, T.bsr, xa, xb);
+    hero.bT = heroEdge(B.t, sB, B.tsr, xa, xb);
+    hero.bB = heroEdge(B.b, sB, B.bsr, xa, xb);
+    const yAt = (e, x) => { const xs = e.xs; let k = 1; while (k < xs.length - 1 && xs[k] < x) k++; return e.ys[k - 1] + (e.ys[k] - e.ys[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]); };
+    const samples = e => Array.from({ length: 81 }, (_, i) => yAt(e, vbX + vbW * i / 80));
+    hero.eTmax = -(Math.max(...samples(hero.tB)) - vbY) - 40;
+    hero.eBmax = (vbY + vbH) - Math.min(...samples(hero.bT)) + 40;
+    // stripe extents in rotated space
+    const cs = [[vbX, vbY], [vbX + vbW, vbY], [vbX, vbY + vbH], [vbX + vbW, vbY + vbH]];
+    const us = cs.map(([x, y]) => x * CO + y * SI), vs = cs.map(([x, y]) => -x * SI + y * CO);
+    hero.u0 = Math.min(...us) - 80; hero.u1 = Math.max(...us) + 80; hero.v0 = Math.min(...vs) - 80; hero.v1 = Math.max(...vs) + 80;
+    heroRender();
+  }
+  function heroRender() {
+    if (!hero.vb) return;
+    const st = hero.st, e = hero;
+    e.tb.setAttribute('d', bandD(e.tT.xs, e.tT.ys, e.tB.ys, st.dT, st.eT, st.eT));
+    e.bb.setAttribute('d', bandD(e.bT.xs, e.bT.ys, e.bB.ys, st.dB, st.eB, st.eB));
+    const top = e.tB.xs.map((x, k) => f1(x) + ' ' + f1(e.tB.ys[k] + st.eT));
+    const bot = e.bT.xs.map((x, k) => f1(x) + ' ' + f1(e.bT.ys[k] + st.eB)).reverse();
+    e.region.setAttribute('d', 'M' + top.join('L') + 'L' + bot.join('L') + 'Z');
+    const Wu = e.u1 - e.u0;
+    const set = (r, x, y, w, h) => { r.setAttribute('x', f1(x)); r.setAttribute('y', f1(y)); r.setAttribute('width', f1(Math.max(w, 0))); r.setAttribute('height', f1(Math.max(h, 0))); };
+    set(e.rects[0], e.u1 - Wu * st.w0, e.v0, Wu * st.w0, V1 - e.v0 + 0.6);
+    set(e.rects[1], e.u0, V1, Wu * st.w1, V2 - V1);
+    set(e.rects[2], e.u0, V2 - 0.6, Wu * st.w2, e.v1 - V2 + 0.6);
+    const [vx, vy, vw, vh] = e.vb, cx = vx + vw / 2, cy = vy + vh / 2;
+    e.zoom.setAttribute('transform', `translate(${f1(cx)} ${f1(cy)}) scale(${st.z.toFixed(4)}) translate(${f1(-cx)} ${f1(-cy)})`);
+    e.icons.forEach((g, k) => g.style.opacity = clamp01((([st.w0, st.w1, st.w2][k]) - 0.6) / 0.4) * st.ic);
+  }
+
+  /* ---------------- build everything ---------------- */
+  const ribs = {
+    group: new Ribbons($('[data-rib="group"]'), ['group'], { fill: 0.3, ay: 0.35 }),
+    identity: new Ribbons($('[data-rib="identity"]'), ['group', 'agency', 'interlink', 'logistics'], { fill: 0.42, ay: 0.46 }),
+    agency: new Ribbons($('[data-rib="agency"]'), ['agency'], { fill: 0.34, ay: 0.36 }),
+    interlink: new Ribbons($('[data-rib="interlink"]'), ['interlink'], { fill: 0.34, ay: 0.36 }),
+    logistics: new Ribbons($('[data-rib="logistics"]'), ['logistics'], { fill: 0.34, ay: 0.36 }),
+    contact: new Ribbons($('[data-rib="contact"]'), ['group'], { fill: 0.36, ay: 0.22, op: 0.55 }),
+    tGroup: new Ribbons($('[data-rib="t-group"]'), ['group'], { fill: 0.7, ay: 0.36, op: 0.45 }),
+    tInterlink: new Ribbons($('[data-rib="t-interlink"]'), ['interlink'], { fill: 0.7, ay: 0.36, op: 0.45 }),
+    tLogistics: new Ribbons($('[data-rib="t-logistics"]'), ['logistics'], { fill: 0.7, ay: 0.36, op: 0.45 })
+  };
+  const layoutAll = () => { heroLayout(); Object.values(ribs).forEach(r => r.layout()); };
+  layoutAll();
+  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutAll, 120); });
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!window.gsap || !window.ScrollTrigger || reduce) { document.documentElement.classList.remove('pre'); return; }
+
+  /* =====================================================================
+     MOTION
+     ===================================================================== */
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
+  document.documentElement.classList.add('anim');
+
+  let lenis = null;
+  if (window.Lenis) {
+    lenis = new Lenis({ lerp: 0.09 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+  $$('a[href^="#"]').forEach(a => a.addEventListener('click', ev => {
+    const t = document.querySelector(a.getAttribute('href')); if (!t) return;
+    ev.preventDefault(); lenis ? lenis.scrollTo(t, { duration: 1.6 }) : t.scrollIntoView({ behavior: 'smooth' });
+  }));
+
+  // render batching: components mark themselves dirty, one render per frame
+  const dirty = new Set();
+  const touch = c => dirty.add(c);
+  gsap.ticker.add(() => { dirty.forEach(c => c === hero ? heroRender() : c.render()); dirty.clear(); });
+  ScrollTrigger.addEventListener('refreshInit', layoutAll);
+  ScrollTrigger.addEventListener('refresh', layoutAll);
+
+  function splitWords(el) {
+    if (el._w) return el._w;
+    const words = el.textContent.trim().split(/\s+/);
+    el.setAttribute('aria-label', el.textContent.trim()); el.textContent = '';
+    words.forEach((w, i) => {
+      const o = document.createElement('span'); o.className = 'w'; o.setAttribute('aria-hidden', 'true');
+      const inner = document.createElement('span'); inner.className = 'wi'; inner.textContent = w;
+      o.appendChild(inner); el.appendChild(o); if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+    return (el._w = $$('.wi', el));
+  }
+
+  /* ---- HERO: opening sequence (independent of scroll) ---- */
+  const hs = hero.st;
+  Object.assign(hs, { dT: 0, dB: 0, w0: 0, w1: 0, w2: 0 });
+  heroRender();
+  const h1Words = splitWords($('#heroH1'));
+  gsap.set(h1Words, { yPercent: 115 });
+  gsap.set('.hero-meta > *, .hero-title small', { opacity: 0, y: 14 });
+  document.documentElement.classList.remove('pre');
+  const H = () => touch(hero);
+  gsap.timeline({ defaults: { onUpdate: H } })
+    .to(hs, { dT: 1, duration: 1.5, ease: 'expo.inOut' }, 0.1)
+    .to(hs, { dB: 1, duration: 1.5, ease: 'expo.inOut' }, 0.25)
+    .to(hs, { w1: 1, duration: 1.5, ease: 'power3.inOut' }, 0.45)
+    .to(hs, { w0: 1, duration: 1.5, ease: 'power3.inOut' }, 0.6)
+    .to(hs, { w2: 1, duration: 1.5, ease: 'power3.inOut' }, 0.72)
+    .to(h1Words, { yPercent: 0, duration: 1.2, stagger: 0.07, ease: 'expo.out' }, 1.0)
+    .to('.hero-meta > *, .hero-title small', { opacity: 1, y: 0, duration: 1, stagger: 0.08, ease: 'power3.out' }, 1.15);
+
+  /* ---- HERO: pinned scroll, the band opens to full screen ---- */
+  const hsc = { e: 0 };
+  gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=140%', pin: true, scrub: 0.8 } })
+    .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { hs.eT = hero.eTmax * hsc.e; hs.eB = hero.eBmax * hsc.e; hs.z = 1 + 0.06 * hsc.e; touch(hero); } }, 0)
+    .to('.hero-meta, .hero-title', { y: -50, opacity: 0, duration: 0.4, ease: 'power2.in' }, 0)
+    .fromTo('.hero-end', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, 0.7)
+    .to({}, { duration: 0.15 });
+
+  /* ---- generic scroll-linked reveals (all scrubbed, nothing pops) ---- */
+  $$('[data-split]').forEach(el => {
+    gsap.from(splitWords(el), { yPercent: 115, ease: 'none', stagger: 0.04,
+      scrollTrigger: { trigger: el, start: 'top 94%', end: 'top 62%', scrub: 0.6 } });
+  });
+  $$('[data-scrub]').forEach(el => {
+    gsap.fromTo(splitWords(el), { opacity: 0.18 }, { opacity: 1, ease: 'none', stagger: 0.1,
+      scrollTrigger: { trigger: el, start: 'top 85%', end: 'bottom 50%', scrub: 0.6 } });
+  });
+  $$('[data-fade]').forEach(el => gsap.from(el, { y: 36, opacity: 0, ease: 'none',
+    scrollTrigger: { trigger: el, start: 'top 96%', end: 'top 74%', scrub: 0.6 } }));
+  $$('[data-list]').forEach(list => {
+    gsap.from([...list.children], { y: 26, opacity: 0, ease: 'none', stagger: 0.15, scrollTrigger: { trigger: list, start: 'top 92%', end: 'bottom 70%', scrub: 0.6 } });
+    const sqs = $$('.sq', list);
+    if (sqs.length) gsap.from(sqs, { scale: 0, rotate: -90, ease: 'none', stagger: 0.15, scrollTrigger: { trigger: list, start: 'top 92%', end: 'bottom 70%', scrub: 0.6 } });
+  });
+  $$('[data-cards]').forEach(grid => $$('.card', grid).forEach((card, i) => {
+    const tl = gsap.timeline({ scrollTrigger: { trigger: card, start: `top ${98 - (i % 3) * 3}%`, end: `top ${74 - (i % 3) * 3}%`, scrub: 0.6 } });
+    tl.from(card, { y: 50, opacity: 0, ease: 'none' }, 0).from($('.sq', card), { scale: 0, rotate: 90, ease: 'none' }, 0);
+  }));
+  /* ---- images: the rounded frame opens to full width as it reaches the middle of the screen ---- */
+  $$('.media-frame').forEach(fr => {
+    const endR = root.dataset.layout === 'contained' ? 28 : 0;
+    gsap.fromTo(fr, { clipPath: 'inset(0% 7% 0% 7% round 28px)' }, { clipPath: `inset(0% 0% 0% 0% round ${endR}px)`, ease: 'none',
+      scrollTrigger: { trigger: fr, start: 'top 92%', end: 'center 52%', scrub: 0.6 } });
+    gsap.fromTo($('.media-in', fr), { scale: 1.14, yPercent: 8 }, { scale: 1, yPercent: -4, ease: 'none',
+      scrollTrigger: { trigger: fr, start: 'top bottom', end: 'bottom top', scrub: true } });
+  });
+
+  /* ---- ribbons: draw along their length, pan across the spread, drift apart ---- */
+  function ribbonScroll(r, sec, drawStart = 'top 85%', drawEnd = 'top 10%') {
+    r.st.q = 0; r.render();
+    const R = () => touch(r);
+    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: drawStart, end: drawEnd, scrub: 0.8 } });
+    gsap.fromTo(r.st, { pan: 0, par: -1 }, { pan: 1, par: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
+  }
+  ribbonScroll(ribs.group, '#group');
+  ['agency', 'interlink', 'logistics'].forEach(k => {
+    ribbonScroll(ribs[k], '#' + k);
+    const sec = $('#' + k);
+    gsap.from($$('.chap-mark > *', sec), { y: 30, opacity: 0, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: sec, start: 'top 75%', end: 'top 30%', scrub: 0.6 } });
+    gsap.from($('.chap-text .eyebrow', sec), { opacity: 0, y: 14, ease: 'none', scrollTrigger: { trigger: sec, start: 'top 60%', end: 'top 30%', scrub: 0.6 } });
+  });
+  gsap.from($$('#group .chap-mark > *'), { y: 30, opacity: 0, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: '#group', start: 'top 75%', end: 'top 30%', scrub: 0.6 } });
+  ribbonScroll(ribs.contact, '#contact', 'top 90%', 'top 25%');
+  {
+    [['tGroup', 't-group'], ['tInterlink', 't-interlink'], ['tLogistics', 't-logistics']].forEach(([k, a]) => ribbonScroll(ribs[k], $(`[data-rib="${a}"]`).closest('.tile'), 'top 95%', 'top 45%'));
+    $$('[data-tiles] .tile').forEach((t, i) => gsap.from(t, { y: 60, opacity: 0, ease: 'none',
+      scrollTrigger: { trigger: t, start: `top ${100 - (i % 4) * 2}%`, end: `top ${78 - (i % 4) * 2}%`, scrub: 0.6 } }));
+  }
+
+  /* ---- identity: pinned, one ribbon pair moves through the four spreads ---- */
+  {
+    const r = ribs.identity, tabs = $$('#identity .id-tabs li');
+    let tabOn = -1;
+    const R = () => { touch(r); const k = Math.min(3, Math.round(r.st.m)); if (k !== tabOn) { tabOn = k; tabs.forEach((t, i) => t.classList.toggle('on', i === k)); } };
+    r.st.q = 0; r.st.m = 0; r.st.pan = 0.15; r.render();
+    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: '#identity', start: 'top 80%', end: 'top top', scrub: 0.8 } });
+    const cols = ['#2c59b0', '#4388ac', '#50abdc', '#49989a'];
+    const items = $$('#identity .id-item');
+    const tl = gsap.timeline({ scrollTrigger: { trigger: '#identity', start: 'top top', end: '+=400%', pin: true, scrub: 0.8 } });
+    // hold 0.5 · move 0.7 · hold 0.5 · move 0.7 · hold 0.5 · move 0.7 · hold 0.4
+    tl.to(r.st, { pan: 0.85, duration: 4, ease: 'none', onUpdate: R }, 0);
+    for (let k = 1; k < 4; k++) {
+      const at = 0.5 + (k - 1) * 1.2;
+      tl.to(r.st, { m: k, duration: 0.7, ease: 'none', onUpdate: R }, at)
+        .to('#identity .id-bg', { backgroundColor: cols[k], duration: 0.5, ease: 'power1.inOut' }, at + 0.1)
+        .to(items[k - 1], { opacity: 0, y: -24, duration: 0.25, ease: 'power1.in' }, at)
+        .fromTo(items[k], { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power1.out' }, at + 0.4);
+    }
+    tl.to({}, { duration: 0.01 }, 4);
+  }
+
+  /* ---- nav: mark takes the colour of the current company ---- */
+  const colors = { group: 'var(--group)', agency: 'var(--agency)', interlink: 'var(--interlink)', logistics: 'var(--logistics)' };
+  $$('[data-accent]').forEach(sec => {
+    const key = sec.dataset.accent;
+    ScrollTrigger.create({ trigger: sec, start: 'top 50%', end: 'bottom 50%', onToggle: self => {
+      if (!self.isActive) return;
+      document.documentElement.style.setProperty('--accent', colors[key]);
+      $$('.nav [data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === key));
+    } });
+  });
+
+  ScrollTrigger.sort();
+  ScrollTrigger.refresh();
+  const again = () => { ScrollTrigger.sort(); ScrollTrigger.refresh(); };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(again);
+  addEventListener('load', again);
+})();
+</script>
+</body>
+</html>
