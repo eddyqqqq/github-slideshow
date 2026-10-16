@@ -170,25 +170,7 @@ html.lenis, html.lenis body { height: auto; }
 .block .eyebrow { opacity: .85; }
 .grid-svc, .facility, .services { padding-bottom: clamp(80px, 11vw, 150px); }
 
-/* ---------- numbers (horizontal) ---------- */
-.numbers { background: var(--mist); overflow: hidden; }
-.numbers-inner { min-height: 100vh; min-height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: clamp(28px, 5vh, 56px); padding-block: 96px 64px; }
-.numbers-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
-.numbers-head h2 { font-size: clamp(30px, 4.4vw, 60px); line-height: 1.05; max-width: 14ch; }
-.numbers-head p { color: var(--muted); max-width: 36ch; font-size: 15px; }
-.num-viewport { overflow-x: auto; scrollbar-width: none; }
-.num-viewport::-webkit-scrollbar { display: none; }
-.anim .num-viewport { overflow: visible; }
-.num-track { display: flex; gap: clamp(16px, 2vw, 28px); padding-left: var(--gut); padding-right: var(--gut-r); width: max-content; }
-.num { width: min(80vw, 460px); flex: none; background: var(--paper); border-radius: 22px; padding: clamp(22px, 2.6vw, 34px); display: grid; gap: 18px; align-content: space-between; min-height: clamp(300px, 46vh, 420px); position: relative; overflow: hidden; }
-.num .who { display: flex; align-items: center; gap: 10px; color: var(--c); }
-.num .who .eyebrow { color: var(--muted); }
-.num strong { display: block; font: 300 clamp(60px, 8vw, 118px)/0.9 var(--display); letter-spacing: -0.045em; color: var(--c); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.num strong.long { font-size: clamp(46px, 5.4vw, 82px); }
-.num strong sup { font-size: .38em; letter-spacing: 0; vertical-align: top; margin-left: 4px; font-weight: 400; }
-.num p { color: var(--muted); font-size: 15.5px; max-width: 28ch; }
-
-/* ---------- figures, variant B: grid of tiles ---------- */
+/* ---------- figures: grid of tiles ---------- */
 .figs { background: var(--paper); padding-block: clamp(80px, 11vw, 150px); }
 .figs .wrap { display: grid; gap: clamp(32px, 4vw, 56px); }
 .figs-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
@@ -209,13 +191,12 @@ html.lenis, html.lenis body { height: auto; }
 .tile:not([class*="c-"]) strong { color: var(--agency); }
 @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) { .tiles { grid-template-columns: minmax(0, 1fr); } .tile.w2 { grid-column: auto; } }
-[data-figures="strip"] #figs, [data-figures="grid"] #numbers { display: none; }
 
 /* ---------- layout variant: contained panels ---------- */
 :root { --side: 0px; --rad: 0px; }
 [data-layout="contained"] { --side: max(12px, calc((100vw - 1440px) / 2)); --rad: 28px; }
 /* panels are drawn with a clip, not margins, so pinned sections keep their geometry */
-[data-layout="contained"] .band, [data-layout="contained"] .block, [data-layout="contained"] .identity, [data-layout="contained"] .numbers {
+[data-layout="contained"] .band, [data-layout="contained"] .block, [data-layout="contained"] .identity {
   clip-path: inset(6px var(--side) 6px var(--side) round var(--rad)); }
 [data-layout="contained"] .hero { clip-path: inset(calc(58px + env(safe-area-inset-top, 0px) + 8px) var(--side) 0 var(--side) round var(--rad)); }
 [data-layout="contained"] .media { padding-inline: var(--side); }
@@ -273,7 +254,7 @@ html.lenis, html.lenis body { height: auto; }
 </head>
 <body>
 <script>(function () { var h = (location.hash || '').slice(1), d = document.documentElement;
-  d.dataset.layout = /contained/.test(h) ? 'contained' : 'full'; d.dataset.figures = /grid/.test(h) ? 'grid' : 'strip'; })();</script>
+  d.dataset.layout = /contained/.test(h) ? 'contained' : 'full'; })();</script>
 <script>document.documentElement.classList.add('pre'); setTimeout(function () { document.documentElement.classList.remove('pre'); }, 4000);</script>
 
 <svg class="sprite" aria-hidden="true">
@@ -393,28 +374,7 @@ html.lenis, html.lenis body { height: auto; }
   </div></div>
 </section>
 
-<!-- NUMBERS -->
-<section class="numbers" id="numbers" data-accent="group" aria-labelledby="num-h">
-  <div class="numbers-inner">
-    <div class="wrap numbers-head">
-      <h2 id="num-h" data-split>The group in figures</h2>
-      <p>Annual volumes and market shares across the three companies of Aries Group.</p>
-    </div>
-    <div class="num-viewport"><div class="num-track">
-      <article class="num" style="--c:var(--group)"><div class="who"><span class="sq"></span><span class="eyebrow">Aries Group</span></div><strong>2003</strong><p>Founded in Constanța, Romania’s largest port city.</p></article>
-      <article class="num" style="--c:var(--agency)"><div class="who"><span class="sq"></span><span class="eyebrow">Shipping Agency</span></div><strong><span>600</span><sup>+</sup></strong><p>Maritime port calls handled every year.</p></article>
-      <article class="num" style="--c:var(--agency)"><div class="who"><span class="sq"></span><span class="eyebrow">Shipping Agency</span></div><strong><span>800</span><sup>+</sup></strong><p>Inland waterway port calls on the Romanian Danube every year.</p></article>
-      <article class="num" style="--c:var(--agency)"><div class="who"><span class="sq"></span><span class="eyebrow">Fertilizers</span></div><strong><span>50</span><sup>%+</sup></strong><p>Of fertilizer traffic through Romanian ports.</p></article>
-      <article class="num" style="--c:var(--agency)"><div class="who"><span class="sq"></span><span class="eyebrow">Agri commodities</span></div><strong><span>25</span><sup>%</sup></strong><p>Of agricultural products exported and imported via Romanian ports.</p></article>
-      <article class="num" style="--c:var(--agency)"><div class="who"><span class="sq"></span><span class="eyebrow">Tankers</span></div><strong><span>20</span><sup>%</sup></strong><p>Of tanker traffic in Romanian ports: crude, petroleum products, liquid chemicals.</p></article>
-      <article class="num" style="--c:var(--interlink)"><div class="who"><span class="sq"></span><span class="eyebrow">Interlink · Rail</span></div><strong class="long"><span>800,000</span><sup>t</sup></strong><p>Bulk grain moved by rail each year.</p></article>
-      <article class="num" style="--c:var(--interlink)"><div class="who"><span class="sq"></span><span class="eyebrow">Grain facility</span></div><strong class="long"><span>1,500</span><sup>t/day</sup></strong><p>Stuffing capacity at DP World Constanța, or 60 × 20′ containers a day.</p></article>
-      <article class="num" style="--c:var(--logistics)"><div class="who"><span class="sq"></span><span class="eyebrow">Logistics</span></div><strong class="long"><span>300,000</span><sup>t</sup></strong><p>Bulk, general, unit and project cargo managed each year.</p></article>
-    </div></div>
-  </div>
-</section>
-
-<!-- FIGURES, variant B: tiles -->
+<!-- FIGURES -->
 <section class="figs" id="figs" data-accent="group" aria-labelledby="figs-h">
   <div class="wrap">
     <div class="figs-head">
@@ -590,7 +550,6 @@ html.lenis, html.lenis body { height: auto; }
 
 <div class="variants" role="group" aria-label="Concept variants">
   <div class="seg"><span class="lbl">Layout</span><button type="button" data-v="layout" data-val="full">Full width</button><button type="button" data-v="layout" data-val="contained">Contained</button></div>
-  <div class="seg"><span class="lbl">Figures</span><button type="button" data-v="figures" data-val="strip">Strip</button><button type="button" data-v="figures" data-val="grid">Grid</button></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -611,13 +570,12 @@ html.lenis, html.lenis body { height: auto; }
     try { navigator.clipboard.writeText('office@aries-group.ro').then(done, fallback); } catch (e) { fallback(); }
   });
 
-  // variant switcher: the choice lives in the link (#contained, #grid, #contained-grid) so it can be shared
+  // layout switcher: the choice lives in the link (#contained) so it can be shared
   const root = document.documentElement;
   $$('.variants button').forEach(b => {
     b.setAttribute('aria-pressed', String(root.dataset[b.dataset.v] === b.dataset.val));
     b.addEventListener('click', () => {
-      const next = { layout: root.dataset.layout, figures: root.dataset.figures, [b.dataset.v]: b.dataset.val };
-      const tok = [next.layout === 'contained' ? 'contained' : '', next.figures === 'grid' ? 'grid' : ''].filter(Boolean).join('-');
+      const tok = b.dataset.val === 'contained' ? 'contained' : '';
       history.replaceState(null, '', tok ? '#' + tok : location.pathname + location.search);
       location.reload();
     });
@@ -906,7 +864,7 @@ html.lenis, html.lenis body { height: auto; }
   });
   gsap.from($$('#group .chap-mark > *'), { y: 30, opacity: 0, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: '#group', start: 'top 75%', end: 'top 30%', scrub: 0.6 } });
   ribbonScroll(ribs.contact, '#contact', 'top 90%', 'top 25%');
-  if (root.dataset.figures === 'grid') {
+  {
     [['tGroup', 't-group'], ['tInterlink', 't-interlink'], ['tLogistics', 't-logistics']].forEach(([k, a]) => ribbonScroll(ribs[k], $(`[data-rib="${a}"]`).closest('.tile'), 'top 95%', 'top 45%'));
     $$('[data-tiles] .tile').forEach((t, i) => gsap.from(t, { y: 60, opacity: 0, ease: 'none',
       scrollTrigger: { trigger: t, start: `top ${100 - (i % 4) * 2}%`, end: `top ${78 - (i % 4) * 2}%`, scrub: 0.6 } }));
@@ -932,14 +890,6 @@ html.lenis, html.lenis body { height: auto; }
         .fromTo(items[k], { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power1.out' }, at + 0.4);
     }
     tl.to({}, { duration: 0.01 }, 4);
-  }
-
-  /* ---- horizontal figures ---- */
-  if (document.documentElement.dataset.figures === 'strip') {
-  const track = $('.num-track');
-  const dist = () => Math.max(0, track.scrollWidth - $('#numbers').clientWidth);
-  const hz = gsap.to(track, { x: () => -dist(), ease: 'none',
-    scrollTrigger: { trigger: '#numbers', start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 0.8, invalidateOnRefresh: true } });
   }
 
   /* ---- nav: mark takes the colour of the current company ---- */
