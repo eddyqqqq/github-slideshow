@@ -41,8 +41,8 @@ One-page animated concept built from the Aries Group brochure. This is a referen
 for p in $(seq 1 20); do pdftocairo -svg -f $p -l $p Brosura.pdf svg/p$p.svg; done
 # 2. sample every shape onto the shared grid
 python3 tools/extract_shapes.py svg tools/shapes.json
-# 3. inject the data into the page
-python3 -c "s=open('tools/template.html').read(); open('index.html','w').write(s.replace('/*SHAPES*/', open('tools/shapes.json').read()))"
+# 3. simplify the data and build index.html from tools/template.html
+python3 tools/build.py
 ```
 
 `extract_shapes.py` maps each brochure page to its clip paths (ribbons, cover bands, cut shapes). If a new brochure version moves shapes, update the page/clip ids in the `R` table and the `add(...)` calls.
