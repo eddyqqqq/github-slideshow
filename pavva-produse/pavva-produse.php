@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Pavva Products
  * Description:       Câmpurile produselor Pavva (Caracteristici, Culori și finisaje, Dimensiuni, Variante de amenajare, Fișe tehnice, Declarații de performanță) și informații la imaginile din galeria WooCommerce. Afișarea pe site o fac widgeturile din „Pavva Widgets”. Creat de imagient.
- * Version:           5.1.0
+ * Version:           5.2.0
  * Author:            imagient
  * Author URI:        http://imagient.com/
  * Requires at least: 6.0
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Datele (cheile din baza de date) sunt aceleași ca în 4.10.30.
  */
 final class PAVVA_Produse {
-    const VERSION = '5.1.0';
+    const VERSION = '5.2.0';
 
     const META_CULORI = '_pavva_culori_finisaje';
     const META_CARACT = '_pavva_caracteristici';
@@ -48,6 +48,11 @@ final class PAVVA_Produse {
         require_once __DIR__ . '/includes/class-pavva-p-fields.php';
         require_once __DIR__ . '/includes/class-pavva-p-gallery-info.php';
         new Pavva_P_Fields();
+        /* Produse → Import Pavva: produse noi dintr-un pachet ZIP (products.json + imagini) */
+        if ( is_admin() ) {
+            require_once __DIR__ . '/includes/class-pavva-p-import.php';
+            new Pavva_P_Import();
+        }
         /* Galeria WooCommerce: nume fișier, ID și link Media Library la fiecare imagine. */
         new Pavva_P_Gallery_Info();
     }
