@@ -5,6 +5,8 @@
  * Produse → Import Pavva. Se încarcă pachetul, se vede lista cu ce se creează și ce există deja,
  * apoi produsele noi se creează pe rând (câte unul pe cerere, ca să nu expire serverul).
  * Produsele existente (același nume sau slug) nu se ating. Produsele noi se creează ca Ciornă.
+ * Produsele create tot de aici pot primi imaginile dintr-un pachet nou („Actualizează imaginile”):
+ * se înlocuiesc doar pozele importate, textele și ce ai schimbat de mână rămân.
  *
  * @package Pavva_Produse
  * @author  imagient
@@ -77,13 +79,22 @@ final class Pavva_P_Import {
         return $map;
     }
 
+    /* după nume / slug, apoi după numele vechi din „alias” (ex. „Arco Granito” → „Granito Arco”) */
     private static function find_existing( array $p ): int {
         $m = self::existing();
-        $n = 'n:' . self::norm( $p['titlu'] ?? '' );
-        $s = 's:' . sanitize_title( $p['slug'] ?? ( $p['titlu'] ?? '' ) );
-        if ( isset( $m[ $n ] ) ) return (int) $m[ $n ];
-        if ( isset( $m[ $s ] ) ) return (int) $m[ $s ];
+        $names = array_merge( array( $p['titlu'] ?? '' ), (array) ( $p['alias'] ?? array() ) );
+        foreach ( $names as $k => $t ) {
+            $n = 'n:' . self::norm( $t );
+            $s = 's:' . sanitize_title( 0 === $k && ! empty( $p['slug'] ) ? $p['slug'] : $t );
+            if ( isset( $m[ $n ] ) ) return (int) $m[ $n ];
+            if ( isset( $m[ $s ] ) ) return (int) $m[ $s ];
+        }
         return 0;
+    }
+
+    /* produs creat de importator (doar acestora li se pot actualiza imaginile) */
+    private static function imported( $id ): bool {
+        return $id && '' !== (string) get_post_meta( $id, '_pavva_import_sursa', true );
     }
 
     /* iconurile caracteristicilor („Garanție - 10 ani” …), luate de la produsele care le au deja */
@@ -136,25 +147,33 @@ final class Pavva_P_Import {
         $icons = self::icons();
         $rows  = '';
         $todo  = 0;
+        $upd   = 0;
         foreach ( $pkg['produse'] as $i => $p ) {
-            $ex = self::find_existing( $p );
+            $ex  = self::find_existing( $p );
+            $imp = self::imported( $ex );
             if ( ! $ex ) $todo++;
+            if ( $imp ) $upd++;
             $miss = array();
             foreach ( (array) ( $p['caracteristici'] ?? array() ) as $c ) {
                 if ( empty( $icons[ self::norm( $c ) ] ) ) $miss[] = $c;
             }
-            $rows .= '<tr data-i="' . (int) $i . '" data-new="' . ( $ex ? '0' : '1' ) . '">'
+            $rows .= '<tr data-i="' . (int) $i . '" data-new="' . ( $ex ? '0' : '1' ) . '" data-upd="' . ( $imp ? '1' : '0' ) . '">'
                 . '<td><strong>' . esc_html( $p['titlu'] ?? '' ) . '</strong><br><small>' . esc_html( $p['sursa'] ?? '' ) . '</small></td>'
                 . '<td>' . esc_html( $p['categorie'] ?? '' ) . '</td>'
-                . '<td>' . count( (array) ( $p['culori'] ?? array() ) ) . ' culori · ' . count( (array) ( $p['dimensiuni'] ?? array() ) ) . ' dimensiuni · ' . ( count( (array) ( $p['galerie'] ?? array() ) ) + ( empty( $p['imagine_principala'] ) ? 0 : 1 ) ) . ' imagini galerie'
+                . '<td>' . count( (array) ( $p['culori'] ?? array() ) ) . ' culori · ' . count( (array) ( $p['dimensiuni'] ?? array() ) ) . ' dimensiuni · ' . ( count( (array) ( $p['galerie'] ?? array() ) ) + ( empty( $p['imagine_principala'] ) ? 0 : 1 ) ) . ' imagini galerie / header'
                 . ( $miss ? '<br><small style="color:#996800">Fără iconiță pe site: ' . esc_html( implode( ', ', $miss ) ) . '</small>' : '' ) . '</td>'
-                . '<td class="pvi-status">' . ( $ex ? 'Există deja – <a href="' . esc_url( get_edit_post_link( $ex ) ) . '">vezi produsul</a> (nu se modifică)' : '<span style="color:#2271b1">Va fi creat (Ciornă)</span>' ) . '</td></tr>';
+                . '<td class="pvi-status">' . ( $imp ? 'Importat deja – <a href="' . esc_url( get_edit_post_link( $ex ) ) . '">vezi produsul</a><br><small>imaginile se pot actualiza din acest pachet</small>'
+                    : ( $ex ? 'Există deja – <a href="' . esc_url( get_edit_post_link( $ex ) ) . '">vezi produsul</a> (nu se modifică)' : '<span style="color:#2271b1">Va fi creat (Ciornă)</span>' ) ) . '</td></tr>';
         }
 
         echo '<p><strong>' . count( $pkg['produse'] ) . '</strong> produse în pachet · <strong>' . (int) $todo . '</strong> noi de creat.</p>';
         echo '<table class="widefat striped" style="max-width:1100px"><thead><tr><th>Produs</th><th>Categorie</th><th>Conținut</th><th>Status</th></tr></thead><tbody>' . $rows . '</tbody></table>';
-        if ( $todo ) {
-            echo '<p style="margin-top:16px"><button type="button" class="button button-primary button-hero" id="pvi-start">Importă ' . (int) $todo . ' produse noi</button> <span id="pvi-progress" style="margin-left:12px"></span></p>';
+        if ( $todo || $upd ) {
+            echo '<p style="margin-top:16px">';
+            if ( $todo ) echo '<button type="button" class="button button-primary button-hero pvi-run" data-mod="nou">Importă ' . (int) $todo . ' produse noi</button> ';
+            if ( $upd ) echo '<button type="button" class="button button-hero pvi-run" data-mod="upd">Actualizează imaginile la ' . (int) $upd . ' produse importate</button>';
+            echo ' <span id="pvi-progress" style="margin-left:12px"></span></p>';
+            if ( $upd ) echo '<p class="description" style="max-width:900px">„Actualizează imaginile” înlocuiește doar pozele puse de import (principală, galerie / header, culori, dimensiuni) și numele, dacă s-a schimbat în pachet. Descrierile, categoria și pozele adăugate de tine rămân. Pozele vechi ale importului se șterg din Media.</p>';
         }
         echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="margin-top:24px">';
         wp_nonce_field( self::NONCE );
@@ -164,23 +183,28 @@ final class Pavva_P_Import {
         ?>
         <script>
         (function () {
-            var btn = document.getElementById('pvi-start');
-            if (!btn) return;
-            var rows = [].slice.call(document.querySelectorAll('tr[data-new="1"]'));
+            var btns = [].slice.call(document.querySelectorAll('.pvi-run'));
             var prog = document.getElementById('pvi-progress');
-            btn.addEventListener('click', function () {
-                btn.disabled = true;
+            btns.forEach(function (btn) { btn.addEventListener('click', function () {
+                var mod = btn.getAttribute('data-mod');
+                var rows = [].slice.call(document.querySelectorAll(mod === 'upd' ? 'tr[data-upd="1"]' : 'tr[data-new="1"]'));
+                btns.forEach(function (b) { b.disabled = true; });
                 var done = 0, ok = 0;
                 (function next() {
-                    if (!rows.length) { prog.textContent = 'Gata: ' + ok + ' produse create. Le găsești în Produse → Ciorne.'; return; }
+                    if (!rows.length) {
+                        prog.textContent = mod === 'upd' ? 'Gata: ' + ok + ' produse actualizate.' : 'Gata: ' + ok + ' produse create. Le găsești în Produse → Ciorne.';
+                        btns.forEach(function (b) { if (b !== btn) b.disabled = false; });
+                        return;
+                    }
                     var tr = rows.shift(), st = tr.querySelector('.pvi-status');
-                    st.textContent = 'Se creează…';
+                    st.textContent = mod === 'upd' ? 'Se actualizează…' : 'Se creează…';
                     prog.textContent = 'Produsul ' + (++done) + ' din ' + (done + rows.length) + '…';
                     var fd = new FormData();
                     fd.append('action', 'pavva_import_one');
                     fd.append('_wpnonce', <?php echo wp_json_encode( wp_create_nonce( self::NONCE ) ); ?>);
                     fd.append('pachet', <?php echo wp_json_encode( $token ); ?>);
                     fd.append('i', tr.getAttribute('data-i'));
+                    fd.append('mod', mod);
                     fetch(ajaxurl, { method: 'POST', body: fd, credentials: 'same-origin' })
                         .then(function (r) { return r.json(); })
                         .then(function (r) {
@@ -190,7 +214,7 @@ final class Pavva_P_Import {
                         .catch(function (e) { st.innerHTML = '<span style="color:#b32d2e">Eroare: ' + e + '</span>'; })
                         .then(next);
                 })();
-            });
+            }); });
         })();
         </script>
         <?php
@@ -257,6 +281,12 @@ final class Pavva_P_Import {
         @set_time_limit( 300 );
         $p  = $pkg['produse'][ $i ];
         $ex = self::find_existing( $p );
+        if ( isset( $_POST['mod'] ) && 'upd' === $_POST['mod'] ) {
+            if ( ! self::imported( $ex ) ) wp_send_json_error( 'Produsul nu a fost creat de import.' );
+            $r = self::update_images( $ex, $p, $pkg['dir'] );
+            if ( is_wp_error( $r ) ) wp_send_json_error( $r->get_error_message() );
+            wp_send_json_success( array( 'html' => '<span style="color:#008a20">Actualizat</span> – <a href="' . esc_url( get_edit_post_link( $ex ) ) . '">editează</a> · <a href="' . esc_url( get_preview_post_link( $ex ) ) . '" target="_blank">previzualizează</a>' ) );
+        }
         if ( $ex ) wp_send_json_success( array( 'html' => 'Există deja – sărit (<a href="' . esc_url( get_edit_post_link( $ex ) ) . '">vezi</a>)' ) );
         $id = self::create( $p, $pkg['dir'] );
         if ( is_wp_error( $id ) ) wp_send_json_error( $id->get_error_message() );
@@ -282,7 +312,28 @@ final class Pavva_P_Import {
         $id = media_handle_sideload( array( 'name' => $file, 'tmp_name' => $tmp ), $post_id, $alt );
         if ( is_wp_error( $id ) ) { @unlink( $tmp ); return 0; }
         update_post_meta( $id, '_wp_attachment_image_alt', $alt );
+        update_post_meta( $id, '_pavva_import_img', 1 );
         return (int) $id;
+    }
+
+    /* poză pusă de import (marcată, sau după numele fișierului la importurile vechi) */
+    private static function import_att( $att, $pid ): bool {
+        $att = absint( $att );
+        if ( ! $att ) return false;
+        if ( get_post_meta( $att, '_pavva_import_img', true ) ) return true;
+        return (int) get_post_field( 'post_parent', $att ) === (int) $pid
+            && (bool) preg_match( '/^pavva-[a-z0-9-]+-(galerie|culoare|dimensiune)-/', basename( (string) get_attached_file( $att ) ) );
+    }
+
+    /* imaginea principală + galeria; principala intră și în galerie, ca slider-ul din header să aibă mereu o imagine */
+    private static function gallery( array $p, $dir, $id, $title ): array {
+        $main = self::sideload( $dir, $p['imagine_principala'] ?? '', $id, $title );
+        $gal  = $main ? array( $main ) : array();
+        foreach ( (array) ( $p['galerie'] ?? array() ) as $k => $f ) {
+            $a = self::sideload( $dir, $f, $id, $title . ' – imagine ' . ( $k + 2 ) );
+            if ( $a ) $gal[] = $a;
+        }
+        return array( $main, $gal );
     }
 
     private static function create( array $p, $dir ) {
@@ -307,12 +358,7 @@ final class Pavva_P_Import {
         update_post_meta( $id, '_pavva_import_sursa', sanitize_text_field( $p['sursa'] ?? '' ) );
 
         /* imaginea principală + galeria */
-        $main = self::sideload( $dir, $p['imagine_principala'] ?? '', $id, $title );
-        $gal  = array();
-        foreach ( (array) ( $p['galerie'] ?? array() ) as $k => $f ) {
-            $a = self::sideload( $dir, $f, $id, $title . ' – imagine ' . ( $k + 2 ) );
-            if ( $a ) $gal[] = $a;
-        }
+        list( $main, $gal ) = self::gallery( $p, $dir, $id, $title );
         if ( $main ) $product->set_image_id( $main );
         if ( $gal ) $product->set_gallery_image_ids( $gal );
         $product->save();
@@ -362,5 +408,85 @@ final class Pavva_P_Import {
         clean_post_cache( $id );
         if ( class_exists( 'Pavva_W_Quote_Form' ) ) Pavva_W_Quote_Form::flush();
         return $id;
+    }
+
+    /* ---------------------------------------------------------------- actualizarea imaginilor */
+
+    private static function update_images( $id, array $p, $dir ) {
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        require_once ABSPATH . 'wp-admin/includes/media.php';
+        require_once ABSPATH . 'wp-admin/includes/image.php';
+
+        $product = wc_get_product( $id );
+        if ( ! $product ) return new WP_Error( 'pvi', 'Produsul nu mai există.' );
+        $title = sanitize_text_field( $p['titlu'] ?? '' );
+        if ( '' === $title ) $title = $product->get_name();
+        $old = array();
+
+        /* numele nou din pachet (slug-ul se schimbă doar dacă produsul nu e încă publicat) */
+        if ( $product->get_name() !== $title ) {
+            $product->set_name( $title );
+            if ( 'publish' !== $product->get_status() ) $product->set_slug( sanitize_title( $p['slug'] ?? $title ) );
+        }
+
+        /* principala + galeria: pozele tale (neimportate) din galerie rămân, după cele noi */
+        list( $main, $gal ) = self::gallery( $p, $dir, $id, $title );
+        $cur_main = $product->get_image_id();
+        if ( $main && ( ! $cur_main || self::import_att( $cur_main, $id ) ) ) {
+            if ( $cur_main ) $old[] = $cur_main;
+            $product->set_image_id( $main );
+        }
+        $keep = array();
+        foreach ( $product->get_gallery_image_ids() as $g ) {
+            if ( self::import_att( $g, $id ) ) $old[] = $g; else $keep[] = $g;
+        }
+        $product->set_gallery_image_ids( array_values( array_unique( array_merge( $gal, $keep ) ) ) );
+        $product->save();
+
+        /* culori: după denumire, apoi după poziție; se schimbă doar miniatura importată */
+        $col = get_post_meta( $id, PAVVA_Produse::META_CULORI, true );
+        if ( is_array( $col ) ) {
+            $new = array_values( (array) ( $p['culori'] ?? array() ) );
+            foreach ( $col as $k => $c ) {
+                $match = null;
+                foreach ( $new as $n ) {
+                    if ( self::norm( $n['denumire'] ?? '' ) === self::norm( $c['denumire'] ?? '' ) ) { $match = $n; break; }
+                }
+                if ( ! $match && isset( $new[ $k ] ) ) $match = $new[ $k ];
+                $t = absint( $c['thumbnail_id'] ?? 0 );
+                if ( ! $match || ( $t && ! self::import_att( $t, $id ) ) ) continue;
+                $a = self::sideload( $dir, $match['thumbnail'] ?? '', $id, $title . ' – ' . ( $c['denumire'] ?? '' ) );
+                if ( ! $a ) continue;
+                if ( $t ) $old[] = $t;
+                $col[ $k ]['thumbnail_id'] = $a;
+            }
+            update_post_meta( $id, PAVVA_Produse::META_CULORI, $col );
+        }
+
+        /* dimensiuni: după poziție; specificațiile rămân cum sunt */
+        $dims = get_post_meta( $id, PAVVA_Produse::META_DIM, true );
+        if ( is_array( $dims ) ) {
+            $new = array_values( (array) ( $p['dimensiuni'] ?? array() ) );
+            foreach ( $dims as $k => $d ) {
+                $t = absint( $d['imagine_id'] ?? 0 );
+                if ( empty( $new[ $k ]['imagine'] ) || ( $t && ! self::import_att( $t, $id ) ) ) continue;
+                $v = $d['specificatii'][0]['valoare'] ?? '';
+                $a = self::sideload( $dir, $new[ $k ]['imagine'], $id, $v ? $title . ' – ' . $v : $title );
+                if ( ! $a ) continue;
+                if ( $t ) $old[] = $t;
+                $dims[ $k ]['imagine_id'] = $a;
+            }
+            update_post_meta( $id, PAVVA_Produse::META_DIM, $dims );
+        }
+
+        /* pozele vechi ale importului, dacă nu mai sunt folosite în produs */
+        $used = array_merge( array( $product->get_image_id() ), $product->get_gallery_image_ids() );
+        foreach ( array_unique( array_map( 'absint', $old ) ) as $a ) {
+            if ( $a && ! in_array( $a, array_map( 'absint', $used ), true ) ) wp_delete_attachment( $a, true );
+        }
+
+        clean_post_cache( $id );
+        if ( class_exists( 'Pavva_W_Quote_Form' ) ) Pavva_W_Quote_Form::flush();
+        return true;
     }
 }
