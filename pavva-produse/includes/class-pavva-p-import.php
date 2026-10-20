@@ -309,6 +309,8 @@ final class Pavva_P_Import {
         if ( ! is_file( $src ) ) return 0;
         $tmp = wp_tempnam( $file );
         if ( ! $tmp || ! @copy( $src, $tmp ) ) return 0;
+        /* nume după conținut: o poză nouă primește altă adresă, ca browserele și cache-ul să n-o arate pe cea veche */
+        $file = preg_replace( '/(\.[a-z]+)$/i', '-' . substr( md5_file( $src ), 0, 6 ) . '$1', $file );
         $id = media_handle_sideload( array( 'name' => $file, 'tmp_name' => $tmp ), $post_id, $alt );
         if ( is_wp_error( $id ) ) { @unlink( $tmp ); return 0; }
         update_post_meta( $id, '_wp_attachment_image_alt', $alt );
