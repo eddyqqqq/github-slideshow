@@ -42,6 +42,18 @@ final class Pavva_W_Perf {
         } );
         /* fonturile preîncărcate se recitesc când salvezi un font în Elementor → Custom Fonts */
         add_action( 'save_post_elementor_font', function () { delete_transient( 'pavva_perf_fonts' ); } );
+        /* imaginea din header preîncărcată se uită când se schimbă galeria / imaginea principală sau se șterge poza
+           (altfel prima afișare după schimbare ar preîncărca poza veche, iar cache-ul paginii ar păstra-o) */
+        $forget = function ( $mid, $post_id, $key ) {
+            if ( in_array( $key, array( '_product_image_gallery', '_thumbnail_id' ), true ) ) delete_post_meta( (int) $post_id, self::META );
+        };
+        add_action( 'added_post_meta', $forget, 10, 3 );
+        add_action( 'updated_post_meta', $forget, 10, 3 );
+        add_action( 'deleted_post_meta', function ( $mids, $post_id, $key ) use ( $forget ) { $forget( 0, $post_id, $key ); }, 10, 3 );
+        add_action( 'delete_attachment', function ( $att ) {
+            $parent = (int) wp_get_post_parent_id( $att );
+            if ( $parent ) delete_post_meta( $parent, self::META );
+        } );
 
         $s = self::settings();
         if ( ! empty( $s['lcp'] ) || ! empty( $s['fonts_preload'] ) ) {
