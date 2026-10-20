@@ -39,6 +39,8 @@ final class Pavva_W_Perf {
             if ( get_option( 'pavva_perf_htaccess_v' ) === PAVVA_WIDGETS_VERSION || ! current_user_can( 'manage_options' ) ) return;
             update_option( 'pavva_perf_htaccess_v', PAVVA_WIDGETS_VERSION, false );
             self::sync_htaccess();
+            /* preîncărcările salvate de versiunea veche se refac la următoarea afișare a fiecărei pagini */
+            delete_post_meta_by_key( self::META );
         } );
         /* fonturile preîncărcate se recitesc când salvezi un font în Elementor → Custom Fonts */
         add_action( 'save_post_elementor_font', function () { delete_transient( 'pavva_perf_fonts' ); } );
