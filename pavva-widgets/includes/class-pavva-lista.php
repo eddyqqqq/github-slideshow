@@ -151,7 +151,7 @@ final class Pavva_W_Lista {
 		foreach ( Pavva_W_Data::visible_items( Pavva_W_Data::items( $pid, Pavva_W_Data::META_DIM ) ) as $row ) {
 			foreach ( Pavva_W_Data::dimension_item_specs( $row, $pid ) as $spec ) {
 				$label = (string) ( $spec['eticheta'] ?? '' );
-				if ( ! preg_match( '/grosim/i', remove_accents( $label ) ) ) continue;
+				if ( ! preg_match( '/grosim|thick/i', remove_accents( $label ) ) ) continue;
 				$val = self::txt( $spec['valoare'] ?? '' );
 				if ( '' === $val ) continue;
 				/* „4” cu eticheta „Grosime (cm)” → „4 cm” */
@@ -189,8 +189,8 @@ final class Pavva_W_Lista {
 		$v = self::variants( $pid );
 		$h = '';
 		if ( $undec ) {
-			if ( $v['colors'] ) $h .= '<span class="pvl-var-c is-undec">Culoare: Nu am decis</span>';
-			if ( $v['thick'] ) $h .= '<span class="pvl-var-t is-undec">Grosime: Nu am decis</span>';
+			if ( $v['colors'] ) $h .= '<span class="pvl-var-c is-undec">' . esc_html( pavva_t( 'Culoare' ) . ': ' . pavva_t( 'Nu am decis' ) ) . '</span>';
+			if ( $v['thick'] ) $h .= '<span class="pvl-var-t is-undec">' . esc_html( pavva_t( 'Grosime' ) . ': ' . pavva_t( 'Nu am decis' ) ) . '</span>';
 		} else {
 			if ( $v['colors'] ) {
 				$c  = $v['colors'][0];

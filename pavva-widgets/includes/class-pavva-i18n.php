@@ -25,6 +25,28 @@ final class Pavva_W_I18n {
 		add_action( 'pre_get_posts', array( __CLASS__, 'admin_order' ) );
 		/* textele implicite ale widgeturilor (nesalvate în pagină) se traduc din dicționar pe paginile în altă limbă */
 		add_action( 'elementor/frontend/widget/before_render', array( __CLASS__, 'widget_defaults' ) );
+		/* schimbarea limbii din meniu (Polylang): codul limbii (RO, EN …) în loc de nume; o limbă nouă apare singură */
+		add_filter( 'nav_menu_item_title', array( __CLASS__, 'lang_item_title' ), 20, 2 );
+		/* limba curentă primește culoarea de „activ” din widgetul de meniu Elementor */
+		add_filter( 'wp_nav_menu_objects', array( __CLASS__, 'lang_item_active' ), 20 );
+	}
+
+	public static function lang_item_active( $items ) {
+		foreach ( (array) $items as $item ) {
+			if ( is_array( $item->classes ?? null ) && in_array( 'current-lang', $item->classes, true ) && ! in_array( 'current-menu-item', $item->classes, true ) ) {
+				$item->classes[] = 'current-menu-item';
+			}
+		}
+		return $items;
+	}
+
+	public static function lang_item_title( $title, $item ) {
+		$cls = is_array( $item->classes ?? null ) ? $item->classes : array();
+		if ( ! in_array( 'lang-item', $cls, true ) ) return $title;
+		foreach ( $cls as $c ) {
+			if ( preg_match( '/^lang-item-([a-z]{2,3}(?:-[a-z]{2,4})?)$/', $c, $m ) && 'first' !== $m[1] ) return strtoupper( $m[1] );
+		}
+		return $title;
 	}
 
 	public static function widget_defaults( $widget ) {
@@ -108,6 +130,9 @@ final class Pavva_W_I18n {
 		) );
 		register_rest_route( $ns, '/i18n/languages', array(
 			array( 'methods' => 'GET', 'callback' => array( __CLASS__, 'languages' ), 'permission_callback' => $admin ),
+		) );
+		register_rest_route( $ns, '/i18n/meta/(?P<id>\d+)', array(
+			array( 'methods' => 'POST', 'callback' => array( __CLASS__, 'save_meta' ), 'permission_callback' => $admin ),
 		) );
 		register_rest_route( $ns, '/i18n/order', array(
 			array( 'methods' => 'POST', 'callback' => array( __CLASS__, 'save_order' ), 'permission_callback' => $admin ),
@@ -259,6 +284,16 @@ final class Pavva_W_I18n {
 		}
 		clean_term_cache( $tr, $src->taxonomy );
 		return array( 'id' => $tr, 'created' => $new, 'link' => get_term_link( $tr ), 'translations' => pll_get_term_translations( $tr ) );
+	}
+
+	/* câmpuri pentru orice element (ex. elementul „Limbi” din meniu: _pll_menu_item) */
+	public static function save_meta( WP_REST_Request $r ) {
+		$id = (int) $r['id'];
+		if ( ! get_post( $id ) ) return new WP_Error( 'pavva', 'Nu există.', array( 'status' => 404 ) );
+		foreach ( (array) ( $r->get_json_params()['meta'] ?? array() ) as $k => $v ) {
+			if ( null === $v ) delete_post_meta( $id, (string) $k ); else update_post_meta( $id, (string) $k, wp_slash( $v ) );
+		}
+		return array( 'id' => $id, 'meta' => self::meta_of( $id ) );
 	}
 
 	/* limbile Polylang (cu pagina principală a fiecăreia); ?clean=1 recitește cache-ul Polylang */
