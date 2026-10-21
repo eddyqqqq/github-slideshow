@@ -1754,7 +1754,7 @@ class Pavva_Culori_Widget extends Widget_Base {
 		$show_arrows = isset( $s['show_arrows'] ) && 'yes' === $s['show_arrows'] && count( $colors ) > 1;
 		$show_labels = isset( $s['show_thumb_labels'] ) && 'yes' === $s['show_thumb_labels'];
 		$heading     = isset( $s['heading_text'] ) ? (string) $s['heading_text'] : '';
-		$label       = '' !== trim( $heading ) ? $heading : 'Culori și finisaje';
+		$label       = '' !== trim( $heading ) ? pavva_t( $heading ) : pavva_t( 'Culori și finisaje' );
 		$mode        = isset( $s['animation_mode'] ) && in_array( $s['animation_mode'], array( 'slide', 'fade', 'none' ), true ) ? $s['animation_mode'] : 'slide';
 		$options     = array(
 			'trigger' => ( isset( $s['trigger'] ) && 'hover' === $s['trigger'] ) ? 'hover' : 'click',
@@ -1802,8 +1802,8 @@ class Pavva_Culori_Widget extends Widget_Base {
 					<?php endforeach; ?>
 
 					<?php if ( $show_arrows ) : ?>
-						<button type="button" class="pvc-arrow pvc-prev" aria-label="Culoarea anterioară"><?php echo $this->arrow_html( $s, 'prev' ); // phpcs:ignore ?></button>
-						<button type="button" class="pvc-arrow pvc-next" aria-label="Culoarea următoare"><?php echo $this->arrow_html( $s, 'next' ); // phpcs:ignore ?></button>
+						<button type="button" class="pvc-arrow pvc-prev" aria-label="<?php echo esc_attr( pavva_t( 'Culoarea anterioară' ) ); ?>"><?php echo $this->arrow_html( $s, 'prev' ); // phpcs:ignore ?></button>
+						<button type="button" class="pvc-arrow pvc-next" aria-label="<?php echo esc_attr( pavva_t( 'Culoarea următoare' ) ); ?>"><?php echo $this->arrow_html( $s, 'next' ); // phpcs:ignore ?></button>
 					<?php endif; ?>
 				</div>
 

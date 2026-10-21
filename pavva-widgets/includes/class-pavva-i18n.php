@@ -23,6 +23,30 @@ final class Pavva_W_I18n {
 	public static function init() {
 		add_action( 'rest_api_init', array( __CLASS__, 'routes' ) );
 		add_action( 'pre_get_posts', array( __CLASS__, 'admin_order' ) );
+		/* textele implicite ale widgeturilor (nesalvate în pagină) se traduc din dicționar pe paginile în altă limbă */
+		add_action( 'elementor/frontend/widget/before_render', array( __CLASS__, 'widget_defaults' ) );
+	}
+
+	public static function widget_defaults( $widget ) {
+		$l = self::lang();
+		if ( '' === $l || $l === self::default_lang() ) return;
+		$dict = get_option( self::OPT, array() );
+		if ( empty( $dict[ $l ] ) || ! is_array( $dict[ $l ] ) ) return;
+		$d = $dict[ $l ];
+		foreach ( $widget->get_settings() as $k => $v ) {
+			if ( '_' === substr( (string) $k, 0, 1 ) ) continue;
+			if ( is_string( $v ) && isset( $d[ $v ] ) ) {
+				$widget->set_settings( $k, $d[ $v ] );
+			} elseif ( is_array( $v ) && isset( $v[0] ) && is_array( $v[0] ) ) {
+				$changed = false;
+				foreach ( $v as $i => $row ) {
+					foreach ( $row as $rk => $rv ) {
+						if ( is_string( $rv ) && isset( $d[ $rv ] ) ) { $v[ $i ][ $rk ] = $d[ $rv ]; $changed = true; }
+					}
+				}
+				if ( $changed ) $widget->set_settings( $k, $v );
+			}
+		}
 	}
 
 	public static function on(): bool {

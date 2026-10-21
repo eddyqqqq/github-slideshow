@@ -1492,7 +1492,7 @@ class Pavva_Carusel_Widget extends Widget_Base {
 		}
 		$show_desc   = isset( $s['show_desc'] ) && 'yes' === $s['show_desc'];
 		$show_bar    = isset( $s['show_bar'] ) && 'yes' === $s['show_bar'];
-		$label       = ! empty( $s['heading_text'] ) ? $s['heading_text'] : 'Produse';
+		$label       = ! empty( $s['heading_text'] ) ? $s['heading_text'] : pavva_t( 'Produse' );
 		?>
 		<?php
 		$title_fx = isset( $s['title_fx'] ) && in_array( $s['title_fx'], array( 'none', 'underline', 'center', 'shift' ), true ) ? $s['title_fx'] : 'none';

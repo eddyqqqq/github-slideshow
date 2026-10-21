@@ -799,7 +799,7 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 			$it = Pavva_W_Lista::item( (int) $pid );
 			if ( $it ) $items[] = $it + array( 'tags' => Pavva_W_Lista::preview_tags( (int) $pid, 1 === $i ) );
 		}
-		$t = function ( $k, $def ) use ( $s ) { $v = trim( (string) ( $s[ $k ] ?? '' ) ); return '' !== $v ? $v : $def; };
+		$t = function ( $k, $def ) use ( $s ) { $v = trim( (string) ( $s[ $k ] ?? '' ) ); return pavva_t( '' !== $v ? $v : $def ); };
 		echo '<div class="pvl-editor-preview" data-pvl-preview>';
 		if ( $bar ) {
 			echo '<div class="pvl-toast is-on pvl-toast-preview"><span class="pvl-toast-t">' . esc_html( $t( 'dw_title', 'Oferta ta' ) ) . ': <strong>' . esc_html( count( $items ) . ' produse' ) . '</strong></span>'

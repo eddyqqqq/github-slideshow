@@ -2492,7 +2492,7 @@ class Pavva_Grila_Produse_Widget extends Widget_Base {
 		}
 		if ( $counter && $rest > 0 ) {
 			$label = str_replace( '{n}', (string) (int) $rest, '' !== trim( (string) $format ) ? (string) $format : '+{n}' );
-			$html .= '<span class="pvg-colors-more' . ( $box ? ' is-box' : '' ) . '" aria-label="' . esc_attr( 'încă ' . $rest . ' culori' ) . '">' . esc_html( $label ) . '</span>';
+			$html .= '<span class="pvg-colors-more' . ( $box ? ' is-box' : '' ) . '" aria-label="' . esc_attr( sprintf( pavva_t( 'încă %d culori' ), $rest ) ) . '">' . esc_html( $label ) . '</span>';
 		}
 		return $html . '</div>';
 	}
