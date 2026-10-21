@@ -905,7 +905,7 @@ class Pavva_Feature_Tabs_Widget extends Widget_Base {
 			<?php if ( count( $items ) > 1 && isset( $s['show_dots'] ) && 'yes' === $s['show_dots'] ) : ?>
 				<div class="pf-dots">
 					<?php foreach ( $items as $i => $item ) : ?>
-						<button type="button" class="pf-dot<?php echo 0 === $i ? ' is-active' : ''; ?>" aria-label="<?php echo esc_attr( 'Arată: ' . ( isset( $item['item_title'] ) ? wp_strip_all_tags( $item['item_title'] ) : ( $i + 1 ) ) ); ?>"></button>
+						<button type="button" class="pf-dot<?php echo 0 === $i ? ' is-active' : ''; ?>" aria-label="<?php echo esc_attr( pavva_t( 'Arată:' ) . ' ' . ( isset( $item['item_title'] ) ? wp_strip_all_tags( $item['item_title'] ) : ( $i + 1 ) ) ); ?>"></button>
 					<?php endforeach; ?>
 				</div>
 			<?php endif; ?>

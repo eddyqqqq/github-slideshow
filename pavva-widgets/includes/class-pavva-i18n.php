@@ -82,6 +82,9 @@ final class Pavva_W_I18n {
 			array( 'methods' => 'GET', 'callback' => function () { return get_option( self::OPT, array() ); }, 'permission_callback' => $admin ),
 			array( 'methods' => 'POST', 'callback' => array( __CLASS__, 'save_strings' ), 'permission_callback' => $admin ),
 		) );
+		register_rest_route( $ns, '/i18n/languages', array(
+			array( 'methods' => 'GET', 'callback' => array( __CLASS__, 'languages' ), 'permission_callback' => $admin ),
+		) );
 		register_rest_route( $ns, '/i18n/order', array(
 			array( 'methods' => 'POST', 'callback' => array( __CLASS__, 'save_order' ), 'permission_callback' => $admin ),
 		) );
@@ -144,6 +147,7 @@ final class Pavva_W_I18n {
 			pll_save_post_translations( $links );
 			/* categoriile: varianta lor în limba traducerii, unde există; restul (tip produs, vizibilitate) la fel */
 			foreach ( get_object_taxonomies( $src->post_type ) as $tax ) {
+				if ( in_array( $tax, array( 'language', 'post_translations', 'term_language', 'term_translations' ), true ) ) continue;
 				$ids = wp_get_object_terms( $src->ID, $tax, array( 'fields' => 'ids' ) );
 				if ( is_wp_error( $ids ) || ! $ids ) continue;
 				if ( pll_is_translated_taxonomy( $tax ) ) {
@@ -156,6 +160,8 @@ final class Pavva_W_I18n {
 			$res       = wp_update_post( wp_slash( $arr ), true );
 			if ( is_wp_error( $res ) ) return $res;
 		}
+		/* limba se fixează la sfârșit (salvările de mai sus pot readuce limba implicită) */
+		pll_set_post_language( $tr, $lang );
 		foreach ( (array) ( $p['meta'] ?? array() ) as $k => $v ) {
 			$k = (string) $k;
 			if ( '' === $k ) continue;
@@ -163,6 +169,8 @@ final class Pavva_W_I18n {
 			update_post_meta( $tr, $k, wp_slash( $v ) );
 		}
 		self::refresh( $tr );
+		/* Polylang ține în cache pagina principală a fiecărei limbi: se recitește */
+		if ( function_exists( 'PLL' ) && isset( PLL()->model ) && method_exists( PLL()->model, 'clean_languages_cache' ) ) PLL()->model->clean_languages_cache();
 		return array( 'id' => $tr, 'created' => $new, 'link' => get_permalink( $tr ), 'translations' => pll_get_post_translations( $tr ) );
 	}
 
@@ -227,6 +235,17 @@ final class Pavva_W_I18n {
 		}
 		clean_term_cache( $tr, $src->taxonomy );
 		return array( 'id' => $tr, 'created' => $new, 'link' => get_term_link( $tr ), 'translations' => pll_get_term_translations( $tr ) );
+	}
+
+	/* limbile Polylang (cu pagina principală a fiecăreia); ?clean=1 recitește cache-ul Polylang */
+	public static function languages( WP_REST_Request $r ) {
+		if ( ! self::on() ) return array();
+		if ( $r->get_param( 'clean' ) && method_exists( PLL()->model, 'clean_languages_cache' ) ) PLL()->model->clean_languages_cache();
+		$out = array();
+		foreach ( PLL()->model->get_languages_list() as $l ) {
+			$out[] = array( 'slug' => $l->slug, 'locale' => $l->locale, 'page_on_front' => $l->page_on_front, 'home_url' => $l->get_home_url(), 'is_default' => $l->is_default );
+		}
+		return array( 'languages' => $out, 'page_on_front' => (int) get_option( 'page_on_front' ), 'front_translations' => pll_get_post_translations( (int) get_option( 'page_on_front' ) ) );
 	}
 
 	/* dicționarul textelor fixe: { "en": { "Adaugă în listă": "Add to list", … } } (se îmbină cu ce există) */

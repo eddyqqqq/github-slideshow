@@ -13,6 +13,7 @@
 (function (w, d) {
 	'use strict';
 	var SITE = (w.PavvaA11y && w.PavvaA11y.site) || d.title.split(/\s[–|-]\s/).pop() || '';
+	function T(k, def) { return (w.PavvaA11y && w.PavvaA11y.t && w.PavvaA11y.t[k]) || def; }
 	var SOCIAL = [
 		['facebook.', 'Facebook'], ['instagram.', 'Instagram'], ['tiktok.', 'TikTok'], ['youtube.', 'YouTube'],
 		['youtu.be', 'YouTube'], ['linkedin.', 'LinkedIn'], ['pinterest.', 'Pinterest'], ['twitter.', 'X'],
@@ -48,13 +49,13 @@
 
 	function nameFor(a) {
 		var href = a.getAttribute('href') || '';
-		if (/^tel:/i.test(href)) return 'Sună la ' + decodeURIComponent(href.slice(4));
-		if (/^mailto:/i.test(href)) return 'Scrie la ' + decodeURIComponent(href.slice(7).split('?')[0]);
+		if (/^tel:/i.test(href)) return T('call', 'Sună la') + ' ' + decodeURIComponent(href.slice(4));
+		if (/^mailto:/i.test(href)) return T('write', 'Scrie la') + ' ' + decodeURIComponent(href.slice(7).split('?')[0]);
 		var low = (a.href || '').toLowerCase();
 		for (var i = 0; i < SOCIAL.length; i++) if (low.indexOf(SOCIAL[i][0]) !== -1) return SOCIAL[i][1];
-		if (a.hostname && a.hostname !== location.hostname) return 'Deschide ' + a.hostname.replace(/^www\./, '');
+		if (a.hostname && a.hostname !== location.hostname) return T('open', 'Deschide') + ' ' + a.hostname.replace(/^www\./, '');
 		var seg = (a.pathname || '').replace(/\/+$/, '').split('/').pop();
-		if (!seg) return SITE ? SITE + ' – prima pagină' : 'Prima pagină';
+		if (!seg) return SITE ? SITE + ' – ' + T('home', 'prima pagină') : T('homeCap', 'Prima pagină');
 		seg = decodeURIComponent(seg).replace(/[-_]+/g, ' ').trim();
 		return seg.charAt(0).toUpperCase() + seg.slice(1);
 	}

@@ -2855,8 +2855,8 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		}
 		$url  = isset( $slide['slide_link']['url'] ) ? (string) $slide['slide_link']['url'] : '';
 		$host = (string) wp_parse_url( $url, PHP_URL_HOST );
-		if ( false !== strpos( $host, 'google.' ) && false !== strpos( $url, '/maps' ) ) return 'Deschide locația în Google Maps';
-		return $host && $host !== wp_parse_url( home_url(), PHP_URL_HOST ) ? 'Deschide ' . preg_replace( '/^www\./', '', $host ) : 'Deschide';
+		if ( false !== strpos( $host, 'google.' ) && false !== strpos( $url, '/maps' ) ) return pavva_t( 'Deschide locația în Google Maps' );
+		return $host && $host !== wp_parse_url( home_url(), PHP_URL_HOST ) ? pavva_t( 'Deschide' ) . ' ' . preg_replace( '/^www\./', '', $host ) : pavva_t( 'Deschide' );
 	}
 
 	private function get_picture_html( $slide, $index, $size, $bp, $quality = 'smart', $priority = true, $defer = false ) {
@@ -3318,7 +3318,7 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 									'class'                => array( 'ps-slide', 'elementor-repeater-item-' . ( isset( $slide['_id'] ) ? $slide['_id'] : $i ), ! empty( $slide['_pavva_dyn'] ) ? 'ps-slide-dyn' : '' ),
 									'role'                 => 'group',
 									'aria-roledescription' => 'slide',
-									'aria-label'           => ( $i + 1 ) . ' din ' . $count,
+									'aria-label'           => sprintf( pavva_t( '%1$d din %2$d' ), $i + 1, $count ),
 									'aria-hidden'          => 0 === $i ? 'false' : 'true',
 								)
 							);
@@ -3358,15 +3358,15 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 
 					<?php if ( $is_yes( 'show_arrows' ) && $count > 1 ) : ?>
 						<div class="ps-arrows">
-							<button type="button" class="ps-arrow ps-prev" aria-label="<?php echo esc_attr( ! empty( $s['prev_label'] ) ? $s['prev_label'] : 'Slide-ul anterior' ); ?>"><?php echo $this->get_arrow_html( $s, 'prev' ); // phpcs:ignore ?></button>
-							<button type="button" class="ps-arrow ps-next" aria-label="<?php echo esc_attr( ! empty( $s['next_label'] ) ? $s['next_label'] : 'Slide-ul următor' ); ?>"><?php echo $this->get_arrow_html( $s, 'next' ); // phpcs:ignore ?></button>
+							<button type="button" class="ps-arrow ps-prev" aria-label="<?php echo esc_attr( ! empty( $s['prev_label'] ) ? $s['prev_label'] : pavva_t( 'Slide-ul anterior' ) ); ?>"><?php echo $this->get_arrow_html( $s, 'prev' ); // phpcs:ignore ?></button>
+							<button type="button" class="ps-arrow ps-next" aria-label="<?php echo esc_attr( ! empty( $s['next_label'] ) ? $s['next_label'] : pavva_t( 'Slide-ul următor' ) ); ?>"><?php echo $this->get_arrow_html( $s, 'next' ); // phpcs:ignore ?></button>
 						</div>
 					<?php endif; ?>
 
 					<?php if ( $count > 1 && isset( $s['pagination'] ) && 'dots' === $s['pagination'] ) : ?>
 						<div class="ps-pagination ps-dots">
 							<?php for ( $i = 0; $i < $count; $i++ ) : ?>
-								<button type="button" class="ps-dot<?php echo 0 === $i ? ' is-active' : ''; ?>" aria-label="<?php echo esc_attr( 'Mergi la slide-ul ' . ( $i + 1 ) ); ?>"<?php echo 0 === $i ? ' aria-current="true"' : ''; ?>></button>
+								<button type="button" class="ps-dot<?php echo 0 === $i ? ' is-active' : ''; ?>" aria-label="<?php echo esc_attr( sprintf( pavva_t( 'Mergi la slide-ul %d' ), $i + 1 ) ); ?>"<?php echo 0 === $i ? ' aria-current="true"' : ''; ?>></button>
 							<?php endfor; ?>
 						</div>
 					<?php elseif ( $count > 1 && isset( $s['pagination'] ) && 'fraction' === $s['pagination'] ) : ?>

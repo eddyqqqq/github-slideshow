@@ -157,7 +157,7 @@ final class Pavva_W_Perf {
         if ( ! self::front() ) return;
         $js = (string) file_get_contents( PAVVA_WIDGETS_PATH . 'assets/a11y.js' ); // phpcs:ignore WordPress.WP.AlternativeFunctions
         echo '<script id="pavva-a11y" data-no-defer="1" data-no-optimize="1" data-cfasync="false" nowprocket>'
-            . 'window.PavvaA11y=' . wp_json_encode( array( 'site' => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ) ) . ';' . $js . '</script>' . "\n"; // phpcs:ignore -- fișier propriu
+            . 'window.PavvaA11y=' . wp_json_encode( array( 'site' => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ), 't' => array_map( 'pavva_t', array( 'call' => 'Sună la', 'write' => 'Scrie la', 'open' => 'Deschide', 'home' => 'prima pagină', 'homeCap' => 'Prima pagină' ) ) ) ) . ';' . $js . '</script>' . "\n"; // phpcs:ignore -- fișier propriu
     }
 
     /* ================= cache în browser pentru JavaScript ================= */

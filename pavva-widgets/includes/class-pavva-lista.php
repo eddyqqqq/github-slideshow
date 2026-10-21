@@ -20,7 +20,14 @@ final class Pavva_W_Lista {
 
 	/* pagina cu formularul (se poate schimba din fiecare widget; aici e valoarea implicită) */
 	public static function form_url(): string {
-		return (string) apply_filters( 'pavva_lista_form_url', home_url( '/solicita-oferta/' ) );
+		$url = home_url( '/solicita-oferta/' );
+		/* pe paginile în altă limbă: pagina de ofertă tradusă */
+		if ( function_exists( 'pll_get_post' ) && Pavva_W_I18n::lang() && Pavva_W_I18n::lang() !== Pavva_W_I18n::default_lang() ) {
+			$page = get_page_by_path( 'solicita-oferta' );
+			$tr   = $page ? (int) pll_get_post( $page->ID, Pavva_W_I18n::lang() ) : 0;
+			if ( $tr ) $url = get_permalink( $tr );
+		}
+		return (string) apply_filters( 'pavva_lista_form_url', $url );
 	}
 
 	/* adresa aleasă în widget: relativă (/solicita-oferta/) sau completă */
@@ -44,27 +51,51 @@ final class Pavva_W_Lista {
 				'bar'      => (bool) apply_filters( 'pavva_lista_bar', true ),
 				/* panoul lateral cu produsele (se deschide din iconița „Oferta ta”, meniu, bara de jos) */
 				'drawer'   => (bool) apply_filters( 'pavva_lista_drawer', true ),
-				'i18n'     => array(
-					'added'     => 'Adăugat în ofertă',
-					'removed'   => 'Scos din ofertă',
-					'see'       => 'Vezi oferta',
-					'remove'    => 'Scoate din ofertă',
-					'pick'      => '+ Adaugă alt produs',
-					'one'       => '1 produs',
-					'many'      => 'produse',
-					'title'     => 'Oferta ta',
-					'empty'     => 'niciun produs',
-					'cleared'   => 'Lista a fost golită',
-					'full'      => 'Lista are deja numărul maxim de produse.',
+				'i18n'     => array_map( 'pavva_t', array(
+					'color' => 'Culoare',
+					'thick' => 'Grosime',
+					'one' => '1 produs',
+					'many' => 'produse',
+					'title' => 'Oferta ta',
+					'hide' => 'Ascunde bara',
+					'empty' => 'niciun produs',
+					'edit' => 'Modifică',
+					'choose' => 'Alege culoarea / grosimea',
+					'remove' => 'Scoate din ofertă',
+					'removed' => 'Scos din ofertă',
+					'saved' => 'Variantă salvată',
+					'cleared' => 'Lista a fost golită',
+					'added' => 'Adăugat în ofertă',
+					'undecided' => 'Nu am decis',
+					'needColor' => 'Alege o culoare (sau „Nu am decis”).',
+					'needThick' => 'Alege grosimea (sau „Nu am decis”).',
+					'close' => 'Închide',
+					'cta' => 'Solicită ofertă',
+					'more' => 'Continuă să alegi',
+					'dwEmpty' => 'Nu ai adăugat încă niciun produs. Apasă „Adaugă la ofertă” pe produsele care te interesează.',
+					'browse' => 'Vezi produsele',
+					'see' => 'Vezi oferta',
+					'barAdd' => 'Adaugă în listă',
+					'pkTitle' => 'Alege varianta',
+					'pkAdd' => 'Adaugă la ofertă',
+					'pkSave' => 'Salvează',
+					'pkCancel' => 'Anulează',
+					'pick' => '+ Adaugă alt produs',
 					'listTitle' => 'Produsele tale',
+					'listEmptyPick' => 'Adaugă produsele care te interesează. Poți alege mai multe, fiecare cu culoarea și grosimea dorită.',
 					'listEmpty' => 'Alege produsele dorite din lista de mai jos. Poți adăuga mai multe.',
-					'hide'      => 'Ascunde bara',
-					'close'     => 'Închide',
-					'cta'       => 'Solicită ofertă',
-					'more'      => 'Continuă să alegi',
-					'browse'    => 'Vezi produsele',
-					'dwEmpty'   => 'Nu ai adăugat încă niciun produs. Apasă „Adaugă la ofertă” pe produsele care te interesează.',
-				),
+					'pickTitle' => 'Alege produsul',
+					'needOne' => 'Adaugă cel puțin un produs în ofertă.',
+					'addMore' => 'Adaugă alt produs',
+					'addFirst' => 'Adaugă produs',
+					'all' => 'Toate',
+					'other' => 'Alte produse',
+					'none' => 'Nu sunt produse în această categorie.',
+					'addThis' => 'Adaugă produsul',
+					'back' => 'Înapoi la produse',
+					'needVar' => 'Alege culoarea și grosimea pentru',
+					'full' => 'Lista are deja numărul maxim de produse.',
+				) ),
 			)
 		);
 	}
@@ -72,6 +103,8 @@ final class Pavva_W_Lista {
 	/* categoria principală a produsului: cea aleasă în Yoast, altfel prima */
 	public static function primary_cat( int $pid ): string {
 		$primary = absint( get_post_meta( $pid, '_yoast_wpseo_primary_product_cat', true ) );
+		/* produsul tradus: categoria principală în limba lui */
+		if ( $primary && function_exists( 'pll_get_term' ) && ( $pl = pll_get_post_language( $pid ) ) ) $primary = (int) pll_get_term( $primary, $pl ) ?: $primary;
 		if ( $primary ) {
 			$t = get_term( $primary, 'product_cat' );
 			if ( $t instanceof WP_Term ) return self::txt( $t->name );

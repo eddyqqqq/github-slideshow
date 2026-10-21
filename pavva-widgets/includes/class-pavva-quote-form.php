@@ -43,6 +43,19 @@ final class Pavva_W_Quote_Form {
 
     public static function flush() {
         delete_transient( self::CACHE_KEY );
+        /* și listele pe limbi (Polylang) */
+        if ( function_exists( 'pll_languages_list' ) ) {
+            foreach ( (array) pll_languages_list( array( 'fields' => 'slug' ) ) as $l ) delete_transient( self::CACHE_KEY . '_' . $l );
+        }
+        self::$data = null;
+    }
+
+    /* limba listei: cea cerută (?lang= la REST) sau a paginii; '' fără Polylang */
+    private static function list_lang( $lang = null ): string {
+        if ( ! function_exists( 'pll_languages_list' ) ) return '';
+        $all = (array) pll_languages_list( array( 'fields' => 'slug' ) );
+        $l   = null !== $lang ? sanitize_key( (string) $lang ) : Pavva_W_I18n::lang();
+        return in_array( $l, $all, true ) ? $l : Pavva_W_I18n::default_lang();
     }
 
     /* Numele parametrilor din adresă (aceleași ca în setările linkului „Solicită ofertă”). */
@@ -57,8 +70,8 @@ final class Pavva_W_Quote_Form {
             array(
                 'methods'             => 'GET',
                 'permission_callback' => '__return_true', /* doar nume publice de categorii / produse */
-                'callback'            => function () {
-                    return rest_ensure_response( self::data() );
+                'callback'            => function ( $req ) {
+                    return rest_ensure_response( self::data( $req->get_param( 'lang' ) ) );
                 },
             )
         );
@@ -72,7 +85,7 @@ final class Pavva_W_Quote_Form {
             'pavva-oferta',
             'PavvaOferta',
             array(
-                'rest'   => esc_url_raw( rest_url( 'pavva/v1/oferta' ) ),
+                'rest'   => esc_url_raw( Pavva_W_I18n::lang() ? add_query_arg( 'lang', Pavva_W_I18n::lang(), rest_url( 'pavva/v1/oferta' ) ) : rest_url( 'pavva/v1/oferta' ) ),
                 'places' => PAVVA_WIDGETS_URL . 'assets/data/localitati.json?v=' . pavva_widgets_asset_version( 'assets/data/localitati.json' ),
                 'params' => array( 'produs' => (string) $p['produs'], 'categorie' => (string) $p['categorie'] ),
             )
@@ -92,16 +105,20 @@ final class Pavva_W_Quote_Form {
     }
 
     /* Categoriile (ierarhic, în ordinea din WooCommerce) și produsele cu categoriile lor. */
-    public static function data(): array {
-        if ( null !== self::$data ) return self::$data;
-        $cached = get_transient( self::CACHE_KEY );
+    public static function data( $lang = null ): array {
+        $lang = self::list_lang( $lang );
+        $key  = self::CACHE_KEY . ( $lang ? '_' . $lang : '' );
+        if ( null !== self::$data && ( self::$data['lang'] ?? '' ) === $lang ) return self::$data;
+        $cached = get_transient( $key );
         if ( is_array( $cached ) && isset( $cached['cats'], $cached['prods'] ) ) {
             self::$data = $cached;
             return self::$data;
         }
 
         $cats  = array();
-        $terms = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => true ) );
+        $targs = array( 'taxonomy' => 'product_cat', 'hide_empty' => true );
+        if ( $lang ) $targs['lang'] = $lang;
+        $terms = get_terms( $targs );
         if ( ! is_wp_error( $terms ) ) {
             $terms = array_values( array_filter( $terms, function ( $t ) { return 'uncategorized' !== $t->slug; } ) );
             usort( $terms, function ( $a, $b ) {
@@ -134,6 +151,7 @@ final class Pavva_W_Quote_Form {
             'fields'         => 'ids',
             'no_found_rows'  => true,
         );
+        if ( $lang ) $args['lang'] = $lang;
         $hidden = get_term_by( 'name', 'exclude-from-catalog', 'product_visibility' );
         if ( $hidden instanceof WP_Term ) {
             $args['tax_query'] = array( array( 'taxonomy' => 'product_visibility', 'field' => 'term_taxonomy_id', 'terms' => array( (int) $hidden->term_taxonomy_id ), 'operator' => 'NOT IN' ) ); // phpcs:ignore
@@ -161,8 +179,8 @@ final class Pavva_W_Quote_Form {
             );
         }
 
-        self::$data = array( 'cats' => $cats, 'prods' => $prods );
-        set_transient( self::CACHE_KEY, self::$data, 12 * HOUR_IN_SECONDS );
+        self::$data = array( 'cats' => $cats, 'prods' => $prods, 'lang' => $lang );
+        set_transient( $key, self::$data, 12 * HOUR_IN_SECONDS );
         return self::$data;
     }
 
@@ -178,7 +196,7 @@ final class Pavva_W_Quote_Form {
         $first    = $existing ? trim( (string) $existing[0] ) : '';
         if ( false !== strpos( $first, '|' ) ) $first = trim( strtok( $first, '|' ) );
         if ( '' === $first ) {
-            $first = ! empty( $item['field_label'] ) ? self::txt( $item['field_label'] ) : ( 'categorie' === $role ? 'Categorie produs' : 'Produs solicitat' );
+            $first = ! empty( $item['field_label'] ) ? self::txt( $item['field_label'] ) : ( 'categorie' === $role ? pavva_t( 'Categorie produs' ) : pavva_t( 'Produs solicitat' ) );
         }
 
         $d     = self::data();
