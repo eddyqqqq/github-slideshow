@@ -1,0 +1,15 @@
+/* Pavva – Limbă: RO | EN în header */
+.pvlang{display:flex;align-items:center;gap:var(--pvlang-gap,6px);line-height:1;--pvlang-ease:200ms}
+.pvlang-a,.pvlang-btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;box-sizing:border-box;text-decoration:none;color:inherit;font:inherit;font-weight:600;letter-spacing:.02em;border:0 solid transparent;background:transparent;cursor:pointer;transition:color var(--pvlang-ease),background-color var(--pvlang-ease),border-color var(--pvlang-ease)}
+.pvlang-a.is-on{color:#AB5525}
+.pvlang-a:hover,.pvlang-a:focus-visible,.pvlang-btn:hover{color:#AB5525}
+.pvlang-sep{opacity:.45;user-select:none}
+.pvlang--drop{position:relative}
+.pvlang-btn{padding:0;margin:0;-webkit-appearance:none;appearance:none}
+.pvlang-chev{transition:transform var(--pvlang-ease)}
+.pvlang--drop.is-open .pvlang-chev{transform:rotate(180deg)}
+.pvlang-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:999;min-width:140px;margin:0;padding:6px;list-style:none;background:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(27,15,40,.12)}
+.pvlang-menu li{margin:0;padding:0}
+.pvlang-menu .pvlang-a{display:flex;justify-content:flex-start;width:100%;padding:8px 10px;border-radius:6px}
+.pvlang-menu .pvlang-a:hover{background:rgba(171,85,37,.08)}
+.pvlang-note{padding:8px;border:1px dashed #ccc;font-size:12px}

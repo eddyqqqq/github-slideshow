@@ -3,7 +3,7 @@
  * Plugin Name:       Pavva Widgets
  * Plugin URI:        https://imagient.ro/
  * Description:       Widgeturile Elementor, etichetele dinamice și formularele create special pentru site-ul Pavva. Câmpurile produselor / categoriilor sunt în „Pavva Products” și „Pavva Categories”. Creat de Imagient (imagient.ro).
- * Version:           4.14.0
+ * Version:           4.15.0
  * Author:            Imagient
  * Author URI:        https://imagient.ro/
  * Requires at least: 6.0
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '4.14.0' );
+define( 'PAVVA_WIDGETS_VERSION', '4.15.0' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -190,6 +190,7 @@ function pavva_widgets_register_styles() {
 	wp_register_style( 'pavva-grila-produse', PAVVA_WIDGETS_URL . 'assets/grila-produse.css', array(), pavva_widgets_asset_version( 'assets/grila-produse.css' ) );
 	wp_register_style( 'pavva-caracteristici', PAVVA_WIDGETS_URL . 'assets/caracteristici.css', array(), pavva_widgets_asset_version( 'assets/caracteristici.css' ) );
 	wp_register_style( 'pavva-sectiuni-goale', PAVVA_WIDGETS_URL . 'assets/sectiuni-goale.css', array(), pavva_widgets_asset_version( 'assets/sectiuni-goale.css' ) );
+	wp_register_style( 'pavva-limba', PAVVA_WIDGETS_URL . 'assets/limba.css', array(), pavva_widgets_asset_version( 'assets/limba.css' ) );
 }
 
 function pavva_widgets_register_scripts() {
@@ -216,6 +217,8 @@ function pavva_widgets_register_widgets( $widgets_manager ) {
 		'widgets/class-pavva-oferta-buton-widget.php'  => 'Pavva_Oferta_Buton_Widget',
 		'widgets/class-pavva-oferta-contor-widget.php' => 'Pavva_Oferta_Contor_Widget',
 		'widgets/class-pavva-oferta-lista-widget.php'  => 'Pavva_Oferta_Lista_Widget',
+		/* schimbarea limbii (Polylang) */
+		'widgets/class-pavva-limba-widget.php'         => 'Pavva_Limba_Widget',
 	);
 
 	/* fiecare widget separat: dacă unul are o problemă, celălalt tot apare */
