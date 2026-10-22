@@ -33,7 +33,13 @@ final class Pavva_W_I18n {
 
 	public static function lang_item_active( $items ) {
 		foreach ( (array) $items as $item ) {
-			if ( is_array( $item->classes ?? null ) && in_array( 'current-lang', $item->classes, true ) && ! in_array( 'current-menu-item', $item->classes, true ) ) {
+			if ( ! is_array( $item->classes ?? null ) ) continue;
+			/* limba din capul listei derulante (Polylang „dropdown”) rămâne în culoarea normală */
+			if ( in_array( 'pll-parent-menu-item', $item->classes, true ) ) {
+				$item->classes = array_values( array_diff( $item->classes, array( 'current-menu-item' ) ) );
+				continue;
+			}
+			if ( in_array( 'current-lang', $item->classes, true ) && ! in_array( 'current-menu-item', $item->classes, true ) ) {
 				$item->classes[] = 'current-menu-item';
 			}
 		}
@@ -93,6 +99,16 @@ final class Pavva_W_I18n {
 		static $dict = null;
 		if ( null === $dict ) { $dict = get_option( self::OPT, array() ); if ( ! is_array( $dict ) ) $dict = array(); }
 		return isset( $dict[ $l ][ $text ] ) && '' !== $dict[ $l ][ $text ] ? $dict[ $l ][ $text ] : $text;
+	}
+
+	/* același text în toate limbile (ex. „Nu am decis” / „Not decided”): pentru datele salvate în browser într-o altă limbă */
+	public static function all_langs( $text ): array {
+		$out  = array( $text );
+		$dict = get_option( self::OPT, array() );
+		foreach ( is_array( $dict ) ? $dict : array() as $tr ) {
+			if ( is_array( $tr ) && ! empty( $tr[ $text ] ) ) $out[] = $tr[ $text ];
+		}
+		return array_values( array_unique( $out ) );
 	}
 
 	/* ---------------------------------------------------------------- ordinea în admin */
@@ -293,7 +309,13 @@ final class Pavva_W_I18n {
 		foreach ( (array) ( $r->get_json_params()['meta'] ?? array() ) as $k => $v ) {
 			if ( null === $v ) delete_post_meta( $id, (string) $k ); else update_post_meta( $id, (string) $k, wp_slash( $v ) );
 		}
-		return array( 'id' => $id, 'meta' => self::meta_of( $id ) );
+		/* condițiile de afișare (template / Custom Code) se citesc dintr-un cache Elementor Pro: se refac */
+		$regen = false;
+		if ( array_key_exists( '_elementor_conditions', (array) ( $r->get_json_params()['meta'] ?? array() ) ) && class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) {
+			$cache = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager()->get_cache();
+			if ( $cache && method_exists( $cache, 'regenerate' ) ) { $cache->regenerate(); $regen = true; }
+		}
+		return array( 'id' => $id, 'meta' => self::meta_of( $id ), 'conditions_cache' => $regen );
 	}
 
 	/* limbile Polylang (cu pagina principală a fiecăreia); ?clean=1 recitește cache-ul Polylang */

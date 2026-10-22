@@ -27,7 +27,7 @@ final class Pavva_W_Quote_Form {
     /** @var array|null */
     private static $data = null;
 
-    const CACHE_KEY = 'pavva_w_oferta_data_v3';
+    const CACHE_KEY = 'pavva_w_oferta_data_v4';
 
     public static function init() {
         /* Elementor Pro: listele cu ID categorie / produs vin deja completate din server */
@@ -174,6 +174,8 @@ final class Pavva_W_Quote_Form {
             $prods[] = array_merge(
                 array( 'name' => self::txt( get_the_title( $pid ) ), 'cats' => array_values( array_unique( $names ) ) ),
                 $item ? array( 'id' => $item['id'], 'cat' => $item['cat'], 'url' => $item['url'], 'img' => $item['img'] ) : array(),
+                /* același produs în celelalte limbi (lista de ofertă e comună tuturor limbilor) */
+                function_exists( 'pll_get_post_translations' ) ? array( 'tr' => array_values( array_map( 'intval', pll_get_post_translations( $pid ) ) ) ) : array(),
                 /* culori + grosimi (alegerea variantei în formular) */
                 class_exists( 'Pavva_W_Lista' ) && ( $v = Pavva_W_Lista::variants( (int) $pid ) ) && ( $v['colors'] || $v['thick'] ) ? array( 'opts' => $v ) : array()
             );

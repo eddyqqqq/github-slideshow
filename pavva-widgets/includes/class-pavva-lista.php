@@ -46,6 +46,10 @@ final class Pavva_W_Lista {
 			'PavvaListaCfg',
 			array(
 				'form'     => self::form_url(),
+				/* lista e una pentru toate limbile: la schimbarea limbii, produsele se traduc din datele de mai jos */
+				'lang'     => Pavva_W_I18n::lang(),
+				'rest'     => esc_url_raw( Pavva_W_I18n::lang() ? add_query_arg( 'lang', Pavva_W_I18n::lang(), rest_url( 'pavva/v1/oferta' ) ) : rest_url( 'pavva/v1/oferta' ) ),
+				'undecAll' => Pavva_W_I18n::all_langs( 'Nu am decis' ),
 				'autoList' => (bool) apply_filters( 'pavva_lista_auto_list', true ),
 				/* bara de jos „Oferta ta · Vezi oferta”, cât lista are produse */
 				'bar'      => (bool) apply_filters( 'pavva_lista_bar', true ),
@@ -89,6 +93,8 @@ final class Pavva_W_Lista {
 					'addMore' => 'Adaugă alt produs',
 					'addFirst' => 'Adaugă produs',
 					'all' => 'Toate',
+					'step1' => 'Categorie',
+					'step2' => 'Produs',
 					'other' => 'Alte produse',
 					'none' => 'Nu sunt produse în această categorie.',
 					'addThis' => 'Adaugă produsul',

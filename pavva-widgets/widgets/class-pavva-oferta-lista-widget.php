@@ -420,9 +420,9 @@ class Pavva_Oferta_Lista_Widget extends Widget_Base {
 		echo '<div class="pvl-adder is-open">';
 		echo '<button type="button" class="pvl-add-btn" aria-expanded="true"><span class="pvl-add-plus" aria-hidden="true">+</span><span class="pvl-add-t">Adaugă încă un produs</span></button>';
 		echo '<div class="pvl-adder-panel"><div class="pvl-adder-head"><p class="pvl-adder-title">Alege produsul</p><button type="button" class="pvl-adder-x" aria-label="Închide">' . $x . '</button></div>'; // phpcs:ignore -- SVG fix
-		echo '<p class="pvl-step">Categorie</p><div class="pvl-chips"><button type="button" class="pvl-chip is-on">Toate</button>';
+		echo '<p class="pvl-step">' . esc_html( pavva_t( 'Categorie' ) ) . '</p><div class="pvl-chips"><button type="button" class="pvl-chip is-on">' . esc_html( pavva_t( 'Toate' ) ) . '</button>';
 		foreach ( array_slice( $cats, 0, 6 ) as $c ) echo '<button type="button" class="pvl-chip">' . esc_html( $c ) . '</button>';
-		echo '</div><p class="pvl-step">Produs</p><div class="pvl-tiles">';
+		echo '</div><p class="pvl-step">' . esc_html( pavva_t( 'Produs' ) ) . '</p><div class="pvl-tiles">';
 		if ( $items ) echo '<p class="pvl-tiles-cat">' . esc_html( $items[0]['cat'] ?: 'Produse' ) . '</p>';
 		foreach ( $items as $it ) {
 			echo '<button type="button" class="pvl-tile"><span class="pvl-tile-img">' . ( $it['img'] ? '<img src="' . esc_url( $it['img'] ) . '" alt="">' : '' ) . '</span><span class="pvl-tile-n">' . esc_html( $it['name'] ) . '</span></button>';

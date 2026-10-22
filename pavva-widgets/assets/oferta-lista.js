@@ -427,7 +427,12 @@
 	function pickOn() { return C.picker !== false && dcfg().pick; }
 	function undec() { return txt('undecided', 'Nu am decis'); }
 	/* textul vechi („Nu m-am hotărât încă”) din listele salvate înainte e tratat la fel */
-	function isUndec(v) { var n = norm(v); return !!n && (n === norm(undec()) || n === norm('Nu m-am hotărât încă')); }
+	function isUndec(v) {
+		var n = norm(v);
+		if (!n) return false;
+		/* și „Nu am decis” din altă limbă (lista e comună tuturor limbilor) */
+		return n === norm(undec()) || n === norm('Nu m-am hotărât încă') || (C.undecAll || []).some(function (x) { return norm(x) === n; });
+	}
 	function pickerBody(it, cur) {
 		var o = it.opts || {}, h = '';
 		var Q = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.2 9a3 3 0 1 1 4.3 2.7c-.9.5-1.5 1.2-1.5 2.3v.5M12 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
@@ -667,6 +672,48 @@
 	w.addEventListener('pageshow', function (e) { if (e.persisted) { shutDrawerNow(); render(); } });
 	d.addEventListener('visibilitychange', function () { if (d.visibilityState === 'visible') render(); });
 
+	/* ---------- o singură listă pentru toate limbile: produsele se arată în limba paginii ---------- */
+	var LANG_KEY = 'pavva_oferta_lang';
+	/* produsul după id, inclusiv după id-urile traducerilor lui */
+	function prodIndex(prods) {
+		var byId = {};
+		prods.forEach(function (p) { if (p.id) byId[p.id] = p; });
+		prods.forEach(function (p) { (p.tr || []).forEach(function (id) { if (!byId[id]) byId[id] = p; }); });
+		return byId;
+	}
+	/* rândul din listă primește datele produsului p (nume, categorie, adresă, variante); true = s-a schimbat ceva */
+	function relang(it, p) {
+		var changed = false;
+		/* culoarea aleasă: aceeași poziție în lista de culori a produsului (numele culorii poate diferi între limbi) */
+		if (it.color && !isUndec(it.color) && it.opts && it.opts.colors && p.opts && p.opts.colors) {
+			var i = -1;
+			it.opts.colors.forEach(function (c, n) { if (i < 0 && norm(c.n) === norm(it.color)) i = n; });
+			var c = i >= 0 ? p.opts.colors[i] : null;
+			if (c && c.n !== it.color) { it.color = String(c.n); it.ct = String(c.t || ''); changed = true; }
+		}
+		['name', 'cat', 'url', 'img'].forEach(function (k) { if (p[k] !== undefined && it[k] !== p[k]) { it[k] = p[k]; changed = true; } });
+		if (p.opts && JSON.stringify(p.opts) !== JSON.stringify(it.opts || null)) { it.opts = p.opts; changed = true; }
+		if (p.id && it.id !== p.id) { it.id = p.id; changed = true; }
+		return changed;
+	}
+	function markLang() { if (C.lang) { try { w.localStorage.setItem(LANG_KEY, C.lang); } catch (e) {} } }
+	/* lista a fost făcută (sau schimbată ultima oară) în altă limbă: se traduce o singură dată */
+	function syncLang() {
+		if (!C.lang || !C.rest || !w.fetch) return;
+		var mark = null;
+		try { mark = w.localStorage.getItem(LANG_KEY); } catch (e) { return; }
+		if (mark === C.lang) return;
+		if (!read().length) { markLang(); return; }
+		w.fetch(C.rest, { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (D) {
+			var prods = (D && D.prods) || [];
+			if (!prods.length || !prods[0].id) return;
+			var byId = prodIndex(prods), list = read();
+			list.forEach(function (it) { var p = it.id && byId[it.id]; if (p) relang(it, p); });
+			markLang();
+			write(list.map(single));
+		}).catch(function () {});
+	}
+
 	/* ---------- formularul de ofertă ---------- */
 	var forms = [];
 
@@ -677,20 +724,18 @@
 		var byName = {};
 		prods.forEach(function (p) { byName[norm(p.name)] = p; });
 
-		/* produsele din listă se actualizează după catalog (nume schimbat, produs șters) */
+		/* produsele din listă se actualizează după catalog (nume schimbat, produs șters, altă limbă) */
 		if (prods.length && prods[0].id) {
-			var byId = {};
-			prods.forEach(function (p) { byId[p.id] = p; });
+			var byId = prodIndex(prods);
 			var list = read(), changed = false;
 			list = list.filter(function (it) {
 				var p = it.id ? byId[it.id] : byName[norm(it.name)];
 				if (!p) { changed = true; return false; }
-				['name', 'cat', 'url', 'img'].forEach(function (k) { if (p[k] !== undefined && it[k] !== p[k]) { it[k] = p[k]; changed = true; } });
-				if (p.opts && JSON.stringify(p.opts) !== JSON.stringify(it.opts || null)) { it.opts = p.opts; changed = true; }
-				if (!it.id && p.id) { it.id = p.id; changed = true; }
+				if (relang(it, p)) changed = true;
 				return true;
 			});
 			if (changed) { memory = list; try { w.localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {} }
+			markLang();
 		}
 
 		var ph = null;
@@ -1016,6 +1061,7 @@
 			if (x) bindForm(form, x.categorie, x.produs, x.data);
 		});
 		render();
+		syncLang();
 		watchProduct();
 		fitIcons();
 	}

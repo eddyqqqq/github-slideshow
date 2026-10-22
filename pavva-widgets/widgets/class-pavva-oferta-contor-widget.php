@@ -769,9 +769,9 @@ class Pavva_Oferta_Contor_Widget extends Widget_Base {
 		?>
 		<div class="pvl-counter-wrap">
 			<a class="pvl-counter<?php echo $edit ? '' : ' is-empty'; ?>" href="<?php echo esc_url( $url ); ?>" data-pvl-counter
-				data-pvl-label="<?php echo esc_attr( '' !== $label ? $label : 'Oferta ta' ); ?>"<?php echo $hide ? ' data-pvl-hide-empty' : ''; ?><?php echo $edit ? ' data-pvl-preview' : ''; ?><?php echo $this->drawer_attrs( $s, $url ); // phpcs:ignore -- escapat în drawer_attrs ?>
+				data-pvl-label="<?php echo esc_attr( '' !== $label ? $label : pavva_t( 'Oferta ta' ) ); ?>"<?php echo $hide ? ' data-pvl-hide-empty' : ''; ?><?php echo $edit ? ' data-pvl-preview' : ''; ?><?php echo $this->drawer_attrs( $s, $url ); // phpcs:ignore -- escapat în drawer_attrs ?>
 				<?php echo 'pavva' === ( $s['icon_style'] ?? 'pavva' ) && 'button' === ( $s['icon_fit'] ?? '' ) ? 'data-pvl-fit="button"' : ''; ?>
-				aria-label="<?php echo esc_attr( '' !== $label ? $label : 'Oferta ta' ); ?>">
+				aria-label="<?php echo esc_attr( '' !== $label ? $label : pavva_t( 'Oferta ta' ) ); ?>">
 				<span class="pvl-c-ico" aria-hidden="true">
 					<?php if ( 'library' === ( $s['icon_style'] ?? 'pavva' ) ) : Icons_Manager::render_icon( $s['icon'] ?? array(), array( 'aria-hidden' => 'true' ) ); else : echo 'button' === ( $s['icon_fit'] ?? '' ) ? self::ICON_FIT : self::ICON; endif; // phpcs:ignore -- SVG fix ?>
 					<?php if ( 'yes' === ( $s['show_count'] ?? 'yes' ) ) : ?>
