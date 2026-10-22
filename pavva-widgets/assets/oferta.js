@@ -53,7 +53,7 @@
 		if (/produs|product/.test(h)) return 'produs';
 		if (/judet|county/.test(h)) return 'judet';
 		if (/localitat|oras\b|comuna|city/.test(h)) return 'localitate';
-		if (/suprafat|\bm2\b|\bmp\b/.test(h)) return 'suprafata';
+		if (/suprafat|\bm2\b|\bmp\b|\barea\b|surface|\bsq\s?m\b/.test(h)) return 'suprafata';
 		return '';
 	}
 
@@ -269,7 +269,7 @@
 		input.autocomplete = 'off';
 		input.maxLength = 7;
 		input.placeholder = label + ' (m²)';
-		input.title = 'Doar cifre (m²)';
+		input.title = (C.i18n && C.i18n.digits) || 'Doar cifre (m²)';
 		/* doar cifre: orice altceva (litere, punct, minus, spații) dispare imediat, inclusiv la lipire */
 		input.addEventListener('input', function () {
 			var v = input.value.replace(/\D+/g, '').replace(/^0+/, '');

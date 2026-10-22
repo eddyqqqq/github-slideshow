@@ -88,6 +88,7 @@ final class Pavva_W_Quote_Form {
                 'rest'   => esc_url_raw( Pavva_W_I18n::lang() ? add_query_arg( 'lang', Pavva_W_I18n::lang(), rest_url( 'pavva/v1/oferta' ) ) : rest_url( 'pavva/v1/oferta' ) ),
                 'places' => PAVVA_WIDGETS_URL . 'assets/data/localitati.json?v=' . pavva_widgets_asset_version( 'assets/data/localitati.json' ),
                 'params' => array( 'produs' => (string) $p['produs'], 'categorie' => (string) $p['categorie'] ),
+                'i18n'   => array( 'digits' => pavva_t( 'Doar cifre (m²)' ) ),
             )
         );
     }
