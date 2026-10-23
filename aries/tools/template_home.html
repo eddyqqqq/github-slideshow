@@ -25,16 +25,19 @@
   --line: #d9dee5;
   --on: #ffffff;
   --font: "Area Normal", "Area Fallback", "Helvetica Neue", Arial, sans-serif;
-  --gut: max(clamp(20px, 4.7vw, 68px), env(safe-area-inset-left, 0px));
-  --gut-r: max(clamp(20px, 4.7vw, 68px), env(safe-area-inset-right, 0px));
+  /* the design is 1440 wide with 68 px margins: the layout scales with the screen width (4.7 vw margins) */
+  --gut: max(20px, 4.7vw, env(safe-area-inset-left, 0px));
+  --gut-r: max(20px, 4.7vw, env(safe-area-inset-right, 0px));
   /* fluid type from the 1440 design: titles Area Bold 48, text Area Regular 20 (hero title 60, labels 14,
      links 16); larger on 1920 / 2560, smaller on phones */
-  --h-xl: clamp(36px, 4.167vw, 104px);
-  --h-l: clamp(28px, 3.333vw, 80px);
-  --body: clamp(16px, 1.389vw, 26px);
-  --small: clamp(12px, 0.972vw, 18px);
-  --link: clamp(14px, 1.111vw, 20px);
-  --cw: max(1440px, 76vw);  /* content width */
+  /* type: the design sizes at 1440, scaling with the width below it and at half that rate above it, so text
+     on 1920 / 2560 screens grows a little rather than in step with the screen */
+  --h-xl: clamp(34px, min(4.167vw, 30px + 2.083vw), 92px);
+  --h-l: clamp(28px, min(3.333vw, 24px + 1.667vw), 72px);
+  --body: clamp(16px, min(1.389vw, 10px + .694vw), 24px);
+  --small: clamp(12px, min(.972vw, 7px + .486vw), 17px);
+  --link: clamp(14px, min(1.111vw, 8px + .556vw), 19px);
+  --cw: 100vw;  /* content width: full width minus the margins, as in the design */
   --logo-w: clamp(46px, 5vw, 110px);
   --logo-top: clamp(20px, 5vw, 110px);
   color-scheme: light;
@@ -52,7 +55,7 @@ a { color: inherit; }
 :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 2px; }
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; text-wrap: balance; }
-.wrap { width: 100%; max-width: var(--cw); margin-inline: auto; padding-left: var(--gut); padding-right: var(--gut-r); }
+.wrap { width: 100%; margin-inline: auto; padding-left: var(--gut); padding-right: var(--gut-r); }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
 .wi { display: inline-block; }
@@ -99,6 +102,16 @@ html.lenis, html.lenis body { height: auto; }
 .anim .shade { opacity: 0; }
 .anim .scene-two { position: absolute; inset: 0; background: none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); }
 .pre #hTop, .pre #hBot, .pre #hImgWrap { opacity: 0; }
+/* landscape screens: the hero is the design itself scaled to the width (1440 × 1240): logo 72 px from the top,
+   the band composition edge to edge from 219 px, the title under it. When that is taller than the screen the
+   page first scrolls down to the title, then the hero pins and opens. */
+@media (min-aspect-ratio: 1/1) and (min-width: 760px) {
+  .hero-stage { height: max(100vh, 86.1vw); height: max(100svh, 86.1vw); }
+  .hero-layout { padding-top: 15.2vw; }
+  .hero-slot { flex: none; height: 51.87vw; }
+  .hero-title { padding-block: 1.8vw 0; }
+  .anim .scene-two { top: auto; height: 100vh; height: 100svh; }
+}
 
 /* ---------- scene 2: Group and the three companies, one ribbon through four shapes ---------- */
 .identity { position: relative; overflow: hidden; color: var(--on); background: var(--blue); }
@@ -166,7 +179,7 @@ html.lenis, html.lenis body { height: auto; }
 /* ---------- services cards: a row that slides sideways while the section is pinned ---------- */
 .cards { padding-block: clamp(24px, 4vw, 50px) clamp(90px, 10vw, 150px); overflow: hidden; }
 .cards-track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-  padding-left: max(var(--gut), calc((100vw - var(--cw)) / 2 + var(--gut))); padding-right: var(--gut-r); }
+  padding-left: var(--gut); padding-right: var(--gut-r); }
 .cards-track::-webkit-scrollbar { display: none; }
 .anim .cards-track { overflow: visible; scroll-snap-type: none; width: max-content; will-change: transform; }
 .card { --o: 1; --h: 0; flex: none; width: min(max(752px, 39vw), 84vw); height: clamp(280px, min(36vw, 58vh), 800px); position: relative; overflow: hidden; background: var(--blue); color: var(--on); scroll-snap-align: start; }
@@ -432,7 +445,10 @@ document.addEventListener('DOMContentLoaded', () => {
       this.stale = false;
       const st = this.st, last = this.keys.length - 1;
       const P = this.place;
-      const vbX = P ? -P.x * this.vbW : (this.SW - this.vbW) * clamp01(st.pan + st.mx), vbY = P ? -P.y * this.vbH : -this.vbH * this.ay;
+      // ays: one vertical position per shape (the identity scene), blended as the ribbon flows between them
+      let ay = this.ay;
+      if (this.ays) { const k = Math.max(0, Math.min(st.m, this.ays.length - 1)), i0 = Math.floor(k), i1 = Math.min(i0 + 1, this.ays.length - 1); ay = this.ays[i0] + (this.ays[i1] - this.ays[i0]) * (k - i0); }
+      const vbX = P ? -P.x * this.vbW : (this.SW - this.vbW) * clamp01(st.pan + st.mx), vbY = P ? -P.y * this.vbH : -this.vbH * ay;
       this.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(this.vbW)} ${f1(this.vbH)}`);
       const m = Math.max(0, Math.min(st.m, last));
       const i = Math.min(Math.floor(m), last), t = m - i;
@@ -539,7 +555,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const r = e.target._rib; r.vis = e.isIntersecting; if (r.vis && r.stale) request(r);
   }), { rootMargin: '25% 0px' }) : null;
   Object.values(ribs).forEach(r => { if (r === ribs.menu) return; r.svg._rib = r; r.vis = !io; if (io) io.observe(r.svg); });
-  const layoutAll = () => { heroLayout(); Object.values(ribs).forEach(r => r.layout()); };
+  // identity: for each state, centre the ribbon in the free band between the top block (logo or Group text) and the
+  // bottom block, so on wide, short screens it does not run over the titles
+  function identityBands() {
+    const sec = $('#group').getBoundingClientRect(), H = sec.height;
+    if (!H) return;
+    const tops = $$('.id-top .id-states > *'), foots = $$('.id-foot .id-states > *');
+    ribs.identity.ays = tops.map((t, k) => {
+      const a = t.getBoundingClientRect().bottom - sec.top, b = foots[k].getBoundingClientRect().top - sec.top;
+      return Math.min(0.72, Math.max(0.36, (a + b) / 2 / H));
+    });
+  }
+  const layoutAll = () => { heroLayout(); identityBands(); Object.values(ribs).forEach(r => r.layout()); };
   layoutAll();
   let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutAll, 120); });
 
@@ -663,7 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---- SCENE 1 · scroll: the bands fly apart → the photo with its text → the gradient fills the screen ---- */
   const shade = $('#shade'), twoWords = splitWords($('#sceneTwo h2')), twoP = $('#sceneTwo p');
   const hsc = { e: 0 };
-  gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=320%', pin: true, scrub: 0.8 } })
+  gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'bottom bottom', end: '+=320%', pin: true, scrub: 0.8 } })
     .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { hs.eT = hero.eTmax * hsc.e; hs.eB = hero.eBmax * hsc.e; hs.z = 1 + 0.08 * hsc.e; H();
       const tone = hsc.e > 0.18 ? 'dark' : 'light'; if (hero.el.dataset.tone !== tone) { hero.el.dataset.tone = tone; setTone(); } } }, 0)
     .to('#heroTitle', { y: -60, opacity: 0, duration: 0.35, ease: 'power2.in' }, 0)

@@ -26,6 +26,8 @@
 
 **Responsive.** Fluid type and content width (`--cw: max(1440px, 76vw)`), so 1920 and 2560 screens get the 1440 design scaled up instead of a narrow column; the hero composition keeps the same weight on phones and tablets; short landscape screens get a compact layout. Checked at 320, 390, 768, 1024, 1280, 1440, 1920, 2560 and 844×390.
 
+**Layout scale.** The design is 1440 wide with 68 px margins, so margins are 4.7 vw and the content runs full width at every size. On landscape screens the hero is the design itself scaled to the width (logo, band composition edge to edge, title): when that is taller than the screen, the page first scrolls down to the title and then the hero pins and opens. Phones and portrait tablets keep the cropped composition. Type follows the design sizes at 1440, scales with the width below it and at half that rate above it. In the company scene the ribbon is centred, per state, in the free band between the logo and the text.
+
 **Type.** Area Normal: titles Bold 48 px and text Regular 20 px at 1440 (hero title 60, labels 14, links 16), fluid above and below. The fonts are self-hosted as subset WOFF2 (`fonts/area-regular.woff2`, `fonts/area-bold.woff2`, about 32 KB each, Latin + Romanian), preloaded, with metric-matched Arial fallbacks so nothing moves when they swap in. **They are not in this repository**: Area Normal is a commercial typeface whose embedding is restricted, so it needs a web licence; the files are git-ignored and go on the server.
 
 **Libraries** are self-hosted in `vendor/` (GSAP 3.12.5, ScrollTrigger, Lenis 1.1.13): no third-party hosts, nothing render-blocking.
