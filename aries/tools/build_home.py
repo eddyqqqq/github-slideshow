@@ -39,6 +39,12 @@ def main():
         markup = part[part.index('</style>') + 8:].strip()
         html = html.replace('</style>', css + '</style>', 1).replace('</header>', '</header>\n' + markup, 1)
     html = re.sub(r'<!--LOGO:(\w+)-->', lambda m: logo(m.group(1)), html)
+    if os.environ.get('VARIANT') == 'contained':
+        # the contained layout: same page, every section inside a centred frame (see .contained in the CSS)
+        html = html.replace('<html lang="en">', '<html lang="en" class="contained">', 1).replace('<title>Aries Group</title>', '<title>Aries Group (contained)</title>', 1)
+        open(os.path.join(HERE, '..', 'contained.html'), 'w').write(html)
+        print('wrote contained.html')
+        return
     open(os.path.join(HERE, '..', 'index.html'), 'w').write(html)
     pts = sum(len(v['lo']['x']) * 2 for v in data['ribbons'].values()) + len(data['hero']['x'])
     print(f'shape data {len(payload) // 1024} KB, points {pts}')

@@ -203,6 +203,38 @@ html.lenis, html.lenis body { height: auto; }
   .js .id-foot { padding-bottom: 18px; } .co-item { gap: 8px; } .id-top { padding-top: 18px; }
 }
 
+/* ---------- contained variant (html.contained, built as contained.html) ----------
+   Everything sits in a centred frame (the 1440 design width at most, with an outer margin on smaller screens):
+   texts align to it, and the coloured scenes become panels with rounded corners, clipped to it with clip-path so
+   the pinned scenes keep working. */
+.contained {
+  --outer: clamp(10px, 1.8vw, 36px);
+  --frame: min(1440px, 100vw - 2 * var(--outer));
+  --side: calc((100vw - var(--frame)) / 2);
+  --gut: calc(var(--side) + max(20px, var(--frame) * 0.047));
+  --gut-r: var(--gut);
+  --u: min(var(--frame) / 1440, 100vh / 1170);
+  --logo-w: clamp(44px, var(--frame) * 0.052, 75px);
+  --round: clamp(6px, .8vw, 14px);
+  /* type follows the frame (the design sizes at 1440) instead of the screen */
+  --h-xl: max(34px, var(--frame) * .04167);
+  --h-l: max(28px, var(--frame) * .03333);
+  --body: max(16px, var(--frame) * .01389);
+  --small: max(12px, var(--frame) * .00972);
+  --link: max(14px, var(--frame) * .01111);
+}
+.contained .tile { padding: max(22px, var(--frame) * .042) max(22px, var(--frame) * .042) max(22px, var(--frame) * .046); }
+.contained .tile strong { font-size: clamp(52px, var(--frame) * .075, 108px); }
+.contained .figs .wrap { gap: clamp(10px, var(--frame) * .014, 20px); }
+.contained .card { width: min(752px, 84vw); height: clamp(280px, min(var(--frame) * .36, 58vh), 515px); }
+.contained .card h3 { font-size: clamp(22px, var(--frame) * .022, 32px); }
+.contained .hero { clip-path: inset(var(--outer) var(--side) 0 var(--side) round var(--round)); }
+.contained .hero-slot { margin-inline: var(--side); }
+.contained .identity { clip-path: inset(0 var(--side) var(--outer) var(--side) round var(--round)); }
+.contained .identity .rib-svg { left: var(--side); width: var(--frame); }
+.contained.js .id-foot { padding-bottom: calc(clamp(36px, 8vh, 90px) + var(--outer)); }   /* clear of the panel's rounded bottom */
+.contained .cards { clip-path: inset(0 var(--side)); }
+
 /* ---------- footer ---------- */
 .foot { padding-block: clamp(70px, 8vw, 110px) 34px; }
 .foot-grid { display: grid; grid-template-columns: 1.2fr repeat(3, minmax(0, 1fr)); gap: 32px; }
@@ -568,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ID_PAN = [0.062, 0.351, 0.649, 0.938];
   const interp = (xs, ys, x) => { let k = 1; while (k < xs.length - 1 && xs[k] < x) k++; const t = (x - xs[k - 1]) / (xs[k] - xs[k - 1]); return ys[k - 1] + (ys[k] - ys[k - 1]) * Math.min(1, Math.max(0, t)); };
   function identityBands() {
-    const r = ribs.identity, sec = $('#group').getBoundingClientRect(), H = sec.height;
+    const r = ribs.identity, sec = $('#group').getBoundingClientRect(), H = sec.height, x0 = r.svg.getBoundingClientRect().left;
     if (!r.s || !H) return;
     const tops = $$('.id-top .id-states > *'), foots = $$('.id-foot .id-states > *'), m = 18;
     r.ays = r.keys.map((key, k) => {
@@ -577,8 +609,8 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let sx = a; sx <= b; sx += 6) { const y = interp(xs, ys, (sx / s + vbX) / f) * f * s; v = pick === 'max' ? Math.max(v, y) : Math.min(v, y); }
         return v; };
       const tb = tops[k].getBoundingClientRect(), fb = foots[k].getBoundingClientRect();
-      const lowB = edge(sp.lo.x, sp.lo.b, Math.max(0, fb.left - sec.left - m), fb.right - sec.left + m, 'max');
-      const topT = edge(sp.up.x, sp.up.t, Math.max(0, tb.left - sec.left - m), tb.right - sec.left + m, 'min');
+      const lowB = edge(sp.lo.x, sp.lo.b, Math.max(0, fb.left - x0 - m), fb.right - x0 + m, 'max');
+      const topT = edge(sp.up.x, sp.up.t, Math.max(0, tb.left - x0 - m), tb.right - x0 + m, 'min');
       const hi = (fb.top - sec.top - m - lowB) / H, lo = (tb.bottom - sec.top + m - topT) / H;
       const ay = lo <= hi ? Math.min(Math.max(0.55, lo), hi) : (lo + hi) / 2;
       return Math.min(0.85, Math.max(0.15, ay));

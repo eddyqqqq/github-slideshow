@@ -3,6 +3,7 @@
 `index.html` is the **homepage built from the design** (`design/images/homepage-design.jpg`), played as a scroll sequence. The first concept from the brochure is kept in `v1/index.html`; its ideas and motion (below) carry over.
 
 - `index.html` — the homepage (needs `img/*.webp`, `vendor/*.js` and `fonts/*.woff2` next to it).
+- `contained.html` — the same homepage in a contained layout: everything inside a centred frame (1440 px at most, with an outer margin), the coloured scenes as rounded panels clipped to it. Built with `VARIANT=contained python3 tools/build_home.py`.
 - `v1/index.html` — the first concept (brochure draft 2).
 - `design/` — the design file, its photos and the designer's ribbon SVGs.
 - `img/` — the Aries mark (`mark.png`, an alpha mask recoloured with CSS) and the web-compressed photos.
