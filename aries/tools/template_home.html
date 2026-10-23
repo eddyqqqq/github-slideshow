@@ -198,9 +198,6 @@ html.lenis, html.lenis body { height: auto; }
   calc(100% - var(--o) * 53% - var(--h) * 4%) 100%, calc(100% - var(--o) * 53% - var(--h) * 4%) 70.4%); }
 .card .pi { position: absolute; inset: 0; overflow: hidden; transform-origin: 75% 50%; }
 .card .pi img { display: block; width: 104%; max-width: none; height: 100%; margin-left: 11%; object-fit: cover; object-position: 50% 50%; }   /* placed as in the design: the photo's right part shows beside the diagonal */
-.cards-bar { display: none; height: 2px; background: var(--line); margin-top: clamp(22px, 3vw, 36px); overflow: hidden; }
-.cards-bar i { display: block; height: 100%; background: var(--blue); transform-origin: 0 50%; transform: scaleX(.1); }
-.anim .cards-bar { display: block; }
 
 @media (max-height: 520px) and (orientation: landscape) {
   .g-intro { padding-top: 8px; gap: 8px; } .g-intro h2, .co-item h2 { font-size: clamp(22px, 2.6vw, 30px); }
@@ -367,7 +364,6 @@ html.lenis, html.lenis body { height: auto; }
     <article class="card" data-tone="dark"><h3>Freight forwarding and full-service logistics.</h3><div class="ph"><div class="pi"><img src="img/card-stacker.webp" alt="" width="784" height="515" loading="lazy" decoding="async"></div></div></article>
     <article class="card" data-tone="dark"><h3>Cargo chartering and brokerage.</h3><div class="ph"><div class="pi"><img src="img/card-vessel.webp" alt="" width="1196" height="681" loading="lazy" decoding="async"></div></div></article>
   </div>
-  <div class="wrap"><div class="cards-bar" aria-hidden="true"><i></i></div></div>
 </section>
 
 </main>
@@ -846,8 +842,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const dist = () => Math.max(0, track.offsetWidth - root.clientWidth);
     const hz = gsap.to(track, { x: () => -dist(), ease: 'none',
       scrollTrigger: { trigger: sec, start: 'center center', end: () => '+=' + dist(), pin: true, scrub: 0.8, invalidateOnRefresh: true } });
-    gsap.fromTo('.cards-bar i', { scaleX: 0.1 }, { scaleX: 1, ease: 'none',
-      scrollTrigger: { trigger: sec, start: 'center center', end: () => '+=' + dist(), scrub: 0.8, invalidateOnRefresh: true } });
     const vw = root.clientWidth;
     cards.forEach((c, i) => {
       const img = $('.pi img', c), pi = $('.pi', c), h3 = $('h3', c);
