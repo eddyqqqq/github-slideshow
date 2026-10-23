@@ -14,11 +14,15 @@
 2. **Group + companies** (one pinned scene). The blue scene slides up over the end of the hero while the gradient is still filling, so the Group text arrives with the fill, not after it. One ribbon pair then flows Group (`Group_32`) → Shipping Agency (`Group_11`) → Interlink (`Group_12`) → Logistics (`Group_13`) while the background colour, logo and text change. Every shape is scaled to the same width and the ribbon SVG covers the whole section, so shapes are only ever cut by the screen edge. The tabs (top right), the menu and the footer links jump to a state.
 3. **Statements, figure tiles** (ribbons `Group_33` / `34` / `35`), **service cards**: the section pins and the row slides sideways with the scroll (progress bar underneath); the diagonal photo cut opens as each card comes in and swings open with an elastic bounce on hover. Then the **footer**.
 
-**Navigation.** Burger as in the design (three plain lines, top right, aligned with the logo); its lines turn white over photo and colour, it hides while scrolling down and returns when scrolling up. The menu is a full-screen blue panel that slides down from the top (transform only, no scroll lock that would remove the scrollbar): white logo, three columns (Aries Group / Companies with their colour squares / Activity), the Group ribbon drawing along the bottom, slogan and e-mail.
+**Navigation.** The full-screen menu is set aside for now (`tools/parts/menu.html`; build with `MENU=1 python3 tools/build_home.py` to put it back). When it returns: burger as in the design (three plain lines, top right), white over photo and colour, hides while scrolling down; the panel slides down without ever showing a scrollbar (a bar that appeared during the slide made the page jump), and the Group ribbon is fitted into the free band between the links and the slogan so it never covers text.
 
-**Hover.** Buttons and links behave the same: the text turns the header blue and a 2 px bar draws in from the left (and leaves to the right); inside the blue menu the bar is white. The figure tiles' ribbons follow the mouse left and right; the service cards' diagonal cut eases open a little.
+**Logos** are the design files (`design/logos/`), inlined: Group in colour on white (header, footer), the companies in white on their colours; 72 px wide at 1440.
 
-**Figures** appear at 0 and count up once they are fully on screen, one after the other (tabular figures, so the digits don't jitter).
+**Images** keep the quality they were delivered at: the desktop hero and the card photos are the original WebP files; phones get a 900 px hero as AVIF (WebP fallback), chosen by the browser through a hidden `<picture>`.
+
+**Hover.** Buttons and links behave the same: the text turns the header blue and a 2 px bar draws in from the left (and leaves to the right). The service cards' diagonal cut eases open a little. The figure tiles have no hover.
+
+**Figure tiles** follow the design layout (label top left, figure low with its caption under it, the wide tile's second figure just past the middle). The figures count from 0 when a tile is well in view, one after the other, and reset when it leaves below, so the count plays every time you scroll down to it (tabular figures, so the digits don't jitter).
 
 **Responsive.** Fluid type and content width (`--cw: max(1440px, 76vw)`), so 1920 and 2560 screens get the 1440 design scaled up instead of a narrow column; the hero composition keeps the same weight on phones and tablets; short landscape screens get a compact layout. Checked at 320, 390, 768, 1024, 1280, 1440, 1920, 2560 and 844×390.
 
@@ -30,7 +34,7 @@ Colours (sampled from the design): Group `#145fad`, Shipping Agency `#3089a9`, I
 
 Build: `python3 tools/build_home.py` (reads `design/ribbons/*.svg` through `tools/design_svg.py`, writes `index.html`). To change a ribbon, replace its SVG and rebuild.
 
-Lighthouse (local, simulated slow 4G for mobile): mobile performance 82–85, desktop 99; accessibility, SEO and best practices 100.
+Lighthouse (local, simulated slow 4G for mobile): mobile performance 78–81 (the full-quality hero photo), desktop 99; accessibility, SEO and best practices 100.
 
 # First concept (v1)
 

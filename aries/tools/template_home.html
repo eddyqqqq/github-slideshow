@@ -9,8 +9,6 @@
 <link rel="icon" href="data:,">
 <link rel="preload" as="font" type="font/woff2" href="fonts/area-regular.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/area-bold.woff2" crossorigin>
-<link rel="preload" as="image" href="img/hero.webp" media="(min-width: 700px)" fetchpriority="high">
-<link rel="preload" as="image" href="img/hero-900.webp" media="(max-width: 699px)" fetchpriority="high">
 <style>
 /* Layout: the homepage design, played as a scroll sequence. Hero bands open onto the photo, the blue
    gradient fills the screen, Group and the three companies pass through one pinned ribbon scene,
@@ -37,6 +35,8 @@
   --small: clamp(12px, 0.972vw, 18px);
   --link: clamp(14px, 1.111vw, 20px);
   --cw: max(1440px, 76vw);  /* content width */
+  --logo-w: clamp(46px, 5vw, 110px);
+  --logo-top: clamp(20px, 5vw, 110px);
   color-scheme: light;
 }
 @font-face { font-family: "Area Normal"; src: url(fonts/area-regular.woff2) format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
@@ -53,7 +53,6 @@ a { color: inherit; }
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; text-wrap: balance; }
 .wrap { width: 100%; max-width: var(--cw); margin-inline: auto; padding-left: var(--gut); padding-right: var(--gut-r); }
-.mark { display: inline-block; aspect-ratio: 256 / 302; background: currentColor; -webkit-mask: url(/*MARK*/) center / contain no-repeat; mask: url(/*MARK*/) center / contain no-repeat; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
 .wi { display: inline-block; }
@@ -63,61 +62,31 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; text-wrap: balance; }
    (and leaves to the right) */
 .more::after, .ul::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--blue);
   transform: scaleX(0); transform-origin: 100% 50%; transition: transform .5s cubic-bezier(.65, 0, .25, 1); }
-.more:hover, .more:focus-visible { color: var(--blue); }
+a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(--blue); }
 .more:hover::after, .more:focus-visible::after, .ul:hover::after, .ul:focus-visible::after { transform: scaleX(1); transform-origin: 0 50%; }
 /* the menu is blue itself: there the bar is white */
 .menu .ul::after, .menu .more::after { background: var(--on); }
-.menu .more:hover, .menu .more:focus-visible { color: var(--on); }
+.menu a.more:hover, .menu a.more:focus-visible, .menu a.ul:hover, .menu a.ul:focus-visible { color: var(--on); }
 .ul { position: relative; display: inline-block; padding-bottom: 3px; transition: color .35s; }
 .statement .more, .co-item .more { padding-bottom: 8px; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 
-/* logo lockup: mark above the words, as in the design */
-.lockup { display: inline-grid; justify-items: center; gap: clamp(5px, .2vw + 3px, 9px); color: var(--blue); text-decoration: none; }
-.lockup .mark { height: clamp(40px, 1.1vw + 30px, 72px); }
-.lockup b { font: 700 clamp(12px, .3vw + 8.7px, 19px)/1 var(--font); letter-spacing: .26em; margin-right: -.26em; }
-.lockup span { font: 400 clamp(7.5px, .19vw + 5.3px, 12px)/1.3 var(--font); letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; text-align: center; }
-.lockup.on { color: var(--on); }
+/* logos: the design files (Group in colour on white, the companies in white); 72 px wide at 1440 */
+.logo { display: block; width: var(--logo-w); height: auto; }
+.logo-link { display: inline-block; }
 
 /* ---------- header + menu ---------- */
-.top { position: absolute; z-index: 40; top: 0; left: 0; right: 0; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(18px, 2.6vw, 38px)); }
+.top { position: absolute; z-index: 40; top: 0; left: 0; right: 0; padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top)); }
 .top .wrap { display: flex; justify-content: space-between; align-items: flex-start; }
-.burger { position: fixed; z-index: 60; top: calc(env(safe-area-inset-top, 0px) + clamp(22px, 3.2vw, 46px)); right: calc(var(--gut-r) - 10px);
-  width: clamp(46px, 2.4vw, 64px); height: clamp(46px, 2.4vw, 64px); border: 0; padding: 0; background: none; cursor: pointer; display: grid; place-content: center; gap: 6px; color: var(--ink);
-  transition: transform .5s cubic-bezier(.65, 0, .25, 1), color .35s; }
-.burger i { display: block; width: clamp(26px, 1.4vw, 40px); height: 2px; background: currentColor; transition: transform .45s cubic-bezier(.65, 0, .25, 1), opacity .2s; }
-.burger i:nth-child(3) { width: clamp(18px, 1vw, 28px); justify-self: end; transition: width .35s, transform .45s cubic-bezier(.65, 0, .25, 1); }
-.burger:hover i:nth-child(3) { width: clamp(26px, 1.4vw, 40px); }
-.nav-light .burger { color: var(--on); }
-.nav-hide .burger { transform: translateY(calc(-100% - 60px)); }
-.menu-open .burger { color: var(--on); transform: none; }
-.menu-open .burger i:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-.menu-open .burger i:nth-child(2) { opacity: 0; }
-.menu-open .burger i:nth-child(3) { width: clamp(26px, 1.4vw, 40px); transform: translateY(-8px) rotate(-45deg); }
-.menu { position: fixed; inset: 0; z-index: 55; background: var(--blue); color: var(--on); display: grid; grid-template-rows: auto 1fr auto; overflow: hidden auto;
-  transform: translate3d(0, -101%, 0); visibility: hidden; transition: transform .85s cubic-bezier(.76, 0, .24, 1), visibility 0s .85s; overscroll-behavior: contain; }
-.menu-open .menu { transform: none; visibility: visible; transition: transform .85s cubic-bezier(.76, 0, .24, 1), visibility 0s; }
-.menu-top { padding-top: calc(env(safe-area-inset-top, 0px) + clamp(18px, 2.6vw, 38px)); }
-.menu-body { display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; gap: clamp(28px, 4vw, 64px); align-content: start; padding-block: clamp(40px, 11vh, 130px) 40px; position: relative; z-index: 1; }
-.menu h3 { font-size: var(--small); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .75; margin-bottom: 18px; }
-.menu ul { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(6px, 1.2vh, 12px); }
-.menu a { font-size: clamp(22px, 2.5vw, 52px); line-height: 1.2; text-decoration: none; white-space: nowrap; }
-.menu .co i { display: inline-block; width: .32em; height: .32em; background: var(--c); border: 1px solid var(--on); margin-right: .45em; vertical-align: .18em; }
-.menu-rib { z-index: 0; }
-.menu-foot { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(24px, 4vh, 44px)); }
-.menu-foot p { font-size: clamp(26px, 3.2vw, 46px); line-height: 1.05; }
-.menu-foot a { font-size: var(--link); }
-.menu-top, .menu-body > *, .menu-foot { opacity: 0; transform: translate3d(0, 28px, 0); transition: opacity .25s, transform .25s; }
-.menu-open .menu-top, .menu-open .menu-body > *, .menu-open .menu-foot { opacity: 1; transform: none;
-  transition: opacity .6s ease calc(.5s + var(--d, 0s)), transform .8s cubic-bezier(.16, 1, .3, 1) calc(.5s + var(--d, 0s)); }
-@media (max-width: 760px) { .menu-body { grid-template-columns: minmax(0, 1fr); justify-content: stretch; align-content: start; gap: 30px; padding-top: 50px; } .menu a { white-space: normal; } }
-
 /* ---------- scene 1: hero → photo → blue (one pinned sequence) ---------- */
 .hero { position: relative; background: var(--paper); }
 .hero-stage { position: relative; height: 100vh; height: 100svh; min-height: 340px; overflow: hidden; }
 .hero-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.hero-layout { position: absolute; inset: 0; display: flex; flex-direction: column; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(110px, 13vh, 150px)); pointer-events: none; }
+.hero-src { position: absolute; left: 0; top: 0; width: 15px; opacity: 0; pointer-events: none; }
+.hero-src img { display: block; width: 100%; height: auto; }
+.hero-layout { position: absolute; inset: 0; display: flex; flex-direction: column; pointer-events: none;
+  padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top) + var(--logo-w) * 1.76 + clamp(8px, 2vh, 28px)); }  /* the bands start below the logo */
 .hero-slot { flex: 1 1 auto; min-height: 0; }
 .hero-title { padding-block: clamp(18px, 3vh, 34px) clamp(28px, 6vh, 64px); display: grid; gap: 10px; }
 .hero-title h1 { color: var(--blue); font-size: var(--h-xl); line-height: 1.05; }
@@ -136,9 +105,9 @@ html.lenis, html.lenis body { height: auto; }
 .id-bg { position: absolute; inset: 0; background: var(--blue); }
 .rib-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
 .id-top, .id-foot { position: relative; }
-.id-top { padding-top: calc(env(safe-area-inset-top, 0px) + clamp(36px, 7vh, 80px)); }
+.id-top { padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top)); }
 .id-top .wrap { position: relative; }
-.co-tabs { position: absolute; top: 4px; right: calc(var(--gut-r) + clamp(64px, 3.4vw, 90px)); }
+.co-tabs { position: absolute; top: 4px; right: var(--gut-r); }
 .id-foot { padding-block: 60px clamp(36px, 8vh, 90px); }
 .id-states { display: grid; gap: 40px; }
 .g-intro { padding-top: clamp(30px, 6vh, 70px); display: grid; gap: 18px; justify-items: start; }
@@ -175,15 +144,24 @@ html.lenis, html.lenis body { height: auto; }
 
 /* ---------- figures ---------- */
 .figs .wrap { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.tile { position: relative; overflow: hidden; color: var(--on); padding: clamp(20px, 2.6vw, 36px); min-height: clamp(260px, 29vw, 420px); display: grid; align-content: space-between; }
-.tile.wide { grid-column: span 2; }
+/* as in the design (1440): tiles about 415 px tall, 60 px inner margin, label top left, the figure low with
+   its caption right under it; in the wide tile the second figure starts just past the middle */
+.figs .wrap { gap: clamp(10px, 1.4vw, 28px); }
+.tile { position: relative; overflow: hidden; color: var(--on); padding: clamp(22px, 4.2vw, 96px) clamp(22px, 4.2vw, 96px) clamp(22px, 4.6vw, 104px);
+  aspect-ratio: 642 / 415; display: grid; grid-template-rows: auto 1fr; }
+.tile.wide { grid-column: span 2; aspect-ratio: auto; min-height: 0; height: clamp(260px, 28.8vw, 700px); }
 .tile.agency { background: var(--agency); } .tile.interlink { background: var(--interlink); } .tile.logistics { background: var(--logistics); }
-.tile .lbl { position: relative; font-size: var(--small); }
-.tile .nums { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 20px; }
-.tile strong { font-variant-numeric: tabular-nums; display: block; font: 400 clamp(52px, 7.4vw, 170px)/0.95 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; white-space: nowrap; }
-.tile strong sup { font-size: .5em; vertical-align: top; margin-left: 4px; position: relative; top: -.12em; }
-.tile small { display: block; font-size: var(--small); margin-top: 8px; }
-@media (max-width: 760px) { .figs .wrap { grid-template-columns: minmax(0, 1fr); } .tile.wide { grid-column: auto; } }
+.tile .lbl { position: relative; font-size: var(--link); }
+.tile .nums { position: relative; align-self: end; display: grid; grid-template-columns: minmax(0, 1fr); }
+.tile.wide .nums { grid-template-columns: 54fr 46fr; }
+.tile strong { display: block; font: 400 clamp(52px, 7.5vw, 180px)/0.9 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; white-space: nowrap; }
+.tile strong sup { font-size: .5em; line-height: 0; vertical-align: top; position: relative; top: .06em; margin-left: .06em; }
+.tile small { display: block; font-size: var(--link); margin-top: clamp(8px, .8vw, 18px); }
+@media (max-width: 760px) {
+  .figs .wrap { grid-template-columns: minmax(0, 1fr); }
+  .tile, .tile.wide { grid-column: auto; aspect-ratio: auto; height: auto; min-height: 300px; }
+  .tile.wide .nums { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+}
 
 /* ---------- services cards: a row that slides sideways while the section is pinned ---------- */
 .cards { padding-block: clamp(24px, 4vw, 50px) clamp(90px, 10vw, 150px); overflow: hidden; }
@@ -227,20 +205,10 @@ html.lenis, html.lenis body { height: auto; }
 
 <header class="top">
   <div class="wrap">
-    <a class="lockup" href="#hero"><span class="mark"></span><b>ARIES</b><span>Group</span></a>
+    <a class="logo-link" href="#hero" aria-label="Aries Group"><!--LOGO:group--></a>
   </div>
 </header>
-<button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><i></i><i></i><i></i></button>
-<nav class="menu" id="menu" aria-label="Main">
-  <svg class="rib-svg menu-rib" data-rib="menu" aria-hidden="true"></svg>
-  <div class="menu-top wrap"><span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Group</span></span></div>
-  <div class="menu-body wrap">
-    <div style="--d:0s"><h3>Aries Group</h3><ul><li><a class="ul" href="#group" data-co="0">About us</a></li><li><a class="ul" href="#certifications">Certifications</a></li><li><a class="ul" href="#contact">Contact</a></li></ul></div>
-    <div style="--d:.08s"><h3>Companies</h3><ul><li><a class="ul co" href="#group" data-co="1"><i style="--c:var(--agency)"></i>Aries Shipping Agency</a></li><li><a class="ul co" href="#group" data-co="2"><i style="--c:var(--interlink)"></i>Aries Interlink</a></li><li><a class="ul co" href="#group" data-co="3"><i style="--c:var(--logistics)"></i>Aries Logistics</a></li></ul></div>
-    <div style="--d:.16s"><h3>Activity</h3><ul><li><a class="ul" href="#news">News</a></li><li><a class="ul" href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
-  </div>
-  <div class="menu-foot wrap" style="--d:.24s"><p>Where possibilities arise</p><a class="more" href="mailto:office@aries-group.ro">office@aries-group.ro</a></div>
-</nav>
+
 
 <main>
 
@@ -253,6 +221,12 @@ html.lenis, html.lenis body { height: auto; }
       <path id="hTop" fill="#145FAD" d="M0 0Z"/>
       <path id="hBot" fill="#145FAD" d="M0 0Z"/>
     </svg>
+    <!-- the photo source: the browser picks the format and size here, the SVG below uses what it picked -->
+    <picture class="hero-src" aria-hidden="true">
+      <source media="(max-width: 699px)" type="image/avif" srcset="img/hero-900.avif">
+      <source media="(max-width: 699px)" type="image/webp" srcset="img/hero-900.webp">
+      <img id="heroSrc" src="img/hero.webp" alt="" width="1500" height="1020" fetchpriority="high" decoding="async">
+    </picture>
     <div class="shade" id="shade"></div>
     <div class="hero-layout">
       <div class="hero-slot" id="heroSlot"></div>
@@ -280,9 +254,9 @@ html.lenis, html.lenis body { height: auto; }
         <h2>Integrated maritime and logistics solutions that expand possibilities.</h2>
         <p>We integrate maritime, rail and road transport capabilities to create flexible supply chain solutions tailored to the specific needs of each customer.</p>
       </div>
-      <span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Shipping<br>Agency</span></span>
-      <span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Interlink</span></span>
-      <span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Logistics</span></span>
+      <div class="co-logo"><!--LOGO:agency--></div>
+      <div class="co-logo"><!--LOGO:interlink--></div>
+      <div class="co-logo"><!--LOGO:logistics--></div>
     </div>
     <ul class="co-tabs" aria-label="Companies">
       <li><button type="button" data-co="1">Aries Shipping Agency</button></li>
@@ -347,7 +321,7 @@ html.lenis, html.lenis body { height: auto; }
 <footer class="foot" id="contact">
   <div class="wrap">
     <div class="foot-grid">
-      <div><span class="lockup"><span class="mark"></span><b>ARIES</b><span>Group</span></span></div>
+      <div><!--LOGO:group--></div>
       <div><h3>Aries Group</h3><ul><li><a class="ul" href="#group" data-co="0">About us</a></li><li><a class="ul" href="#certifications" id="certifications">Certifications</a></li><li><a class="ul" href="mailto:office@aries-group.ro">Contact</a></li></ul></div>
       <div><h3>Companies</h3><ul><li><a class="ul" href="#group" data-co="1">Aries Shipping Agency</a></li><li><a class="ul" href="#group" data-co="2">Aries Interlink</a></li><li><a class="ul" href="#group" data-co="3">Aries Logistics</a></li></ul></div>
       <div><h3 id="news">Activity</h3><ul><li><a class="ul" href="#news">News</a></li><li><a class="li" href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener" ><span aria-hidden="true">in</span><span class="sr">Aries Group on LinkedIn</span></a></li></ul></div>
@@ -376,13 +350,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const burger = $('.burger'), menu = $('#menu');
   let onMenu = () => {};
   const setMenu = open => {
-    if (open === root.classList.contains('menu-open')) return;
+    if (!menu || open === root.classList.contains('menu-open')) return;
     root.classList.toggle('menu-open', open); burger.setAttribute('aria-expanded', String(open)); burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     if (open) $('a', menu).focus({ preventScroll: true });
     onMenu(open);
   };
-  burger.addEventListener('click', () => setMenu(!root.classList.contains('menu-open')));
-  addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('menu-open')) { setMenu(false); burger.focus(); } });
+  if (burger) {
+    burger.addEventListener('click', () => setMenu(!root.classList.contains('menu-open')));
+    addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('menu-open')) { setMenu(false); burger.focus(); } });
+  }
 
   /* =====================================================================
      SHAPE DATA — from the design SVGs (aries/design/ribbons), built by tools/build_home.py
@@ -437,7 +413,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!r.width || !r.height) return;
       this.W = r.width; this.H = r.height;
       this.s = Math.max(this.W * this.over / this.SW, (this.H * this.fill) / this.span);
-      this.vbW = this.W / this.s; this.vbH = this.H / this.s;
+      // maxH (the menu): on short screens the ribbon is flattened a little to fit its band instead of covering text
+      const sy = this.maxH ? Math.min(this.s, this.maxH / this.span) : this.s;
+      this.svg.setAttribute('preserveAspectRatio', sy < this.s ? 'none' : 'xMidYMid slice');
+      this.vbW = this.W / this.s; this.vbH = this.H / sy;
       request(this);
     }
     pair(key, q0, q1, g, pl, pu) {
@@ -478,11 +457,19 @@ document.addEventListener('DOMContentLoaded', () => {
     zoom: $('#hZoom'), wrap: $('#hImgWrap'), img: $('#hImg'),
     st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1 }, eTmax: -400, eBmax: 400
   };
-  // one photo per screen size; the matching <link rel=preload> in the head has already started fetching it
-  hero.img.setAttribute('href', matchMedia('(max-width: 699px)').matches ? 'img/hero-900.webp' : 'img/hero.webp');
+  // the photo the browser chose in the hidden <picture> (AVIF or WebP, phone or desktop size), already loading
+  const heroSrc = $('#heroSrc');
+  hero.img.setAttribute('href', heroSrc.currentSrc || heroSrc.src);
   function edge(arr, xa, xb) {
     const xs = [], ys = [], n = HB.x.length;
-    if (xa < 0) { xs.push(xa - 5); ys.push(arr[0] + HB.sl * (xa - 5)); }
+    // past the left end the bands bend gently towards horizontal instead of climbing on (their tangent would run
+    // up into the logo on screens wider than the composition): y = y0 + sl·L·(e^(dx/L) − 1), same for both edges
+    if (xa < 0) {
+      const L = 140, pts = [];
+      for (let dx = -12; dx > xa - 5; dx *= 1.6) pts.push(dx);
+      pts.push(xa - 5);
+      pts.reverse().forEach(dx => { xs.push(dx); ys.push(arr[0] + HB.sl * L * (Math.exp(dx / L) - 1)); });
+    }
     for (let k = 0; k < n; k++) { xs.push(HB.x[k]); ys.push(arr[k]); }
     if (xb > HB.w) { xs.push(xb + 5); ys.push(arr[n - 1] + HB.sr * (xb + 5 - HB.w)); }
     return { xs, ys };
@@ -540,12 +527,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const narrow = innerWidth < 700;
   const ribs = {
     identity: new Ribbons($('[data-rib="identity"]'), ['group', 'agency', 'interlink', 'logistics'], { over: 1.08, fill: 0.2, ay: narrow ? 0.54 : 0.56 }),
-    // tiles: drawn a little wider than the tile, so the scroll and the mouse can move them sideways
-    tAgency: new Ribbons($('[data-rib="t-agency"]'), ['agencyT'], { over: 1.3, fill: 1.05, ay: 0.42 }),
-    tInterlink: new Ribbons($('[data-rib="t-interlink"]'), ['interlinkT'], { over: 1.3, fill: 1.6, ay: 0.44 }),
-    tLogistics: new Ribbons($('[data-rib="t-logistics"]'), ['logisticsT'], { over: 1.3, fill: 1.2, ay: 0.36 }),
-    menu: new Ribbons($('[data-rib="menu"]'), ['group'], { over: 1.06, ay: narrow ? 0.84 : 0.88 })
+    tAgency: new Ribbons($('[data-rib="t-agency"]'), ['agencyT'], { fill: 1.05, ay: 0.42 }),
+    tInterlink: new Ribbons($('[data-rib="t-interlink"]'), ['interlinkT'], { fill: 1.6, ay: 0.44 }),
+    tLogistics: new Ribbons($('[data-rib="t-logistics"]'), ['logisticsT'], { fill: 1.2, ay: 0.36 }),
   };
+  if (menu) ribs.menu = new Ribbons($('[data-rib="menu"]'), ['group'], { over: 1.06, ay: narrow ? 0.84 : 0.88 });
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
     const r = e.target._rib; r.vis = e.isIntersecting; if (r.vis && r.stale) request(r);
   }), { rootMargin: '25% 0px' }) : null;
@@ -566,8 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // the menu ribbon is drawn only when the menu opens
-  ribs.menu.st.pan = 0.5;
-  onMenu = open => { if (open) { ribs.menu.vis = true; ribs.menu.layout(); } };
+  if (ribs.menu) { ribs.menu.st.pan = 0.5; onMenu = open => { if (open) { ribs.menu.vis = true; ribs.menu.layout(); } }; }
 
   /* ---------------- burger: light or dark lines for what is under it; hides while scrolling down ----------------
      A thin line at the burger's height is watched with IntersectionObserver, so scrolling costs no hit-testing. */
@@ -575,7 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const setTone = () => root.classList.toggle('nav-light', [...under].some(el => el.dataset.tone === 'dark'));
   let lineIO = null;
   const watchLine = () => {
-    if (!('IntersectionObserver' in window)) return;
+    if (!burger || !('IntersectionObserver' in window)) return;
     if (lineIO) lineIO.disconnect();
     under.clear();
     const bt = burger.getBoundingClientRect(), mid = Math.round(bt.top + bt.height / 2);
@@ -587,6 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let lz; addEventListener('resize', () => { clearTimeout(lz); lz = setTimeout(watchLine, 200); });
   let lastY = scrollY, navQueued = false;
   function navTick() {
+    if (!burger) return;
     navQueued = false;
     const y = scrollY;
     if (y <= 80 || y < lastY - 2) root.classList.remove('nav-hide');
@@ -618,9 +604,19 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.ticker.lagSmoothing(0);
   }
   const goTo = y => lenis ? lenis.scrollTo(y, { duration: 1.6 }) : scrollTo({ top: y, behavior: 'smooth' });
-  onMenu = open => {
+  if (ribs.menu) onMenu = open => {
     const r = ribs.menu;
     r.vis = true;
+    // the ribbon sits in the free band between the links and the slogan, so it never covers the text
+    if (open) {
+      // (measured inside the panel, which is still above the screen, from the lists rather than the stretched
+      // grid row; the items are still 28 px low while they slide in)
+      const top0 = menu.getBoundingClientRect().top;
+      const linksEnd = Math.max(...$$('.menu-body ul', menu).map(u => u.getBoundingClientRect().bottom)) - top0 - 28;
+      const footTop = $('.menu-foot', menu).getBoundingClientRect().top - top0 - 28;
+      r.ay = Math.min(0.92, Math.max(0.3, (linksEnd + footTop) / 2 / innerHeight));
+      r.maxH = Math.max(80, footTop - linksEnd - 24);
+    }
     if (lenis) open ? lenis.stop() : lenis.start();
     gsap.killTweensOf(r.st);
     if (open) { r.layout(); r.st.q = 0; r.render(); gsap.fromTo(r.st, { q: 0, pan: 0.2 }, { q: 1, pan: 0.8, duration: 2, delay: 0.6, ease: 'power3.out', onUpdate: () => touch(r) }); }
@@ -742,32 +738,23 @@ document.addEventListener('DOMContentLoaded', () => {
     r.st.q = 0; r.render();
     const R = () => touch(r);
     gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: drawStart, end: drawEnd, scrub: 0.8 } });
-    gsap.fromTo(r.st, { pan: 0.3 }, { pan: 0.7, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
-    // hover: the ribbon follows the mouse left and right
-    const mx = gsap.quickTo(r.st, 'mx', { duration: 1.2, ease: 'power3.out', onUpdate: R });
-    sec.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; const b = sec.getBoundingClientRect(); mx(((e.clientX - b.left) / b.width - 0.5) * -0.6); });
-    sec.addEventListener('pointerleave', () => mx(0));
+    gsap.fromTo(r.st, { pan: 0 }, { pan: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
   }
   [['tAgency', 't-agency'], ['tInterlink', 't-interlink'], ['tLogistics', 't-logistics']].forEach(([k, a]) => later(() => ribbonScroll(ribs[k], $(`[data-rib="${a}"]`).closest('.tile'))));
-  // tiles rise in; inside, label and caption fade up and each figure appears at 0, fully on screen,
-  // then counts up once (the right-hand figure of a row a beat later, so they run one after the other)
+  // tiles rise in, label and caption fade up; the figures count from 0 to their value when the tile is well
+  // in view (the right-hand figure of a row a beat later), and go back to 0 when it leaves below the screen,
+  // so the count plays again every time you scroll down to it
   $$('[data-tiles] .tile').forEach((t, i) => later(() => {
     gsap.from(t, { y: 70, opacity: 0, ease: 'none', scrollTrigger: { trigger: t, start: `top ${100 - (i % 2) * 3}%`, end: `top ${76 - (i % 2) * 3}%`, scrub: 0.6 } });
     gsap.from($$('small, .lbl', t), { y: 24, opacity: 0, ease: 'none', stagger: 0.12, scrollTrigger: { trigger: t, start: 'top 85%', end: 'top 55%', scrub: 0.6 } });
+    const vw = root.clientWidth, fmt = v => Math.round(v).toLocaleString('en-US');
+    const figs = $$('strong', t).map((el, j) => ({ node: el.firstChild, to: parseInt(el.firstChild.textContent.replace(/\D/g, ''), 10), o: { v: 0 },
+      late: j * 0.35 + (i === 2 && el.getBoundingClientRect().left > vw * 0.45 ? 0.3 : 0) }));
+    figs.forEach(f => { f.node.textContent = '0'; });
+    ScrollTrigger.create({ trigger: t, start: 'top 70%',
+      onEnter: () => figs.forEach(f => { gsap.killTweensOf(f.o); f.o.v = 0; gsap.to(f.o, { v: f.to, duration: 2.4, delay: f.late, ease: 'power2.out', onUpdate: () => { f.node.textContent = fmt(f.o.v); } }); }),
+      onLeaveBack: () => figs.forEach(f => { gsap.killTweensOf(f.o); f.o.v = 0; f.node.textContent = '0'; }) });
   }));
-  later(() => {
-    const vw = root.clientWidth;
-    $$('[data-tiles] strong').forEach(el => {
-      const node = el.firstChild, to = parseInt(node.textContent.replace(/\D/g, ''), 10);
-      const r = el.getBoundingClientRect();
-      if (r.bottom < innerHeight * 0.95) return;   // already on screen when the page opens: leave the value
-      node.textContent = '0';
-      gsap.from(el, { y: 30, opacity: 0, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom 95%', scrub: 0.5 } });
-      const o = { v: 0 }, late = r.left > vw * 0.45 ? 0.3 : 0;
-      ScrollTrigger.create({ trigger: el, start: 'bottom 95%', once: true,
-        onEnter: () => gsap.to(o, { v: to, duration: 2.2, delay: 0.1 + late, ease: 'power2.out', onUpdate: () => { node.textContent = Math.round(o.v).toLocaleString('en-US'); } }) });
-    });
-  });
 
   /* ---- services: the section pins and the row slides sideways with the scroll ---- */
   later(() => {

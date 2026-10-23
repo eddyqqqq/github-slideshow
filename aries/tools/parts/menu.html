@@ -1,0 +1,52 @@
+<!-- Full-screen menu, taken out of the page for now (to be added back later).
+     Its CSS goes into the page stylesheet and its markup right after the page header; the script still has the hooks
+     (setMenu, onMenu, the burger tone line), which switch on by themselves when .burger and #menu exist,
+     the build adds it when run with MENU=1 (python3 tools/build_home.py with MENU=1 in the environment). -->
+<style>
+.burger { position: fixed; z-index: 60; top: calc(env(safe-area-inset-top, 0px) + clamp(22px, 3.2vw, 46px)); right: calc(var(--gut-r) - 10px);
+  width: clamp(46px, 2.4vw, 64px); height: clamp(46px, 2.4vw, 64px); border: 0; padding: 0; background: none; cursor: pointer; display: grid; place-content: center; gap: 6px; color: var(--ink);
+  transition: transform .5s cubic-bezier(.65, 0, .25, 1), color .35s; }
+.burger i { display: block; width: clamp(26px, 1.4vw, 40px); height: 2px; background: currentColor; transition: transform .45s cubic-bezier(.65, 0, .25, 1), opacity .2s; }
+.burger i:nth-child(3) { width: clamp(18px, 1vw, 28px); justify-self: end; transition: width .35s, transform .45s cubic-bezier(.65, 0, .25, 1); }
+.burger:hover i:nth-child(3) { width: clamp(26px, 1.4vw, 40px); }
+.nav-light .burger { color: var(--on); }
+.nav-hide .burger { transform: translateY(calc(-100% - 60px)); }
+.menu-open .burger { color: var(--on); transform: none; }
+.menu-open .burger i:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.menu-open .burger i:nth-child(2) { opacity: 0; }
+.menu-open .burger i:nth-child(3) { width: clamp(26px, 1.4vw, 40px); transform: translateY(-8px) rotate(-45deg); }
+.menu { position: fixed; inset: 0; z-index: 55; background: var(--blue); color: var(--on); display: grid; grid-template-rows: auto 1fr auto; overflow: hidden auto; scrollbar-width: none;
+  transform: translate3d(0, -101%, 0); visibility: hidden; transition: transform .85s cubic-bezier(.76, 0, .24, 1), visibility 0s .85s; overscroll-behavior: contain; }
+/* the panel scrolls on short screens but never shows a scrollbar: a bar that appears while the items slide in
+   and disappears when they settle makes everything jump sideways */
+.menu::-webkit-scrollbar { display: none; }
+.menu-open .menu { transform: none; visibility: visible; transition: transform .85s cubic-bezier(.76, 0, .24, 1), visibility 0s; }
+.menu-top { padding-top: calc(env(safe-area-inset-top, 0px) + clamp(18px, 2.6vw, 38px)); }
+.menu-body { display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; gap: clamp(28px, 4vw, 64px); align-content: start; padding-block: clamp(40px, 11vh, 130px) 40px; position: relative; z-index: 1; }
+.menu h3 { font-size: var(--small); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .75; margin-bottom: 18px; }
+.menu ul { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(6px, 1.2vh, 12px); }
+.menu a { font-size: clamp(22px, 2.5vw, 52px); line-height: 1.2; text-decoration: none; white-space: nowrap; }
+.menu .co i { display: inline-block; width: .32em; height: .32em; background: var(--c); border: 1px solid var(--on); margin-right: .45em; vertical-align: .18em; }
+.menu-rib { z-index: 0; }
+.menu-top .logo path { fill: var(--on); }   /* the Group logo in white on the blue panel */
+.menu-foot { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(24px, 4vh, 44px)); }
+.menu-foot p { font-size: clamp(26px, 3.2vw, 46px); line-height: 1.05; }
+.menu-foot a { font-size: var(--link); }
+.menu-top, .menu-body > *, .menu-foot { opacity: 0; transform: translate3d(0, 28px, 0); transition: opacity .25s, transform .25s; }
+.menu-open .menu-top, .menu-open .menu-body > *, .menu-open .menu-foot { opacity: 1; transform: none;
+  transition: opacity .6s ease calc(.5s + var(--d, 0s)), transform .8s cubic-bezier(.16, 1, .3, 1) calc(.5s + var(--d, 0s)); }
+@media (max-width: 760px) { .menu-body { grid-template-columns: minmax(0, 1fr); justify-content: stretch; align-content: start; gap: 30px; padding-top: 50px; } .menu a { white-space: normal; } }
+
+</style>
+
+<button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><i></i><i></i><i></i></button>
+<nav class="menu" id="menu" aria-label="Main">
+  <svg class="rib-svg menu-rib" data-rib="menu" aria-hidden="true"></svg>
+  <div class="menu-top wrap"><!--LOGO:group--></div>
+  <div class="menu-body wrap">
+    <div style="--d:0s"><h3>Aries Group</h3><ul><li><a class="ul" href="#group" data-co="0">About us</a></li><li><a class="ul" href="#certifications">Certifications</a></li><li><a class="ul" href="#contact">Contact</a></li></ul></div>
+    <div style="--d:.08s"><h3>Companies</h3><ul><li><a class="ul co" href="#group" data-co="1"><i style="--c:var(--agency)"></i>Aries Shipping Agency</a></li><li><a class="ul co" href="#group" data-co="2"><i style="--c:var(--interlink)"></i>Aries Interlink</a></li><li><a class="ul co" href="#group" data-co="3"><i style="--c:var(--logistics)"></i>Aries Logistics</a></li></ul></div>
+    <div style="--d:.16s"><h3>Activity</h3><ul><li><a class="ul" href="#news">News</a></li><li><a class="ul" href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
+  </div>
+  <div class="menu-foot wrap" style="--d:.24s"><p>Where possibilities arise</p><a class="more" href="mailto:office@aries-group.ro">office@aries-group.ro</a></div>
+</nav>
