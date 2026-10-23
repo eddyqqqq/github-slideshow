@@ -1,4 +1,4 @@
-"""Build aries/index.html from tools/template.html and tools/shapes.json.
+"""Build aries/v1/index.html (the first prototype) from tools/template.html and tools/shapes.json.
 
 The shape data is compacted for the page:
 - identity ribbons are read from the designer's SVGs in tools/ribbons/ (see ribbons_svg.py);
@@ -61,7 +61,7 @@ def main():
     mark = open(os.path.join(HERE, '..', 'img', 'mark.png'), 'rb').read()
     import base64
     html = tpl.replace('/*SHAPES*/', payload).replace('/*MARK*/', 'data:image/png;base64,' + base64.b64encode(mark).decode())
-    open(os.path.join(HERE, '..', 'index.html'), 'w').write(html)
+    open(os.path.join(HERE, '..', 'v1', 'index.html'), 'w').write(html)
     pts = sum(len(v['lo']['x']) * 2 for v in spreads.values())
     print(f'shape data {len(payload) // 1024} KB, ribbon points {pts}')
 

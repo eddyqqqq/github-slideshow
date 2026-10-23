@@ -1,10 +1,28 @@
-# Aries Group — concept site (brochure draft 2)
+# Aries Group — website
 
-One-page animated concept built from the Aries Group brochure. This is a reference for the final design: the pieces below were approved and should be reused as they are.
+`index.html` is the **homepage built from the design** (`design/images/homepage-design.jpg`), played as a scroll sequence. The first concept from the brochure is kept in `v1/index.html`; its ideas and motion (below) carry over.
 
-- `index.html` — the finished page (self-contained; GSAP, ScrollTrigger and Lenis from jsDelivr).
-- `img/mark.png` — the Aries mark as an alpha mask, recoloured with CSS (`.mark`).
-- `tools/` — how the shapes were made, so they can be regenerated or extended.
+- `index.html` — the homepage (self-contained apart from `img/*.webp`; GSAP, ScrollTrigger and Lenis from jsDelivr).
+- `v1/index.html` — the first concept (brochure draft 2).
+- `design/` — the design file, its photos and the designer's ribbon SVGs.
+- `img/` — the Aries mark (`mark.png`, an alpha mask recoloured with CSS) and the web-compressed photos.
+- `tools/` — how the shapes are made, so they can be regenerated or extended.
+
+## Homepage scroll sequence
+
+1. **Hero → photo → Group** (one pinned scene). The two blue bands (`design/ribbons/Vector.svg`) draw in with the photo between them. On scroll the bands fly apart and the photo fills the screen with *The partner of choice…*; then the blue gradient fills the screen from the top-left corner and becomes the Group section, where the Group ribbon (`Group_32`) draws and pans.
+2. **Companies** (one pinned scene). Shipping Agency → Interlink → Logistics: one ribbon pair flows through `Group_11` / `Group_12` / `Group_13` while the background colour, logo and text change. The tabs (top right), the menu and the footer links jump to a company.
+3. **Statements, figure tiles** (ribbons `Group_33` / `34` / `35`), **service cards** (horizontal, drag or swipe; diagonal photo cut opens on scroll), **footer**.
+
+Colours (sampled from the design): Group `#145fad`, Shipping Agency `#3089a9`, Interlink `#2aa8da`, Logistics `#42979c`.
+
+Build: `python3 tools/build_home.py` (reads `design/ribbons/*.svg` through `tools/design_svg.py`, writes `index.html`). To change a ribbon, replace its SVG and rebuild.
+
+Lighthouse (local): mobile performance 90–94, desktop 99; SEO and best practices 100; accessibility 95 (white text on the Shipping Agency / Interlink brand colours is below 4.5:1).
+
+# First concept (v1)
+
+One-page animated concept built from the Aries Group brochure (`v1/index.html`, built with `python3 tools/build.py`).
 
 ## Ideas to keep
 
@@ -41,7 +59,7 @@ One-page animated concept built from the Aries Group brochure. This is a referen
 for p in $(seq 1 20); do pdftocairo -svg -f $p -l $p Brosura.pdf svg/p$p.svg; done
 # 2. sample every shape onto the shared grid
 python3 tools/extract_shapes.py svg tools/shapes.json
-# 3. simplify the data and build index.html from tools/template.html
+# 3. simplify the data and build v1/index.html from tools/template.html
 #    (identity ribbons are read from tools/ribbons/*.svg — replace those files to change them)
 python3 tools/build.py
 ```

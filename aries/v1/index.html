@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aries Group</title>
+<meta name="description" content="Aries Group: integrated maritime, rail and road logistics from Constanța across the Black Sea and Danube region. Shipping agency, rail freight and logistics.">
+<link rel="icon" href="data:,">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<script>(function () { var l = document.createElement('link'); l.rel = 'stylesheet';
+  l.href = 'https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;600&family=IBM+Plex+Mono:wght@500&display=swap';
+  document.head.appendChild(l); })();</script>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;600&family=IBM+Plex+Mono:wght@500&display=swap"></noscript>
+<style>
+/* Layout: the brochure as one scroll. The white-gradient ribbons (drawn from the brochure's own vectors,
+   continuous across each two-page spread) carry every chapter; the cover band opens the page;
+   images are grey placeholders until real photography is supplied. */
+:root {
+  --group: #2c59b0;
+  --agency: #4388ac;
+  --interlink: #50abdc;
+  --logistics: #49989a;
+  /* darker shades for small coloured text on white (WCAG AA) */
+  --agency-ink: #356f93;
+  --interlink-ink: #1d7db3;
+  --logistics-ink: #2f7a7c;
+  --ink: #0f1d38;
+  --muted: #56647d;
+  --paper: #ffffff;
+  --mist: #eef3fa;
+  --line: #d7e0ee;
+  --on: #ffffff;
+  --dummy: #e5e8ed;
+  --dummy-2: #dadfe6;
+  --dummy-3: #ced4dd;
+  --dummy-ink: #5f6878;
+  --display: "Figtree", "Figtree Fallback", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Figtree Fallback", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gut: max(clamp(16px, 5vw, 64px), env(safe-area-inset-left, 0px));
+  --gut-r: max(clamp(16px, 5vw, 64px), env(safe-area-inset-right, 0px));
+  --accent: var(--group);
+  color-scheme: light;
+}
+/* fallback sized like Figtree so the late web font does not shift the layout */
+@font-face { font-family: "Figtree Fallback"; src: local("Arial"), local("Helvetica Neue"), local("Helvetica"); size-adjust: 98%; ascent-override: 97%; descent-override: 26%; line-gap-override: 0%; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.6 var(--body); overflow-x: clip; -webkit-font-smoothing: antialiased; }
+img, svg { max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+h1, h2, h3, p, figure { margin: 0; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: -0.02em; text-wrap: balance; }
+.wrap { width: 100%; max-width: 1280px; margin-inline: auto; padding-left: var(--gut); padding-right: var(--gut-r); }
+.eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; }
+.sq { display: inline-block; width: 0.9em; height: 0.9em; background: currentColor; flex: none; }
+.mark { display: inline-block; aspect-ratio: 256 / 302; background: currentColor; -webkit-mask: url(data:image/png;base64,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) center / contain no-repeat; mask: url(data:image/png;base64,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) center / contain no-repeat; }
+.w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.wi { display: inline-block; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ---------- nav ---------- */
+.nav { position: fixed; inset: 0 0 auto; z-index: 50; padding-top: env(safe-area-inset-top, 0px);
+  background: color-mix(in srgb, var(--paper) 80%, transparent); -webkit-backdrop-filter: saturate(1.4) blur(12px); backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 58px; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--accent); transition: color .6s; }
+.brand .mark { height: 28px; }
+.brand b { font: 600 14px/1 var(--display); letter-spacing: 0.24em; color: var(--ink); }
+.brand b span { font-weight: 400; color: var(--muted); }
+.nav ul { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+.nav ul a { display: block; padding: 7px 12px; border-radius: 999px; text-decoration: none; font-size: 13.5px; color: var(--muted); transition: color .3s, background .3s; }
+.nav ul a:hover, .nav ul a.on { color: var(--ink); background: var(--mist); }
+.nav .cta { color: var(--on); background: var(--group); }
+.nav .cta:hover { color: var(--on); background: var(--ink); }
+@media (max-width: 760px) { .nav ul li:not(:last-child) { display: none; } .nav { background: color-mix(in srgb, var(--paper) 94%, transparent); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+
+/* ---------- hero: the cover band ---------- */
+.hero { position: relative; height: 100vh; height: 100svh; min-height: 580px; overflow: hidden; background: var(--paper); }
+.hero-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hband { fill: var(--group); }
+.s-road { fill: var(--dummy-2); } .s-ship { fill: var(--dummy); } .s-rail { fill: var(--dummy-3); }
+.ph-ico use { color: var(--dummy-ink); }
+.ph-cap { font: 500 6.5px var(--mono); letter-spacing: .12em; fill: var(--dummy-ink); text-transform: uppercase; }
+.hero-layout { position: absolute; inset: 0; display: flex; flex-direction: column; padding-top: calc(58px + env(safe-area-inset-top, 0px) + 10px); pointer-events: none; }
+.hero-layout > * { pointer-events: auto; }
+.hero-slot { flex: 1 1 auto; min-height: 0; }
+.hero-foot { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding-block: 10px clamp(24px, 5.5vh, 60px); }
+.hero-meta { display: grid; gap: 12px; }
+.hero-meta .divlist { display: none; }
+.hero-meta .eyebrow { color: var(--group); }
+.divlist { list-style: none; margin: 0; padding: 0; display: flex; gap: 22px; }
+.divlist li { display: grid; justify-items: center; gap: 6px; font: 600 9.5px/1.2 var(--display); letter-spacing: .22em; color: var(--group); text-align: center; }
+.divlist li span { font-weight: 400; font-size: 7px; letter-spacing: .26em; }
+.divlist .mark { height: 34px; color: var(--group); }
+.hero-title { display: grid; justify-items: start; gap: 4px; }
+.hero-title small { font-size: clamp(15px, 1.5vw, 20px); color: var(--ink); }
+.hero-title h1 { color: var(--group); font-size: clamp(38px, 5.6vw, 88px); line-height: 1; }
+.hero-end { position: absolute; left: 0; right: 0; bottom: clamp(28px, 8vh, 80px); z-index: 2; display: none; }
+.anim .hero-end { display: block; opacity: 0; }
+.hero-end p { font: 300 clamp(28px, 3.8vw, 56px)/1.1 var(--display); max-width: 17ch; letter-spacing: -0.02em; color: var(--ink); }
+.hero-end .eyebrow { display: block; margin-bottom: 14px; color: var(--group); }
+.pre #hTB, .pre #hBB, .pre #hStripes, .pre #hIcons { opacity: 0; }
+@media (max-width: 760px) {
+  .hero-layout { justify-content: center; }
+  .hero-slot { flex: none; aspect-ratio: 594.55 / 474; order: 1; }
+  .hero-foot { display: contents; }
+  .hero-meta { order: 0; padding: 0 var(--gut-r) 16px var(--gut); }
+  .hero-meta .divlist { display: flex; }
+  .hero-title { order: 2; padding: 16px var(--gut-r) 0 var(--gut); justify-items: end; text-align: right; }
+  .divlist { gap: 16px; }
+  .ph-cap { display: none; }
+}
+
+/* ---------- ribbons (identity) ---------- */
+.band { position: relative; overflow: hidden; color: var(--on); }
+.band.group { background: var(--group); }
+.band.agency { background: var(--agency); }
+.band.interlink { background: var(--interlink); }
+.band.logistics { background: var(--logistics); }
+.rib-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+
+.chapter { min-height: 120vh; min-height: 120svh; display: grid; align-content: end; }
+.chapter .chap-text { position: relative; padding-block: 0 clamp(48px, 9vh, 96px); display: grid; gap: 18px; }
+.chapter h2 { font: 300 clamp(30px, 4.6vw, 66px)/1.08 var(--display); max-width: 20ch; letter-spacing: -0.025em; }
+.chapter .eyebrow { opacity: .85; }
+.chap-mark { position: absolute; top: calc(58px + env(safe-area-inset-top, 0px) + 28px); right: var(--gut-r); display: grid; justify-items: center; gap: 9px; text-align: center; z-index: 1; }
+.chap-mark .mark { height: clamp(62px, 8vw, 104px); color: var(--on); }
+.chap-mark b { font: 600 clamp(14px, 1.4vw, 19px)/1 var(--display); letter-spacing: .26em; }
+.chap-mark span { font: 400 10.5px/1.45 var(--display); letter-spacing: .32em; text-transform: uppercase; }
+
+.intro { min-height: 130vh; min-height: 130svh; display: grid; align-content: end; }
+.intro .chap-text { padding-block: 0 clamp(56px, 10vh, 110px); display: grid; gap: clamp(22px, 3vw, 36px); }
+.statement { font: 300 clamp(32px, 4.8vw, 70px)/1.08 var(--display); letter-spacing: -0.025em; max-width: 18ch; }
+.lede { max-width: 46ch; font-size: clamp(16px, 1.4vw, 19px); opacity: .9; }
+
+/* identity showcase */
+.identity { height: 100vh; height: 100svh; position: relative; overflow: hidden; color: var(--on); background: var(--group); }
+.id-bg { position: absolute; inset: 0; background: var(--group); }
+.id-head { position: absolute; top: calc(58px + env(safe-area-inset-top, 0px) + 28px); left: 0; right: 0; }
+.id-head .wrap { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.id-tabs { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; flex-wrap: wrap; }
+.id-tabs li { font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 9px 13px; border-radius: 999px; color: color-mix(in srgb, var(--on) 70%, transparent); transition: background .4s, color .4s; }
+.id-tabs li.on { background: color-mix(in srgb, var(--on) 18%, transparent); color: var(--on); }
+.id-foot { position: absolute; left: 0; right: 0; bottom: clamp(40px, 9vh, 96px); }
+.id-items { display: grid; }
+.id-item { grid-area: 1 / 1; display: grid; gap: 12px; }
+.id-item h2 { font: 300 clamp(36px, 6vw, 92px)/1 var(--display); letter-spacing: -0.035em; }
+.id-item p { font-size: clamp(16px, 1.5vw, 20px); opacity: .9; max-width: 40ch; }
+.anim .id-item:not(:first-child) { opacity: 0; }
+
+/* ---------- services ---------- */
+.services { padding-top: clamp(80px, 12vw, 160px); background: var(--paper); }
+.services .wrap { display: grid; gap: 40px; }
+.svc-list { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--line); }
+.svc-list li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: clamp(14px, 2.4vw, 28px); padding-block: clamp(18px, 2.6vw, 30px); border-bottom: 1px solid var(--line); font: 300 clamp(22px, 3.4vw, 46px)/1.15 var(--display); letter-spacing: -0.02em; }
+.svc-list li > span:nth-child(2) { min-width: 0; }
+.svc-list .sq { color: var(--group); width: clamp(14px, 1.6vw, 22px); height: clamp(14px, 1.6vw, 22px); }
+.svc-list em { font: 500 11px/1 var(--mono); letter-spacing: .12em; font-style: normal; color: var(--muted); text-transform: uppercase; }
+@media (max-width: 600px) { .svc-list em { display: none; } .svc-list li { grid-template-columns: auto 1fr; } }
+
+/* ---------- images: one rounded frame that opens to full width; colour bands stay straight ---------- */
+.media { padding-top: clamp(60px, 8vw, 120px); }
+.media-frame { position: relative; height: clamp(320px, 50vw, 760px); background: var(--dummy); overflow: hidden; clip-path: inset(0% 5% 0% 5% round 24px); }
+.media-in { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; color: var(--dummy-ink); }
+.media-in svg { width: clamp(44px, 5vw, 68px); height: clamp(44px, 5vw, 68px); }
+.media-in figcaption { font: 500 11.5px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; text-align: center; padding-inline: 16px; }
+.block { padding-block: clamp(100px, 13vw, 180px); color: var(--on); }
+.media + .block, .grid-svc + section .block { margin-top: 0; }
+.block.group { background: var(--group); } .block.agency { background: var(--agency); } .block.interlink { background: var(--interlink); } .block.logistics { background: var(--logistics); }
+.block .wrap { display: grid; gap: 28px; }
+.block h2 { font: 300 clamp(30px, 4.6vw, 66px)/1.1 var(--display); max-width: 19ch; letter-spacing: -0.025em; }
+.block .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px 48px; max-width: 980px; }
+.block .cols p { opacity: .9; font-size: 16px; max-width: 48ch; }
+.block .eyebrow { opacity: .85; }
+.grid-svc, .facility, .services { padding-bottom: clamp(80px, 11vw, 150px); }
+
+/* ---------- figures: grid of tiles ---------- */
+.figs { background: var(--paper); padding-block: clamp(80px, 11vw, 150px); }
+.figs .wrap { display: grid; gap: clamp(32px, 4vw, 56px); }
+.figs-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+.figs-head h2 { font-size: clamp(30px, 4.4vw, 60px); line-height: 1.05; max-width: 14ch; }
+.figs-head p { color: var(--muted); max-width: 36ch; font-size: 15px; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+.tile { position: relative; overflow: hidden; border-radius: 22px; background: var(--mist); color: var(--ink); padding: clamp(20px, 2.2vw, 30px); display: grid; align-content: space-between; gap: 22px; min-height: clamp(220px, 22vw, 300px); }
+.tile.w2 { grid-column: span 2; }
+.tile.c-group { background: var(--group); color: var(--on); } .tile.c-agency { background: var(--agency); color: var(--on); }
+.tile.c-interlink { background: var(--interlink); color: var(--on); } .tile.c-logistics { background: var(--logistics); color: var(--on); }
+.tile .rib-svg { opacity: .9; }
+.tile .who { position: relative; display: flex; align-items: center; gap: 10px; }
+.tile .who .eyebrow { opacity: .8; }
+.tile strong { position: relative; display: block; font: 300 clamp(48px, 5.6vw, 96px)/0.9 var(--display); letter-spacing: -0.045em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tile strong.long { font-size: clamp(40px, 3.9vw, 66px); }
+.tile strong sup { font-size: .38em; vertical-align: top; margin-left: 4px; font-weight: 400; letter-spacing: 0; }
+.tile p { position: relative; font-size: 15px; max-width: 30ch; opacity: .85; }
+.tile:not([class*="c-"]) strong { color: var(--agency); }
+@media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .tiles { grid-template-columns: minmax(0, 1fr); } .tile.w2 { grid-column: auto; } }
+
+/* ---------- layout variant: contained panels ---------- */
+:root { --side: 0px; --rad: 0px; }
+[data-layout="contained"] { --side: max(12px, calc((100vw - 1440px) / 2)); --rad: 28px; }
+/* panels are drawn with a clip, not margins, so pinned sections keep their geometry */
+[data-layout="contained"] .band, [data-layout="contained"] .block, [data-layout="contained"] .identity {
+  clip-path: inset(6px var(--side) 6px var(--side) round var(--rad)); }
+[data-layout="contained"] .hero { clip-path: inset(calc(58px + env(safe-area-inset-top, 0px) + 8px) var(--side) 0 var(--side) round var(--rad)); }
+[data-layout="contained"] .media { padding-inline: var(--side); }
+[data-layout="contained"] .chap-mark { right: calc(var(--side) + var(--gut-r)); top: calc(58px + env(safe-area-inset-top, 0px) + 40px); }
+[data-layout="contained"] .wrap { max-width: min(1280px, calc(100vw - 2 * var(--side))); }
+
+/* ---------- variant switcher (concept review only) ---------- */
+.variants { position: fixed; z-index: 60; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  display: flex; gap: 10px; align-items: center; padding: 6px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 86%, transparent);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 8px 30px rgba(15, 29, 56, .25); max-width: calc(100vw - 24px); }
+.variants .seg { display: flex; gap: 2px; align-items: center; }
+.variants .lbl { font: 500 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--on) 60%, transparent); padding: 0 6px 0 8px; }
+.variants button { font: 600 12.5px/1 var(--body); color: var(--on); background: transparent; border: 0; border-radius: 999px; padding: 8px 12px; cursor: pointer; }
+.variants button[aria-pressed="true"] { background: var(--on); color: var(--ink); }
+@media (max-width: 560px) { .variants .lbl { display: none; } .variants button { padding: 8px 10px; } }
+
+/* ---------- cards ---------- */
+.grid-svc { padding-top: clamp(80px, 11vw, 150px); background: var(--paper); }
+.grid-svc .wrap { display: grid; gap: clamp(36px, 5vw, 64px); }
+.grid-svc .head { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+.grid-svc .head h2 { font-size: clamp(28px, 3.8vw, 52px); line-height: 1.08; max-width: 16ch; }
+.grid-svc .head .eyebrow { color: var(--ci, var(--c)); }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: clamp(28px, 3.4vw, 48px) clamp(24px, 3vw, 48px); }
+.card { display: grid; gap: 12px; align-content: start; padding-top: 22px; border-top: 1px solid var(--line); min-width: 0; }
+.card .sq { color: var(--c); width: 14px; height: 14px; }
+.card h3 { font-size: clamp(21px, 1.9vw, 26px); line-height: 1.15; }
+.card p { color: var(--muted); font-size: 15.5px; }
+.card .fig { font: 500 12px/1.3 var(--mono); letter-spacing: .06em; color: var(--ci, var(--c)); }
+
+.facility { padding-top: clamp(80px, 11vw, 150px); background: var(--paper); }
+.facility .wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: clamp(36px, 6vw, 96px); align-items: start; }
+.facility .txt { display: grid; gap: 18px; color: var(--muted); max-width: 52ch; }
+.facility .txt h2 { color: var(--ink); font: 400 clamp(28px, 3.6vw, 48px)/1.12 var(--display); }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.checks li { display: flex; align-items: center; gap: 16px; font-size: 16px; }
+.checks .sq { color: var(--group); width: 16px; height: 16px; }
+
+/* ---------- contact ---------- */
+.contact { padding-block: clamp(150px, 24vw, 320px) clamp(48px, 7vw, 80px); }
+.contact .wrap { position: relative; display: grid; gap: clamp(48px, 8vw, 110px); }
+.contact h2 { font: 300 clamp(48px, 9vw, 150px)/0.95 var(--display); letter-spacing: -0.045em; max-width: 12ch; }
+.contact-row { display: flex; justify-content: space-between; align-items: end; gap: 40px; flex-wrap: wrap; }
+.contacts { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; font-size: clamp(15px, 1.4vw, 18px); }
+.contacts li { display: flex; align-items: center; gap: 16px; }
+.contacts .sq { width: 18px; height: 18px; color: var(--on); }
+.contacts a { text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--on) 40%, transparent); }
+.copy { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--on); background: color-mix(in srgb, var(--on) 14%, transparent); border: 0; border-radius: 999px; padding: 7px 11px; cursor: pointer; }
+.copy:hover { background: color-mix(in srgb, var(--on) 26%, transparent); }
+.marks { display: flex; gap: clamp(20px, 3vw, 36px); align-items: end; }
+.marks div { display: grid; justify-items: center; gap: 8px; font: 600 11px/1.25 var(--display); letter-spacing: .2em; text-align: center; }
+.marks div span { font-weight: 400; font-size: 8.5px; letter-spacing: .24em; }
+.marks .mark { height: 46px; color: var(--on); }
+.foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid color-mix(in srgb, var(--on) 22%, transparent); font-size: 13px; opacity: .8; }
+</style>
+</head>
+<body>
+<script>(function () { var h = (location.hash || '').slice(1), d = document.documentElement;
+  d.dataset.layout = /contained/.test(h) ? 'contained' : 'full'; })();</script>
+<script>document.documentElement.classList.add('pre'); setTimeout(function () { document.documentElement.classList.remove('pre'); }, 4000);</script>
+
+<svg class="sprite" aria-hidden="true">
+  <symbol id="imgIcon" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><rect x="2.5" y="4" width="19" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M3 17.5l5.2-5 3.6 3.4 3.2-3 5.5 5.1"/></g></symbol>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#hero" aria-label="Aries Group, back to top"><span class="mark"></span><b>ARIES <span>GROUP</span></b></a>
+    <nav aria-label="Sections">
+      <ul>
+        <li><a href="#agency" data-nav="agency">Shipping Agency</a></li>
+        <li><a href="#interlink" data-nav="interlink">Interlink</a></li>
+        <li><a href="#logistics" data-nav="logistics">Logistics</a></li>
+        <li><a class="cta" href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- HERO: brochure cover band with three image placeholders (road, sea, rail) -->
+<section class="hero" id="hero" data-accent="group">
+  <svg class="hero-svg" id="heroSvg" viewBox="-300 150 1194 750" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><clipPath id="hRegion"><path id="hRegionPath" d="M0 0Z"/></clipPath></defs>
+    <g clip-path="url(#hRegion)">
+      <g id="hZoom">
+        <g id="hStripes" transform="rotate(20.7552)">
+          <rect class="s-road" id="sRoad" x="0" y="0" width="0" height="0"/>
+          <rect class="s-ship" id="sShip" x="0" y="0" width="0" height="0"/>
+          <rect class="s-rail" id="sRail" x="0" y="0" width="0" height="0"/>
+        </g>
+        <g id="hIcons">
+          <g class="ph-ico" transform="translate(480 360)"><use href="#imgIcon" x="-13" y="-17" width="26" height="26"/><text class="ph-cap" text-anchor="middle" y="20">Image · Road</text></g>
+          <g class="ph-ico" transform="translate(205 425)"><use href="#imgIcon" x="-13" y="-17" width="26" height="26"/><text class="ph-cap" text-anchor="middle" y="20">Image · Sea</text></g>
+          <g class="ph-ico" transform="translate(84 548)"><use href="#imgIcon" x="-13" y="-17" width="26" height="26"/><text class="ph-cap" text-anchor="middle" y="20">Image · Rail</text></g>
+        </g>
+      </g>
+    </g>
+    <path class="hband" id="hTB" d="M0 0Z"/>
+    <path class="hband" id="hBB" d="M0 0Z"/>
+  </svg>
+
+  <div class="hero-layout">
+    <div class="hero-slot" id="heroSlot"></div>
+    <div class="hero-foot wrap">
+      <div class="hero-meta">
+        <span class="eyebrow">Est. 2003 · Constanța, Romania</span>
+        <ul class="divlist" aria-label="Group companies">
+          <li><span class="mark"></span>ARIES<span>SHIPPING<br>AGENCY</span></li>
+          <li><span class="mark"></span>ARIES<span>INTERLINK</span></li>
+          <li><span class="mark"></span>ARIES<span>LOGISTICS</span></li>
+        </ul>
+      </div>
+      <div class="hero-title">
+        <small>aries-group.ro</small>
+        <h1 id="heroH1">Where possibilities arise</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-end"><div class="wrap"><span class="eyebrow">Sea · River · Rail · Road</span><p>One partner across the entire transport chain.</p></div></div>
+</section>
+
+<!-- GROUP: spread p3–p4 -->
+<section class="band group intro" id="group" data-accent="group">
+  <svg class="rib-svg" data-rib="group" aria-hidden="true"></svg>
+  <div class="chap-mark"><span class="mark" role="img" aria-label="Aries Group mark"></span><b>ARIES</b><span>Group</span></div>
+  <div class="wrap chap-text">
+    <span class="eyebrow">Aries Group · 44.17° N, 28.65° E</span>
+    <h2 class="statement" data-scrub>Integrated maritime and logistics solutions covering the entire transport chain.</h2>
+    <p class="lede" data-fade>Established in 2003, Aries Group is among Romania’s leading transport and logistics providers, headquartered in Constanța and operating across the Black Sea and Danube region.</p>
+  </div>
+</section>
+
+<!-- SERVICES + arc-cut placeholder (p5) -->
+<section class="services" data-accent="group" aria-labelledby="svc-h">
+  <div class="wrap">
+    <span class="eyebrow" id="svc-h" style="color:var(--group)">What we do</span>
+    <ul class="svc-list" data-list>
+      <li><span class="sq"></span><span>Multimodal transport, stevedoring and warehousing</span><em>Logistics</em></li>
+      <li><span class="sq"></span><span>Port agency and all related services</span><em>Shipping Agency</em></li>
+      <li><span class="sq"></span><span>Freight forwarding and full-service logistics</span><em>Logistics</em></li>
+      <li><span class="sq"></span><span>Cargo chartering and brokerage</span><em>Shipping Agency</em></li>
+    </ul>
+  </div>
+  <figure class="media"><div class="media-frame"><div class="media-in"><svg aria-hidden="true"><use href="#imgIcon"/></svg><figcaption>Image placeholder · Container terminal at night, aerial</figcaption></div></div></figure>
+</section>
+
+<!-- PARTNER: blue peak block (p6) -->
+<section data-accent="group" aria-labelledby="partner-h">
+  <div class="block group">
+    <div class="wrap">
+      <h2 id="partner-h" data-split>The partner of choice when you need a ship agent, liner agent, shipbroker, rail freight operator or logistics provider in Romania.</h2>
+      <div class="cols" data-fade>
+        <p>We integrate maritime, rail and road transport capabilities to create flexible supply chain solutions tailored to the specific needs of each customer.</p>
+        <p>With specialized divisions, each focused on a specific area of expertise, we reduce operational friction and give our customers greater predictability and operational control, regardless of project complexity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IDENTITY: one ribbon pair moving through the four spreads -->
+<section class="identity" id="identity" data-accent="group" aria-labelledby="id-h">
+  <div class="id-bg"></div>
+  <svg class="rib-svg" data-rib="identity" aria-hidden="true"></svg>
+  <div class="id-head"><div class="wrap">
+    <span class="eyebrow" id="id-h">Four companies, one line</span>
+    <ul class="id-tabs" aria-hidden="true"><li class="on">Group</li><li>Shipping Agency</li><li>Interlink</li><li>Logistics</li></ul>
+  </div></div>
+  <div class="id-foot"><div class="wrap id-items">
+    <div class="id-item"><h2>Aries Group</h2><p>Integrated maritime and logistics solutions, headquartered in Constanța.</p></div>
+    <div class="id-item"><h2>Shipping Agency</h2><p>Comprehensive agency services in all Romanian Black Sea and Danube ports.</p></div>
+    <div class="id-item"><h2>Interlink</h2><p>Rail transport and operations for grains, steel products and fertilizers.</p></div>
+    <div class="id-item"><h2>Logistics</h2><p>Bulk and break-bulk cargo, from stevedoring to door-to-door delivery.</p></div>
+  </div></div>
+</section>
+
+<!-- FIGURES -->
+<section class="figs" id="figs" data-accent="group" aria-labelledby="figs-h">
+  <div class="wrap">
+    <div class="figs-head">
+      <h2 id="figs-h" data-split>The group in figures</h2>
+      <p>Annual volumes and market shares across the three companies of Aries Group.</p>
+    </div>
+    <div class="tiles" data-tiles>
+      <article class="tile w2 c-group"><svg class="rib-svg" data-rib="t-group" aria-hidden="true"></svg><div class="who"><span class="sq"></span><span class="eyebrow">Aries Group</span></div><strong>2003</strong><p>Founded in Constanța, Romania’s largest port city.</p></article>
+      <article class="tile c-agency"><div class="who"><span class="sq"></span><span class="eyebrow">Shipping Agency</span></div><strong>600<sup>+</sup></strong><p>Maritime port calls every year.</p></article>
+      <article class="tile c-agency"><div class="who"><span class="sq"></span><span class="eyebrow">Shipping Agency</span></div><strong>800<sup>+</sup></strong><p>Inland waterway port calls every year.</p></article>
+      <article class="tile"><div class="who"><span class="sq" style="color:var(--agency)"></span><span class="eyebrow">Fertilizers</span></div><strong>50<sup>%+</sup></strong><p>Of fertilizer traffic through Romanian ports.</p></article>
+      <article class="tile"><div class="who"><span class="sq" style="color:var(--agency)"></span><span class="eyebrow">Agri commodities</span></div><strong>25<sup>%</sup></strong><p>Of agricultural products exported and imported via Romanian ports.</p></article>
+      <article class="tile"><div class="who"><span class="sq" style="color:var(--agency)"></span><span class="eyebrow">Tankers</span></div><strong>20<sup>%</sup></strong><p>Of tanker traffic in Romanian ports.</p></article>
+      <article class="tile"><div class="who"><span class="sq" style="color:var(--interlink)"></span><span class="eyebrow">Grain facility</span></div><strong class="long" style="color:var(--interlink)">1,500<sup>t/day</sup></strong><p>Stuffing capacity, or 60 × 20′ containers a day.</p></article>
+      <article class="tile w2 c-interlink"><svg class="rib-svg" data-rib="t-interlink" aria-hidden="true"></svg><div class="who"><span class="sq"></span><span class="eyebrow">Interlink · Rail</span></div><strong>800,000<sup>t</sup></strong><p>Bulk grain moved by rail each year.</p></article>
+      <article class="tile w2 c-logistics"><svg class="rib-svg" data-rib="t-logistics" aria-hidden="true"></svg><div class="who"><span class="sq"></span><span class="eyebrow">Logistics</span></div><strong>300,000<sup>t</sup></strong><p>Bulk, general, unit and project cargo managed each year.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SHIPPING AGENCY (spread p7–p8) ================= -->
+<section class="band agency chapter" id="agency" data-accent="agency">
+  <svg class="rib-svg" data-rib="agency" aria-hidden="true"></svg>
+  <div class="chap-mark"><span class="mark" role="img" aria-label="Aries Shipping Agency mark"></span><b>ARIES</b><span>Shipping<br>Agency</span></div>
+  <div class="wrap chap-text">
+    <span class="eyebrow">Aries Shipping Agency</span>
+    <h2 data-split>Maritime and river agency providing comprehensive agency services in all Romanian Black Sea and Danube ports.</h2>
+  </div>
+</section>
+
+<section class="grid-svc" data-accent="agency" style="--c:var(--agency);--ci:var(--agency-ink)" aria-label="Shipping Agency services">
+  <div class="wrap">
+    <div class="head"><h2 data-split>Six agency desks, one port team.</h2><span class="eyebrow">Black Sea · Danube</span></div>
+    <div class="cards" data-cards>
+      <article class="card"><span class="sq"></span><span class="fig">25% of Romanian agri trade</span><h3>Agricultural Commodities Agency</h3><p>We handle ships which load or discharge 25% of all agricultural products exported and imported via Romanian ports, including grain, oil seeds, meals, edible oils and sugar.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Tramp &amp; break-bulk liner</span><h3>Agency for Steel Products and General Cargo</h3><p>Tramp and break-bulk liner vessels, with parceling services between the Black Sea and North/Central America, Middle East, Indian Subcontinent and Far East, plus cargo supervision, port captain and customs services.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">20% of tanker traffic</span><h3>Tanker Agency</h3><p>Crude oil, petroleum products and liquid chemicals, on behalf of Romania’s largest petroleum company and other major traders.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Passenger · naval · auxiliary</span><h3>Agency for Passenger and Naval Vessels</h3><p>Intra-group expertise in ship agency, bunkering, logistics, procurement, storage, chandling, supply and transport to meet the requirements of shipowners and operators.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">50%+ of fertilizer traffic</span><h3>Fertilizers Agency</h3><p>Imports, exports and transit cargoes, on behalf of Romania’s largest fertilizer producer and major local and international traders.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Vessels · barges · pushers</span><h3>River Ships Agency</h3><p>Channel transit formalities, pilotage and towage coordination, customs transit procedures and brokerage for cargo transported via inland waterways.</p></article>
+    </div>
+  </div>
+  <figure class="media"><div class="media-frame"><div class="media-in"><svg aria-hidden="true"><use href="#imgIcon"/></svg><figcaption>Image placeholder · Vessel loading under a gantry crane</figcaption></div></div></figure>
+</section>
+
+<section data-accent="agency" aria-labelledby="ag-stat">
+  <div class="block agency">
+    <div class="wrap">
+      <h2 id="ag-stat">Handling over <span>600</span> maritime port calls and over <span>800</span> inland waterway port calls annually.</h2>
+      <div class="cols" data-fade>
+        <p>Our maritime division handles a wide variety of vessel types and cargoes: agricultural commodities, fertilizers, petroleum and liquid products, steel products, project cargo, Ro-Ro vessels, cruise ships and military vessels.</p>
+        <p>Beyond traditional ship agency, we provide cargo operation supervision, port captain services, customs formalities and operational consultancy, to the highest standards of efficiency and compliance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INTERLINK (spread p11–p12) ================= -->
+<section class="band interlink chapter" id="interlink" data-accent="interlink">
+  <svg class="rib-svg" data-rib="interlink" aria-hidden="true"></svg>
+  <div class="chap-mark"><span class="mark" role="img" aria-label="Aries Interlink mark"></span><b>ARIES</b><span>Interlink</span></div>
+  <div class="wrap chap-text">
+    <span class="eyebrow">Aries Interlink</span>
+    <h2 data-split>Supply chain support across Romania, with expertise in rail transport for grains, steel products and fertilizers.</h2>
+  </div>
+</section>
+
+<section class="grid-svc" data-accent="interlink" style="--c:var(--interlink);--ci:var(--interlink-ink)" aria-label="Interlink services">
+  <div class="wrap">
+    <div class="head"><h2 data-split>Rail, in sync with the ship.</h2><span class="eyebrow">Inland loading points → ports</span></div>
+    <div class="cards" data-cards>
+      <article class="card"><span class="sq"></span><span class="fig">Grains · steel · fertilizers</span><h3>Rail Freight</h3><p>Specialized rail transport across Romania, connecting inland loading points with ports and other destinations.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Capacity per shipment</span><h3>Wagon Capacity Management</h3><p>We secure wagon availability so cargo reaches terminal operations and vessel loading on schedule.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Loading → unloading</span><h3>Rail Operations Coordination</h3><p>Loading, dispatch, arrival and unloading, with continuous operational follow-up at every stage.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Terminal &amp; vessel windows</span><h3>Train Schedule Optimization</h3><p>Train movements planned around terminal availability and vessel loading schedules.</p></article>
+    </div>
+  </div>
+  <figure class="media"><div class="media-frame"><div class="media-in"><svg aria-hidden="true"><use href="#imgIcon"/></svg><figcaption>Image placeholder · Train in motion</figcaption></div></div></figure>
+</section>
+
+<section data-accent="interlink" aria-labelledby="in-stat">
+  <div class="block interlink">
+    <div class="wrap">
+      <h2 id="in-stat">Managing annual rail transport volumes of around <span>800,000</span> tons of bulk grain.</h2>
+      <div class="cols" data-fade>
+        <p>Aries Interlink coordinates end-to-end rail operations, securing wagon capacity, planning train movements and keeping clients, railway operators, infrastructure managers and loading points in constant contact.</p>
+        <p>During the grain harvest, limited rail capacity and tight vessel loading schedules call for precise coordination and fast decisions. We keep cargo moving, minimize delays and support export commitments.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="facility" data-accent="interlink" aria-labelledby="fac-h">
+  <div class="wrap">
+    <div class="txt">
+      <span class="eyebrow" style="color:var(--interlink-ink)">Grain Containerization Facility</span>
+      <h2 id="fac-h" data-split>A dedicated bulk grain facility inside the Black Sea’s largest container terminal, DP World Constanța.</h2>
+      <p data-fade>Handling annual bulk grain volumes that reach 100,000 tons. Grain goes straight into containers from ships, barges, trucks or trains, with a stuffing capacity of 1,500 tons, or 60 × 20′ containers, per day. The facility sits in the port’s free zone, so every export and transit service is in one place.</p>
+    </div>
+    <ul class="checks" data-list>
+      <li><span class="sq"></span>Cargo Handling &amp; Stuffing</li>
+      <li><span class="sq"></span>Container Handling &amp; Preparation</li>
+      <li><span class="sq"></span>Customs Formalities for Export &amp; Transit</li>
+      <li><span class="sq"></span>Cargo Fumigation</li>
+      <li><span class="sq"></span>Phytosanitary, Veterinary &amp; Origin Certificates</li>
+      <li><span class="sq"></span>Container Sea Freight</li>
+      <li><span class="sq"></span>Cargo Storage within the Bonded Area</li>
+    </ul>
+  </div>
+  <figure class="media"><div class="media-frame"><div class="media-in"><svg aria-hidden="true"><use href="#imgIcon"/></svg><figcaption>Image placeholder · Rail freight yard</figcaption></div></div></figure>
+</section>
+
+<!-- ================= LOGISTICS (spread p17–p18) ================= -->
+<section class="band logistics chapter" id="logistics" data-accent="logistics">
+  <svg class="rib-svg" data-rib="logistics" aria-hidden="true"></svg>
+  <div class="chap-mark"><span class="mark" role="img" aria-label="Aries Logistics mark"></span><b>ARIES</b><span>Logistics</span></div>
+  <div class="wrap chap-text">
+    <span class="eyebrow">Aries Logistics</span>
+    <h2 data-split>Bulk and break-bulk logistics delivering stevedoring, inland transport, customs brokerage, warehousing and door-to-door delivery.</h2>
+  </div>
+</section>
+
+<section class="grid-svc" data-accent="logistics" style="--c:var(--logistics);--ci:var(--logistics-ink)" aria-label="Logistics services">
+  <div class="wrap">
+    <div class="head"><h2 data-split>From the quay to the hinterland.</h2><span class="eyebrow">Port · road · river · storage</span></div>
+    <div class="cards" data-cards>
+      <article class="card"><span class="sq"></span><span class="fig">Bulk · general · project</span><h3>Cargo Handling</h3><p>Complete cargo handling across Romanian ports for bulk, general, unitized and project cargo, with a strong focus on speed and efficiency.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Hinterland ↔ ports</span><h3>Road Transport &amp; Door-to-Door</h3><p>Collection and delivery between the hinterland and Romanian ports: steel products, general cargo, grains and project cargo.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Bonded &amp; free circulation</span><h3>Warehousing</h3><p>Short and long-term storage in port and inland, tailored to the requirements of each project.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Constanța → Central Europe</span><h3>Danube Transport</h3><p>Barge transport along the Danube, with transshipment between seagoing vessels and barges and intermodal options along the corridor.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Conventional &amp; containers</span><h3>Freight Forwarding</h3><p>Forwarding and logistics solutions for conventional and containerized cargo, built around each shipment.</p></article>
+      <article class="card"><span class="sq"></span><span class="fig">Faster clearance</span><h3>Customs Brokerage</h3><p>A specialized customs team manages clearance procedures, cutting processing time and keeping the process transparent.</p></article>
+    </div>
+  </div>
+  <figure class="media"><div class="media-frame"><div class="media-in"><svg aria-hidden="true"><use href="#imgIcon"/></svg><figcaption>Image placeholder · Truck on a bridge at sunset</figcaption></div></div></figure>
+</section>
+
+<section data-accent="logistics" aria-labelledby="lo-stat">
+  <div class="block logistics">
+    <div class="wrap">
+      <h2 id="lo-stat">Managing annual cargo volumes reaching <span>300,000</span> tons.</h2>
+      <div class="cols" data-fade>
+        <p>Aries Logistics manages cargo flows across Romanian ports and the hinterland, connecting port operations with transport, storage and customs support.</p>
+        <p>We handle bulk, general, unit and project cargo, with a complete range of logistics capabilities under one roof.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT (back cover) -->
+<section class="band group contact" id="contact" data-accent="group" aria-labelledby="ct-h">
+  <svg class="rib-svg" data-rib="contact" aria-hidden="true"></svg>
+  <div class="wrap">
+    <h2 id="ct-h" data-split>Where possibilities arise</h2>
+    <div class="contact-row">
+      <ul class="contacts" data-list>
+        <li><span class="sq"></span><span>+40 241 550 871</span></li>
+        <li><span class="sq"></span><span>+40 241 550 898 (Fax)</span></li>
+        <li><span class="sq"></span><a href="mailto:office@aries-group.ro" id="mail">office@aries-group.ro</a><button class="copy" type="button" id="copyMail">Copy</button></li>
+        <li><span class="sq"></span><span>175 Mamaia Blvd., 900565 Constanța, Romania</span></li>
+      </ul>
+      <div class="marks">
+        <div><span class="mark"></span>ARIES<span>SHIPPING<br>AGENCY</span></div>
+        <div><span class="mark"></span>ARIES<span>INTERLINK</span></div>
+        <div><span class="mark"></span>ARIES<span>LOGISTICS</span></div>
+      </div>
+    </div>
+    <div class="foot"><span>© Aries Group · aries-group.ro</span><span>Concept site based on brochure draft 2 · images are placeholders</span></div>
+  </div>
+</section>
+
+</main>
+
+<div class="variants" role="group" aria-label="Concept variants">
+  <div class="seg"><span class="lbl">Layout</span><button type="button" data-v="layout" data-val="full">Full width</button><button type="button" data-v="layout" data-val="contained">Contained</button></div>
+</div>
+
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+// runs after the deferred libraries; parsing and first paint are never blocked by them
+document.addEventListener('DOMContentLoaded', () => {
+  const $ = (s, c = document) => c.querySelector(s);
+  const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+  const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+  const f1 = v => (Math.round(v * 10) / 10).toString();
+
+  // copy email
+  const copyBtn = $('#copyMail');
+  copyBtn.addEventListener('click', () => {
+    const done = () => { copyBtn.textContent = 'Copied'; setTimeout(() => copyBtn.textContent = 'Copy', 1600); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents($('#mail')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    try { navigator.clipboard.writeText('office@aries-group.ro').then(done, fallback); } catch (e) { fallback(); }
+  });
+
+  // layout switcher: the choice lives in the link (#contained) so it can be shared
+  const root = document.documentElement;
+  $$('.variants button').forEach(b => {
+    b.setAttribute('aria-pressed', String(root.dataset[b.dataset.v] === b.dataset.val));
+    b.addEventListener('click', () => {
+      const tok = b.dataset.val === 'contained' ? 'contained' : '';
+      history.replaceState(null, '', tok ? '#' + tok : location.pathname + location.search);
+      location.reload();
+    });
+  });
+
+  /* =====================================================================
+     SHAPE DATA — sampled from the brochure PDF vectors (pt units, A4 page width 594.55)
+     Each shape is y(x) on a shared grid; ribbons have a top (t) and bottom (b) edge.
+     ===================================================================== */
+  const DATA = {"w":1190.55,"spreads":{"group":{"lo":{"x":[0.0,9.9,10.5,18.6,20.4,21.6,28.8,31.6,33.1,39.4,39.5,45.2,50.6,51.8,57.7,60.3,62.3,66.4,73.8,74.6,79.8,83.1,89.1,96.2,97.6,103.4,105.3,107.7,113.2,118.1,119.4,128.3,128.7,129.0,138.7,144.0,145.3,154.3,154.8,156.8,164.8,165.7,168.5,175.5,180.6,188.4,192.1,192.9,200.1,203.5,205.6,212.0,218.6,224.1,227.6,231.9,241.6,244.5,245.9,253.0,256.2,264.0,266.7,267.9,278.2,282.0,282.6,292.1,294.4,299.9,306.0,309.3,317.6,319.9,321.2,333.9,335.1,336.1,345.9,348.1,352.4,357.7,363.1,369.4,369.6,375.1,386.6,390.3,399.6,400.4,403.3,418.0,419.7,419.9,427.2,429.3,436.2,445.5,448.6,452.3,454.7,458.2,468.1,473.0,477.3,482.1,483.7,487.0,499.0,500.2,505.8,514.1,516.0,518.2,528.8,534.1,536.0,543.2,543.5,544.9,557.4,562.1,562.6,571.2,580.0,580.5,584.7,588.7,589.7,597.8,605.9,607.4,610.6,614.4,616.8,623.1,631.2,634.6,635.1,639.5,643.5,655.9,658.1,660.9,664.0,669.0,669.6,680.0,686.6,688.0,689.6,695.1,699.2,703.4,711.2,711.7,717.2,719.9,726.2,733.6,736.0,740.6,744.0,748.1,753.7,755.2,759.6,764.9,767.3,769.1,773.9,775.9,782.2,785.1,789.7,793.6,804.1,1190.5],"t":[-22.5,-14.8,-14.3,-8.3,-7.0,-6.1,-1.1,0.9,1.9,6.1,6.1,9.8,13.2,13.9,17.5,19.1,20.2,22.6,26.7,27.1,29.9,31.6,34.7,38.3,38.9,41.7,42.6,43.7,46.1,48.3,48.8,52.5,52.7,52.8,56.6,58.6,59.1,62.2,62.4,63.1,65.8,66.1,67.0,69.1,70.6,72.8,73.8,74.0,75.8,76.7,77.2,78.7,80.1,81.3,82.0,82.8,84.5,85.0,85.2,86.4,86.8,87.9,88.2,88.4,89.5,89.9,90.0,90.8,91.0,91.4,91.8,92.0,92.3,92.4,92.5,92.7,92.7,92.7,92.7,92.7,92.6,92.5,92.4,92.1,92.1,91.8,91.1,90.8,90.0,90.0,89.7,88.1,87.9,87.9,87.0,86.6,85.7,84.2,83.7,83.1,82.7,82.1,80.2,79.2,78.3,77.3,76.9,76.1,73.3,73.0,71.6,69.4,68.9,68.3,65.2,63.6,63.1,60.8,60.7,60.3,56.1,54.5,54.3,51.2,47.9,47.7,46.0,44.5,44.1,40.7,37.3,36.6,35.2,33.5,32.4,29.6,25.7,24.0,23.7,21.6,19.6,13.1,11.9,10.3,8.6,5.8,5.5,-0.5,-4.5,-5.3,-6.4,-9.8,-12.4,-15.2,-20.3,-20.7,-24.4,-26.3,-30.8,-36.2,-38.1,-41.5,-44.2,-47.4,-52.0,-53.1,-56.8,-61.3,-63.3,-64.9,-69.1,-70.9,-76.7,-79.4,-83.7,-87.4,-83.3,66.1],"b":[37.1,43.9,44.3,49.6,50.7,51.4,55.9,57.6,58.5,62.2,62.2,65.5,68.5,69.2,72.4,73.7,74.8,76.9,80.5,81.0,83.5,85.0,87.8,91.0,91.6,94.0,94.8,95.8,98.0,100.0,100.5,103.8,104.0,104.1,107.5,109.3,109.8,112.7,112.8,113.4,115.9,116.1,116.9,118.9,120.3,122.3,123.2,123.4,125.1,125.8,126.3,127.7,129.0,130.1,130.7,131.5,133.1,133.6,133.8,134.8,135.2,136.2,136.5,136.7,137.8,138.1,138.2,139.0,139.1,139.5,139.9,140.0,140.4,140.4,140.5,140.7,140.7,140.8,140.7,140.7,140.7,140.5,140.3,140.0,140.0,139.7,139.0,138.7,138.0,138.0,137.7,136.2,136.0,136.0,135.1,134.9,133.9,132.6,132.2,131.5,131.2,130.6,128.8,127.9,127.1,126.1,125.8,125.1,122.4,122.2,120.8,118.8,118.3,117.8,114.9,113.5,112.9,110.8,110.7,110.3,106.4,104.9,104.8,101.9,98.8,98.6,97.1,95.7,95.3,92.2,89.1,88.5,87.1,85.6,84.6,81.9,78.4,76.8,76.6,74.6,72.8,66.8,65.7,64.3,62.7,60.2,59.9,54.4,50.8,50.0,49.1,46.0,43.6,41.2,36.5,36.2,32.8,31.1,27.0,22.2,20.6,17.5,15.2,12.3,8.2,7.2,4.0,0.0,-1.7,-3.2,-6.8,-8.5,-13.4,-15.9,-19.6,-23.0,-32.1,117.3]},"up":{"x":[0.0,9.9,10.5,18.6,20.4,21.6,28.8,31.6,33.1,39.4,39.5,45.2,50.6,51.8,57.7,60.3,62.3,66.4,73.8,74.6,79.8,83.1,89.1,96.2,97.6,103.4,105.3,107.7,113.2,118.1,119.4,128.3,128.7,129.0,138.7,144.0,145.3,154.3,154.8,156.8,164.8,165.7,168.5,175.5,180.6,188.4,192.1,192.9,200.1,203.5,205.6,212.0,218.6,224.1,227.6,231.9,241.6,244.5,245.9,253.0,256.2,264.0,266.7,267.9,278.2,282.0,282.6,292.1,294.4,299.9,306.0,309.3,317.6,319.9,321.2,333.9,335.1,336.1,345.9,348.1,352.4,357.7,363.1,369.4,369.6,375.1,386.6,390.3,399.6,400.4,403.3,418.0,419.7,419.9,427.2,429.3,436.2,445.5,448.6,452.3,454.7,458.2,468.1,473.0,477.3,482.1,483.7,487.0,499.0,500.2,505.8,514.1,516.0,518.2,528.8,534.1,536.0,543.2,543.5,544.9,557.4,562.1,562.6,571.2,580.0,580.5,584.7,588.7,589.7,597.8,605.9,607.4,610.6,614.4,616.8,623.1,631.2,634.6,635.1,639.5,643.5,655.9,658.1,660.9,664.0,669.0,669.6,680.0,686.6,688.0,689.6,695.1,699.2,703.4,711.2,711.7,717.2,719.9,726.2,733.6,736.0,740.6,744.0,748.1,753.7,755.2,759.6,764.9,767.3,769.1,773.9,775.9,782.2,785.1,789.7,793.6,804.1,1190.5],"t":[-87.4,-78.9,-78.4,-71.7,-70.3,-69.4,-63.8,-61.6,-60.5,-55.8,-55.7,-51.6,-47.8,-47.0,-42.9,-41.2,-39.9,-37.2,-32.6,-32.1,-28.9,-26.9,-23.4,-19.4,-18.6,-15.5,-14.4,-13.2,-10.4,-7.9,-7.3,-3.0,-2.8,-2.6,1.7,4.0,4.6,8.3,8.5,9.3,12.4,12.7,13.7,16.3,18.0,20.5,21.7,22.0,24.1,25.1,25.7,27.4,29.1,30.4,31.3,32.2,34.3,34.9,35.2,36.4,36.9,38.3,38.6,38.8,40.2,40.7,40.7,41.6,41.9,42.4,42.8,43.0,43.5,43.5,43.6,43.9,43.9,43.9,43.8,43.8,43.7,43.5,43.3,43.0,43.0,42.6,41.7,41.3,40.3,40.3,39.9,37.9,37.7,37.7,36.4,36.1,34.9,33.1,32.5,31.7,31.2,30.4,28.1,26.9,25.8,24.6,24.2,23.2,19.8,19.5,17.7,15.2,14.5,13.8,10.2,8.3,7.6,5.0,4.9,4.4,-0.5,-2.4,-2.6,-6.1,-10.0,-10.2,-12.0,-13.9,-14.3,-18.0,-21.9,-22.7,-24.2,-26.1,-27.3,-30.5,-34.8,-36.6,-36.9,-39.3,-41.4,-48.5,-49.7,-51.4,-53.2,-56.2,-56.5,-62.9,-67.1,-67.9,-68.9,-72.5,-75.2,-78.0,-83.3,-83.6,-87.4,-89.3,-93.8,-99.2,-101.0,-104.4,-106.9,-110.1,-114.5,-115.6,-119.1,-123.4,-125.4,-126.9,-130.9,-132.7,-138.1,-140.8,-139.0,-137.5,-133.5,13.7],"b":[-22.5,-14.8,-14.3,-8.3,-7.0,-6.1,-1.1,0.9,1.9,6.1,6.1,9.8,13.2,13.9,17.5,19.1,20.2,22.6,26.7,27.1,29.9,31.6,34.7,38.3,38.9,41.7,42.6,43.7,46.1,48.3,48.8,52.5,52.7,52.8,56.6,58.6,59.1,62.2,62.4,63.1,65.8,66.1,67.0,69.1,70.6,72.8,73.8,74.0,75.8,76.7,77.2,78.7,80.1,81.3,82.0,82.8,84.5,85.0,85.2,86.4,86.8,87.9,88.2,88.4,89.5,89.9,90.0,90.8,91.0,91.4,91.8,92.0,92.3,92.4,92.5,92.7,92.7,92.7,92.7,92.7,92.6,92.5,92.4,92.1,92.1,91.8,91.1,90.8,90.0,90.0,89.7,88.1,87.9,87.9,87.0,86.6,85.7,84.2,83.7,83.1,82.7,82.1,80.2,79.2,78.3,77.3,76.9,76.1,73.3,73.0,71.6,69.4,68.9,68.3,65.2,63.6,63.1,60.8,60.7,60.3,56.1,54.5,54.3,51.2,47.9,47.7,46.0,44.5,44.1,40.7,37.3,36.6,35.2,33.5,32.4,29.6,25.7,24.0,23.7,21.6,19.6,13.1,11.9,10.3,8.6,5.8,5.5,-0.5,-4.5,-5.3,-6.4,-9.8,-12.4,-15.2,-20.3,-20.7,-24.4,-26.3,-30.8,-36.2,-38.1,-41.5,-44.2,-47.4,-52.0,-53.1,-56.8,-61.3,-63.3,-64.9,-69.1,-70.9,-76.7,-79.4,-83.7,-87.4,-83.3,66.1]},"gl":{"c":[302.78,339.9,883.58,-240.89],"s":[[0.0,0.89],[0.08,0.73],[0.19,0.57],[0.3,0.42],[0.42,0.31],[0.54,0.21],[0.67,0.15],[0.81,0.11],[1.0,0.1]]},"gu":{"c":[303.56,281.07,880.71,-296.08],"s":[[0.0,0.1],[0.15,0.11],[0.29,0.16],[0.43,0.23],[0.56,0.34],[0.7,0.47],[0.83,0.64],[0.96,0.83],[1.0,0.9]]}},"agency":{"lo":{"x":[0.0,13.6,20.2,22.1,27.2,36.0,36.8,47.6,51.7,52.5,68.0,69.6,73.4,87.3,88.0,88.3,105.6,108.6,109.9,122.1,124.5,131.6,135.6,143.9,153.2,155.8,163.9,167.6,169.2,177.5,182.6,184.4,189.1,198.4,202.7,205.5,210.5,218.0,219.8,223.0,231.8,234.4,236.0,239.0,241.7,249.3,253.0,256.6,260.1,269.2,271.8,274.1,279.4,282.4,288.1,294.9,295.1,295.6,309.0,310.5,315.3,322.8,323.1,326.6,329.8,335.4,337.3,343.5,346.5,347.4,359.2,360.2,361.6,370.7,373.6,378.9,382.0,393.1,393.1,395.7,403.9,411.9,412.0,414.6,425.1,427.7,430.0,435.4,438.0,445.6,447.6,448.0,455.7,462.8,464.6,465.6,472.5,475.4,481.1,482.0,494.8,496.1,497.1,507.6,513.8,514.6,522.9,528.3,532.7,538.0,546.4,552.7,581.6,589.4,610.7,618.5,638.3,639.5,645.9,648.5,654.3,664.0,669.2,669.3,677.7,679.8,684.7,690.6,695.2,696.1,701.5,710.2,711.2,712.7,719.8,724.2,727.7,729.4,735.8,744.2,744.7,747.7,754.3,759.9,762.3,764.5,772.4,780.3,780.4,785.1,796.5,798.2,799.2,811.6,813.3,818.7,825.3,830.7,832.1,837.1,845.8,848.7,849.1,859.9,863.0,867.8,876.3,880.6,881.0,883.2,893.7,897.1,902.3,904.5,914.0,918.0,923.6,932.0,934.9,939.0,945.0,953.1,956.5,966.4,967.2,974.4,978.8,987.9,988.4,1001.8,1009.4,1009.7,1017.4,1023.8,1025.4,1031.2,1038.0,1041.5,1049.7,1052.7,1059.9,1066.3,1074.3,1074.7,1081.6,1091.7,1095.0,1103.3,1109.0,1110.4,1117.8,1125.1,1132.0,1135.5,1144.5,1146.7,1146.9,1162.7,1168.6,1168.7,1171.9,1190.5],"t":[-29.5,-19.0,-14.1,-12.7,-8.9,-2.7,-2.1,5.3,8.1,8.6,18.7,19.7,22.1,30.4,30.9,31.0,40.7,42.4,43.1,49.4,50.6,54.1,56.0,59.8,64.0,65.0,68.4,69.9,70.5,73.7,75.6,76.2,77.9,80.9,82.3,83.2,84.7,86.8,87.2,88.1,90.3,90.9,91.3,91.9,92.5,94.1,94.8,95.4,96.0,97.4,97.8,98.1,98.7,99.1,99.6,100.2,100.2,100.3,101.0,101.0,101.2,101.3,101.3,101.2,101.2,101.1,101.0,100.7,100.5,100.4,99.4,99.3,99.2,98.0,97.6,96.8,96.3,94.2,94.2,93.7,91.9,89.9,89.9,89.2,86.2,85.4,84.7,82.9,82.0,79.3,78.6,78.5,75.5,72.6,71.9,71.4,68.4,67.1,64.5,64.0,57.8,57.1,56.6,51.1,47.7,47.3,42.6,39.5,37.0,33.9,28.8,25.0,7.0,2.1,-11.2,-15.9,-27.7,-28.4,-32.0,-33.5,-36.7,-41.9,-44.7,-44.8,-49.0,-50.0,-52.4,-55.2,-57.3,-57.8,-60.2,-63.9,-64.3,-64.9,-67.7,-69.4,-70.8,-71.4,-73.6,-76.5,-76.6,-77.6,-79.6,-81.2,-81.8,-82.4,-84.5,-86.3,-86.3,-87.4,-89.6,-89.9,-90.1,-92.0,-92.3,-93.0,-93.7,-94.3,-94.4,-94.8,-95.4,-95.6,-95.6,-96.0,-96.0,-96.1,-96.0,-96.0,-96.0,-95.9,-95.4,-95.2,-94.8,-94.7,-93.8,-93.3,-92.7,-91.5,-91.1,-90.4,-89.4,-87.9,-87.2,-85.1,-84.9,-83.3,-82.2,-79.8,-79.6,-75.7,-73.4,-73.2,-70.7,-68.5,-67.9,-65.8,-63.2,-61.8,-58.5,-57.3,-54.3,-51.4,-47.8,-47.6,-44.3,-39.3,-37.6,-33.3,-30.2,-29.5,-25.4,-21.3,-17.2,-15.1,-9.6,-8.2,-8.2,2.0,5.9,6.0,8.2,21.2],"b":[32.8,42.4,46.8,48.1,51.5,57.2,57.7,64.5,67.0,67.5,76.6,77.5,79.7,87.3,87.7,87.8,96.6,98.1,98.7,104.4,105.4,108.6,110.3,113.8,117.5,118.4,121.4,122.8,123.3,126.2,127.8,128.4,129.9,132.6,133.8,134.6,135.9,137.8,138.2,139.0,140.9,141.4,141.8,142.3,142.9,144.2,144.8,145.4,145.9,147.1,147.4,147.7,148.3,148.6,149.0,149.5,149.6,149.6,150.2,150.2,150.4,150.4,150.4,150.4,150.3,150.2,150.1,149.8,149.7,149.6,148.7,148.7,148.5,147.6,147.2,146.5,146.1,144.3,144.3,143.8,142.3,140.6,140.6,139.9,137.4,136.7,136.1,134.5,133.8,131.5,130.9,130.7,128.1,125.6,125.0,124.6,122.0,120.8,118.5,118.1,112.6,112.0,111.6,106.7,103.6,103.2,99.0,96.2,93.8,91.0,86.3,82.6,65.4,60.5,47.2,42.3,30.0,29.3,25.4,23.8,20.3,14.7,11.7,11.6,6.9,5.7,3.0,-0.1,-2.5,-2.9,-5.7,-9.9,-10.4,-11.1,-14.3,-16.2,-17.7,-18.5,-21.1,-24.3,-24.5,-25.6,-27.9,-29.8,-30.5,-31.3,-33.6,-35.7,-35.8,-37.0,-39.6,-39.9,-40.1,-42.4,-42.7,-43.5,-44.3,-45.0,-45.1,-45.6,-46.3,-46.5,-46.5,-46.9,-47.0,-47.1,-47.0,-46.9,-46.9,-46.8,-46.3,-46.1,-45.6,-45.4,-44.4,-43.9,-43.2,-41.9,-41.4,-40.6,-39.5,-37.8,-37.0,-34.6,-34.4,-32.5,-31.3,-28.6,-28.4,-24.1,-21.4,-21.2,-18.4,-15.9,-15.3,-12.9,-10.0,-8.5,-4.8,-3.4,0.0,3.2,7.2,7.5,11.1,16.7,18.5,23.3,26.7,27.5,32.1,36.7,41.2,43.5,49.5,51.1,51.1,62.4,66.7,66.7,69.2,83.5]},"up":{"x":[0.0,13.6,20.2,22.1,27.2,36.0,36.8,47.6,51.7,52.5,68.0,69.6,73.4,87.3,88.0,88.3,105.6,108.6,109.9,122.1,124.5,131.6,135.6,143.9,153.2,155.8,163.9,167.6,169.2,177.5,182.6,184.4,189.1,198.4,202.7,205.5,210.5,218.0,219.8,223.0,231.8,234.4,236.0,239.0,241.7,249.3,253.0,256.6,260.1,269.2,271.8,274.1,279.4,282.4,288.1,294.9,295.1,295.6,309.0,310.5,315.3,322.8,323.1,326.6,329.8,335.4,337.3,343.5,346.5,347.4,359.2,360.2,361.6,370.7,373.6,378.9,382.0,393.1,393.1,395.7,403.9,411.9,412.0,414.6,425.1,427.7,430.0,435.4,438.0,445.6,447.6,448.0,455.7,462.8,464.6,465.6,472.5,475.4,481.1,482.0,494.8,496.1,497.1,507.6,513.8,514.6,522.9,528.3,532.7,538.0,546.4,552.7,581.6,589.4,610.7,618.5,638.3,639.5,645.9,648.5,654.3,664.0,669.2,669.3,677.7,679.8,684.7,690.6,695.2,696.1,701.5,710.2,711.2,712.7,719.8,724.2,727.7,729.4,735.8,744.2,744.7,747.7,754.3,759.9,762.3,764.5,772.4,780.3,780.4,785.1,796.5,798.2,799.2,811.6,813.3,818.7,825.3,830.7,832.1,837.1,845.8,848.7,849.1,859.9,863.0,867.8,876.3,880.6,881.0,883.2,893.7,897.1,902.3,904.5,914.0,918.0,923.6,932.0,934.9,939.0,945.0,953.1,956.5,966.4,967.2,974.4,978.8,987.9,988.4,1001.8,1009.4,1009.7,1017.4,1023.8,1025.4,1031.2,1038.0,1041.5,1049.7,1052.7,1059.9,1066.3,1074.3,1074.7,1081.6,1091.7,1095.0,1103.3,1109.0,1110.4,1117.8,1125.1,1132.0,1135.5,1144.5,1146.7,1146.9,1162.7,1168.6,1168.7,1171.9,1190.5],"t":[-91.6,-79.4,-73.7,-72.0,-67.7,-60.5,-59.8,-51.3,-48.1,-47.5,-36.1,-34.9,-32.3,-22.8,-22.4,-22.2,-11.3,-9.5,-8.8,-1.8,-0.5,3.4,5.4,9.6,14.1,15.2,18.8,20.4,21.1,24.4,26.4,27.1,28.8,32.0,33.4,34.3,35.8,37.9,38.4,39.3,41.4,42.1,42.4,43.1,43.6,45.1,45.8,46.4,46.9,48.2,48.5,48.8,49.3,49.6,50.1,50.5,50.5,50.5,50.9,51.0,50.9,50.8,50.8,50.6,50.5,50.2,50.0,49.5,49.3,49.2,47.7,47.6,47.4,45.9,45.3,44.3,43.7,41.1,41.1,40.4,38.2,35.7,35.7,34.9,31.3,30.4,29.5,27.5,26.5,23.4,22.6,22.3,19.0,15.7,14.9,14.4,11.0,9.6,6.7,6.2,-0.6,-1.3,-1.9,-7.8,-11.4,-11.8,-16.8,-20.0,-22.7,-25.9,-31.1,-35.1,-53.1,-58.0,-71.0,-75.6,-86.9,-87.6,-91.0,-92.4,-95.5,-100.4,-103.0,-103.1,-107.1,-108.1,-110.3,-112.9,-114.9,-115.3,-117.6,-121.0,-121.4,-122.0,-124.5,-126.1,-127.3,-127.9,-130.0,-132.6,-132.7,-133.7,-135.4,-137.0,-137.5,-138.1,-140.0,-141.6,-141.6,-142.6,-144.6,-144.9,-145.1,-146.9,-147.1,-147.7,-148.4,-148.9,-149.0,-149.4,-149.9,-150.0,-150.0,-150.3,-150.4,-150.4,-150.3,-150.2,-150.2,-150.1,-149.6,-149.4,-149.0,-148.9,-148.0,-147.5,-146.9,-145.8,-145.3,-144.7,-143.7,-142.3,-141.6,-139.6,-139.4,-137.8,-136.7,-134.5,-134.3,-130.6,-128.4,-128.3,-125.9,-123.8,-123.2,-121.2,-118.8,-117.5,-114.4,-113.3,-110.4,-107.8,-104.4,-104.2,-101.1,-96.5,-94.9,-90.9,-88.1,-87.4,-83.6,-79.8,-76.0,-74.1,-69.1,-67.8,-67.7,-58.4,-54.8,-54.7,-52.8,-40.9],"b":[-29.5,-19.0,-14.1,-12.7,-8.9,-2.7,-2.1,5.3,8.1,8.6,18.7,19.7,22.1,30.4,30.9,31.0,40.7,42.4,43.1,49.4,50.6,54.1,56.0,59.8,64.0,65.0,68.4,69.9,70.5,73.7,75.6,76.2,77.9,80.9,82.3,83.2,84.7,86.8,87.2,88.1,90.3,90.9,91.3,91.9,92.5,94.1,94.8,95.4,96.0,97.4,97.8,98.1,98.7,99.1,99.6,100.2,100.2,100.3,101.0,101.0,101.2,101.3,101.3,101.2,101.2,101.1,101.0,100.7,100.5,100.4,99.4,99.3,99.2,98.0,97.6,96.8,96.3,94.2,94.2,93.7,91.9,89.9,89.9,89.2,86.2,85.4,84.7,82.9,82.0,79.3,78.6,78.5,75.5,72.6,71.9,71.4,68.4,67.1,64.5,64.0,57.8,57.1,56.6,51.1,47.7,47.3,42.6,39.5,37.0,33.9,28.8,25.0,7.0,2.1,-11.2,-15.9,-27.7,-28.4,-32.0,-33.5,-36.7,-41.9,-44.7,-44.8,-49.0,-50.0,-52.4,-55.2,-57.3,-57.8,-60.2,-63.9,-64.3,-64.9,-67.7,-69.4,-70.8,-71.4,-73.6,-76.5,-76.6,-77.6,-79.6,-81.2,-81.8,-82.4,-84.5,-86.3,-86.3,-87.4,-89.6,-89.9,-90.1,-92.0,-92.3,-93.0,-93.7,-94.3,-94.4,-94.8,-95.4,-95.6,-95.6,-96.0,-96.0,-96.1,-96.0,-96.0,-96.0,-95.9,-95.4,-95.2,-94.8,-94.7,-93.8,-93.3,-92.7,-91.5,-91.1,-90.4,-89.4,-87.9,-87.2,-85.1,-84.9,-83.3,-82.2,-79.8,-79.6,-75.7,-73.4,-73.2,-70.7,-68.5,-67.9,-65.8,-63.2,-61.8,-58.5,-57.3,-54.3,-51.4,-47.8,-47.6,-44.3,-39.3,-37.6,-33.3,-30.2,-29.5,-25.4,-21.3,-17.2,-15.1,-9.6,-8.2,-8.2,2.0,5.9,6.0,8.2,21.2]},"gl":{"c":[0.0,27.14,1190.55,27.14],"s":[[0.0,0.9],[0.09,0.73],[0.19,0.57],[0.3,0.42],[0.42,0.31],[0.54,0.21],[0.67,0.15],[0.81,0.11],[1.0,0.1]]},"gu":{"c":[0.0,-24.58,1190.55,-24.58],"s":[[0.0,0.1],[0.15,0.11],[0.29,0.16],[0.43,0.23],[0.56,0.34],[0.7,0.47],[0.83,0.64],[0.96,0.83],[1.0,0.9]]}},"interlink":{"lo":{"x":[0.0,363.5,365.2,371.0,841.6,842.6,847.3,1190.5],"t":[28.2,-96.2,-96.8,-94.4,98.9,99.3,97.6,-29.1],"b":[80.4,-44.1,-43.4,-41.0,152.0,151.6,149.9,23.3]},"up":{"x":[0.0,363.5,365.2,371.0,841.6,842.6,847.3,1190.5],"t":[-23.7,-149.4,-150.0,-152.0,40.5,40.9,42.8,-81.0],"b":[28.2,-96.2,-96.8,-94.4,98.9,99.3,97.6,-29.1]},"gl":{"c":[0.0,27.58,1190.55,27.58],"s":[[0.0,0.9],[0.09,0.73],[0.19,0.57],[0.3,0.42],[0.42,0.31],[0.54,0.21],[0.67,0.15],[0.81,0.11],[1.0,0.1]]},"gu":{"c":[0.0,-26.33,1190.55,-26.33],"s":[[0.0,0.1],[0.15,0.11],[0.29,0.16],[0.43,0.23],[0.56,0.34],[0.7,0.47],[0.83,0.64],[0.96,0.83],[1.0,0.9]]}},"logistics":{"lo":{"x":[0.0,62.0,124.0,198.5,372.1,372.1,446.5,446.5,521.0,521.0,595.4,595.4,669.8,669.8,744.2,744.2,818.6,818.6,992.2,992.2,1066.6,1066.6,1128.6,1128.6,1190.5],"t":[66.4,53.5,39.9,23.0,-17.3,-17.3,-34.3,-34.3,-50.7,-50.7,-66.4,-66.4,-50.7,-50.7,-34.3,-34.3,-17.3,-17.3,23.0,23.0,39.9,39.9,53.4,53.5,66.4],"b":[115.5,102.5,88.9,72.1,31.8,31.8,14.8,14.8,-1.7,-1.7,-17.3,-17.3,-1.7,-1.7,14.8,14.8,31.8,31.8,72.1,72.1,88.9,89.0,102.5,102.5,115.5]},"up":{"x":[0.0,62.0,124.0,198.5,372.1,372.1,446.5,446.5,521.0,521.0,595.4,595.4,669.8,669.8,744.2,744.2,818.6,818.6,992.2,992.2,1066.6,1066.6,1128.6,1128.6,1190.5],"t":[17.3,4.3,-9.2,-26.1,-66.4,-66.4,-83.4,-83.4,-99.9,-99.9,-115.5,-115.5,-99.9,-99.9,-83.4,-83.4,-66.4,-66.4,-26.1,-26.1,-9.2,-9.2,4.3,4.3,17.3],"b":[66.4,53.5,39.9,23.0,-17.3,-17.3,-34.3,-34.3,-50.7,-50.7,-66.4,-66.4,-50.7,-50.7,-34.3,-34.3,-17.3,-17.3,23.0,23.0,39.9,39.9,53.4,53.5,66.4]},"gl":{"c":[0.0,24.56,1190.55,24.56],"s":[[0.0,0.9],[0.09,0.73],[0.19,0.57],[0.3,0.42],[0.42,0.31],[0.54,0.21],[0.67,0.15],[0.81,0.11],[1.0,0.1]]},"gu":{"c":[0.0,-24.56,1190.55,-24.56],"s":[[0.0,0.1],[0.15,0.11],[0.29,0.16],[0.43,0.23],[0.56,0.34],[0.7,0.47],[0.83,0.64],[0.96,0.83],[1.0,0.9]]}}},"tb":{"x":[0.0,4.8,7.5,10.0,14.5,17.5,20.0,25.0,30.0,32.5,35.0,35.2,42.5,45.0,47.5,50.0,52.5,57.5,60.0,65.0,67.5,74.0,74.5,77.5,82.5,90.0,92.5,97.5,100.0,104.5,113.6,115.0,119.2,120.0,125.0,127.5,130.0,135.0,140.0,145.0,152.5,155.0,162.5,165.0,167.5,170.0,175.0,180.0,185.0,187.1,189.6,190.0,198.1,200.0,202.5,205.0,209.0,215.0,218.6,220.0,225.0,227.5,229.7,230.0,237.5,240.0,242.5,245.0,250.2,251.8,252.5,253.2,257.5,262.5,267.5,271.7,277.5,285.0,290.0,295.0,300.0,300.6,305.0,307.5,315.0,317.5,321.5,325.0,330.0,335.0,337.5,340.5,342.5,345.0,346.1,347.5,352.5,355.0,361.9,362.5,363.0,370.6,372.5,380.7,385.0,387.5,387.5,392.1,396.3,432.5,437.5,465.0,465.8,472.5,480.0,485.0,505.0,517.5,522.5,525.0,527.5,536.9,537.5,565.0,570.0,590.0,594.6],"t":[247.2,251.3,253.6,255.6,259.1,261.4,263.2,266.8,270.2,271.8,273.4,273.6,278.0,279.4,280.9,282.2,283.6,286.2,287.4,289.8,290.9,293.7,293.9,295.2,297.1,299.8,300.6,302.2,302.9,304.2,306.5,306.8,307.7,307.8,308.8,309.2,309.7,310.4,311.0,311.6,312.2,312.4,312.7,312.7,312.8,312.8,312.7,312.5,312.3,312.1,312.0,311.9,311.2,311.0,310.6,310.3,309.8,308.8,308.1,307.9,306.9,306.3,305.8,305.8,304.0,303.3,302.6,302.0,300.4,300.0,299.8,299.5,298.2,296.5,294.7,293.2,290.9,287.9,285.7,283.5,281.1,280.9,278.7,277.5,273.6,272.3,270.1,268.1,265.2,262.3,260.7,258.9,257.6,256.0,255.3,254.4,251.1,249.4,244.6,244.1,243.7,238.2,236.7,230.3,226.7,224.6,224.5,220.5,222.2,235.9,237.9,248.3,248.6,251.2,254.0,256.0,263.6,268.3,270.2,271.2,272.2,275.7,276.0,286.4,288.4,296.0,297.7],"b":[279.6,283.4,285.4,287.3,290.5,292.5,294.2,297.4,300.4,301.9,303.3,303.5,307.3,308.6,309.8,311.0,312.1,314.3,315.4,317.4,318.4,320.8,320.9,322.0,323.7,325.9,326.7,328.0,328.7,329.8,331.8,332.0,332.8,333.0,333.8,334.2,334.5,335.1,335.7,336.1,336.7,336.8,337.1,337.2,337.2,337.3,337.2,337.2,337.0,336.9,336.8,336.7,336.2,336.0,335.8,335.6,335.1,334.4,333.9,333.6,332.8,332.4,332.0,331.9,330.4,329.9,329.3,328.7,327.5,327.1,326.9,326.7,325.5,324.1,322.6,321.2,319.3,316.6,314.7,312.7,310.6,310.3,308.4,307.2,303.7,302.4,300.4,298.6,295.9,293.0,291.6,289.8,288.6,287.0,286.4,285.4,282.2,280.5,275.7,275.3,274.9,269.2,267.8,261.2,257.5,255.3,255.3,251.2,247.2,261.2,263.1,273.8,274.0,276.7,279.6,281.5,289.2,294.1,296.0,296.9,297.9,301.5,301.8,312.4,314.3,322.1,323.8],"tsl":0.8655,"tsr":0.3811,"bsl":0.7971,"bsr":0.3866},"bb":{"x":[0.0,7.5,12.5,14.5,20.0,25.0,27.5,32.5,37.5,40.0,45.0,50.0,55.0,57.5,62.5,70.0,70.5,77.5,80.0,85.0,87.5,92.5,97.5,104.5,107.5,112.5,117.5,122.5,127.5,129.2,130.0,137.5,142.5,150.0,155.0,165.0,175.0,180.0,187.1,187.5,189.6,190.3,192.5,197.5,198.1,208.6,208.6,210.0,217.5,220.0,225.0,227.2,230.0,238.4,240.0,251.8,262.5,265.0,267.5,272.5,280.0,285.0,290.0,297.5,299.7,300.0,305.0,307.5,310.0,320.0,327.5,330.0,337.5,340.5,342.5,345.0,346.1,355.0,357.5,361.9,363.0,364.7,365.0,370.6,377.5,380.7,382.5,387.5,387.5,390.0,392.5,396.3,396.9,397.5,401.6,402.5,430.0,437.5,457.5,527.5,535.0,537.5,542.5,545.0,550.0,594.6],"t":[585.0,590.8,594.4,595.8,599.5,602.6,604.2,607.1,609.9,611.2,613.8,616.2,618.6,619.7,621.8,624.8,624.9,627.5,628.3,629.9,630.7,632.1,633.5,635.2,635.9,636.9,637.9,638.7,639.5,639.7,639.9,640.8,641.3,641.9,642.2,642.5,642.5,642.4,642.1,642.0,641.9,641.9,641.7,641.4,641.3,640.2,640.2,640.1,639.0,638.7,637.9,637.5,637.0,635.3,635.0,632.2,629.3,628.5,627.8,626.2,623.7,621.9,620.0,617.0,616.1,615.9,613.8,612.6,611.5,606.7,602.8,601.4,597.2,595.4,594.2,592.6,592.0,586.2,584.5,581.4,580.5,579.3,579.1,574.9,569.4,566.7,565.2,560.8,560.7,558.5,556.1,552.6,552.8,553.0,554.6,554.9,565.6,568.4,576.2,603.2,606.2,607.1,609.1,610.0,612.0,629.2],"b":[614.8,619.8,623.0,624.2,627.5,630.3,631.6,634.3,636.8,638.0,640.3,642.5,644.6,645.6,647.5,650.2,650.3,652.6,653.4,654.9,655.5,656.9,658.1,659.7,660.3,661.3,662.2,663.0,663.7,663.9,664.0,664.9,665.3,665.9,666.2,666.5,666.5,666.3,666.0,666.0,665.8,665.8,665.7,665.3,665.3,664.3,664.2,664.1,663.2,662.8,662.0,661.7,661.2,659.7,659.3,656.8,654.0,653.4,652.6,651.2,648.8,647.2,645.4,642.7,641.8,641.7,639.7,638.7,637.6,633.2,629.6,628.4,624.5,622.9,621.8,620.4,619.8,614.5,613.0,610.2,609.5,608.4,608.2,604.4,599.5,597.2,595.8,592.0,591.9,590.0,588.0,584.8,584.2,583.8,580.2,580.5,591.2,594.1,601.8,628.9,631.8,632.7,634.7,635.6,637.6,654.8],"tsl":0.792,"tsr":0.387,"bsl":0.6902,"bsr":0.3866}};
+  const PW = 594.551, SW = DATA.w;
+  const SPREAD = DATA.spreads;          // { company: { lo/up: {x, t, b}, gl/gu: gradient } } from tools/ribbons/*.svg
+
+  // polygon for a band between two edges, visible between fractions q0..q1 of its length (left to right)
+  function bandD(xs, t, b, q1, dyT, dyB, q0 = 0) {
+    const n = xs.length;
+    q0 = clamp01(q0); q1 = clamp01(q1);
+    if (q1 - q0 <= 0.0005) return 'M0 0Z';
+    const span = xs[n - 1] - xs[0], xa = xs[0] + span * q0, xb = xs[0] + span * q1;
+    const T = [], B = [];
+    const at = (x, k, arr) => arr[k - 1] + (arr[k] - arr[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]);
+    let k = 0;
+    while (k < n && xs[k] < xa) k++;
+    if (k > 0 && k < n && xs[k] > xa) { T.push(f1(xa) + ' ' + f1(at(xa, k, t) + dyT)); B.push(f1(xa) + ' ' + f1(at(xa, k, b) + dyB)); }
+    for (; k < n && xs[k] <= xb; k++) { T.push(f1(xs[k]) + ' ' + f1(t[k] + dyT)); B.push(f1(xs[k]) + ' ' + f1(b[k] + dyB)); }
+    if (k < n && k > 0) { T.push(f1(xb) + ' ' + f1(at(xb, k, t) + dyT)); B.push(f1(xb) + ' ' + f1(at(xb, k, b) + dyB)); }
+    if (T.length < 2) return 'M0 0Z';
+    return 'M' + T.join('L') + 'L' + B.reverse().join('L') + 'Z';
+  }
+
+  /* ---------------- ribbons (identity spreads) ---------------- */
+  const NS = 'http://www.w3.org/2000/svg';
+  let uid = 0;
+  class Ribbons {
+    constructor(svg, keys, o = {}) {
+      this.svg = svg; this.keys = keys;
+      this.fill = o.fill || 0.42; this.ay = o.ay || 0.42; this.op = o.op || 1;
+      let lo = 1e9, hi = -1e9;
+      keys.forEach(k => { const s = SPREAD[k]; lo = Math.min(lo, ...s.up.t); hi = Math.max(hi, ...s.lo.b); });
+      this.yc = (lo + hi) / 2; this.span = hi - lo + 24;
+      this.st = { q: 1, pan: 0.5, m: 0 };
+      const id = 'rb' + (uid++);
+      const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); parent.appendChild(e); return e; };
+      const defs = mk('defs', {}, svg);
+      // the designer's own gradients, one pair per company (Group's runs diagonally)
+      const grad = (gid, g) => { const e = mk('linearGradient', { id: gid, gradientUnits: 'userSpaceOnUse', x1: g.c[0], y1: g.c[1], x2: g.c[2], y2: g.c[3] }, defs); g.s.forEach(([o, a]) => mk('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': +(a * this.op).toFixed(3) }, e)); };
+      this.gid = id;
+      keys.forEach(k => { grad(id + k + 'u', SPREAD[k].gu); grad(id + k + 'l', SPREAD[k].gl); });
+      this.pu = mk('path', { d: 'M0 0Z' }, svg);
+      this.pl = mk('path', { d: 'M0 0Z' }, svg);
+      this.pu2 = mk('path', { d: 'M0 0Z' }, svg);
+      this.pl2 = mk('path', { d: 'M0 0Z' }, svg);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    }
+    layout() {
+      const r = this.svg.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      this.W = r.width; this.H = r.height;
+      this.s = Math.max(this.W / SW, (this.H * this.fill) / this.span);
+      this.vbW = this.W / this.s; this.vbH = this.H / this.s;
+      request(this);
+    }
+    // one ribbon pair, visible between q0 and q1; the upper ribbon trails the lower one slightly
+    pair(key, q0, q1, pl, pu) {
+      const sp = SPREAD[key];
+      if (pl._k !== key) { pl._k = pu._k = key; pl.setAttribute('fill', `url(#${this.gid}${key}l)`); pu.setAttribute('fill', `url(#${this.gid}${key}u)`); }
+      const lo0 = q0 <= 0 ? 0 : clamp01(q0 * 1.08), up0 = q0 <= 0 ? 0 : clamp01(q0 * 1.12 - 0.12);
+      pl.setAttribute('d', bandD(sp.lo.x, sp.lo.t, sp.lo.b, clamp01(q1 * 1.08), 0, 0, lo0));
+      pu.setAttribute('d', bandD(sp.up.x, sp.up.t, sp.up.b, clamp01(q1 * 1.12 - 0.12), 0, 0, up0));
+    }
+    render() {
+      if (!this.s) return;
+      if (!this.vis) { this.stale = true; return; }      // off screen: draw when it scrolls in
+      this.stale = false;
+      const st = this.st, last = this.keys.length - 1;
+      const vbX = (SW - this.vbW) * clamp01(st.pan), vbY = this.yc - this.vbH * this.ay;
+      this.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(this.vbW)} ${f1(this.vbH)}`);
+      const m = Math.max(0, Math.min(st.m, last));
+      const i = Math.min(Math.floor(m), last), t = m - i;
+      const ease = v => { v = clamp01(v); return v * v * (3 - 2 * v); };
+      if (t < 0.001 || i >= last) {
+        this.pair(this.keys[i], 0, st.q, this.pl, this.pu);
+        this.pl2.setAttribute('d', 'M0 0Z'); this.pu2.setAttribute('d', 'M0 0Z');
+      } else {
+        // the current shape leaves to the right while the next one is drawn in behind it
+        this.pair(this.keys[i], ease(t / 0.86), 1, this.pl, this.pu);
+        this.pair(this.keys[i + 1], 0, ease((t - 0.14) / 0.86), this.pl2, this.pu2);
+      }
+    }
+  }
+
+  /* ---------------- hero: the cover band ---------------- */
+  const TH = Math.atan(0.378965), CO = Math.cos(TH), SI = Math.sin(TH);
+  const V1 = 263.582 * CO, V2 = 433.307 * CO;   // stripe dividers (brochure image edges) in rotated space
+  const hero = {
+    el: $('#hero'), svg: $('#heroSvg'), slot: $('#heroSlot'),
+    tb: $('#hTB'), bb: $('#hBB'), region: $('#hRegionPath'), zoom: $('#hZoom'),
+    rects: [$('#sRoad'), $('#sShip'), $('#sRail')], icons: $$('#hIcons .ph-ico'),
+    R: [0, 208, PW, 474],
+    st: { dT: 1, dB: 1, w0: 1, w1: 1, w2: 1, ic: 1, eT: 0, eB: 0, z: 1 },
+    eTmax: -400, eBmax: 400
+  };
+  function heroEdge(gx, arr, sl, sr, xa, xb) {
+    const xs = [], ys = [], n = gx.length;
+    if (xa < 0) { const x0 = Math.floor(xa / 5) * 5 - 5; xs.push(x0); ys.push(arr[0] + sl * x0); }
+    for (let k = 0; k < n; k++) { xs.push(gx[k]); ys.push(arr[k]); }
+    if (xb > PW) { const x1 = Math.ceil(xb / 5) * 5 + 5; xs.push(x1); ys.push(arr[n - 1] + sr * (x1 - PW)); }
+    return { xs, ys };
+  }
+  function heroLayout() {
+    const H = hero.el.getBoundingClientRect(), Sl = hero.slot.getBoundingClientRect();
+    if (!H.width || !Sl.height) return;
+    const [rx, ry, rw, rh] = hero.R;
+    const s = Math.min(Sl.width / rw, Sl.height / rh);
+    const sl = Sl.left - H.left, stp = Sl.top - H.top;
+    const vbX = rx + rw / 2 - (sl + Sl.width / 2) / s;
+    const vbY = ry + rh / 2 - (stp + Sl.height / 2) / s;
+    const vbW = H.width / s, vbH = H.height / s;
+    hero.vb = [vbX, vbY, vbW, vbH];
+    hero.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(vbW)} ${f1(vbH)}`);
+    const xa = vbX - vbW * 0.3, xb = vbX + vbW * 1.3;   // generous overdraw so a late resize never shows a cut edge
+    const T = DATA.tb, B = DATA.bb;
+    const sT = (T.tsl + T.bsl) / 2, sB = (B.tsl + B.bsl) / 2;   // extend along the band's centre line
+    hero.tT = heroEdge(T.x, T.t, sT, T.tsr, xa, xb);
+    hero.tB = heroEdge(T.x, T.b, sT, T.bsr, xa, xb);
+    hero.bT = heroEdge(B.x, B.t, sB, B.tsr, xa, xb);
+    hero.bB = heroEdge(B.x, B.b, sB, B.bsr, xa, xb);
+    const yAt = (e, x) => { const xs = e.xs; let k = 1; while (k < xs.length - 1 && xs[k] < x) k++; return e.ys[k - 1] + (e.ys[k] - e.ys[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]); };
+    const samples = e => Array.from({ length: 81 }, (_, i) => yAt(e, vbX + vbW * i / 80));
+    hero.eTmax = -(Math.max(...samples(hero.tB)) - vbY) - 40;
+    hero.eBmax = (vbY + vbH) - Math.min(...samples(hero.bT)) + 40;
+    // stripe extents in rotated space
+    const cs = [[vbX, vbY], [vbX + vbW, vbY], [vbX, vbY + vbH], [vbX + vbW, vbY + vbH]];
+    const us = cs.map(([x, y]) => x * CO + y * SI), vs = cs.map(([x, y]) => -x * SI + y * CO);
+    hero.u0 = Math.min(...us) - 80; hero.u1 = Math.max(...us) + 80; hero.v0 = Math.min(...vs) - 80; hero.v1 = Math.max(...vs) + 80;
+    heroRender();
+  }
+  function heroRender() {
+    if (!hero.vb) return;
+    const st = hero.st, e = hero;
+    e.tb.setAttribute('d', bandD(e.tT.xs, e.tT.ys, e.tB.ys, st.dT, st.eT, st.eT));
+    e.bb.setAttribute('d', bandD(e.bT.xs, e.bT.ys, e.bB.ys, st.dB, st.eB, st.eB));
+    const top = e.tB.xs.map((x, k) => f1(x) + ' ' + f1(e.tB.ys[k] + st.eT));
+    const bot = e.bT.xs.map((x, k) => f1(x) + ' ' + f1(e.bT.ys[k] + st.eB)).reverse();
+    e.region.setAttribute('d', 'M' + top.join('L') + 'L' + bot.join('L') + 'Z');
+    const Wu = e.u1 - e.u0;
+    const set = (r, x, y, w, h) => { r.setAttribute('x', f1(x)); r.setAttribute('y', f1(y)); r.setAttribute('width', f1(Math.max(w, 0))); r.setAttribute('height', f1(Math.max(h, 0))); };
+    set(e.rects[0], e.u1 - Wu * st.w0, e.v0, Wu * st.w0, V1 - e.v0 + 0.6);
+    set(e.rects[1], e.u0, V1, Wu * st.w1, V2 - V1);
+    set(e.rects[2], e.u0, V2 - 0.6, Wu * st.w2, e.v1 - V2 + 0.6);
+    const [vx, vy, vw, vh] = e.vb, cx = vx + vw / 2, cy = vy + vh / 2;
+    e.zoom.setAttribute('transform', `translate(${f1(cx)} ${f1(cy)}) scale(${st.z.toFixed(4)}) translate(${f1(-cx)} ${f1(-cy)})`);
+    e.icons.forEach((g, k) => g.style.opacity = clamp01((([st.w0, st.w1, st.w2][k]) - 0.6) / 0.4) * st.ic);
+  }
+
+  let request = c => c.render();
+
+  /* ---------------- build everything ---------------- */
+  const ribs = {
+    group: new Ribbons($('[data-rib="group"]'), ['group'], { fill: 0.3, ay: 0.35 }),
+    identity: new Ribbons($('[data-rib="identity"]'), ['group', 'agency', 'interlink', 'logistics'], { fill: 0.42, ay: 0.46 }),
+    agency: new Ribbons($('[data-rib="agency"]'), ['agency'], { fill: 0.34, ay: 0.36 }),
+    interlink: new Ribbons($('[data-rib="interlink"]'), ['interlink'], { fill: 0.34, ay: 0.36 }),
+    logistics: new Ribbons($('[data-rib="logistics"]'), ['logistics'], { fill: 0.34, ay: 0.36 }),
+    contact: new Ribbons($('[data-rib="contact"]'), ['group'], { fill: 0.36, ay: 0.22, op: 0.55 }),
+    tGroup: new Ribbons($('[data-rib="t-group"]'), ['group'], { fill: 0.7, ay: 0.36, op: 0.45 }),
+    tInterlink: new Ribbons($('[data-rib="t-interlink"]'), ['interlink'], { fill: 0.7, ay: 0.36, op: 0.45 }),
+    tLogistics: new Ribbons($('[data-rib="t-logistics"]'), ['logistics'], { fill: 0.7, ay: 0.36, op: 0.45 })
+  };
+  // visibility gate: ribbons outside the viewport are not redrawn
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
+    const r = e.target._rib; r.vis = e.isIntersecting; if (r.vis && r.stale) request(r);
+  }), { rootMargin: '25% 0px' }) : null;
+  Object.values(ribs).forEach(r => { r.svg._rib = r; r.vis = !io; if (io) io.observe(r.svg); });
+  const layoutAll = () => { heroLayout(); Object.values(ribs).forEach(r => r.layout()); };
+  layoutAll();
+  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutAll, 120); });
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!window.gsap || !window.ScrollTrigger || reduce) { document.documentElement.classList.remove('pre'); return; }
+
+  /* =====================================================================
+     MOTION
+     ===================================================================== */
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true });
+  document.documentElement.classList.add('anim');
+
+  let lenis = null;
+  if (window.Lenis) {
+    lenis = new Lenis({ lerp: 0.09 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+  $$('a[href^="#"]').forEach(a => a.addEventListener('click', ev => {
+    const t = document.querySelector(a.getAttribute('href')); if (!t) return;
+    ev.preventDefault(); lenis ? lenis.scrollTo(t, { duration: 1.6 }) : t.scrollIntoView({ behavior: 'smooth' });
+  }));
+
+  // render batching: components mark themselves dirty, one render per frame
+  const dirty = new Set();
+  const touch = c => dirty.add(c);
+  request = touch;
+  gsap.ticker.add(() => { dirty.forEach(c => c === hero ? heroRender() : c.render()); dirty.clear(); });
+  ScrollTrigger.addEventListener('refresh', layoutAll);
+
+  function splitWords(el) {
+    if (el._w) return el._w;
+    const words = el.textContent.trim().split(/\s+/);
+    el.setAttribute('aria-label', el.textContent.trim()); el.textContent = '';
+    words.forEach((w, i) => {
+      const o = document.createElement('span'); o.className = 'w'; o.setAttribute('aria-hidden', 'true');
+      const inner = document.createElement('span'); inner.className = 'wi'; inner.textContent = w;
+      o.appendChild(inner); el.appendChild(o); if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+    return (el._w = $$('.wi', el));
+  }
+
+  /* ---- HERO: opening sequence (independent of scroll) ---- */
+  const hs = hero.st;
+  Object.assign(hs, { dT: 0, dB: 0, w0: 0, w1: 0, w2: 0 });
+  heroRender();
+  document.documentElement.classList.remove('pre');
+  const H = () => touch(hero);
+  gsap.timeline({ defaults: { onUpdate: H } })
+    .to(hs, { dT: 1, duration: 1.5, ease: 'expo.inOut' }, 0.1)
+    .to(hs, { dB: 1, duration: 1.5, ease: 'expo.inOut' }, 0.25)
+    .to(hs, { w1: 1, duration: 1.5, ease: 'power3.inOut' }, 0.45)
+    .to(hs, { w0: 1, duration: 1.5, ease: 'power3.inOut' }, 0.6)
+    .to(hs, { w2: 1, duration: 1.5, ease: 'power3.inOut' }, 0.72);
+
+  /* ---- HERO: pinned scroll, the band opens to full screen ---- */
+  const hsc = { e: 0 };
+  gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=140%', pin: true, scrub: 0.8 } })
+    .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { hs.eT = hero.eTmax * hsc.e; hs.eB = hero.eBmax * hsc.e; hs.z = 1 + 0.06 * hsc.e; touch(hero); } }, 0)
+    .to('.hero-meta, .hero-title', { y: -50, opacity: 0, duration: 0.4, ease: 'power2.in' }, 0)
+    .fromTo('.hero-end', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, 0.7)
+    .to({}, { duration: 0.15 });
+
+  /* ---- everything below the hero is set up in small slices when the browser is idle,
+          so start-up never blocks the main thread in one long task ---- */
+  const tasks = [];
+  let tasksDone = false;
+  const later = fn => tasks.push(fn);
+  const idle = cb => ('requestIdleCallback' in window) ? requestIdleCallback(cb, { timeout: 250 }) : setTimeout(cb, 16);
+  function runLater(done) {
+    const slice = () => {
+      const t0 = performance.now();
+      while (tasks.length && performance.now() - t0 < 12) tasks.shift()();
+      if (tasks.length) idle(slice); else { tasksDone = true; done(); }
+    };
+    idle(slice);
+  }
+
+  /* ---- generic scroll-linked reveals (all scrubbed, nothing pops) ---- */
+  $$('[data-split]').forEach(el => later(() => {
+    gsap.from(splitWords(el), { yPercent: 115, ease: 'none', stagger: 0.04,
+      scrollTrigger: { trigger: el, start: 'top 94%', end: 'top 62%', scrub: 0.6 } });
+  }));
+  $$('[data-scrub]').forEach(el => later(() => {
+    gsap.fromTo(splitWords(el), { opacity: 0.18 }, { opacity: 1, ease: 'none', stagger: 0.1,
+      scrollTrigger: { trigger: el, start: 'top 85%', end: 'bottom 50%', scrub: 0.6 } });
+  }));
+  $$('[data-fade]').forEach(el => later(() => gsap.from(el, { y: 36, opacity: 0, ease: 'none',
+    scrollTrigger: { trigger: el, start: 'top 96%', end: 'top 74%', scrub: 0.6 } })));
+  $$('[data-list]').forEach(list => later(() => {
+    gsap.from([...list.children], { y: 26, opacity: 0, ease: 'none', stagger: 0.15, scrollTrigger: { trigger: list, start: 'top 92%', end: 'bottom 70%', scrub: 0.6 } });
+    const sqs = $$('.sq', list);
+    if (sqs.length) gsap.from(sqs, { scale: 0, rotate: -90, ease: 'none', stagger: 0.15, scrollTrigger: { trigger: list, start: 'top 92%', end: 'bottom 70%', scrub: 0.6 } });
+  }));
+  $$('[data-cards]').forEach(grid => $$('.card', grid).forEach((card, i) => later(() => {
+    const tl = gsap.timeline({ scrollTrigger: { trigger: card, start: `top ${98 - (i % 3) * 3}%`, end: `top ${74 - (i % 3) * 3}%`, scrub: 0.6 } });
+    tl.from(card, { y: 50, opacity: 0, ease: 'none' }, 0).from($('.sq', card), { scale: 0, rotate: 90, ease: 'none' }, 0);
+  })));
+  /* ---- images: the rounded frame opens to full width as it reaches the middle of the screen ---- */
+  $$('.media-frame').forEach(fr => later(() => {
+    const endR = root.dataset.layout === 'contained' ? 28 : 0;
+    gsap.fromTo(fr, { clipPath: 'inset(0% 7% 0% 7% round 28px)' }, { clipPath: `inset(0% 0% 0% 0% round ${endR}px)`, ease: 'none',
+      scrollTrigger: { trigger: fr, start: 'top 92%', end: 'center 52%', scrub: 0.6 } });
+    gsap.fromTo($('.media-in', fr), { scale: 1.14, yPercent: 8 }, { scale: 1, yPercent: -4, ease: 'none',
+      scrollTrigger: { trigger: fr, start: 'top bottom', end: 'bottom top', scrub: true } });
+  }));
+
+  /* ---- ribbons: draw along their length, pan across the spread, drift apart ---- */
+  function ribbonScroll(r, sec, drawStart = 'top 85%', drawEnd = 'top 10%') {
+    r.st.q = 0; r.render();
+    const R = () => touch(r);
+    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: drawStart, end: drawEnd, scrub: 0.8 } });
+    gsap.fromTo(r.st, { pan: 0 }, { pan: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
+  }
+  later(() => ribbonScroll(ribs.group, '#group'));
+  ['agency', 'interlink', 'logistics'].forEach(k => later(() => {
+    ribbonScroll(ribs[k], '#' + k);
+    const sec = $('#' + k);
+    gsap.from($$('.chap-mark > *', sec), { y: 30, opacity: 0, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: sec, start: 'top 75%', end: 'top 30%', scrub: 0.6 } });
+    gsap.from($('.chap-text .eyebrow', sec), { opacity: 0, y: 14, ease: 'none', scrollTrigger: { trigger: sec, start: 'top 60%', end: 'top 30%', scrub: 0.6 } });
+  }));
+  later(() => gsap.from($$('#group .chap-mark > *'), { y: 30, opacity: 0, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: '#group', start: 'top 75%', end: 'top 30%', scrub: 0.6 } }));
+  later(() => ribbonScroll(ribs.contact, '#contact', 'top 90%', 'top 25%'));
+  {
+    [['tGroup', 't-group'], ['tInterlink', 't-interlink'], ['tLogistics', 't-logistics']].forEach(([k, a]) => later(() => ribbonScroll(ribs[k], $(`[data-rib="${a}"]`).closest('.tile'), 'top 95%', 'top 45%')));
+    $$('[data-tiles] .tile').forEach((t, i) => later(() => gsap.from(t, { y: 60, opacity: 0, ease: 'none',
+      scrollTrigger: { trigger: t, start: `top ${100 - (i % 4) * 2}%`, end: `top ${78 - (i % 4) * 2}%`, scrub: 0.6 } })));
+  }
+
+  /* ---- identity: pinned, one ribbon pair moves through the four spreads ---- */
+  later(() => {
+    const r = ribs.identity, tabs = $$('#identity .id-tabs li');
+    let tabOn = -1;
+    const R = () => { touch(r); const k = Math.min(3, Math.round(r.st.m)); if (k !== tabOn) { tabOn = k; tabs.forEach((t, i) => t.classList.toggle('on', i === k)); } };
+    r.st.q = 0; r.st.m = 0; r.st.pan = 0.15; r.render();
+    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: '#identity', start: 'top 80%', end: 'top top', scrub: 0.8 } });
+    const cols = ['#2c59b0', '#4388ac', '#50abdc', '#49989a'];
+    const items = $$('#identity .id-item');
+    const tl = gsap.timeline({ scrollTrigger: { trigger: '#identity', start: 'top top', end: '+=400%', pin: true, scrub: 0.8 } });
+    // hold 0.5 · move 0.7 · hold 0.5 · move 0.7 · hold 0.5 · move 0.7 · hold 0.4
+    tl.to(r.st, { pan: 0.85, duration: 4, ease: 'none', onUpdate: R }, 0);
+    for (let k = 1; k < 4; k++) {
+      const at = 0.5 + (k - 1) * 1.2;
+      tl.to(r.st, { m: k, duration: 0.7, ease: 'none', onUpdate: R }, at)
+        .to('#identity .id-bg', { backgroundColor: cols[k], duration: 0.5, ease: 'power1.inOut' }, at + 0.1)
+        .to(items[k - 1], { opacity: 0, y: -24, duration: 0.25, ease: 'power1.in' }, at)
+        .fromTo(items[k], { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power1.out' }, at + 0.4);
+    }
+    tl.to({}, { duration: 0.01 }, 4);
+  });
+
+  /* ---- nav: mark takes the colour of the current company ---- */
+  const colors = { group: 'var(--group)', agency: 'var(--agency)', interlink: 'var(--interlink)', logistics: 'var(--logistics)' };
+  // native observer instead of one ScrollTrigger per section (cheaper to set up and to refresh)
+  if ('IntersectionObserver' in window) {
+    const navIO = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      const key = e.target.dataset.accent;
+      document.documentElement.style.setProperty('--accent', colors[key]);
+      $$('.nav [data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === key));
+    }), { rootMargin: '-50% 0px -50% 0px' });
+    $$('[data-accent]').forEach(sec => navIO.observe(sec));
+  }
+
+  // one sorted refresh once everything exists, and again (debounced) when fonts or late resources settle
+  let rf = 0;
+  const again = () => { clearTimeout(rf); rf = setTimeout(() => { ScrollTrigger.sort(); ScrollTrigger.refresh(); }, 120); };
+  runLater(again);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => tasksDone && again());
+  addEventListener('load', () => tasksDone && again());
+});
+</script>
+</body>
+</html>

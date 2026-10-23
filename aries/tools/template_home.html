@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aries Group</title>
+<meta name="description" content="Aries Group is among Romania’s leading transport and logistics providers: shipping agency, rail freight and logistics across the Black Sea and Danube region.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preload" as="image" href="img/hero.webp" media="(min-width: 700px)" fetchpriority="high">
+<link rel="preload" as="image" href="img/hero-900.webp" media="(max-width: 699px)" fetchpriority="high">
+<script>(function () { var l = document.createElement('link'); l.rel = 'stylesheet';
+  l.href = 'https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&display=swap';
+  document.head.appendChild(l); })();</script>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&display=swap"></noscript>
+<style>
+/* Layout: the homepage design, played as a scroll sequence. Hero bands open onto the photo, the blue
+   gradient fills the screen into the Group section, the three companies pass through one pinned scene,
+   then figures, services and footer. Colours sampled from the design file. */
+:root {
+  --blue: #145fad;        /* Aries Group */
+  --agency: #3089a9;      /* Shipping Agency */
+  --interlink: #2aa8da;   /* Interlink */
+  --logistics: #42979c;   /* Logistics */
+  --ink: #111418;
+  --text: #2a2f36;
+  --muted: #6a7280;
+  --paper: #ffffff;
+  --line: #d9dee5;
+  --on: #ffffff;
+  --font: "Figtree", "Figtree Fallback", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --gut: max(clamp(20px, 4.7vw, 68px), env(safe-area-inset-left, 0px));
+  --gut-r: max(clamp(20px, 4.7vw, 68px), env(safe-area-inset-right, 0px));
+  --h-xl: clamp(40px, 4.6vw, 66px);
+  --h-l: clamp(28px, 3.1vw, 44px);
+  --body: clamp(14px, 1.05vw, 15.5px);
+  color-scheme: light;
+}
+@font-face { font-family: "Figtree Fallback"; src: local("Arial"), local("Helvetica Neue"), local("Helvetica"); size-adjust: 98%; ascent-override: 97%; descent-override: 26%; line-gap-override: 0%; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--text); font: 400 16px/1.55 var(--font); overflow-x: clip; -webkit-font-smoothing: antialiased; }
+img, svg { max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 2px; }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { font-weight: 400; letter-spacing: -0.015em; text-wrap: balance; }
+.wrap { width: 100%; max-width: 1440px; margin-inline: auto; padding-left: var(--gut); padding-right: var(--gut-r); }
+.mark { display: inline-block; aspect-ratio: 256 / 302; background: currentColor; -webkit-mask: url(/*MARK*/) center / contain no-repeat; mask: url(/*MARK*/) center / contain no-repeat; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.wi { display: inline-block; }
+.more { display: inline-block; font-size: 14px; text-decoration: none; padding: 4px 6px 6px; border-bottom: 1px solid currentColor; transition: opacity .2s, padding .3s; }
+.more:hover { padding-right: 18px; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* logo lockup: mark above the words, as in the design */
+.lockup { display: inline-grid; justify-items: center; gap: 6px; color: var(--blue); text-decoration: none; }
+.lockup .mark { height: 46px; }
+.lockup b { font: 600 13px/1 var(--font); letter-spacing: .26em; margin-right: -.26em; }
+.lockup span { font: 400 8px/1.3 var(--font); letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; text-align: center; }
+.lockup.on { color: var(--on); }
+
+/* ---------- header + menu ---------- */
+.top { position: absolute; z-index: 40; top: 0; left: 0; right: 0; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(18px, 2.6vw, 38px)); }
+.top .wrap { display: flex; justify-content: space-between; align-items: flex-start; }
+.burger { position: fixed; z-index: 60; top: calc(env(safe-area-inset-top, 0px) + clamp(16px, 2.4vw, 34px)); right: var(--gut-r);
+  width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-content: center; gap: 5px;
+  background: color-mix(in srgb, var(--paper) 92%, transparent); box-shadow: 0 2px 14px rgba(17, 20, 24, .08); }
+.burger i { display: block; width: 20px; height: 1.6px; background: var(--ink); transition: transform .35s, opacity .2s; }
+.menu-open .burger i:nth-child(1) { transform: translateY(6.6px) rotate(45deg); }
+.menu-open .burger i:nth-child(2) { opacity: 0; }
+.menu-open .burger i:nth-child(3) { transform: translateY(-6.6px) rotate(-45deg); }
+.menu { position: fixed; inset: 0; z-index: 55; background: var(--blue); color: var(--on); display: grid; align-content: center;
+  clip-path: circle(0 at calc(100% - 44px) 44px); transition: clip-path .7s cubic-bezier(.7, 0, .2, 1); visibility: hidden; }
+.menu-open .menu { clip-path: circle(150% at calc(100% - 44px) 44px); visibility: visible; }
+.menu .wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 40px; }
+.menu h3 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; opacity: .7; margin-bottom: 14px; }
+.menu ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.menu a { font-size: clamp(24px, 2.4vw, 34px); text-decoration: none; }
+.menu a:hover { opacity: .75; }
+
+/* ---------- scene 1: hero → photo → Group (one pinned sequence) ---------- */
+.hero { position: relative; height: 100vh; height: 100svh; min-height: 600px; overflow: hidden; background: var(--paper); }
+.hero-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero-layout { position: absolute; inset: 0; display: flex; flex-direction: column; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(110px, 13vh, 150px)); pointer-events: none; }
+.hero-slot { flex: 1 1 auto; min-height: 0; }
+.hero-title { padding-block: clamp(18px, 3vh, 34px) clamp(28px, 6vh, 64px); display: grid; gap: 10px; }
+.hero-title h1 { color: var(--blue); font-size: var(--h-xl); line-height: 1.05; }
+.hero-title p { font-size: var(--body); color: var(--text); }
+.shade { position: absolute; inset: 0; pointer-events: none; --a: 0%; --b: 62%;
+  background: linear-gradient(158deg, var(--blue) 0%, var(--blue) var(--a), rgb(20 95 173 / .78) calc(var(--a) + (var(--b) - var(--a)) * .45), rgb(20 95 173 / 0) var(--b)); }
+.scene-two, .scene-group { color: var(--on); }
+.scene-two { background: var(--blue); padding-block: 120px 160px; }
+.scene-two h2, .scene-group h2 { font-size: var(--h-l); line-height: 1.15; max-width: 16ch; }
+.scene-two p, .scene-group p { font-size: var(--body); max-width: 46ch; margin-top: 18px; }
+.scene-group { background: var(--blue); padding-block: 120px; display: grid; gap: 40px; }
+.group-rib { position: relative; height: clamp(220px, 34vh, 420px); }
+.rib-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+/* with motion: the three states live inside the pinned hero */
+.anim .shade { opacity: 0; }
+.anim .hero .scene-two { position: absolute; inset: 0; background: none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); opacity: 0; }
+.anim .hero .scene-group { position: absolute; inset: 0; background: none; padding-block: calc(env(safe-area-inset-top, 0px) + clamp(110px, 14vh, 160px)) clamp(36px, 7vh, 80px);
+  grid-template-rows: auto 1fr auto; gap: 0; }
+.anim .hero .scene-group .group-rib { height: auto; min-height: 160px; }
+.anim .scene-group .g-top, .anim .scene-group .g-bot { opacity: 0; }
+.pre #hTop, .pre #hBot, .pre #hImgWrap { opacity: 0; }
+
+/* ---------- scene 2: the three companies ---------- */
+.companies { position: relative; height: 100vh; height: 100svh; min-height: 620px; overflow: hidden; color: var(--on); }
+.co-bg { position: absolute; inset: 0; background: var(--agency); }
+.co-top { position: absolute; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + clamp(36px, 7vh, 80px)); }
+.co-top .wrap { padding-right: calc(var(--gut-r) + 64px); display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.co-logos { display: grid; }
+.co-logos .lockup { grid-area: 1 / 1; }
+.co-tabs { list-style: none; margin: 0; padding: 0; display: flex; gap: clamp(14px, 2.6vw, 44px); flex-wrap: wrap; justify-content: flex-end; }
+.co-tabs button { font: 400 12px/1 var(--font); color: var(--on); background: none; border: 0; padding: 6px 0; cursor: pointer; display: flex; align-items: center; gap: 10px; opacity: .85; }
+.co-tabs button::before { content: ""; width: 10px; height: 10px; border: 1px solid currentColor; transition: background .3s; }
+.co-tabs button[aria-current="true"] { opacity: 1; }
+.co-tabs button[aria-current="true"]::before { background: var(--on); }
+.co-rib { top: 28%; bottom: 28%; height: auto; }
+.co-foot { position: absolute; left: 0; right: 0; bottom: clamp(36px, 8vh, 90px); }
+.co-items { display: grid; }
+.co-item { grid-area: 1 / 1; display: grid; gap: 16px; justify-items: start; }
+.co-item h2 { font-size: var(--h-l); line-height: 1.1; }
+.co-item p { font-size: var(--body); max-width: 46ch; }
+.anim .co-item:not(:first-child), .anim .co-logos .lockup:not(:first-child) { opacity: 0; visibility: hidden; }
+@media (max-width: 700px) { .co-tabs { display: none; } }
+
+/* ---------- statements ---------- */
+.statement { padding-block: clamp(90px, 11vw, 160px) clamp(50px, 6vw, 80px); }
+.statement h2 { color: var(--ink); font-size: var(--h-l); line-height: 1.15; max-width: 22ch; }
+.statement .more { color: var(--ink); margin-top: 22px; }
+
+/* ---------- figures ---------- */
+.figs .wrap { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.tile { position: relative; overflow: hidden; color: var(--on); padding: clamp(20px, 2.6vw, 36px); min-height: clamp(260px, 29vw, 420px); display: grid; align-content: space-between; }
+.tile.wide { grid-column: span 2; }
+.tile.agency { background: var(--agency); } .tile.interlink { background: var(--interlink); } .tile.logistics { background: var(--logistics); }
+.tile .lbl { position: relative; font-size: 12.5px; }
+.tile .nums { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 20px; }
+.tile strong { display: block; font: 400 clamp(56px, 7.4vw, 110px)/0.95 var(--font); letter-spacing: -0.03em; white-space: nowrap; }
+.tile strong sup { font-size: .5em; vertical-align: top; margin-left: 4px; position: relative; top: -.12em; }
+.tile small { display: block; font-size: 12.5px; margin-top: 8px; }
+@media (max-width: 760px) { .figs .wrap { grid-template-columns: minmax(0, 1fr); } .tile.wide { grid-column: auto; } }
+
+/* ---------- services cards ---------- */
+.cards { padding-block: clamp(24px, 4vw, 50px) clamp(90px, 10vw, 150px); }
+.cards-track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding-left: max(var(--gut), calc((100vw - 1440px) / 2 + var(--gut))); padding-right: var(--gut-r); scrollbar-width: none; cursor: grab; }
+.cards-track::-webkit-scrollbar { display: none; }
+.cards-track.drag { cursor: grabbing; scroll-snap-type: none; }
+.card { flex: none; width: min(752px, 84vw); height: clamp(300px, 36vw, 515px); position: relative; overflow: hidden; background: var(--blue); color: var(--on); scroll-snap-align: start; }
+.card h3 { position: relative; z-index: 1; font-size: clamp(22px, 2.2vw, 32px); line-height: 1.12; font-weight: 300; padding: clamp(22px, 3vw, 44px); max-width: 12ch; }
+.card .ph { position: absolute; inset: 0; clip-path: polygon(67% 0, 100% 0, 100% 100%, 48% 100%); }
+.card .ph img { width: 100%; height: 100%; object-fit: cover; object-position: 75% 50%; display: block; transform-origin: 70% 50%; }
+
+/* ---------- footer ---------- */
+.foot { padding-block: clamp(70px, 8vw, 110px) 34px; }
+.foot-grid { display: grid; grid-template-columns: 1.2fr repeat(3, minmax(0, 1fr)); gap: 32px; }
+.foot h3 { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 14px; }
+.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.foot a { text-decoration: none; font-size: 14px; color: var(--text); }
+.foot a:hover { color: var(--blue); }
+.foot .li { display: inline-grid; place-content: center; width: 22px; height: 22px; background: var(--blue); color: var(--on); border-radius: 3px; font: 600 12px/1 var(--font); }
+.foot .slogan { color: var(--blue); font-size: var(--h-xl); line-height: 1.05; margin-top: clamp(60px, 8vw, 110px); }
+.foot .legal { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 40px; font-size: 12.5px; color: var(--muted); }
+.foot .legal nav { display: flex; gap: 14px; flex-wrap: wrap; }
+.foot .legal a { font-size: 12.5px; color: var(--muted); }
+@media (max-width: 760px) { .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-grid > :first-child { grid-column: span 2; } }
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('pre'); setTimeout(function () { document.documentElement.classList.remove('pre'); }, 4000);</script>
+
+<header class="top">
+  <div class="wrap">
+    <a class="lockup" href="#hero"><span class="mark"></span><b>ARIES</b><span>Group</span></a>
+  </div>
+</header>
+<button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><i></i><i></i><i></i></button>
+<nav class="menu" id="menu" aria-label="Main">
+  <div class="wrap">
+    <div><h3>Aries Group</h3><ul><li><a href="#group">About us</a></li><li><a href="#certifications">Certifications</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div><h3>Companies</h3><ul><li><a href="#companies" data-co="0">Aries Shipping Agency</a></li><li><a href="#companies" data-co="1">Aries Interlink</a></li><li><a href="#companies" data-co="2">Aries Logistics</a></li></ul></div>
+    <div><h3>Activity</h3><ul><li><a href="#news">News</a></li><li><a href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
+  </div>
+</nav>
+
+<main>
+
+<!-- SCENE 1: the cover bands open onto the photo; the blue gradient then fills the screen into the Group section -->
+<section class="hero" id="hero">
+  <svg class="hero-svg" id="heroSvg" viewBox="0 -120 1442 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><clipPath id="hClip"><path id="hRegion" d="M0 0Z"/></clipPath></defs>
+    <g clip-path="url(#hClip)"><g id="hZoom"><g id="hImgWrap"><image id="hImg" href="img/hero.webp" x="0" y="0" width="1500" height="1020" preserveAspectRatio="none"/></g></g></g>
+    <path id="hTop" fill="#145FAD" d="M0 0Z"/>
+    <path id="hBot" fill="#145FAD" d="M0 0Z"/>
+  </svg>
+  <div class="shade" id="shade"></div>
+  <div class="hero-layout">
+    <div class="hero-slot" id="heroSlot"></div>
+    <div class="hero-title wrap" id="heroTitle">
+      <h1>Where possibilities arise</h1>
+      <p>Aries Group is among Romania’s leading transport and logistics providers.</p>
+    </div>
+  </div>
+
+  <div class="scene-two" id="sceneTwo">
+    <div class="wrap">
+      <h2>The partner of choice in Romania across the entire transport chain.</h2>
+      <p>Established in 2003, Aries Group operates across the Black Sea and Danube region.</p>
+    </div>
+  </div>
+
+  <div class="scene-group" id="group">
+    <div class="wrap g-top">
+      <h2>Integrated maritime and logistics solutions that expand possibilities.</h2>
+      <p>We integrate maritime, rail and road transport capabilities to create flexible supply chain solutions tailored to the specific needs of each customer.</p>
+    </div>
+    <div class="group-rib"><svg class="rib-svg" data-rib="group" aria-hidden="true"></svg></div>
+    <div class="wrap g-bot">
+      <p>With specialized divisions, each focused on a specific area of expertise, we reduce operational friction and give our customers greater predictability and operational control, regardless of project complexity.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 2: the three companies, one pinned scene -->
+<section class="companies" id="companies" aria-label="Aries companies">
+  <div class="co-bg" id="coBg"></div>
+  <svg class="rib-svg co-rib" data-rib="companies" aria-hidden="true"></svg>
+  <div class="co-top"><div class="wrap">
+    <div class="co-logos">
+      <span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Shipping<br>Agency</span></span>
+      <span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Interlink</span></span>
+      <span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Logistics</span></span>
+    </div>
+    <ul class="co-tabs" aria-label="Companies">
+      <li><button type="button" data-co="0" aria-current="true">Aries Shipping Agency</button></li>
+      <li><button type="button" data-co="1">Aries Interlink</button></li>
+      <li><button type="button" data-co="2">Aries Logistics</button></li>
+    </ul>
+  </div></div>
+  <div class="co-foot"><div class="wrap co-items">
+    <div class="co-item"><h2>Aries Shipping Agency</h2><p>Maritime and river agency providing comprehensive agency services in all Romanian Black Sea and Danube ports.</p><a class="more" href="#contact">View more</a></div>
+    <div class="co-item"><h2>Aries Interlink</h2><p>Supply chain support across Romania, with expertise in rail transport and rail operations mainly for grains, steel products and fertilizers.</p><a class="more" href="#contact">View more</a></div>
+    <div class="co-item"><h2>Aries Logistics</h2><p>Bulk and break-bulk logistics, including stevedoring, transport, customs brokerage, warehousing, freight forwarding and door-to-door delivery.</p><a class="more" href="#contact">View more</a></div>
+  </div></div>
+</section>
+
+<section class="statement" aria-labelledby="st1">
+  <div class="wrap">
+    <h2 id="st1" data-split>The partner of choice when you need a ship agent, liner agent, shipbroker, rail freight operator or logistics provider in Romania.</h2>
+    <a class="more" href="#contact" data-fade>Contact us</a>
+  </div>
+</section>
+
+<section class="figs" aria-label="Aries Group in figures">
+  <div class="wrap" data-tiles>
+    <article class="tile wide agency"><svg class="rib-svg" data-rib="t-agency" aria-hidden="true"></svg>
+      <span class="lbl">Aries Shipping Agency</span>
+      <div class="nums">
+        <div><strong>600<sup>+</sup></strong><small>Maritime port calls annually</small></div>
+        <div><strong>800<sup>+</sup></strong><small>Inland waterway port calls annually</small></div>
+      </div>
+    </article>
+    <article class="tile interlink"><svg class="rib-svg" data-rib="t-interlink" aria-hidden="true"></svg>
+      <span class="lbl">Aries Interlink</span>
+      <div class="nums"><div><strong>800,000<sup>t</sup></strong><small>Bulk grain transported by rail annually</small></div></div>
+    </article>
+    <article class="tile logistics"><svg class="rib-svg" data-rib="t-logistics" aria-hidden="true"></svg>
+      <span class="lbl">Aries Logistics</span>
+      <div class="nums"><div><strong>300,000<sup>t</sup></strong><small>Cargo volumes managed annually</small></div></div>
+    </article>
+  </div>
+</section>
+
+<section class="statement" aria-labelledby="st2">
+  <div class="wrap">
+    <h2 id="st2" data-split>Services tailored to traders, industrial producers and shipping companies operating in Romania and Eastern Europe.</h2>
+    <a class="more" href="#contact" data-fade>Contact us</a>
+  </div>
+</section>
+
+<section class="cards" aria-label="Services">
+  <div class="cards-track" id="cardsTrack">
+    <article class="card"><h3>Multimodal transport, stevedoring and warehousing.</h3><div class="ph"><img src="img/card-stacker.webp" alt="Reach stacker lifting a container in the port" width="784" height="515" loading="lazy" decoding="async"></div></article>
+    <article class="card"><h3>Port agency and all related services.</h3><div class="ph"><img src="img/card-vessel.webp" alt="Bulk carrier moored at the grain terminal" width="1196" height="681" loading="lazy" decoding="async"></div></article>
+    <article class="card"><h3>Freight forwarding and full-service logistics.</h3><div class="ph"><img src="img/card-stacker.webp" alt="" width="784" height="515" loading="lazy" decoding="async"></div></article>
+    <article class="card"><h3>Cargo chartering and brokerage.</h3><div class="ph"><img src="img/card-vessel.webp" alt="" width="1196" height="681" loading="lazy" decoding="async"></div></article>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><span class="lockup"><span class="mark"></span><b>ARIES</b><span>Group</span></span></div>
+      <div><h3>Aries Group</h3><ul><li><a href="#group">About us</a></li><li><a href="#certifications" id="certifications">Certifications</a></li><li><a href="mailto:office@aries-group.ro">Contact</a></li></ul></div>
+      <div><h3>Companies</h3><ul><li><a href="#companies" data-co="0">Aries Shipping Agency</a></li><li><a href="#companies" data-co="1">Aries Interlink</a></li><li><a href="#companies" data-co="2">Aries Logistics</a></li></ul></div>
+      <div><h3 id="news">Activity</h3><ul><li><a href="#news">News</a></li><li><a class="li" href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener" ><span aria-hidden="true">in</span><span class="sr">Aries Group on LinkedIn</span></a></li></ul></div>
+    </div>
+    <p class="slogan" data-split>Where possibilities arise</p>
+    <div class="legal">
+      <nav aria-label="Legal"><a href="#terms">Terms and conditions</a><a href="#privacy">Privacy Policy</a><a href="#cookies">Cookie Policy</a></nav>
+      <span>made by Imagient</span>
+    </div>
+  </div>
+</footer>
+
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+// runs after the deferred libraries; parsing and first paint are never blocked by them
+document.addEventListener('DOMContentLoaded', () => {
+  const $ = (s, c = document) => c.querySelector(s);
+  const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+  const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+  const f1 = v => (Math.round(v * 10) / 10).toString();
+  const root = document.documentElement;
+
+  /* ---------------- menu ---------------- */
+  const burger = $('.burger'), menu = $('#menu');
+  const setMenu = open => { root.classList.toggle('menu-open', open); burger.setAttribute('aria-expanded', String(open)); burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); if (open) $('a', menu).focus({ preventScroll: true }); };
+  burger.addEventListener('click', () => setMenu(!root.classList.contains('menu-open')));
+  addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('menu-open')) { setMenu(false); burger.focus(); } });
+
+  /* =====================================================================
+     SHAPE DATA — from the design SVGs (aries/design/ribbons), built by tools/build_home.py
+     ===================================================================== */
+  const DATA = /*SHAPES*/;
+  const RIB = DATA.ribbons, HB = DATA.hero;
+
+  // polygon for a band between two edges, visible between fractions q0..q1 of its length (left to right)
+  function bandD(xs, t, b, q1, dyT, dyB, q0 = 0) {
+    const n = xs.length;
+    q0 = clamp01(q0); q1 = clamp01(q1);
+    if (q1 - q0 <= 0.0005) return 'M0 0Z';
+    const span = xs[n - 1] - xs[0], xa = xs[0] + span * q0, xb = xs[0] + span * q1;
+    const T = [], B = [];
+    const at = (x, k, arr) => arr[k - 1] + (arr[k] - arr[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]);
+    let k = 0;
+    while (k < n && xs[k] < xa) k++;
+    if (k > 0 && k < n && xs[k] > xa) { T.push(f1(xa) + ' ' + f1(at(xa, k, t) + dyT)); B.push(f1(xa) + ' ' + f1(at(xa, k, b) + dyB)); }
+    for (; k < n && xs[k] <= xb; k++) { T.push(f1(xs[k]) + ' ' + f1(t[k] + dyT)); B.push(f1(xs[k]) + ' ' + f1(b[k] + dyB)); }
+    if (k < n && k > 0) { T.push(f1(xb) + ' ' + f1(at(xb, k, t) + dyT)); B.push(f1(xb) + ' ' + f1(at(xb, k, b) + dyB)); }
+    if (T.length < 2) return 'M0 0Z';
+    return 'M' + T.join('L') + 'L' + B.reverse().join('L') + 'Z';
+  }
+
+  /* ---------------- identity ribbons ---------------- */
+  const NS = 'http://www.w3.org/2000/svg';
+  let uid = 0;
+  class Ribbons {
+    constructor(svg, keys, o = {}) {
+      this.svg = svg; this.keys = keys;
+      this.fill = o.fill || 0.6; this.ay = o.ay || 0.5; this.op = o.op || 1;
+      this.SW = Math.min(...keys.map(k => RIB[k].w));
+      let lo = 1e9, hi = -1e9;
+      keys.forEach(k => { const s = RIB[k]; lo = Math.min(lo, ...s.up.t); hi = Math.max(hi, ...s.lo.b); });
+      this.yc = (lo + hi) / 2; this.span = hi - lo + 12;
+      this.st = { q: 1, pan: 0.5, m: 0 };
+      const id = 'rb' + (uid++);
+      const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); parent.appendChild(e); return e; };
+      const defs = mk('defs', {}, svg);
+      const grad = (gid, g) => { const e = mk('linearGradient', { id: gid, gradientUnits: 'userSpaceOnUse', x1: g.c[0], y1: g.c[1], x2: g.c[2], y2: g.c[3] }, defs); g.s.forEach(([o, a]) => mk('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': +(a * this.op).toFixed(3) }, e)); };
+      this.gid = id;
+      keys.forEach(k => { grad(id + k + 'u', RIB[k].gu); grad(id + k + 'l', RIB[k].gl); });
+      this.pu = mk('path', { d: 'M0 0Z' }, svg); this.pl = mk('path', { d: 'M0 0Z' }, svg);
+      this.pu2 = mk('path', { d: 'M0 0Z' }, svg); this.pl2 = mk('path', { d: 'M0 0Z' }, svg);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    }
+    layout() {
+      const r = this.svg.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      this.W = r.width; this.H = r.height;
+      this.s = Math.max(this.W / this.SW, (this.H * this.fill) / this.span);
+      this.vbW = this.W / this.s; this.vbH = this.H / this.s;
+      request(this);
+    }
+    pair(key, q0, q1, pl, pu) {
+      const sp = RIB[key];
+      if (pl._k !== key) { pl._k = pu._k = key; pl.setAttribute('fill', `url(#${this.gid}${key}l)`); pu.setAttribute('fill', `url(#${this.gid}${key}u)`); }
+      const lo0 = q0 <= 0 ? 0 : clamp01(q0 * 1.08), up0 = q0 <= 0 ? 0 : clamp01(q0 * 1.12 - 0.12);
+      pl.setAttribute('d', bandD(sp.lo.x, sp.lo.t, sp.lo.b, clamp01(q1 * 1.08), 0, 0, lo0));
+      pu.setAttribute('d', bandD(sp.up.x, sp.up.t, sp.up.b, clamp01(q1 * 1.12 - 0.12), 0, 0, up0));
+    }
+    render() {
+      if (!this.s) return;
+      if (!this.vis) { this.stale = true; return; }
+      this.stale = false;
+      const st = this.st, last = this.keys.length - 1;
+      const vbX = (this.SW - this.vbW) * clamp01(st.pan), vbY = this.yc - this.vbH * this.ay;
+      this.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(this.vbW)} ${f1(this.vbH)}`);
+      const m = Math.max(0, Math.min(st.m, last));
+      const i = Math.min(Math.floor(m), last), t = m - i;
+      const ease = v => { v = clamp01(v); return v * v * (3 - 2 * v); };
+      if (t < 0.001 || i >= last) {
+        this.pair(this.keys[i], 0, st.q, this.pl, this.pu);
+        this.pl2.setAttribute('d', 'M0 0Z'); this.pu2.setAttribute('d', 'M0 0Z');
+      } else {
+        // the current shape leaves to the right while the next one is drawn in behind it
+        this.pair(this.keys[i], ease(t / 0.86), 1, this.pl, this.pu);
+        this.pair(this.keys[i + 1], 0, ease((t - 0.14) / 0.86), this.pl2, this.pu2);
+      }
+    }
+  }
+
+  /* ---------------- hero: two design bands with the photo between them ---------------- */
+  const GAP = 464;                       // vertical offset of the lower band (design file)
+  const COMP = [0, 0, HB.w, GAP + Math.max(...HB.b)];
+  const ROT = 21, RC = Math.cos(ROT * Math.PI / 180), RS = Math.sin(ROT * Math.PI / 180);
+  const IMG = { w: 1500, h: 1020 };
+  const hero = {
+    el: $('#hero'), svg: $('#heroSvg'), slot: $('#heroSlot'), top: $('#hTop'), bot: $('#hBot'), region: $('#hRegion'),
+    zoom: $('#hZoom'), wrap: $('#hImgWrap'), img: $('#hImg'),
+    st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1 }, eTmax: -400, eBmax: 400
+  };
+  if (innerWidth < 700) hero.img.setAttribute('href', 'img/hero-900.webp');
+  function edge(arr, xa, xb) {
+    const xs = [], ys = [], n = HB.x.length;
+    if (xa < 0) { xs.push(xa - 5); ys.push(arr[0] + HB.sl * (xa - 5)); }
+    for (let k = 0; k < n; k++) { xs.push(HB.x[k]); ys.push(arr[k]); }
+    if (xb > HB.w) { xs.push(xb + 5); ys.push(arr[n - 1] + HB.sr * (xb + 5 - HB.w)); }
+    return { xs, ys };
+  }
+  function heroLayout() {
+    const H = hero.el.getBoundingClientRect(), S = hero.slot.getBoundingClientRect();
+    if (!H.width || !S.height) return;
+    const [rx, ry, rw, rh] = COMP;
+    // fit the composition in the slot; on narrow screens let it run past the sides (the bands continue off-screen)
+    const s = Math.min(S.height / rh, S.width * (S.width < 700 ? 1.9 : 1) / rw);
+    const vbX = rx + rw / 2 - (S.left - H.left + S.width / 2) / s;
+    const vbY = ry + rh / 2 - (S.top - H.top + S.height / 2) / s;
+    const vbW = H.width / s, vbH = H.height / s;
+    hero.vb = [vbX, vbY, vbW, vbH];
+    hero.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(vbW)} ${f1(vbH)}`);
+    const xa = vbX - vbW * 0.3, xb = vbX + vbW * 1.3;
+    hero.T = edge(HB.t, xa, xb); hero.B = edge(HB.b, xa, xb);
+    const yAt = (e, x) => { const xs = e.xs; let k = 1; while (k < xs.length - 1 && xs[k] < x) k++; return e.ys[k - 1] + (e.ys[k] - e.ys[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]); };
+    const smp = e => Array.from({ length: 81 }, (_, i) => yAt(e, vbX + vbW * i / 80));
+    hero.eTmax = -(Math.max(...smp(hero.B)) - vbY) - 40;
+    hero.eBmax = (vbY + vbH) - (Math.min(...smp(hero.T)) + GAP) + 40;
+    // the photo: rotated to the bands' angle, centred on the composition, large enough to fill the screen
+    const cx = rx + rw / 2, cy = ry + rh / 2;
+    let k = 0;
+    [[vbX, vbY], [vbX + vbW, vbY], [vbX, vbY + vbH], [vbX + vbW, vbY + vbH]].forEach(([x, y]) => {
+      const dx = x - cx, dy = y - cy, u = dx * RC + dy * RS, v = -dx * RS + dy * RC;
+      k = Math.max(k, 2 * Math.abs(u) / IMG.w, 2 * Math.abs(v) / IMG.h);
+    });
+    k *= 1.08;
+    const iw = IMG.w * k, ih = IMG.h * k;
+    hero.img.setAttribute('x', f1(cx - iw / 2)); hero.img.setAttribute('y', f1(cy - ih / 2));
+    hero.img.setAttribute('width', f1(iw)); hero.img.setAttribute('height', f1(ih));
+    hero.img.setAttribute('transform', `rotate(${ROT} ${f1(cx)} ${f1(cy)})`);
+    hero.c = [cx, cy];
+    heroRender();
+  }
+  function heroRender() {
+    if (!hero.vb) return;
+    const st = hero.st, e = hero;
+    e.top.setAttribute('d', bandD(e.T.xs, e.T.ys, e.B.ys, st.dT, st.eT, st.eT));
+    e.bot.setAttribute('d', bandD(e.T.xs, e.T.ys, e.B.ys, st.dB, GAP + st.eB, GAP + st.eB));
+    const top = e.B.xs.map((x, k) => f1(x) + ' ' + f1(e.B.ys[k] + st.eT));
+    const bot = e.T.xs.map((x, k) => f1(x) + ' ' + f1(e.T.ys[k] + GAP + st.eB)).reverse();
+    e.region.setAttribute('d', 'M' + top.join('L') + 'L' + bot.join('L') + 'Z');
+    const [cx, cy] = e.c, z = (st.z * st.zi).toFixed(4);
+    e.zoom.setAttribute('transform', `translate(${f1(cx)} ${f1(cy)}) scale(${z}) translate(${f1(-cx)} ${f1(-cy)})`);
+    e.wrap.style.opacity = st.io;
+  }
+
+  let request = c => c.render();
+
+  /* ---------------- build ---------------- */
+  const ribs = {
+    group: new Ribbons($('[data-rib="group"]'), ['group'], { fill: 0.9, ay: 0.5 }),
+    companies: new Ribbons($('[data-rib="companies"]'), ['agency', 'interlink', 'logistics'], { fill: 0.92, ay: 0.5 }),
+    tAgency: new Ribbons($('[data-rib="t-agency"]'), ['agencyT'], { fill: 1.05, ay: 0.42 }),
+    tInterlink: new Ribbons($('[data-rib="t-interlink"]'), ['interlinkT'], { fill: 1.6, ay: 0.44 }),
+    tLogistics: new Ribbons($('[data-rib="t-logistics"]'), ['logisticsT'], { fill: 1.2, ay: 0.36 })
+  };
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
+    const r = e.target._rib; r.vis = e.isIntersecting; if (r.vis && r.stale) request(r);
+  }), { rootMargin: '25% 0px' }) : null;
+  Object.values(ribs).forEach(r => { r.svg._rib = r; r.vis = !io; if (io) io.observe(r.svg); });
+  const layoutAll = () => { heroLayout(); Object.values(ribs).forEach(r => r.layout()); };
+  layoutAll();
+  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutAll, 120); });
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const noMotion = () => {
+    root.classList.remove('pre');
+    $$('[data-co]').forEach(b => b.addEventListener('click', () => { setMenu(false); }));
+  };
+  if (!window.gsap || !window.ScrollTrigger || reduce) { noMotion(); return; }
+
+  /* =====================================================================
+     MOTION
+     ===================================================================== */
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true });
+  root.classList.add('anim');
+
+  let lenis = null;
+  if (window.Lenis) {
+    lenis = new Lenis({ lerp: 0.09 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+  const goTo = y => lenis ? lenis.scrollTo(y, { duration: 1.6 }) : scrollTo({ top: y, behavior: 'smooth' });
+
+  const dirty = new Set();
+  const touch = c => dirty.add(c);
+  request = touch;
+  gsap.ticker.add(() => { dirty.forEach(c => c === hero ? heroRender() : c.render()); dirty.clear(); });
+  ScrollTrigger.addEventListener('refresh', layoutAll);
+
+  function splitWords(el) {
+    if (el._w) return el._w;
+    const words = el.textContent.trim().split(/\s+/);
+    const sr = document.createElement('span'); sr.className = 'sr'; sr.textContent = el.textContent.trim();
+    el.textContent = ''; el.appendChild(sr);
+    words.forEach((w, i) => {
+      const o = document.createElement('span'); o.className = 'w'; o.setAttribute('aria-hidden', 'true');
+      const inner = document.createElement('span'); inner.className = 'wi'; inner.textContent = w;
+      o.appendChild(inner); el.appendChild(o); if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+    return (el._w = $$('.wi', el));
+  }
+
+  /* ---- SCENE 1 · opening: the bands draw in, the photo settles between them ---- */
+  const hs = hero.st;
+  Object.assign(hs, { dT: 0, dB: 0, io: 0, zi: 1.14 });
+  heroRender();
+  root.classList.remove('pre');
+  const H = () => touch(hero);
+  gsap.timeline({ defaults: { onUpdate: H } })
+    .to(hs, { dT: 1, duration: 1.5, ease: 'expo.inOut' }, 0.1)
+    .to(hs, { dB: 1, duration: 1.5, ease: 'expo.inOut' }, 0.25)
+    .to(hs, { io: 1, duration: 1.1, ease: 'power2.out' }, 0.55)
+    .to(hs, { zi: 1, duration: 2.2, ease: 'expo.out' }, 0.55);
+
+  /* ---- SCENE 1 · scroll: bands open → photo with text → gradient fills → Group ---- */
+  const r1 = ribs.group, R1 = () => touch(r1);
+  r1.st.q = 0; r1.st.pan = 0; r1.render();
+  const two = $('#sceneTwo'), gTop = $('#group .g-top'), gBot = $('#group .g-bot'), shade = $('#shade');
+  const hsc = { e: 0 };
+  gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=420%', pin: true, scrub: 0.8 } })
+    // 1 · the bands move apart and the photo fills the screen
+    .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { hs.eT = hero.eTmax * hsc.e; hs.eB = hero.eBmax * hsc.e; hs.z = 1 + 0.08 * hsc.e; H(); } }, 0)
+    .to('#heroTitle', { y: -60, opacity: 0, duration: 0.4, ease: 'power2.in' }, 0)
+    .to('.top', { opacity: 0, duration: 0.3 }, 0)
+    // 2 · the photo section: gradient from the corner, text rises
+    .to(shade, { opacity: 1, duration: 0.4, ease: 'none' }, 0.55)
+    .fromTo(two, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 0.75)
+    .to({}, { duration: 0.5 })
+    // 3 · the gradient fills the screen and becomes the Group section
+    .to(two, { opacity: 0, y: -40, duration: 0.35, ease: 'power2.in' }, 1.7)
+    .to(shade, { '--a': '100%', '--b': '160%', duration: 0.8, ease: 'power2.inOut' }, 1.7)
+    .fromTo(gTop, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 2.35)
+    .to(r1.st, { q: 1, duration: 0.9, ease: 'power1.inOut', onUpdate: R1 }, 2.45)
+    .to(r1.st, { pan: 1, duration: 1.5, ease: 'none', onUpdate: R1 }, 2.45)
+    .fromTo(gBot, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 2.9)
+    .to({}, { duration: 0.1 }, 3.9);
+
+  /* ---- everything below is set up in idle slices ---- */
+  const tasks = [];
+  let tasksDone = false;
+  const later = fn => tasks.push(fn);
+  const idle = cb => ('requestIdleCallback' in window) ? requestIdleCallback(cb, { timeout: 250 }) : setTimeout(cb, 16);
+  function runLater(done) {
+    const slice = () => {
+      const t0 = performance.now();
+      while (tasks.length && performance.now() - t0 < 12) tasks.shift()();
+      if (tasks.length) idle(slice); else { tasksDone = true; done(); }
+    };
+    idle(slice);
+  }
+
+  /* ---- SCENE 2 · companies: one ribbon pair flows through the three shapes ---- */
+  let coST = null;
+  const CO_T = 3, CO_AT = [0.3, 1.6, 2.85];          // where each company rests on the timeline
+  later(() => {
+    const r = ribs.companies, tabs = $$('.co-tabs button'), items = $$('.co-item'), logos = $$('.co-logos .lockup');
+    let on = -1;
+    const R = () => {
+      touch(r);
+      const k = Math.min(2, Math.round(r.st.m));
+      if (k !== on) { on = k; tabs.forEach((t, i) => t.setAttribute('aria-current', String(i === k))); }
+    };
+    r.st.q = 0; r.st.m = 0; r.st.pan = 0.1; r.render();
+    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: '#companies', start: 'top 85%', end: 'top top', scrub: 0.8 } });
+    const cols = ['#3089a9', '#2aa8da', '#42979c'];
+    const tl = gsap.timeline({ scrollTrigger: { trigger: '#companies', start: 'top top', end: '+=300%', pin: true, scrub: 0.8 } });
+    coST = tl.scrollTrigger;
+    tl.to(r.st, { pan: 0.9, duration: CO_T, ease: 'none', onUpdate: R }, 0);
+    for (let k = 1; k < 3; k++) {
+      const at = 0.6 + (k - 1) * 1.3;
+      tl.to(r.st, { m: k, duration: 0.7, ease: 'none', onUpdate: R }, at)
+        .to('#coBg', { backgroundColor: cols[k], duration: 0.5, ease: 'power1.inOut' }, at + 0.1)
+        .to([items[k - 1], logos[k - 1]], { autoAlpha: 0, y: -24, duration: 0.25, ease: 'power1.in' }, at)
+        .fromTo([items[k], logos[k]], { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: 'power1.out' }, at + 0.4);
+    }
+    tl.to({}, { duration: 0.01 }, CO_T);
+  });
+  // tabs, menu and footer links jump to a company inside the pinned scene
+  const toCompany = k => { if (!coST) return; goTo(coST.start + (coST.end - coST.start) * CO_AT[k] / CO_T); };
+  $$('[data-co]').forEach(b => b.addEventListener('click', ev => { ev.preventDefault(); setMenu(false); toCompany(+b.dataset.co); }));
+  $$('a[href^="#"]:not([data-co])').forEach(a => a.addEventListener('click', ev => {
+    const id = a.getAttribute('href');
+    const t = id === '#group' ? null : document.querySelector(id);
+    ev.preventDefault(); setMenu(false);
+    if (id === '#group') { const st = ScrollTrigger.getAll().find(s => s.trigger === hero.el && s.pin); if (st) goTo(st.start + (st.end - st.start) * 0.72); return; }
+    if (t) lenis ? lenis.scrollTo(t, { duration: 1.6 }) : t.scrollIntoView({ behavior: 'smooth' });
+  }));
+
+  /* ---- statements, figures, services, footer (all scrubbed) ---- */
+  $$('[data-split]').forEach(el => later(() => {
+    const last = !!el.closest('.foot');   // the footer slogan sits at the very end of the page: finish by then
+    gsap.from(splitWords(el), { yPercent: 115, ease: 'none', stagger: 0.04,
+      scrollTrigger: { trigger: el, start: last ? 'top bottom' : 'top 94%', end: last ? 'bottom bottom' : 'top 62%', scrub: 0.6 } });
+  }));
+  $$('[data-fade]').forEach(el => later(() => gsap.from(el, { y: 24, opacity: 0, ease: 'none',
+    scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 82%', scrub: 0.6 } })));
+  function ribbonScroll(r, sec, drawStart = 'top 90%', drawEnd = 'top 30%') {
+    r.st.q = 0; r.render();
+    const R = () => touch(r);
+    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: drawStart, end: drawEnd, scrub: 0.8 } });
+    gsap.fromTo(r.st, { pan: 0 }, { pan: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
+  }
+  [['tAgency', 't-agency'], ['tInterlink', 't-interlink'], ['tLogistics', 't-logistics']].forEach(([k, a]) => later(() => ribbonScroll(ribs[k], $(`[data-rib="${a}"]`).closest('.tile'))));
+  $$('[data-tiles] .tile').forEach((t, i) => later(() => {
+    gsap.from(t, { y: 70, opacity: 0, ease: 'none', scrollTrigger: { trigger: t, start: `top ${100 - (i % 2) * 3}%`, end: `top ${76 - (i % 2) * 3}%`, scrub: 0.6 } });
+    gsap.from($$('strong, small, .lbl', t), { y: 30, opacity: 0, ease: 'none', stagger: 0.12, scrollTrigger: { trigger: t, start: 'top 85%', end: 'top 55%', scrub: 0.6 } });
+  }));
+  $$('.card').forEach((c, i) => later(() => {
+    gsap.from(c, { x: 120 + i * 40, opacity: 0, ease: 'none', scrollTrigger: { trigger: '#cardsTrack', start: 'top 100%', end: 'top 55%', scrub: 0.6 } });
+    gsap.fromTo($('.ph img', c), { scale: 1.18 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: c, start: 'top bottom', end: 'bottom top', scrub: true } });
+    gsap.fromTo($('.ph', c), { clipPath: 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)' }, { clipPath: 'polygon(67% 0, 100% 0, 100% 100%, 48% 100%)', ease: 'none',
+      scrollTrigger: { trigger: '#cardsTrack', start: 'top 92%', end: 'top 45%', scrub: 0.6 } });
+  }));
+
+  // drag the services row with the mouse (touch and trackpads scroll it natively)
+  const track = $('#cardsTrack');
+  let dx = null, sx = 0;
+  track.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; dx = e.clientX; sx = track.scrollLeft; track.classList.add('drag'); track.setPointerCapture(e.pointerId); });
+  track.addEventListener('pointermove', e => { if (dx === null) return; track.scrollLeft = sx - (e.clientX - dx); });
+  const endDrag = () => { if (dx === null) return; dx = null; track.classList.remove('drag'); };
+  track.addEventListener('pointerup', endDrag); track.addEventListener('pointercancel', endDrag);
+
+  // one sorted refresh once everything exists, and again (debounced) when fonts or late resources settle
+  let rf = 0;
+  const again = () => { clearTimeout(rf); rf = setTimeout(() => { ScrollTrigger.sort(); ScrollTrigger.refresh(); }, 120); };
+  runLater(again);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => tasksDone && again());
+  addEventListener('load', () => tasksDone && again());
+});
+</script>
+</body>
+</html>
