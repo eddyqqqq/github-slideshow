@@ -26,7 +26,7 @@
 
 **Responsive.** Fluid type and content width (`--cw: max(1440px, 76vw)`), so 1920 and 2560 screens get the 1440 design scaled up instead of a narrow column; the hero composition keeps the same weight on phones and tablets; short landscape screens get a compact layout. Checked at 320, 390, 768, 1024, 1280, 1440, 1920, 2560 and 844×390.
 
-**Layout scale.** The design is 1440 wide with 68 px margins, so margins are 4.7 vw and the content runs full width at every size. On landscape screens the hero is the design itself scaled to the width (logo, band composition edge to edge, title): when that is taller than the screen, the page first scrolls down to the title and then the hero pins and opens. Phones and portrait tablets keep the cropped composition. Type follows the design sizes at 1440, scales with the width below it and at half that rate above it. In the company scene the ribbon is centred, per state, in the free band between the logo and the text.
+**Layout scale.** The design is 1440 wide with 68 px margins, so margins are 4.7 vw and the content runs full width at every size. On landscape screens the hero is the design laid out in design pixels (`--u`) and scaled so the whole stack (logo, bands, title, space under it: 1170 design px) fits one screen: the band composition starts at the left edge exactly as drawn, and on screens wider than it the bands run on to the right edge (that part of the drawing is two straight bands, so it continues seamlessly). Phones and portrait tablets keep the cropped composition. The logo is 54 design px wide. Type follows the design sizes at 1440, scales with the width below it and at half that rate above it. In the Group and company scene the ribbon is placed per state with its real shape, so its edges stay clear of the top block and the bottom text along their width.
 
 **Type.** Area Normal: titles Bold 48 px and text Regular 20 px at 1440 (hero title 60, labels 14, links 16), fluid above and below. The fonts are self-hosted as subset WOFF2 (`fonts/area-regular.woff2`, `fonts/area-bold.woff2`, about 32 KB each, Latin + Romanian), preloaded, with metric-matched Arial fallbacks so nothing moves when they swap in. **They are not in this repository**: Area Normal is a commercial typeface whose embedding is restricted, so it needs a web licence; the files are git-ignored and go on the server.
 
@@ -36,7 +36,7 @@ Colours (sampled from the design): Group `#145fad`, Shipping Agency `#3089a9`, I
 
 Build: `python3 tools/build_home.py` (reads `design/ribbons/*.svg` through `tools/design_svg.py`, writes `index.html`). To change a ribbon, replace its SVG and rebuild.
 
-Lighthouse (local, simulated slow 4G for mobile): mobile performance 78–81 (the full-quality hero photo), desktop 99; accessibility, SEO and best practices 100.
+Lighthouse (local, simulated slow 4G for mobile): mobile performance 70–77 (the full-quality hero photo), desktop 98; accessibility, SEO and best practices 100.
 
 # First concept (v1)
 

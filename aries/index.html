@@ -38,8 +38,11 @@
   --small: clamp(12px, min(.972vw, 7px + .486vw), 17px);
   --link: clamp(14px, min(1.111vw, 8px + .556vw), 19px);
   --cw: 100vw;  /* content width: full width minus the margins, as in the design */
-  --logo-w: clamp(46px, 5vw, 110px);
-  --logo-top: clamp(20px, 5vw, 110px);
+  /* --u: one design pixel. The hero is laid out on the 1440-wide design and scaled so that its whole stack
+     (logo, bands, title and the white space under it: 1170 design px) fits the screen: by the width, or by the height on wide, short screens */
+  --u: min(100vw / 1440, 100vh / 1170);
+  --logo-w: max(28px, 54 * var(--u));
+  --logo-top: max(20px, 60 * var(--u));
   color-scheme: light;
 }
 @font-face { font-family: "Area Normal"; src: url(fonts/area-regular.woff2) format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
@@ -77,6 +80,7 @@ html.lenis, html.lenis body { height: auto; }
 
 /* logos: the design files (Group in colour on white, the companies in white); 72 px wide at 1440 */
 .logo { display: block; width: var(--logo-w); height: auto; }
+@media (orientation: portrait) { :root { --logo-w: max(40px, 54 * var(--u)); } }
 .logo-link { display: inline-block; }
 
 /* ---------- header + menu ---------- */
@@ -89,7 +93,7 @@ html.lenis, html.lenis body { height: auto; }
 .hero-src { position: absolute; left: 0; top: 0; width: 15px; opacity: 0; pointer-events: none; }
 .hero-src img { display: block; width: 100%; height: auto; }
 .hero-layout { position: absolute; inset: 0; display: flex; flex-direction: column; pointer-events: none;
-  padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top) + var(--logo-w) * 1.76 + clamp(8px, 2vh, 28px)); }  /* the bands start below the logo */
+  padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top) + var(--logo-w) * 1.76 + clamp(8px, 2vh, 28px)); }  /* phones: the bands start below the logo */
 .hero-slot { flex: 1 1 auto; min-height: 0; }
 .hero-title { padding-block: clamp(18px, 3vh, 34px) clamp(28px, 6vh, 64px); display: grid; gap: 10px; }
 .hero-title h1 { color: var(--blue); font-size: var(--h-xl); line-height: 1.05; }
@@ -102,15 +106,16 @@ html.lenis, html.lenis body { height: auto; }
 .anim .shade { opacity: 0; }
 .anim .scene-two { position: absolute; inset: 0; background: none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); }
 .pre #hTop, .pre #hBot, .pre #hImgWrap { opacity: 0; }
-/* landscape screens: the hero is the design itself scaled to the width (1440 × 1240): logo 72 px from the top,
-   the band composition edge to edge from 219 px, the title under it. When that is taller than the screen the
-   page first scrolls down to the title, then the hero pins and opens. */
+/* landscape screens: the hero is the design, scaled by --u so it always fits one screen: logo at the top left,
+   the band composition from the left edge exactly as drawn (747 design px tall, from 180), the title under it.
+   On screens wider than the composition the bands simply run on to the right edge: that part of the drawing is
+   two straight bands, so it continues seamlessly. */
 @media (min-aspect-ratio: 1/1) and (min-width: 760px) {
-  .hero-stage { height: max(100vh, 86.1vw); height: max(100svh, 86.1vw); }
-  .hero-layout { padding-top: 15.2vw; }
-  .hero-slot { flex: none; height: 51.87vw; }
-  .hero-title { padding-block: 1.8vw 0; }
-  .anim .scene-two { top: auto; height: 100vh; height: 100svh; }
+  .hero-layout { padding-top: calc(180 * var(--u)); }
+  .hero-slot { flex: none; height: calc(747 * var(--u)); }
+  .hero-title { padding-block: calc(30 * var(--u)) 0; gap: calc(10 * var(--u)); }
+  .hero-title h1 { font-size: max(22px, 60 * var(--u)); }
+  .hero-title p { font-size: max(14px, 20 * var(--u)); }
 }
 
 /* ---------- scene 2: Group and the three companies, one ribbon through four shapes ---------- */
@@ -193,7 +198,6 @@ html.lenis, html.lenis body { height: auto; }
 .anim .cards-bar { display: block; }
 
 @media (max-height: 520px) and (orientation: landscape) {
-  .hero-layout { padding-top: 104px; } .hero-title { padding-block: 8px 18px; } .hero-title h1 { font-size: 30px; }
   .g-intro { padding-top: 8px; gap: 8px; } .g-intro h2, .co-item h2 { font-size: clamp(22px, 2.6vw, 30px); }
   .js .id-foot { padding-bottom: 18px; } .co-item { gap: 8px; } .id-top { padding-top: 18px; }
 }
@@ -488,18 +492,20 @@ document.addEventListener('DOMContentLoaded', () => {
       pts.reverse().forEach(dx => { xs.push(dx); ys.push(arr[0] + HB.sl * L * (Math.exp(dx / L) - 1)); });
     }
     for (let k = 0; k < n; k++) { xs.push(HB.x[k]); ys.push(arr[k]); }
-    if (xb > HB.w) { xs.push(xb + 5); ys.push(arr[n - 1] + HB.sr * (xb + 5 - HB.w)); }
+    // past the right end the drawing is two straight bands: continue each edge along its own last segment
+    if (xb > HB.w) { const sr = (arr[n - 1] - arr[n - 2]) / (HB.x[n - 1] - HB.x[n - 2]); xs.push(xb + 5); ys.push(arr[n - 1] + sr * (xb + 5 - HB.w)); }
     return { xs, ys };
   }
   function heroLayout() {
     const H = hero.stage.getBoundingClientRect(), S = hero.slot.getBoundingClientRect();
     if (!H.width || !S.height) return;
     const [rx, ry, rw, rh] = COMP;
-    // fit the composition in the slot; on tall screens (phones, tablets) let it grow past the sides so the
-    // bands and photo keep the same weight as on desktop (the bands continue off-screen)
-    const sw = S.width / rw, sh = S.height / rh;
-    const s = Math.min(sh, sw * Math.min(1.8, Math.max(1, sh / sw * 0.62)));
-    const vbX = rx + rw / 2 - (S.left - H.left + S.width / 2) / s;
+    // landscape: the composition fills the slot's height, from the left edge (as in the design).
+    // portrait (phones, tablets): fit the slot and let it grow past the sides, centred, so the bands and photo
+    // keep the same weight as on desktop (the bands continue off-screen)
+    const sw = S.width / rw, sh = S.height / rh, land = matchMedia('(min-aspect-ratio: 1/1) and (min-width: 760px)').matches;
+    const s = land ? sh : Math.min(sh, sw * Math.min(1.8, Math.max(1, sh / sw * 0.62)));
+    const vbX = land ? rx - (S.left - H.left) / s : rx + rw / 2 - (S.left - H.left + S.width / 2) / s;
     const vbY = ry + rh / 2 - (S.top - H.top + S.height / 2) / s;
     const vbW = H.width / s, vbH = H.height / s;
     hero.vb = [vbX, vbY, vbW, vbH];
@@ -555,18 +561,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const r = e.target._rib; r.vis = e.isIntersecting; if (r.vis && r.stale) request(r);
   }), { rootMargin: '25% 0px' }) : null;
   Object.values(ribs).forEach(r => { if (r === ribs.menu) return; r.svg._rib = r; r.vis = !io; if (io) io.observe(r.svg); });
-  // identity: for each state, centre the ribbon in the free band between the top block (logo or Group text) and the
-  // bottom block, so on wide, short screens it does not run over the titles
+  // identity: for each state, place the ribbon vertically so that, along the width of the texts, its lower edge
+  // stays above the bottom text and its upper edge below the top block (logo or Group text), using the real
+  // shape at the pan position where that state rests; when both cannot hold, it sits halfway
+  const ID_PAN = [0.062, 0.351, 0.649, 0.938];
+  const interp = (xs, ys, x) => { let k = 1; while (k < xs.length - 1 && xs[k] < x) k++; const t = (x - xs[k - 1]) / (xs[k] - xs[k - 1]); return ys[k - 1] + (ys[k] - ys[k - 1]) * Math.min(1, Math.max(0, t)); };
   function identityBands() {
-    const sec = $('#group').getBoundingClientRect(), H = sec.height;
-    if (!H) return;
-    const tops = $$('.id-top .id-states > *'), foots = $$('.id-foot .id-states > *');
-    ribs.identity.ays = tops.map((t, k) => {
-      const a = t.getBoundingClientRect().bottom - sec.top, b = foots[k].getBoundingClientRect().top - sec.top;
-      return Math.min(0.72, Math.max(0.36, (a + b) / 2 / H));
+    const r = ribs.identity, sec = $('#group').getBoundingClientRect(), H = sec.height;
+    if (!r.s || !H) return;
+    const tops = $$('.id-top .id-states > *'), foots = $$('.id-foot .id-states > *'), m = 18;
+    r.ays = r.keys.map((key, k) => {
+      const sp = RIB[key], f = r.f[key], s = r.s, vbX = (r.SW - r.vbW) * ID_PAN[k];
+      const edge = (xs, ys, a, b, pick) => { let v = pick === 'max' ? -1e9 : 1e9;
+        for (let sx = a; sx <= b; sx += 6) { const y = interp(xs, ys, (sx / s + vbX) / f) * f * s; v = pick === 'max' ? Math.max(v, y) : Math.min(v, y); }
+        return v; };
+      const tb = tops[k].getBoundingClientRect(), fb = foots[k].getBoundingClientRect();
+      const lowB = edge(sp.lo.x, sp.lo.b, Math.max(0, fb.left - sec.left - m), fb.right - sec.left + m, 'max');
+      const topT = edge(sp.up.x, sp.up.t, Math.max(0, tb.left - sec.left - m), tb.right - sec.left + m, 'min');
+      const hi = (fb.top - sec.top - m - lowB) / H, lo = (tb.bottom - sec.top + m - topT) / H;
+      const ay = lo <= hi ? Math.min(Math.max(0.55, lo), hi) : (lo + hi) / 2;
+      return Math.min(0.85, Math.max(0.15, ay));
     });
+    request(r);
   }
-  const layoutAll = () => { heroLayout(); identityBands(); Object.values(ribs).forEach(r => r.layout()); };
+  const layoutAll = () => { heroLayout(); Object.values(ribs).forEach(r => r.layout()); identityBands(); };
   layoutAll();
   let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutAll, 120); });
 
