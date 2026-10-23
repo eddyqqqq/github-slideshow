@@ -188,12 +188,16 @@ html.lenis, html.lenis body { height: auto; }
   padding-left: var(--gut); padding-right: var(--gut-r); }
 .cards-track::-webkit-scrollbar { display: none; }
 .anim .cards-track { overflow: visible; scroll-snap-type: none; width: max-content; will-change: transform; }
-.card { --o: 1; --h: 0; flex: none; width: min(max(752px, 39vw), 84vw); height: clamp(280px, min(36vw, 58vh), 800px); position: relative; overflow: hidden; background: var(--blue); color: var(--on); scroll-snap-align: start; }
-.card h3 { position: relative; z-index: 1; font-size: clamp(22px, 2.2vw, 54px); line-height: 1.15; font-weight: 400; padding: clamp(22px, 3vw, 44px); max-width: 13ch; }
+/* cards keep the design proportions (752 × 515) at every size; their content scales with the card (cqi) */
+.card { --o: 1; --h: 0; flex: none; border-radius: 6px; width: min(max(752px, 39vw), 84vw, 85vh); aspect-ratio: 752 / 515; container-type: inline-size; position: relative; overflow: hidden; background: var(--blue); color: var(--on); scroll-snap-align: start; }
+.card h3 { position: relative; z-index: 1; font-size: max(16px, 4.4cqi); line-height: 1.15; font-weight: 400; padding: 7.7cqi; max-width: 50%; }   /* as in the design: 33 px type, 58 px margin on a 752 card; inside the straight blue part */
 /* the diagonal cut: --o opens it on scroll, --h swings it on hover */
-.card .ph { position: absolute; inset: 0; clip-path: polygon(calc(100% - var(--o) * 33% - var(--h) * 5%) 0, 100% 0, 100% 100%, calc(100% - var(--o) * 52% - var(--h) * 9%) 100%); }
+/* the blue zone as in the design: a straight left part (47 % of the card) and, over the top 70 %, a diagonal
+   that leans out to 68 % at the top edge; the photo is the rest. --o opens it on scroll, --h on hover. */
+.card .ph { position: absolute; inset: 0; clip-path: polygon(calc(100% - var(--o) * 31.7% - var(--h) * 4%) 0, 100% 0, 100% 100%,
+  calc(100% - var(--o) * 53% - var(--h) * 4%) 100%, calc(100% - var(--o) * 53% - var(--h) * 4%) 70.4%); }
 .card .pi { position: absolute; inset: 0; overflow: hidden; transform-origin: 75% 50%; }
-.card .pi img { display: block; width: 112%; max-width: none; height: 100%; margin-left: -6%; object-fit: cover; object-position: 75% 50%; }
+.card .pi img { display: block; width: 104%; max-width: none; height: 100%; margin-left: 11%; object-fit: cover; object-position: 50% 50%; }   /* placed as in the design: the photo's right part shows beside the diagonal */
 .cards-bar { display: none; height: 2px; background: var(--line); margin-top: clamp(22px, 3vw, 36px); overflow: hidden; }
 .cards-bar i { display: block; height: 100%; background: var(--blue); transform-origin: 0 50%; transform: scaleX(.1); }
 .anim .cards-bar { display: block; }
@@ -821,18 +825,18 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: sec, start: drawStart, end: drawEnd, scrub: 0.8 } });
   }
   [['tAgency', 't-agency'], ['tInterlink', 't-interlink'], ['tLogistics', 't-logistics']].forEach(([k, a]) => later(() => ribbonScroll(ribs[k], $(`[data-rib="${a}"]`).closest('.tile'))));
-  // tiles rise in, label and caption fade up; the figures count from 0 to their value when the tile is well
-  // in view (the right-hand figure of a row a beat later), and go back to 0 when it leaves below the screen,
+  // tiles rise in, label and caption fade up; the figures count from 0 to their value (in about a second) as soon
+  // as the tile comes into view (the right-hand figure of a row a beat later), and go back to 0 when it leaves below the screen,
   // so the count plays again every time you scroll down to it
   $$('[data-tiles] .tile').forEach((t, i) => later(() => {
     gsap.from(t, { y: 70, opacity: 0, ease: 'none', scrollTrigger: { trigger: t, start: `top ${100 - (i % 2) * 3}%`, end: `top ${76 - (i % 2) * 3}%`, scrub: 0.6 } });
     gsap.from($$('small, .lbl', t), { y: 24, opacity: 0, ease: 'none', stagger: 0.12, scrollTrigger: { trigger: t, start: 'top 85%', end: 'top 55%', scrub: 0.6 } });
     const vw = root.clientWidth, fmt = v => Math.round(v).toLocaleString('en-US');
     const figs = $$('strong', t).map((el, j) => ({ node: el.firstChild, to: parseInt(el.firstChild.textContent.replace(/\D/g, ''), 10), o: { v: 0 },
-      late: j * 0.35 + (i === 2 && el.getBoundingClientRect().left > vw * 0.45 ? 0.3 : 0) }));
+      late: j * 0.15 + (i === 2 && el.getBoundingClientRect().left > vw * 0.45 ? 0.15 : 0) }));
     figs.forEach(f => { f.node.textContent = '0'; });
-    ScrollTrigger.create({ trigger: t, start: 'top 70%',
-      onEnter: () => figs.forEach(f => { gsap.killTweensOf(f.o); f.o.v = 0; gsap.to(f.o, { v: f.to, duration: 2.4, delay: f.late, ease: 'power2.out', onUpdate: () => { f.node.textContent = fmt(f.o.v); } }); }),
+    ScrollTrigger.create({ trigger: t, start: 'top 85%',
+      onEnter: () => figs.forEach(f => { gsap.killTweensOf(f.o); f.o.v = 0; gsap.to(f.o, { v: f.to, duration: 1.1, delay: f.late, ease: 'power2.out', onUpdate: () => { f.node.textContent = fmt(f.o.v); } }); }),
       onLeaveBack: () => figs.forEach(f => { gsap.killTweensOf(f.o); f.o.v = 0; f.node.textContent = '0'; }) });
   }));
 
