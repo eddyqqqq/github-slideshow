@@ -18,7 +18,7 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&display=swap"></noscript>
 <style>
 /* Layout: the homepage design, played as a scroll sequence. Hero bands open onto the photo, the blue
-   gradient fills the screen into the Group section, the three companies pass through one pinned scene,
+   gradient fills the screen, Group and the three companies pass through one pinned ribbon scene,
    then figures, services and footer. Colours sampled from the design file. */
 :root {
   --blue: #145fad;        /* Aries Group */
@@ -85,8 +85,9 @@ html.lenis, html.lenis body { height: auto; }
 .menu a { font-size: clamp(24px, 2.4vw, 34px); text-decoration: none; }
 .menu a:hover { opacity: .75; }
 
-/* ---------- scene 1: hero → photo → Group (one pinned sequence) ---------- */
-.hero { position: relative; height: 100vh; height: 100svh; min-height: 600px; overflow: hidden; background: var(--paper); }
+/* ---------- scene 1: hero → photo → blue (one pinned sequence) ---------- */
+.hero { position: relative; background: var(--paper); }
+.hero-stage { position: relative; height: 100vh; height: 100svh; min-height: 600px; overflow: hidden; }
 .hero-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .hero-layout { position: absolute; inset: 0; display: flex; flex-direction: column; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(110px, 13vh, 150px)); pointer-events: none; }
 .hero-slot { flex: 1 1 auto; min-height: 0; }
@@ -95,41 +96,47 @@ html.lenis, html.lenis body { height: auto; }
 .hero-title p { font-size: var(--body); color: var(--text); }
 .shade { position: absolute; inset: 0; pointer-events: none; --a: 0%; --b: 62%;
   background: linear-gradient(158deg, var(--blue) 0%, var(--blue) var(--a), rgb(20 95 173 / .78) calc(var(--a) + (var(--b) - var(--a)) * .45), rgb(20 95 173 / 0) var(--b)); }
-.scene-two, .scene-group { color: var(--on); }
-.scene-two { background: var(--blue); padding-block: 120px 160px; }
-.scene-two h2, .scene-group h2 { font-size: var(--h-l); line-height: 1.15; max-width: 16ch; }
-.scene-two p, .scene-group p { font-size: var(--body); max-width: 46ch; margin-top: 18px; }
-.scene-group { background: var(--blue); padding-block: 120px; display: grid; gap: 40px; }
-.group-rib { position: relative; height: clamp(220px, 34vh, 420px); }
-.rib-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
-/* with motion: the three states live inside the pinned hero */
+.scene-two { color: var(--on); background: var(--blue); padding-block: 120px 160px; }
+.scene-two h2 { font-size: var(--h-l); line-height: 1.15; max-width: 16ch; }
+.scene-two p { font-size: var(--body); max-width: 46ch; margin-top: 18px; }
 .anim .shade { opacity: 0; }
-.anim .hero .scene-two { position: absolute; inset: 0; background: none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); opacity: 0; }
-.anim .hero .scene-group { position: absolute; inset: 0; background: none; padding-block: calc(env(safe-area-inset-top, 0px) + clamp(110px, 14vh, 160px)) clamp(36px, 7vh, 80px);
-  grid-template-rows: auto 1fr auto; gap: 0; }
-.anim .hero .scene-group .group-rib { height: auto; min-height: 160px; }
-.anim .scene-group .g-top, .anim .scene-group .g-bot { opacity: 0; }
+.anim .scene-two { position: absolute; inset: 0; background: none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); }
 .pre #hTop, .pre #hBot, .pre #hImgWrap { opacity: 0; }
 
-/* ---------- scene 2: the three companies ---------- */
-.companies { position: relative; height: 100vh; height: 100svh; min-height: 620px; overflow: hidden; color: var(--on); }
-.co-bg { position: absolute; inset: 0; background: var(--agency); }
-.co-top { position: absolute; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + clamp(36px, 7vh, 80px)); }
-.co-top .wrap { padding-right: calc(var(--gut-r) + 64px); display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
-.co-logos { display: grid; }
-.co-logos .lockup { grid-area: 1 / 1; }
+/* ---------- scene 2: Group and the three companies, one ribbon through four shapes ---------- */
+.identity { position: relative; overflow: hidden; color: var(--on); background: var(--blue); }
+.id-bg { position: absolute; inset: 0; background: var(--blue); }
+.rib-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+.id-top, .id-foot { position: relative; }
+.id-top { padding-top: calc(env(safe-area-inset-top, 0px) + clamp(36px, 7vh, 80px)); }
+.id-top .wrap { padding-right: calc(var(--gut-r) + 64px); display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.id-foot { padding-block: 60px clamp(36px, 8vh, 90px); }
+.id-states { display: grid; gap: 40px; }
+.g-intro { padding-top: clamp(30px, 6vh, 70px); display: grid; gap: 18px; justify-items: start; }
+.g-intro h2 { font-size: var(--h-l); line-height: 1.15; max-width: 19ch; }
+.g-intro p, .g-foot p { font-size: var(--body); max-width: 46ch; }
+.co-item { display: grid; gap: 16px; justify-items: start; }
+.co-item h2 { font-size: var(--h-l); line-height: 1.1; }
+.co-item p { font-size: var(--body); max-width: 46ch; }
 .co-tabs { list-style: none; margin: 0; padding: 0; display: flex; gap: clamp(14px, 2.6vw, 44px); flex-wrap: wrap; justify-content: flex-end; }
 .co-tabs button { font: 400 12px/1 var(--font); color: var(--on); background: none; border: 0; padding: 6px 0; cursor: pointer; display: flex; align-items: center; gap: 10px; opacity: .85; }
 .co-tabs button::before { content: ""; width: 10px; height: 10px; border: 1px solid currentColor; transition: background .3s; }
 .co-tabs button[aria-current="true"] { opacity: 1; }
 .co-tabs button[aria-current="true"]::before { background: var(--on); }
-.co-rib { top: 28%; bottom: 28%; height: auto; }
-.co-foot { position: absolute; left: 0; right: 0; bottom: clamp(36px, 8vh, 90px); }
-.co-items { display: grid; }
-.co-item { grid-area: 1 / 1; display: grid; gap: 16px; justify-items: start; }
-.co-item h2 { font-size: var(--h-l); line-height: 1.1; }
-.co-item p { font-size: var(--body); max-width: 46ch; }
-.anim .co-item:not(:first-child), .anim .co-logos .lockup:not(:first-child) { opacity: 0; visibility: hidden; }
+/* with script: one full-screen scene, the four states stacked */
+.js .identity { height: 100vh; height: 100svh; min-height: 620px; }
+.js .id-top { position: absolute; left: 0; right: 0; top: 0; }
+.js .id-foot { position: absolute; left: 0; right: 0; bottom: 0; padding-top: 0; }
+.js .id-states { gap: 0; }
+.js .id-foot .id-states { align-items: end; }
+.js .id-top .id-states > * { align-self: start; justify-self: start; }
+/* the blue scene slides over the end of the hero while the gradient is still filling (its own background
+   fades in only as the hero lets go), so the Group text arrives with the fill, not after it */
+.anim .identity { margin-top: -80vh; margin-top: -80svh; background: none; }
+.anim .id-bg { opacity: 0; }
+.js .id-states > * { grid-area: 1 / 1; }
+.js .id-states > :not(:first-child) { opacity: 0; visibility: hidden; }
+.anim .co-tabs { opacity: 0; visibility: hidden; }
 @media (max-width: 700px) { .co-tabs { display: none; } }
 
 /* ---------- statements ---------- */
@@ -149,15 +156,21 @@ html.lenis, html.lenis body { height: auto; }
 .tile small { display: block; font-size: 12.5px; margin-top: 8px; }
 @media (max-width: 760px) { .figs .wrap { grid-template-columns: minmax(0, 1fr); } .tile.wide { grid-column: auto; } }
 
-/* ---------- services cards ---------- */
-.cards { padding-block: clamp(24px, 4vw, 50px) clamp(90px, 10vw, 150px); }
-.cards-track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding-left: max(var(--gut), calc((100vw - 1440px) / 2 + var(--gut))); padding-right: var(--gut-r); scrollbar-width: none; cursor: grab; }
+/* ---------- services cards: a row that slides sideways while the section is pinned ---------- */
+.cards { padding-block: clamp(24px, 4vw, 50px) clamp(90px, 10vw, 150px); overflow: hidden; }
+.cards-track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  padding-left: max(var(--gut), calc((100vw - 1440px) / 2 + var(--gut))); padding-right: var(--gut-r); }
 .cards-track::-webkit-scrollbar { display: none; }
-.cards-track.drag { cursor: grabbing; scroll-snap-type: none; }
-.card { flex: none; width: min(752px, 84vw); height: clamp(300px, 36vw, 515px); position: relative; overflow: hidden; background: var(--blue); color: var(--on); scroll-snap-align: start; }
+.anim .cards-track { overflow: visible; scroll-snap-type: none; width: max-content; will-change: transform; }
+.card { --o: 1; --h: 0; flex: none; width: min(752px, 84vw); height: clamp(300px, min(36vw, 58vh), 515px); position: relative; overflow: hidden; background: var(--blue); color: var(--on); scroll-snap-align: start; }
 .card h3 { position: relative; z-index: 1; font-size: clamp(22px, 2.2vw, 32px); line-height: 1.12; font-weight: 300; padding: clamp(22px, 3vw, 44px); max-width: 12ch; }
-.card .ph { position: absolute; inset: 0; clip-path: polygon(67% 0, 100% 0, 100% 100%, 48% 100%); }
-.card .ph img { width: 100%; height: 100%; object-fit: cover; object-position: 75% 50%; display: block; transform-origin: 70% 50%; }
+/* the diagonal cut: --o opens it on scroll, --h swings it on hover */
+.card .ph { position: absolute; inset: 0; clip-path: polygon(calc(100% - var(--o) * 33% - var(--h) * 8%) 0, 100% 0, 100% 100%, calc(100% - var(--o) * 52% - var(--h) * 14%) 100%); }
+.card .pi { position: absolute; inset: 0; overflow: hidden; transform-origin: 75% 50%; }
+.card .pi img { display: block; width: 112%; max-width: none; height: 100%; margin-left: -6%; object-fit: cover; object-position: 75% 50%; }
+.cards-bar { display: none; height: 2px; background: var(--line); margin-top: clamp(22px, 3vw, 36px); overflow: hidden; }
+.cards-bar i { display: block; height: 100%; background: var(--blue); transform-origin: 0 50%; transform: scaleX(.1); }
+.anim .cards-bar { display: block; }
 
 /* ---------- footer ---------- */
 .foot { padding-block: clamp(70px, 8vw, 110px) 34px; }
@@ -175,7 +188,7 @@ html.lenis, html.lenis body { height: auto; }
 </style>
 </head>
 <body>
-<script>document.documentElement.classList.add('pre'); setTimeout(function () { document.documentElement.classList.remove('pre'); }, 4000);</script>
+<script>document.documentElement.classList.add('pre', 'js'); setTimeout(function () { document.documentElement.classList.remove('pre'); }, 4000);</script>
 
 <header class="top">
   <div class="wrap">
@@ -185,67 +198,62 @@ html.lenis, html.lenis body { height: auto; }
 <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><i></i><i></i><i></i></button>
 <nav class="menu" id="menu" aria-label="Main">
   <div class="wrap">
-    <div><h3>Aries Group</h3><ul><li><a href="#group">About us</a></li><li><a href="#certifications">Certifications</a></li><li><a href="#contact">Contact</a></li></ul></div>
-    <div><h3>Companies</h3><ul><li><a href="#companies" data-co="0">Aries Shipping Agency</a></li><li><a href="#companies" data-co="1">Aries Interlink</a></li><li><a href="#companies" data-co="2">Aries Logistics</a></li></ul></div>
+    <div><h3>Aries Group</h3><ul><li><a href="#group" data-co="0">About us</a></li><li><a href="#certifications">Certifications</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div><h3>Companies</h3><ul><li><a href="#group" data-co="1">Aries Shipping Agency</a></li><li><a href="#group" data-co="2">Aries Interlink</a></li><li><a href="#group" data-co="3">Aries Logistics</a></li></ul></div>
     <div><h3>Activity</h3><ul><li><a href="#news">News</a></li><li><a href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
   </div>
 </nav>
 
 <main>
 
-<!-- SCENE 1: the cover bands open onto the photo; the blue gradient then fills the screen into the Group section -->
+<!-- SCENE 1: the cover bands open onto the photo; the blue gradient then fills the screen -->
 <section class="hero" id="hero">
-  <svg class="hero-svg" id="heroSvg" viewBox="0 -120 1442 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <defs><clipPath id="hClip"><path id="hRegion" d="M0 0Z"/></clipPath></defs>
-    <g clip-path="url(#hClip)"><g id="hZoom"><g id="hImgWrap"><image id="hImg" href="img/hero.webp" x="0" y="0" width="1500" height="1020" preserveAspectRatio="none"/></g></g></g>
-    <path id="hTop" fill="#145FAD" d="M0 0Z"/>
-    <path id="hBot" fill="#145FAD" d="M0 0Z"/>
-  </svg>
-  <div class="shade" id="shade"></div>
-  <div class="hero-layout">
-    <div class="hero-slot" id="heroSlot"></div>
-    <div class="hero-title wrap" id="heroTitle">
-      <h1>Where possibilities arise</h1>
-      <p>Aries Group is among Romania’s leading transport and logistics providers.</p>
+  <div class="hero-stage">
+    <svg class="hero-svg" id="heroSvg" viewBox="0 -120 1442 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs><clipPath id="hClip"><path id="hRegion" d="M0 0Z"/></clipPath></defs>
+      <g clip-path="url(#hClip)"><g id="hZoom"><g id="hImgWrap"><image id="hImg" href="img/hero.webp" x="0" y="0" width="1500" height="1020" preserveAspectRatio="none"/></g></g></g>
+      <path id="hTop" fill="#145FAD" d="M0 0Z"/>
+      <path id="hBot" fill="#145FAD" d="M0 0Z"/>
+    </svg>
+    <div class="shade" id="shade"></div>
+    <div class="hero-layout">
+      <div class="hero-slot" id="heroSlot"></div>
+      <div class="hero-title wrap" id="heroTitle">
+        <h1>Where possibilities arise</h1>
+        <p>Aries Group is among Romania’s leading transport and logistics providers.</p>
+      </div>
     </div>
   </div>
-
   <div class="scene-two" id="sceneTwo">
     <div class="wrap">
       <h2>The partner of choice in Romania across the entire transport chain.</h2>
       <p>Established in 2003, Aries Group operates across the Black Sea and Danube region.</p>
     </div>
   </div>
-
-  <div class="scene-group" id="group">
-    <div class="wrap g-top">
-      <h2>Integrated maritime and logistics solutions that expand possibilities.</h2>
-      <p>We integrate maritime, rail and road transport capabilities to create flexible supply chain solutions tailored to the specific needs of each customer.</p>
-    </div>
-    <div class="group-rib"><svg class="rib-svg" data-rib="group" aria-hidden="true"></svg></div>
-    <div class="wrap g-bot">
-      <p>With specialized divisions, each focused on a specific area of expertise, we reduce operational friction and give our customers greater predictability and operational control, regardless of project complexity.</p>
-    </div>
-  </div>
 </section>
 
-<!-- SCENE 2: the three companies, one pinned scene -->
-<section class="companies" id="companies" aria-label="Aries companies">
-  <div class="co-bg" id="coBg"></div>
-  <svg class="rib-svg co-rib" data-rib="companies" aria-hidden="true"></svg>
-  <div class="co-top"><div class="wrap">
-    <div class="co-logos">
+<!-- SCENE 2: Group, then the three companies; one ribbon pair flows through the four shapes -->
+<section class="identity" id="group" aria-label="Aries Group and its companies">
+  <div class="id-bg" id="idBg"></div>
+  <svg class="rib-svg" data-rib="identity" aria-hidden="true"></svg>
+  <div class="id-top"><div class="wrap">
+    <div class="id-states">
+      <div class="g-intro">
+        <h2>Integrated maritime and logistics solutions that expand possibilities.</h2>
+        <p>We integrate maritime, rail and road transport capabilities to create flexible supply chain solutions tailored to the specific needs of each customer.</p>
+      </div>
       <span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Shipping<br>Agency</span></span>
       <span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Interlink</span></span>
       <span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Logistics</span></span>
     </div>
     <ul class="co-tabs" aria-label="Companies">
-      <li><button type="button" data-co="0" aria-current="true">Aries Shipping Agency</button></li>
-      <li><button type="button" data-co="1">Aries Interlink</button></li>
-      <li><button type="button" data-co="2">Aries Logistics</button></li>
+      <li><button type="button" data-co="1">Aries Shipping Agency</button></li>
+      <li><button type="button" data-co="2">Aries Interlink</button></li>
+      <li><button type="button" data-co="3">Aries Logistics</button></li>
     </ul>
   </div></div>
-  <div class="co-foot"><div class="wrap co-items">
+  <div class="id-foot"><div class="wrap id-states">
+    <div class="g-foot"><p>With specialized divisions, each focused on a specific area of expertise, we reduce operational friction and give our customers greater predictability and operational control, regardless of project complexity.</p></div>
     <div class="co-item"><h2>Aries Shipping Agency</h2><p>Maritime and river agency providing comprehensive agency services in all Romanian Black Sea and Danube ports.</p><a class="more" href="#contact">View more</a></div>
     <div class="co-item"><h2>Aries Interlink</h2><p>Supply chain support across Romania, with expertise in rail transport and rail operations mainly for grains, steel products and fertilizers.</p><a class="more" href="#contact">View more</a></div>
     <div class="co-item"><h2>Aries Logistics</h2><p>Bulk and break-bulk logistics, including stevedoring, transport, customs brokerage, warehousing, freight forwarding and door-to-door delivery.</p><a class="more" href="#contact">View more</a></div>
@@ -286,13 +294,14 @@ html.lenis, html.lenis body { height: auto; }
   </div>
 </section>
 
-<section class="cards" aria-label="Services">
+<section class="cards" id="services" aria-label="Services">
   <div class="cards-track" id="cardsTrack">
-    <article class="card"><h3>Multimodal transport, stevedoring and warehousing.</h3><div class="ph"><img src="img/card-stacker.webp" alt="Reach stacker lifting a container in the port" width="784" height="515" loading="lazy" decoding="async"></div></article>
-    <article class="card"><h3>Port agency and all related services.</h3><div class="ph"><img src="img/card-vessel.webp" alt="Bulk carrier moored at the grain terminal" width="1196" height="681" loading="lazy" decoding="async"></div></article>
-    <article class="card"><h3>Freight forwarding and full-service logistics.</h3><div class="ph"><img src="img/card-stacker.webp" alt="" width="784" height="515" loading="lazy" decoding="async"></div></article>
-    <article class="card"><h3>Cargo chartering and brokerage.</h3><div class="ph"><img src="img/card-vessel.webp" alt="" width="1196" height="681" loading="lazy" decoding="async"></div></article>
+    <article class="card"><h3>Multimodal transport, stevedoring and warehousing.</h3><div class="ph"><div class="pi"><img src="img/card-stacker.webp" alt="Reach stacker lifting a container in the port" width="784" height="515" loading="lazy" decoding="async"></div></div></article>
+    <article class="card"><h3>Port agency and all related services.</h3><div class="ph"><div class="pi"><img src="img/card-vessel.webp" alt="Bulk carrier moored at the grain terminal" width="1196" height="681" loading="lazy" decoding="async"></div></div></article>
+    <article class="card"><h3>Freight forwarding and full-service logistics.</h3><div class="ph"><div class="pi"><img src="img/card-stacker.webp" alt="" width="784" height="515" loading="lazy" decoding="async"></div></div></article>
+    <article class="card"><h3>Cargo chartering and brokerage.</h3><div class="ph"><div class="pi"><img src="img/card-vessel.webp" alt="" width="1196" height="681" loading="lazy" decoding="async"></div></div></article>
   </div>
+  <div class="wrap"><div class="cards-bar" aria-hidden="true"><i></i></div></div>
 </section>
 
 </main>
@@ -301,8 +310,8 @@ html.lenis, html.lenis body { height: auto; }
   <div class="wrap">
     <div class="foot-grid">
       <div><span class="lockup"><span class="mark"></span><b>ARIES</b><span>Group</span></span></div>
-      <div><h3>Aries Group</h3><ul><li><a href="#group">About us</a></li><li><a href="#certifications" id="certifications">Certifications</a></li><li><a href="mailto:office@aries-group.ro">Contact</a></li></ul></div>
-      <div><h3>Companies</h3><ul><li><a href="#companies" data-co="0">Aries Shipping Agency</a></li><li><a href="#companies" data-co="1">Aries Interlink</a></li><li><a href="#companies" data-co="2">Aries Logistics</a></li></ul></div>
+      <div><h3>Aries Group</h3><ul><li><a href="#group" data-co="0">About us</a></li><li><a href="#certifications" id="certifications">Certifications</a></li><li><a href="mailto:office@aries-group.ro">Contact</a></li></ul></div>
+      <div><h3>Companies</h3><ul><li><a href="#group" data-co="1">Aries Shipping Agency</a></li><li><a href="#group" data-co="2">Aries Interlink</a></li><li><a href="#group" data-co="3">Aries Logistics</a></li></ul></div>
       <div><h3 id="news">Activity</h3><ul><li><a href="#news">News</a></li><li><a class="li" href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener" ><span aria-hidden="true">in</span><span class="sr">Aries Group on LinkedIn</span></a></li></ul></div>
     </div>
     <p class="slogan" data-split>Where possibilities arise</p>
@@ -354,39 +363,42 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'M' + T.join('L') + 'L' + B.reverse().join('L') + 'Z';
   }
 
-  /* ---------------- identity ribbons ---------------- */
+  /* ---------------- identity ribbons ----------------
+     Every shape is scaled to the same width (the design files differ), so one ribbon can flow through
+     several shapes. The SVG covers its whole section: shapes are never cut by a box, only by the screen. */
   const NS = 'http://www.w3.org/2000/svg';
   let uid = 0;
   class Ribbons {
     constructor(svg, keys, o = {}) {
       this.svg = svg; this.keys = keys;
-      this.fill = o.fill || 0.6; this.ay = o.ay || 0.5; this.op = o.op || 1;
+      this.fill = o.fill || 0; this.over = o.over || 1; this.ay = o.ay || 0.5;
       this.SW = Math.min(...keys.map(k => RIB[k].w));
-      let lo = 1e9, hi = -1e9;
-      keys.forEach(k => { const s = RIB[k]; lo = Math.min(lo, ...s.up.t); hi = Math.max(hi, ...s.lo.b); });
-      this.yc = (lo + hi) / 2; this.span = hi - lo + 12;
+      this.f = {}; let span = 0;
+      keys.forEach(k => { const s = RIB[k], f = this.SW / s.w; this.f[k] = f; span = Math.max(span, (Math.max(...s.lo.b) - Math.min(...s.up.t)) * f); });
+      this.span = span + 12;
       this.st = { q: 1, pan: 0.5, m: 0 };
       const id = 'rb' + (uid++);
       const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); parent.appendChild(e); return e; };
       const defs = mk('defs', {}, svg);
-      const grad = (gid, g) => { const e = mk('linearGradient', { id: gid, gradientUnits: 'userSpaceOnUse', x1: g.c[0], y1: g.c[1], x2: g.c[2], y2: g.c[3] }, defs); g.s.forEach(([o, a]) => mk('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': +(a * this.op).toFixed(3) }, e)); };
+      const grad = (gid, g) => { const e = mk('linearGradient', { id: gid, gradientUnits: 'userSpaceOnUse', x1: g.c[0], y1: g.c[1], x2: g.c[2], y2: g.c[3] }, defs); g.s.forEach(([o, a]) => mk('stop', { offset: o, 'stop-color': '#fff', 'stop-opacity': a }, e)); };
       this.gid = id;
       keys.forEach(k => { grad(id + k + 'u', RIB[k].gu); grad(id + k + 'l', RIB[k].gl); });
-      this.pu = mk('path', { d: 'M0 0Z' }, svg); this.pl = mk('path', { d: 'M0 0Z' }, svg);
-      this.pu2 = mk('path', { d: 'M0 0Z' }, svg); this.pl2 = mk('path', { d: 'M0 0Z' }, svg);
+      this.ga = mk('g', {}, svg); this.gb = mk('g', {}, svg);
+      this.pu = mk('path', { d: 'M0 0Z' }, this.ga); this.pl = mk('path', { d: 'M0 0Z' }, this.ga);
+      this.pu2 = mk('path', { d: 'M0 0Z' }, this.gb); this.pl2 = mk('path', { d: 'M0 0Z' }, this.gb);
       svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
     }
     layout() {
       const r = this.svg.getBoundingClientRect();
       if (!r.width || !r.height) return;
       this.W = r.width; this.H = r.height;
-      this.s = Math.max(this.W / this.SW, (this.H * this.fill) / this.span);
+      this.s = Math.max(this.W * this.over / this.SW, (this.H * this.fill) / this.span);
       this.vbW = this.W / this.s; this.vbH = this.H / this.s;
       request(this);
     }
-    pair(key, q0, q1, pl, pu) {
+    pair(key, q0, q1, g, pl, pu) {
       const sp = RIB[key];
-      if (pl._k !== key) { pl._k = pu._k = key; pl.setAttribute('fill', `url(#${this.gid}${key}l)`); pu.setAttribute('fill', `url(#${this.gid}${key}u)`); }
+      if (g._k !== key) { g._k = key; g.setAttribute('transform', `scale(${this.f[key].toFixed(5)})`); pl.setAttribute('fill', `url(#${this.gid}${key}l)`); pu.setAttribute('fill', `url(#${this.gid}${key}u)`); }
       const lo0 = q0 <= 0 ? 0 : clamp01(q0 * 1.08), up0 = q0 <= 0 ? 0 : clamp01(q0 * 1.12 - 0.12);
       pl.setAttribute('d', bandD(sp.lo.x, sp.lo.t, sp.lo.b, clamp01(q1 * 1.08), 0, 0, lo0));
       pu.setAttribute('d', bandD(sp.up.x, sp.up.t, sp.up.b, clamp01(q1 * 1.12 - 0.12), 0, 0, up0));
@@ -396,18 +408,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!this.vis) { this.stale = true; return; }
       this.stale = false;
       const st = this.st, last = this.keys.length - 1;
-      const vbX = (this.SW - this.vbW) * clamp01(st.pan), vbY = this.yc - this.vbH * this.ay;
+      const vbX = (this.SW - this.vbW) * clamp01(st.pan), vbY = -this.vbH * this.ay;
       this.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(this.vbW)} ${f1(this.vbH)}`);
       const m = Math.max(0, Math.min(st.m, last));
       const i = Math.min(Math.floor(m), last), t = m - i;
       const ease = v => { v = clamp01(v); return v * v * (3 - 2 * v); };
       if (t < 0.001 || i >= last) {
-        this.pair(this.keys[i], 0, st.q, this.pl, this.pu);
+        this.pair(this.keys[i], 0, st.q, this.ga, this.pl, this.pu);
         this.pl2.setAttribute('d', 'M0 0Z'); this.pu2.setAttribute('d', 'M0 0Z');
       } else {
         // the current shape leaves to the right while the next one is drawn in behind it
-        this.pair(this.keys[i], ease(t / 0.86), 1, this.pl, this.pu);
-        this.pair(this.keys[i + 1], 0, ease((t - 0.14) / 0.86), this.pl2, this.pu2);
+        this.pair(this.keys[i], ease(t / 0.86), 1, this.ga, this.pl, this.pu);
+        this.pair(this.keys[i + 1], 0, ease((t - 0.14) / 0.86), this.gb, this.pl2, this.pu2);
       }
     }
   }
@@ -418,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ROT = 21, RC = Math.cos(ROT * Math.PI / 180), RS = Math.sin(ROT * Math.PI / 180);
   const IMG = { w: 1500, h: 1020 };
   const hero = {
-    el: $('#hero'), svg: $('#heroSvg'), slot: $('#heroSlot'), top: $('#hTop'), bot: $('#hBot'), region: $('#hRegion'),
+    el: $('#hero'), stage: $('.hero-stage'), svg: $('#heroSvg'), slot: $('#heroSlot'), top: $('#hTop'), bot: $('#hBot'), region: $('#hRegion'),
     zoom: $('#hZoom'), wrap: $('#hImgWrap'), img: $('#hImg'),
     st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1 }, eTmax: -400, eBmax: 400
   };
@@ -431,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return { xs, ys };
   }
   function heroLayout() {
-    const H = hero.el.getBoundingClientRect(), S = hero.slot.getBoundingClientRect();
+    const H = hero.stage.getBoundingClientRect(), S = hero.slot.getBoundingClientRect();
     if (!H.width || !S.height) return;
     const [rx, ry, rw, rh] = COMP;
     // fit the composition in the slot; on narrow screens let it run past the sides (the bands continue off-screen)
@@ -478,9 +490,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let request = c => c.render();
 
   /* ---------------- build ---------------- */
+  const narrow = innerWidth < 700;
   const ribs = {
-    group: new Ribbons($('[data-rib="group"]'), ['group'], { fill: 0.9, ay: 0.5 }),
-    companies: new Ribbons($('[data-rib="companies"]'), ['agency', 'interlink', 'logistics'], { fill: 0.92, ay: 0.5 }),
+    identity: new Ribbons($('[data-rib="identity"]'), ['group', 'agency', 'interlink', 'logistics'], { over: 1.08, fill: 0.2, ay: narrow ? 0.54 : 0.56 }),
     tAgency: new Ribbons($('[data-rib="t-agency"]'), ['agencyT'], { fill: 1.05, ay: 0.42 }),
     tInterlink: new Ribbons($('[data-rib="t-interlink"]'), ['interlinkT'], { fill: 1.6, ay: 0.44 }),
     tLogistics: new Ribbons($('[data-rib="t-logistics"]'), ['logisticsT'], { fill: 1.2, ay: 0.36 })
@@ -493,12 +505,23 @@ document.addEventListener('DOMContentLoaded', () => {
   layoutAll();
   let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutAll, 120); });
 
+  /* ---------------- identity states (Group, Agency, Interlink, Logistics) ---------------- */
+  const ID_COLS = ['#145fad', '#3089a9', '#2aa8da', '#42979c'];
+  const topSt = $$('.id-top .id-states > *'), footSt = $$('.id-foot .id-states > *'), tabs = $$('.co-tabs button');
+  const markTab = k => tabs.forEach((t, i) => t.setAttribute('aria-current', String(i + 1 === k)));
+  // without motion the tabs and links switch the state directly
+  function showState(k) {
+    [topSt, footSt].forEach(list => list.forEach((e, i) => { e.style.opacity = i === k ? 1 : 0; e.style.visibility = i === k ? 'visible' : 'hidden'; }));
+    $('#idBg').style.background = ID_COLS[k];
+    ribs.identity.st.m = k; ribs.identity.render(); markTab(k);
+  }
+
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const noMotion = () => {
+  if (!window.gsap || !window.ScrollTrigger || reduce) {
     root.classList.remove('pre');
-    $$('[data-co]').forEach(b => b.addEventListener('click', () => { setMenu(false); }));
-  };
-  if (!window.gsap || !window.ScrollTrigger || reduce) { noMotion(); return; }
+    $$('[data-co]').forEach(b => b.addEventListener('click', ev => { ev.preventDefault(); setMenu(false); showState(+b.dataset.co); $('#group').scrollIntoView(); }));
+    return;
+  }
 
   /* =====================================================================
      MOTION
@@ -535,6 +558,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return (el._w = $$('.wi', el));
   }
 
+  // split every headline now, before the first layout: later trigger setup then reads a clean layout
+  // instead of forcing a full relayout after each DOM change
+  $$('[data-split], #sceneTwo h2, .g-intro h2').forEach(splitWords);
+
   /* ---- SCENE 1 · opening: the bands draw in, the photo settles between them ---- */
   const hs = hero.st;
   Object.assign(hs, { dT: 0, dB: 0, io: 0, zi: 1.14 });
@@ -547,28 +574,21 @@ document.addEventListener('DOMContentLoaded', () => {
     .to(hs, { io: 1, duration: 1.1, ease: 'power2.out' }, 0.55)
     .to(hs, { zi: 1, duration: 2.2, ease: 'expo.out' }, 0.55);
 
-  /* ---- SCENE 1 · scroll: bands open → photo with text → gradient fills → Group ---- */
-  const r1 = ribs.group, R1 = () => touch(r1);
-  r1.st.q = 0; r1.st.pan = 0; r1.render();
-  const two = $('#sceneTwo'), gTop = $('#group .g-top'), gBot = $('#group .g-bot'), shade = $('#shade');
+  /* ---- SCENE 1 · scroll: the bands fly apart → the photo with its text → the gradient fills the screen ---- */
+  const shade = $('#shade'), twoWords = splitWords($('#sceneTwo h2')), twoP = $('#sceneTwo p');
   const hsc = { e: 0 };
-  gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=420%', pin: true, scrub: 0.8 } })
-    // 1 · the bands move apart and the photo fills the screen
+  gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=320%', pin: true, scrub: 0.8 } })
     .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { hs.eT = hero.eTmax * hsc.e; hs.eB = hero.eBmax * hsc.e; hs.z = 1 + 0.08 * hsc.e; H(); } }, 0)
-    .to('#heroTitle', { y: -60, opacity: 0, duration: 0.4, ease: 'power2.in' }, 0)
+    .to('#heroTitle', { y: -60, opacity: 0, duration: 0.35, ease: 'power2.in' }, 0)
     .to('.top', { opacity: 0, duration: 0.3 }, 0)
-    // 2 · the photo section: gradient from the corner, text rises
-    .to(shade, { opacity: 1, duration: 0.4, ease: 'none' }, 0.55)
-    .fromTo(two, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 0.75)
-    .to({}, { duration: 0.5 })
-    // 3 · the gradient fills the screen and becomes the Group section
-    .to(two, { opacity: 0, y: -40, duration: 0.35, ease: 'power2.in' }, 1.7)
-    .to(shade, { '--a': '100%', '--b': '160%', duration: 0.8, ease: 'power2.inOut' }, 1.7)
-    .fromTo(gTop, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 2.35)
-    .to(r1.st, { q: 1, duration: 0.9, ease: 'power1.inOut', onUpdate: R1 }, 2.45)
-    .to(r1.st, { pan: 1, duration: 1.5, ease: 'none', onUpdate: R1 }, 2.45)
-    .fromTo(gBot, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 2.9)
-    .to({}, { duration: 0.1 }, 3.9);
+    .to(shade, { opacity: 1, duration: 0.45, ease: 'none' }, 0.5)
+    .fromTo(twoWords, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out' }, 0.62)
+    .fromTo(twoP, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' }, 0.85)
+    .to(twoWords, { yPercent: -115, duration: 0.3, stagger: 0.015, ease: 'power2.in' }, 1.42)
+    .to(twoP, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in' }, 1.42)
+    // the Group text comes up from below (at about 1.85) while the fill completes
+    .to(shade, { '--a': '100%', '--b': '160%', duration: 0.7, ease: 'power1.inOut' }, 1.5)
+    .to({}, { duration: 0.01 }, 2.25);
 
   /* ---- everything below is set up in idle slices ---- */
   const tasks = [];
@@ -584,44 +604,45 @@ document.addEventListener('DOMContentLoaded', () => {
     idle(slice);
   }
 
-  /* ---- SCENE 2 · companies: one ribbon pair flows through the three shapes ---- */
-  let coST = null;
-  const CO_T = 3, CO_AT = [0.3, 1.6, 2.85];          // where each company rests on the timeline
+  /* ---- SCENE 2 · Group arrives with the scroll (blue on blue, no seam), then pins:
+         one ribbon pair flows Group → Agency → Interlink → Logistics while colour, logo and text change ---- */
+  let idST = null;
+  const TR = [0.5, 1.6, 2.7], AT = [0.08, 1.15, 2.25, 3.32], ID_T = 3.4;
   later(() => {
-    const r = ribs.companies, tabs = $$('.co-tabs button'), items = $$('.co-item'), logos = $$('.co-logos .lockup');
+    const r = ribs.identity, R = () => touch(r);
+    r.st.q = 0; r.st.m = 0; r.st.pan = 0; r.render();
+    const enter = { trigger: '#group', start: 'top bottom', end: 'top top', scrub: 0.8 };
+    gsap.to(r.st, { q: 1, pan: 0.04, ease: 'none', onUpdate: R, scrollTrigger: enter });
+    gsap.to('#idBg', { opacity: 1, ease: 'none', scrollTrigger: { trigger: '#group', start: 'top 32%', end: 'top 21%', scrub: true } });
+    gsap.from(splitWords($('.g-intro h2')), { yPercent: 115, ease: 'none', stagger: 0.05, scrollTrigger: { trigger: '#group', start: 'top 98%', end: 'top 40%', scrub: 0.6 } });
+    gsap.from([$('.g-intro p'), $('.g-foot p')], { y: 36, opacity: 0, ease: 'none', stagger: 0.3, scrollTrigger: { trigger: '#group', start: 'top 75%', end: 'top 10%', scrub: 0.6 } });
+
     let on = -1;
-    const R = () => {
-      touch(r);
-      const k = Math.min(2, Math.round(r.st.m));
-      if (k !== on) { on = k; tabs.forEach((t, i) => t.setAttribute('aria-current', String(i === k))); }
-    };
-    r.st.q = 0; r.st.m = 0; r.st.pan = 0.1; r.render();
-    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: '#companies', start: 'top 85%', end: 'top top', scrub: 0.8 } });
-    const cols = ['#3089a9', '#2aa8da', '#42979c'];
-    const tl = gsap.timeline({ scrollTrigger: { trigger: '#companies', start: 'top top', end: '+=300%', pin: true, scrub: 0.8 } });
-    coST = tl.scrollTrigger;
-    tl.to(r.st, { pan: 0.9, duration: CO_T, ease: 'none', onUpdate: R }, 0);
-    for (let k = 1; k < 3; k++) {
-      const at = 0.6 + (k - 1) * 1.3;
-      tl.to(r.st, { m: k, duration: 0.7, ease: 'none', onUpdate: R }, at)
-        .to('#coBg', { backgroundColor: cols[k], duration: 0.5, ease: 'power1.inOut' }, at + 0.1)
-        .to([items[k - 1], logos[k - 1]], { autoAlpha: 0, y: -24, duration: 0.25, ease: 'power1.in' }, at)
-        .fromTo([items[k], logos[k]], { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: 'power1.out' }, at + 0.4);
+    const tl = gsap.timeline({ scrollTrigger: { trigger: '#group', start: 'top top', end: '+=340%', pin: true, scrub: 0.8,
+      onUpdate: () => { const t = tl.time(), k = t < TR[0] + 0.3 ? 0 : t < TR[1] + 0.3 ? 1 : t < TR[2] + 0.3 ? 2 : 3; if (k !== on) { on = k; markTab(k); } } } });
+    idST = tl.scrollTrigger;
+    tl.fromTo(r.st, { pan: 0.04 }, { pan: 0.96, duration: ID_T, ease: 'none', onUpdate: R }, 0);
+    for (let k = 1; k < 4; k++) {
+      const at = TR[k - 1];
+      tl.to(r.st, { m: k, duration: 0.75, ease: 'none', onUpdate: R }, at)
+        .to('#idBg', { backgroundColor: ID_COLS[k], duration: 0.55, ease: 'power1.inOut' }, at + 0.1)
+        .to([topSt[k - 1], footSt[k - 1]], { autoAlpha: 0, y: -30, duration: 0.28, ease: 'power2.in' }, at)
+        .set([topSt[k], footSt[k]], { autoAlpha: 1 }, at + 0.3)
+        .fromTo([...topSt[k].children, ...footSt[k].children], { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, stagger: 0.05, ease: 'power3.out' }, at + 0.3);
     }
-    tl.to({}, { duration: 0.01 }, CO_T);
+    tl.fromTo('.co-tabs', { autoAlpha: 0, y: -12 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: 'power2.out' }, TR[0] + 0.3)
+      .to({}, { duration: 0.01 }, ID_T);
   });
-  // tabs, menu and footer links jump to a company inside the pinned scene
-  const toCompany = k => { if (!coST) return; goTo(coST.start + (coST.end - coST.start) * CO_AT[k] / CO_T); };
-  $$('[data-co]').forEach(b => b.addEventListener('click', ev => { ev.preventDefault(); setMenu(false); toCompany(+b.dataset.co); }));
+  // tabs, menu and footer links jump to a state inside the pinned scene
+  const toState = k => { if (idST) goTo(idST.start + (idST.end - idST.start) * AT[k] / ID_T); };
+  $$('[data-co]').forEach(b => b.addEventListener('click', ev => { ev.preventDefault(); setMenu(false); toState(+b.dataset.co); }));
   $$('a[href^="#"]:not([data-co])').forEach(a => a.addEventListener('click', ev => {
-    const id = a.getAttribute('href');
-    const t = id === '#group' ? null : document.querySelector(id);
+    const t = document.querySelector(a.getAttribute('href'));
     ev.preventDefault(); setMenu(false);
-    if (id === '#group') { const st = ScrollTrigger.getAll().find(s => s.trigger === hero.el && s.pin); if (st) goTo(st.start + (st.end - st.start) * 0.72); return; }
     if (t) lenis ? lenis.scrollTo(t, { duration: 1.6 }) : t.scrollIntoView({ behavior: 'smooth' });
   }));
 
-  /* ---- statements, figures, services, footer (all scrubbed) ---- */
+  /* ---- statements, figures, footer (all scrubbed) ---- */
   $$('[data-split]').forEach(el => later(() => {
     const last = !!el.closest('.foot');   // the footer slogan sits at the very end of the page: finish by then
     gsap.from(splitWords(el), { yPercent: 115, ease: 'none', stagger: 0.04,
@@ -640,25 +661,52 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.from(t, { y: 70, opacity: 0, ease: 'none', scrollTrigger: { trigger: t, start: `top ${100 - (i % 2) * 3}%`, end: `top ${76 - (i % 2) * 3}%`, scrub: 0.6 } });
     gsap.from($$('strong, small, .lbl', t), { y: 30, opacity: 0, ease: 'none', stagger: 0.12, scrollTrigger: { trigger: t, start: 'top 85%', end: 'top 55%', scrub: 0.6 } });
   }));
-  $$('.card').forEach((c, i) => later(() => {
-    gsap.from(c, { x: 120 + i * 40, opacity: 0, ease: 'none', scrollTrigger: { trigger: '#cardsTrack', start: 'top 100%', end: 'top 55%', scrub: 0.6 } });
-    gsap.fromTo($('.ph img', c), { scale: 1.18 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: c, start: 'top bottom', end: 'bottom top', scrub: true } });
-    gsap.fromTo($('.ph', c), { clipPath: 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)' }, { clipPath: 'polygon(67% 0, 100% 0, 100% 100%, 48% 100%)', ease: 'none',
-      scrollTrigger: { trigger: '#cardsTrack', start: 'top 92%', end: 'top 45%', scrub: 0.6 } });
-  }));
 
-  // drag the services row with the mouse (touch and trackpads scroll it natively)
-  const track = $('#cardsTrack');
-  let dx = null, sx = 0;
-  track.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; dx = e.clientX; sx = track.scrollLeft; track.classList.add('drag'); track.setPointerCapture(e.pointerId); });
-  track.addEventListener('pointermove', e => { if (dx === null) return; track.scrollLeft = sx - (e.clientX - dx); });
-  const endDrag = () => { if (dx === null) return; dx = null; track.classList.remove('drag'); };
-  track.addEventListener('pointerup', endDrag); track.addEventListener('pointercancel', endDrag);
+  /* ---- services: the section pins and the row slides sideways with the scroll ---- */
+  later(() => {
+    const sec = $('#services'), track = $('#cardsTrack'), cards = $$('.card', track);
+    const dist = () => Math.max(0, track.offsetWidth - root.clientWidth);
+    const hz = gsap.to(track, { x: () => -dist(), ease: 'none',
+      scrollTrigger: { trigger: sec, start: 'center center', end: () => '+=' + dist(), pin: true, scrub: 0.8, invalidateOnRefresh: true } });
+    gsap.fromTo('.cards-bar i', { scaleX: 0.1 }, { scaleX: 1, ease: 'none',
+      scrollTrigger: { trigger: sec, start: 'center center', end: () => '+=' + dist(), scrub: 0.8, invalidateOnRefresh: true } });
+    const vw = root.clientWidth;
+    cards.forEach((c, i) => {
+      const img = $('.pi img', c), pi = $('.pi', c), h3 = $('h3', c);
+      if (c.getBoundingClientRect().left < vw * 0.85) {
+        // in view when the row arrives: rise in and open the cut before the pin
+        gsap.from(c, { y: 80, opacity: 0, ease: 'none', scrollTrigger: { trigger: sec, start: `top ${100 - i * 4}%`, end: `top ${60 - i * 4}%`, scrub: 0.6 } });
+        gsap.fromTo(c, { '--o': 0 }, { '--o': 1, ease: 'none', scrollTrigger: { trigger: sec, start: `top ${85 - i * 6}%`, end: `top ${30 - i * 6}%`, scrub: 0.6 } });
+      } else {
+        // arrives from the right while the row slides: the cut opens as it comes in
+        gsap.fromTo(c, { '--o': 0 }, { '--o': 1, ease: 'none', scrollTrigger: { trigger: c, containerAnimation: hz, start: 'left 95%', end: 'left 45%', scrub: 0.6 } });
+      }
+      gsap.fromTo(img, { xPercent: -4 }, { xPercent: 4, ease: 'none', scrollTrigger: { trigger: c, containerAnimation: hz, start: 'left right', end: 'right left', scrub: true } });
+      // hover: the cut swings open with a bounce, the photo and title follow
+      c.addEventListener('pointerenter', e => {
+        if (e.pointerType !== 'mouse') return;
+        gsap.to(c, { '--h': 1, duration: 1.2, ease: 'elastic.out(1, 0.42)', overwrite: 'auto' });
+        gsap.to(pi, { scale: 1.07, duration: 1, ease: 'power3.out', overwrite: 'auto' });
+        gsap.to(h3, { x: 10, duration: 1.1, ease: 'elastic.out(1, 0.5)', overwrite: 'auto' });
+      });
+      c.addEventListener('pointerleave', e => {
+        if (e.pointerType !== 'mouse') return;
+        gsap.to(c, { '--h': 0, duration: 1.2, ease: 'elastic.out(1, 0.5)', overwrite: 'auto' });
+        gsap.to(pi, { scale: 1, duration: 0.9, ease: 'power3.out', overwrite: 'auto' });
+        gsap.to(h3, { x: 0, duration: 1, ease: 'elastic.out(1, 0.55)', overwrite: 'auto' });
+      });
+    });
+  });
 
   // one sorted refresh once everything exists, and again (debounced) when fonts or late resources settle
-  let rf = 0;
-  const again = () => { clearTimeout(rf); rf = setTimeout(() => { ScrollTrigger.sort(); ScrollTrigger.refresh(); }, 120); };
-  runLater(again);
+  // (a refresh re-measures every pin, so later ones run only if the page height actually changed)
+  let rf = 0, lastH = 0;
+  const again = force => { clearTimeout(rf); rf = setTimeout(() => {
+    const h = document.body.scrollHeight;
+    if (!force && h === lastH) return;
+    ScrollTrigger.sort(); ScrollTrigger.refresh(); lastH = document.body.scrollHeight;
+  }, 120); };
+  runLater(() => again(true));
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => tasksDone && again());
   addEventListener('load', () => tasksDone && again());
 });

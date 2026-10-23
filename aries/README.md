@@ -10,15 +10,15 @@
 
 ## Homepage scroll sequence
 
-1. **Hero → photo → Group** (one pinned scene). The two blue bands (`design/ribbons/Vector.svg`) draw in with the photo between them. On scroll the bands fly apart and the photo fills the screen with *The partner of choice…*; then the blue gradient fills the screen from the top-left corner and becomes the Group section, where the Group ribbon (`Group_32`) draws and pans.
-2. **Companies** (one pinned scene). Shipping Agency → Interlink → Logistics: one ribbon pair flows through `Group_11` / `Group_12` / `Group_13` while the background colour, logo and text change. The tabs (top right), the menu and the footer links jump to a company.
-3. **Statements, figure tiles** (ribbons `Group_33` / `34` / `35`), **service cards** (horizontal, drag or swipe; diagonal photo cut opens on scroll), **footer**.
+1. **Hero → photo → blue** (one pinned scene). The two blue bands (`design/ribbons/Vector.svg`) draw in with the photo between them. On scroll the bands fly apart, the photo fills the screen and *The partner of choice…* rises in word by word; then the blue gradient fills the screen from the top-left corner.
+2. **Group + companies** (one pinned scene). The blue scene slides up over the end of the hero while the gradient is still filling, so the Group text arrives with the fill, not after it. One ribbon pair then flows Group (`Group_32`) → Shipping Agency (`Group_11`) → Interlink (`Group_12`) → Logistics (`Group_13`) while the background colour, logo and text change. Every shape is scaled to the same width and the ribbon SVG covers the whole section, so shapes are only ever cut by the screen edge. The tabs (top right), the menu and the footer links jump to a state.
+3. **Statements, figure tiles** (ribbons `Group_33` / `34` / `35`), **service cards**: the section pins and the row slides sideways with the scroll (progress bar underneath); the diagonal photo cut opens as each card comes in and swings open with an elastic bounce on hover. Then the **footer**.
 
 Colours (sampled from the design): Group `#145fad`, Shipping Agency `#3089a9`, Interlink `#2aa8da`, Logistics `#42979c`.
 
 Build: `python3 tools/build_home.py` (reads `design/ribbons/*.svg` through `tools/design_svg.py`, writes `index.html`). To change a ribbon, replace its SVG and rebuild.
 
-Lighthouse (local): mobile performance 90–94, desktop 99; SEO and best practices 100; accessibility 95 (white text on the Shipping Agency / Interlink brand colours is below 4.5:1).
+Lighthouse (local): mobile performance 83–88, desktop 99; accessibility, SEO and best practices 100.
 
 # First concept (v1)
 
