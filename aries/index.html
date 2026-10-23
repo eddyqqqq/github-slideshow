@@ -34,9 +34,13 @@
   --font: "Figtree", "Figtree Fallback", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --gut: max(clamp(20px, 4.7vw, 68px), env(safe-area-inset-left, 0px));
   --gut-r: max(clamp(20px, 4.7vw, 68px), env(safe-area-inset-right, 0px));
-  --h-xl: clamp(40px, 4.6vw, 66px);
-  --h-l: clamp(28px, 3.1vw, 44px);
-  --body: clamp(14px, 1.05vw, 15.5px);
+  /* fluid type: the 1440 design sizes, growing on large screens (1920, 2560) and shrinking on phones */
+  --h-xl: clamp(38px, 4.6vw, 112px);
+  --h-l: clamp(26px, 3.05vw, 74px);
+  --body: clamp(14px, 0.5vw + 8px, 20px);
+  --small: clamp(12px, 0.32vw + 7.6px, 16px);
+  --link: clamp(13px, 0.36vw + 8.8px, 18px);
+  --cw: max(1440px, 76vw);  /* content width */
   color-scheme: light;
 }
 @font-face { font-family: "Figtree Fallback"; src: local("Arial"), local("Helvetica Neue"), local("Helvetica"); size-adjust: 98%; ascent-override: 97%; descent-override: 26%; line-gap-override: 0%; }
@@ -48,46 +52,68 @@ a { color: inherit; }
 :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 2px; }
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { font-weight: 400; letter-spacing: -0.015em; text-wrap: balance; }
-.wrap { width: 100%; max-width: 1440px; margin-inline: auto; padding-left: var(--gut); padding-right: var(--gut-r); }
+.wrap { width: 100%; max-width: var(--cw); margin-inline: auto; padding-left: var(--gut); padding-right: var(--gut-r); }
 .mark { display: inline-block; aspect-ratio: 256 / 302; background: currentColor; -webkit-mask: url(data:image/png;base64,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) center / contain no-repeat; mask: url(data:image/png;base64,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) center / contain no-repeat; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
 .wi { display: inline-block; }
-.more { display: inline-block; font-size: 14px; text-decoration: none; padding: 4px 6px 6px; border-bottom: 1px solid currentColor; transition: opacity .2s, padding .3s; }
-.more:hover { padding-right: 18px; }
+.more { position: relative; display: inline-block; font-size: var(--link); text-decoration: none; padding: 4px 2px 7px; transition: color .35s;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; }
+/* hover: the design blue, and a bar that draws in from the left (and leaves to the right) */
+.more::after, .ul::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--blue);
+  transform: scaleX(0); transform-origin: 100% 50%; transition: transform .5s cubic-bezier(.65, 0, .25, 1); }
+.more:hover, .more:focus-visible { color: var(--blue); }
+.more:hover::after, .more:focus-visible::after, .ul:hover::after, .ul:focus-visible::after { transform: scaleX(1); transform-origin: 0 50%; }
+/* on the coloured company backgrounds the text stays white and the bar draws in white */
+.on-dark .more:hover, .on-dark .more:focus-visible { color: var(--on); }
+.on-dark .more::after, .menu .ul::after { background: var(--on); }
+.ul { position: relative; display: inline-block; padding-bottom: 3px; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
 
 /* logo lockup: mark above the words, as in the design */
-.lockup { display: inline-grid; justify-items: center; gap: 6px; color: var(--blue); text-decoration: none; }
-.lockup .mark { height: 46px; }
-.lockup b { font: 600 13px/1 var(--font); letter-spacing: .26em; margin-right: -.26em; }
-.lockup span { font: 400 8px/1.3 var(--font); letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; text-align: center; }
+.lockup { display: inline-grid; justify-items: center; gap: clamp(5px, .2vw + 3px, 9px); color: var(--blue); text-decoration: none; }
+.lockup .mark { height: clamp(40px, 1.1vw + 30px, 72px); }
+.lockup b { font: 600 clamp(12px, .3vw + 8.7px, 19px)/1 var(--font); letter-spacing: .26em; margin-right: -.26em; }
+.lockup span { font: 400 clamp(7.5px, .19vw + 5.3px, 12px)/1.3 var(--font); letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; text-align: center; }
 .lockup.on { color: var(--on); }
 
 /* ---------- header + menu ---------- */
 .top { position: absolute; z-index: 40; top: 0; left: 0; right: 0; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(18px, 2.6vw, 38px)); }
 .top .wrap { display: flex; justify-content: space-between; align-items: flex-start; }
-.burger { position: fixed; z-index: 60; top: calc(env(safe-area-inset-top, 0px) + clamp(16px, 2.4vw, 34px)); right: var(--gut-r);
-  width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-content: center; gap: 5px;
-  background: color-mix(in srgb, var(--paper) 92%, transparent); box-shadow: 0 2px 14px rgba(17, 20, 24, .08); }
-.burger i { display: block; width: 20px; height: 1.6px; background: var(--ink); transition: transform .35s, opacity .2s; }
-.menu-open .burger i:nth-child(1) { transform: translateY(6.6px) rotate(45deg); }
+.burger { position: fixed; z-index: 60; top: calc(env(safe-area-inset-top, 0px) + clamp(22px, 3.2vw, 46px)); right: calc(var(--gut-r) - 10px);
+  width: clamp(46px, 2.4vw, 64px); height: clamp(46px, 2.4vw, 64px); border: 0; padding: 0; background: none; cursor: pointer; display: grid; place-content: center; gap: 6px; color: var(--ink);
+  transition: transform .5s cubic-bezier(.65, 0, .25, 1), color .35s; }
+.burger i { display: block; width: clamp(26px, 1.4vw, 40px); height: 2px; background: currentColor; transition: transform .45s cubic-bezier(.65, 0, .25, 1), opacity .2s; }
+.burger i:nth-child(3) { width: clamp(18px, 1vw, 28px); justify-self: end; transition: width .35s, transform .45s cubic-bezier(.65, 0, .25, 1); }
+.burger:hover i:nth-child(3) { width: clamp(26px, 1.4vw, 40px); }
+.nav-light .burger { color: var(--on); }
+.nav-hide .burger { transform: translateY(calc(-100% - 60px)); }
+.menu-open .burger { color: var(--on); transform: none; }
+.menu-open .burger i:nth-child(1) { transform: translateY(8px) rotate(45deg); }
 .menu-open .burger i:nth-child(2) { opacity: 0; }
-.menu-open .burger i:nth-child(3) { transform: translateY(-6.6px) rotate(-45deg); }
-.menu { position: fixed; inset: 0; z-index: 55; background: var(--blue); color: var(--on); display: grid; align-content: center;
-  clip-path: circle(0 at calc(100% - 44px) 44px); transition: clip-path .7s cubic-bezier(.7, 0, .2, 1); visibility: hidden; }
-.menu-open .menu { clip-path: circle(150% at calc(100% - 44px) 44px); visibility: visible; }
-.menu .wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 40px; }
-.menu h3 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; opacity: .7; margin-bottom: 14px; }
-.menu ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.menu a { font-size: clamp(24px, 2.4vw, 34px); text-decoration: none; }
-.menu a:hover { opacity: .75; }
+.menu-open .burger i:nth-child(3) { width: clamp(26px, 1.4vw, 40px); transform: translateY(-8px) rotate(-45deg); }
+.menu { position: fixed; inset: 0; z-index: 55; background: var(--blue); color: var(--on); display: grid; grid-template-rows: auto 1fr auto; overflow: hidden auto;
+  clip-path: inset(0 0 100% 0); visibility: hidden; transition: clip-path .8s cubic-bezier(.76, 0, .24, 1), visibility 0s .8s; overscroll-behavior: contain; }
+.menu-open .menu { clip-path: inset(0); visibility: visible; transition: clip-path .8s cubic-bezier(.76, 0, .24, 1), visibility 0s; }
+.menu-top { padding-top: calc(env(safe-area-inset-top, 0px) + clamp(18px, 2.6vw, 38px)); }
+.menu-body { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(28px, 4vw, 64px); align-content: start; padding-block: clamp(40px, 11vh, 130px) 40px; position: relative; z-index: 1; }
+.menu h3 { font-size: var(--small); font-weight: 400; letter-spacing: .14em; text-transform: uppercase; opacity: .75; margin-bottom: 18px; }
+.menu ul { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(6px, 1.2vh, 12px); }
+.menu a { font-size: clamp(22px, 2.5vw, 36px); line-height: 1.2; text-decoration: none; }
+.menu .co i { display: inline-block; width: .32em; height: .32em; background: var(--c); border: 1px solid var(--on); margin-right: .45em; vertical-align: .18em; }
+.menu-rib { z-index: 0; }
+.menu-foot { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(24px, 4vh, 44px)); }
+.menu-foot p { font-size: clamp(26px, 3.2vw, 46px); line-height: 1.05; }
+.menu-foot a { font-size: var(--link); }
+.menu-top, .menu-body > *, .menu-foot { opacity: 0; transform: translateY(36px); transition: opacity .3s, transform .3s; }
+.menu-open .menu-top, .menu-open .menu-body > *, .menu-open .menu-foot { opacity: 1; transform: none; transition: opacity .7s calc(.35s + var(--d, 0s)), transform .9s cubic-bezier(.2, .7, .2, 1) calc(.35s + var(--d, 0s)); }
+@media (max-width: 760px) { .menu-body { grid-template-columns: minmax(0, 1fr); align-content: start; gap: 30px; padding-top: 50px; } }
 
 /* ---------- scene 1: hero → photo → blue (one pinned sequence) ---------- */
 .hero { position: relative; background: var(--paper); }
-.hero-stage { position: relative; height: 100vh; height: 100svh; min-height: 600px; overflow: hidden; }
+.hero-stage { position: relative; height: 100vh; height: 100svh; min-height: 340px; overflow: hidden; }
 .hero-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .hero-layout { position: absolute; inset: 0; display: flex; flex-direction: column; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(110px, 13vh, 150px)); pointer-events: none; }
 .hero-slot { flex: 1 1 auto; min-height: 0; }
@@ -109,7 +135,8 @@ html.lenis, html.lenis body { height: auto; }
 .rib-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
 .id-top, .id-foot { position: relative; }
 .id-top { padding-top: calc(env(safe-area-inset-top, 0px) + clamp(36px, 7vh, 80px)); }
-.id-top .wrap { padding-right: calc(var(--gut-r) + 64px); display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.id-top .wrap { position: relative; }
+.co-tabs { position: absolute; top: 4px; right: calc(var(--gut-r) + clamp(64px, 3.4vw, 90px)); }
 .id-foot { padding-block: 60px clamp(36px, 8vh, 90px); }
 .id-states { display: grid; gap: 40px; }
 .g-intro { padding-top: clamp(30px, 6vh, 70px); display: grid; gap: 18px; justify-items: start; }
@@ -118,13 +145,13 @@ html.lenis, html.lenis body { height: auto; }
 .co-item { display: grid; gap: 16px; justify-items: start; }
 .co-item h2 { font-size: var(--h-l); line-height: 1.1; }
 .co-item p { font-size: var(--body); max-width: 46ch; }
-.co-tabs { list-style: none; margin: 0; padding: 0; display: flex; gap: clamp(14px, 2.6vw, 44px); flex-wrap: wrap; justify-content: flex-end; }
-.co-tabs button { font: 400 12px/1 var(--font); color: var(--on); background: none; border: 0; padding: 6px 0; cursor: pointer; display: flex; align-items: center; gap: 10px; opacity: .85; }
+.co-tabs { list-style: none; margin: 0; padding: 0; display: flex; gap: clamp(14px, 2.6vw, 64px); }
+.co-tabs button { font: 400 var(--small)/1 var(--font); color: var(--on); background: none; border: 0; padding: 6px 0; cursor: pointer; display: flex; align-items: center; gap: 10px; opacity: .85; }
 .co-tabs button::before { content: ""; width: 10px; height: 10px; border: 1px solid currentColor; transition: background .3s; }
 .co-tabs button[aria-current="true"] { opacity: 1; }
 .co-tabs button[aria-current="true"]::before { background: var(--on); }
 /* with script: one full-screen scene, the four states stacked */
-.js .identity { height: 100vh; height: 100svh; min-height: 620px; }
+.js .identity { height: 100vh; height: 100svh; min-height: 360px; }
 .js .id-top { position: absolute; left: 0; right: 0; top: 0; }
 .js .id-foot { position: absolute; left: 0; right: 0; bottom: 0; padding-top: 0; }
 .js .id-states { gap: 0; }
@@ -137,7 +164,7 @@ html.lenis, html.lenis body { height: auto; }
 .js .id-states > * { grid-area: 1 / 1; }
 .js .id-states > :not(:first-child) { opacity: 0; visibility: hidden; }
 .anim .co-tabs { opacity: 0; visibility: hidden; }
-@media (max-width: 700px) { .co-tabs { display: none; } }
+@media (max-width: 760px) { .co-tabs { display: none; } }
 
 /* ---------- statements ---------- */
 .statement { padding-block: clamp(90px, 11vw, 160px) clamp(50px, 6vw, 80px); }
@@ -149,21 +176,21 @@ html.lenis, html.lenis body { height: auto; }
 .tile { position: relative; overflow: hidden; color: var(--on); padding: clamp(20px, 2.6vw, 36px); min-height: clamp(260px, 29vw, 420px); display: grid; align-content: space-between; }
 .tile.wide { grid-column: span 2; }
 .tile.agency { background: var(--agency); } .tile.interlink { background: var(--interlink); } .tile.logistics { background: var(--logistics); }
-.tile .lbl { position: relative; font-size: 12.5px; }
+.tile .lbl { position: relative; font-size: var(--small); }
 .tile .nums { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 20px; }
-.tile strong { display: block; font: 400 clamp(56px, 7.4vw, 110px)/0.95 var(--font); letter-spacing: -0.03em; white-space: nowrap; }
+.tile strong { font-variant-numeric: tabular-nums; display: block; font: 400 clamp(52px, 7.4vw, 170px)/0.95 var(--font); letter-spacing: -0.03em; white-space: nowrap; }
 .tile strong sup { font-size: .5em; vertical-align: top; margin-left: 4px; position: relative; top: -.12em; }
-.tile small { display: block; font-size: 12.5px; margin-top: 8px; }
+.tile small { display: block; font-size: var(--small); margin-top: 8px; }
 @media (max-width: 760px) { .figs .wrap { grid-template-columns: minmax(0, 1fr); } .tile.wide { grid-column: auto; } }
 
 /* ---------- services cards: a row that slides sideways while the section is pinned ---------- */
 .cards { padding-block: clamp(24px, 4vw, 50px) clamp(90px, 10vw, 150px); overflow: hidden; }
 .cards-track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-  padding-left: max(var(--gut), calc((100vw - 1440px) / 2 + var(--gut))); padding-right: var(--gut-r); }
+  padding-left: max(var(--gut), calc((100vw - var(--cw)) / 2 + var(--gut))); padding-right: var(--gut-r); }
 .cards-track::-webkit-scrollbar { display: none; }
 .anim .cards-track { overflow: visible; scroll-snap-type: none; width: max-content; will-change: transform; }
-.card { --o: 1; --h: 0; flex: none; width: min(752px, 84vw); height: clamp(300px, min(36vw, 58vh), 515px); position: relative; overflow: hidden; background: var(--blue); color: var(--on); scroll-snap-align: start; }
-.card h3 { position: relative; z-index: 1; font-size: clamp(22px, 2.2vw, 32px); line-height: 1.12; font-weight: 300; padding: clamp(22px, 3vw, 44px); max-width: 12ch; }
+.card { --o: 1; --h: 0; flex: none; width: min(max(752px, 39vw), 84vw); height: clamp(280px, min(36vw, 58vh), 800px); position: relative; overflow: hidden; background: var(--blue); color: var(--on); scroll-snap-align: start; }
+.card h3 { position: relative; z-index: 1; font-size: clamp(22px, 2.2vw, 54px); line-height: 1.12; font-weight: 300; padding: clamp(22px, 3vw, 44px); max-width: 12ch; }
 /* the diagonal cut: --o opens it on scroll, --h swings it on hover */
 .card .ph { position: absolute; inset: 0; clip-path: polygon(calc(100% - var(--o) * 33% - var(--h) * 8%) 0, 100% 0, 100% 100%, calc(100% - var(--o) * 52% - var(--h) * 14%) 100%); }
 .card .pi { position: absolute; inset: 0; overflow: hidden; transform-origin: 75% 50%; }
@@ -172,18 +199,24 @@ html.lenis, html.lenis body { height: auto; }
 .cards-bar i { display: block; height: 100%; background: var(--blue); transform-origin: 0 50%; transform: scaleX(.1); }
 .anim .cards-bar { display: block; }
 
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero-layout { padding-top: 104px; } .hero-title { padding-block: 8px 18px; } .hero-title h1 { font-size: 30px; }
+  .g-intro { padding-top: 8px; gap: 8px; } .g-intro h2, .co-item h2 { font-size: clamp(22px, 2.6vw, 30px); }
+  .js .id-foot { padding-bottom: 18px; } .co-item { gap: 8px; } .id-top { padding-top: 18px; }
+}
+
 /* ---------- footer ---------- */
 .foot { padding-block: clamp(70px, 8vw, 110px) 34px; }
 .foot-grid { display: grid; grid-template-columns: 1.2fr repeat(3, minmax(0, 1fr)); gap: 32px; }
-.foot h3 { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 14px; }
+.foot h3 { font-size: var(--link); font-weight: 600; color: var(--ink); margin-bottom: 14px; }
 .foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.foot a { text-decoration: none; font-size: 14px; color: var(--text); }
-.foot a:hover { color: var(--blue); }
+.foot a { text-decoration: none; font-size: var(--link); color: var(--text); }
+.foot a:hover, .foot a:focus-visible { color: var(--blue); }
 .foot .li { display: inline-grid; place-content: center; width: 22px; height: 22px; background: var(--blue); color: var(--on); border-radius: 3px; font: 600 12px/1 var(--font); }
 .foot .slogan { color: var(--blue); font-size: var(--h-xl); line-height: 1.05; margin-top: clamp(60px, 8vw, 110px); }
-.foot .legal { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 40px; font-size: 12.5px; color: var(--muted); }
+.foot .legal { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 40px; font-size: var(--small); color: var(--muted); }
 .foot .legal nav { display: flex; gap: 14px; flex-wrap: wrap; }
-.foot .legal a { font-size: 12.5px; color: var(--muted); }
+.foot .legal a { font-size: var(--small); color: var(--muted); }
 @media (max-width: 760px) { .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-grid > :first-child { grid-column: span 2; } }
 </style>
 </head>
@@ -197,11 +230,14 @@ html.lenis, html.lenis body { height: auto; }
 </header>
 <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><i></i><i></i><i></i></button>
 <nav class="menu" id="menu" aria-label="Main">
-  <div class="wrap">
-    <div><h3>Aries Group</h3><ul><li><a href="#group" data-co="0">About us</a></li><li><a href="#certifications">Certifications</a></li><li><a href="#contact">Contact</a></li></ul></div>
-    <div><h3>Companies</h3><ul><li><a href="#group" data-co="1">Aries Shipping Agency</a></li><li><a href="#group" data-co="2">Aries Interlink</a></li><li><a href="#group" data-co="3">Aries Logistics</a></li></ul></div>
-    <div><h3>Activity</h3><ul><li><a href="#news">News</a></li><li><a href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
+  <svg class="rib-svg menu-rib" data-rib="menu" aria-hidden="true"></svg>
+  <div class="menu-top wrap"><span class="lockup on" aria-hidden="true"><span class="mark"></span><b>ARIES</b><span>Group</span></span></div>
+  <div class="menu-body wrap">
+    <div style="--d:0s"><h3>Aries Group</h3><ul><li><a class="ul" href="#group" data-co="0">About us</a></li><li><a class="ul" href="#certifications">Certifications</a></li><li><a class="ul" href="#contact">Contact</a></li></ul></div>
+    <div style="--d:.08s"><h3>Companies</h3><ul><li><a class="ul co" href="#group" data-co="1"><i style="--c:var(--agency)"></i>Aries Shipping Agency</a></li><li><a class="ul co" href="#group" data-co="2"><i style="--c:var(--interlink)"></i>Aries Interlink</a></li><li><a class="ul co" href="#group" data-co="3"><i style="--c:var(--logistics)"></i>Aries Logistics</a></li></ul></div>
+    <div style="--d:.16s"><h3>Activity</h3><ul><li><a class="ul" href="#news">News</a></li><li><a class="ul" href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener">LinkedIn</a></li></ul></div>
   </div>
+  <div class="menu-foot wrap" style="--d:.24s"><p>Where possibilities arise</p><a class="more" href="mailto:office@aries-group.ro">office@aries-group.ro</a></div>
 </nav>
 
 <main>
@@ -233,7 +269,7 @@ html.lenis, html.lenis body { height: auto; }
 </section>
 
 <!-- SCENE 2: Group, then the three companies; one ribbon pair flows through the four shapes -->
-<section class="identity" id="group" aria-label="Aries Group and its companies">
+<section class="identity on-dark" id="group" data-tone="dark" aria-label="Aries Group and its companies">
   <div class="id-bg" id="idBg"></div>
   <svg class="rib-svg" data-rib="identity" aria-hidden="true"></svg>
   <div class="id-top"><div class="wrap">
@@ -269,18 +305,18 @@ html.lenis, html.lenis body { height: auto; }
 
 <section class="figs" aria-label="Aries Group in figures">
   <div class="wrap" data-tiles>
-    <article class="tile wide agency"><svg class="rib-svg" data-rib="t-agency" aria-hidden="true"></svg>
+    <article class="tile wide agency" data-tone="dark"><svg class="rib-svg" data-rib="t-agency" aria-hidden="true"></svg>
       <span class="lbl">Aries Shipping Agency</span>
       <div class="nums">
         <div><strong>600<sup>+</sup></strong><small>Maritime port calls annually</small></div>
         <div><strong>800<sup>+</sup></strong><small>Inland waterway port calls annually</small></div>
       </div>
     </article>
-    <article class="tile interlink"><svg class="rib-svg" data-rib="t-interlink" aria-hidden="true"></svg>
+    <article class="tile interlink" data-tone="dark"><svg class="rib-svg" data-rib="t-interlink" aria-hidden="true"></svg>
       <span class="lbl">Aries Interlink</span>
       <div class="nums"><div><strong>800,000<sup>t</sup></strong><small>Bulk grain transported by rail annually</small></div></div>
     </article>
-    <article class="tile logistics"><svg class="rib-svg" data-rib="t-logistics" aria-hidden="true"></svg>
+    <article class="tile logistics" data-tone="dark"><svg class="rib-svg" data-rib="t-logistics" aria-hidden="true"></svg>
       <span class="lbl">Aries Logistics</span>
       <div class="nums"><div><strong>300,000<sup>t</sup></strong><small>Cargo volumes managed annually</small></div></div>
     </article>
@@ -296,10 +332,10 @@ html.lenis, html.lenis body { height: auto; }
 
 <section class="cards" id="services" aria-label="Services">
   <div class="cards-track" id="cardsTrack">
-    <article class="card"><h3>Multimodal transport, stevedoring and warehousing.</h3><div class="ph"><div class="pi"><img src="img/card-stacker.webp" alt="Reach stacker lifting a container in the port" width="784" height="515" loading="lazy" decoding="async"></div></div></article>
-    <article class="card"><h3>Port agency and all related services.</h3><div class="ph"><div class="pi"><img src="img/card-vessel.webp" alt="Bulk carrier moored at the grain terminal" width="1196" height="681" loading="lazy" decoding="async"></div></div></article>
-    <article class="card"><h3>Freight forwarding and full-service logistics.</h3><div class="ph"><div class="pi"><img src="img/card-stacker.webp" alt="" width="784" height="515" loading="lazy" decoding="async"></div></div></article>
-    <article class="card"><h3>Cargo chartering and brokerage.</h3><div class="ph"><div class="pi"><img src="img/card-vessel.webp" alt="" width="1196" height="681" loading="lazy" decoding="async"></div></div></article>
+    <article class="card" data-tone="dark"><h3>Multimodal transport, stevedoring and warehousing.</h3><div class="ph"><div class="pi"><img src="img/card-stacker.webp" alt="Reach stacker lifting a container in the port" width="784" height="515" loading="lazy" decoding="async"></div></div></article>
+    <article class="card" data-tone="dark"><h3>Port agency and all related services.</h3><div class="ph"><div class="pi"><img src="img/card-vessel.webp" alt="Bulk carrier moored at the grain terminal" width="1196" height="681" loading="lazy" decoding="async"></div></div></article>
+    <article class="card" data-tone="dark"><h3>Freight forwarding and full-service logistics.</h3><div class="ph"><div class="pi"><img src="img/card-stacker.webp" alt="" width="784" height="515" loading="lazy" decoding="async"></div></div></article>
+    <article class="card" data-tone="dark"><h3>Cargo chartering and brokerage.</h3><div class="ph"><div class="pi"><img src="img/card-vessel.webp" alt="" width="1196" height="681" loading="lazy" decoding="async"></div></div></article>
   </div>
   <div class="wrap"><div class="cards-bar" aria-hidden="true"><i></i></div></div>
 </section>
@@ -310,13 +346,13 @@ html.lenis, html.lenis body { height: auto; }
   <div class="wrap">
     <div class="foot-grid">
       <div><span class="lockup"><span class="mark"></span><b>ARIES</b><span>Group</span></span></div>
-      <div><h3>Aries Group</h3><ul><li><a href="#group" data-co="0">About us</a></li><li><a href="#certifications" id="certifications">Certifications</a></li><li><a href="mailto:office@aries-group.ro">Contact</a></li></ul></div>
-      <div><h3>Companies</h3><ul><li><a href="#group" data-co="1">Aries Shipping Agency</a></li><li><a href="#group" data-co="2">Aries Interlink</a></li><li><a href="#group" data-co="3">Aries Logistics</a></li></ul></div>
-      <div><h3 id="news">Activity</h3><ul><li><a href="#news">News</a></li><li><a class="li" href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener" ><span aria-hidden="true">in</span><span class="sr">Aries Group on LinkedIn</span></a></li></ul></div>
+      <div><h3>Aries Group</h3><ul><li><a class="ul" href="#group" data-co="0">About us</a></li><li><a class="ul" href="#certifications" id="certifications">Certifications</a></li><li><a class="ul" href="mailto:office@aries-group.ro">Contact</a></li></ul></div>
+      <div><h3>Companies</h3><ul><li><a class="ul" href="#group" data-co="1">Aries Shipping Agency</a></li><li><a class="ul" href="#group" data-co="2">Aries Interlink</a></li><li><a class="ul" href="#group" data-co="3">Aries Logistics</a></li></ul></div>
+      <div><h3 id="news">Activity</h3><ul><li><a class="ul" href="#news">News</a></li><li><a class="li" href="https://www.linkedin.com/company/aries-group-romania/" target="_blank" rel="noopener" ><span aria-hidden="true">in</span><span class="sr">Aries Group on LinkedIn</span></a></li></ul></div>
     </div>
     <p class="slogan" data-split>Where possibilities arise</p>
     <div class="legal">
-      <nav aria-label="Legal"><a href="#terms">Terms and conditions</a><a href="#privacy">Privacy Policy</a><a href="#cookies">Cookie Policy</a></nav>
+      <nav aria-label="Legal"><a class="ul" href="#terms">Terms and conditions</a><a class="ul" href="#privacy">Privacy Policy</a><a class="ul" href="#cookies">Cookie Policy</a></nav>
       <span>made by Imagient</span>
     </div>
   </div>
@@ -336,7 +372,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ---------------- menu ---------------- */
   const burger = $('.burger'), menu = $('#menu');
-  const setMenu = open => { root.classList.toggle('menu-open', open); burger.setAttribute('aria-expanded', String(open)); burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); if (open) $('a', menu).focus({ preventScroll: true }); };
+  let onMenu = () => {};
+  const setMenu = open => {
+    if (open === root.classList.contains('menu-open')) return;
+    root.classList.toggle('menu-open', open); burger.setAttribute('aria-expanded', String(open)); burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    if (open) $('a', menu).focus({ preventScroll: true });
+    onMenu(open);
+  };
   burger.addEventListener('click', () => setMenu(!root.classList.contains('menu-open')));
   addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('menu-open')) { setMenu(false); burger.focus(); } });
 
@@ -376,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.f = {}; let span = 0;
       keys.forEach(k => { const s = RIB[k], f = this.SW / s.w; this.f[k] = f; span = Math.max(span, (Math.max(...s.lo.b) - Math.min(...s.up.t)) * f); });
       this.span = span + 12;
-      this.st = { q: 1, pan: 0.5, m: 0 };
+      this.st = { q: 1, pan: 0.5, m: 0, mx: 0 };
       const id = 'rb' + (uid++);
       const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); parent.appendChild(e); return e; };
       const defs = mk('defs', {}, svg);
@@ -408,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!this.vis) { this.stale = true; return; }
       this.stale = false;
       const st = this.st, last = this.keys.length - 1;
-      const vbX = (this.SW - this.vbW) * clamp01(st.pan), vbY = -this.vbH * this.ay;
+      const vbX = (this.SW - this.vbW) * clamp01(st.pan + st.mx), vbY = -this.vbH * this.ay;
       this.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(this.vbW)} ${f1(this.vbH)}`);
       const m = Math.max(0, Math.min(st.m, last));
       const i = Math.min(Math.floor(m), last), t = m - i;
@@ -446,8 +488,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const H = hero.stage.getBoundingClientRect(), S = hero.slot.getBoundingClientRect();
     if (!H.width || !S.height) return;
     const [rx, ry, rw, rh] = COMP;
-    // fit the composition in the slot; on narrow screens let it run past the sides (the bands continue off-screen)
-    const s = Math.min(S.height / rh, S.width * (S.width < 700 ? 1.9 : 1) / rw);
+    // fit the composition in the slot; on tall screens (phones, tablets) let it grow past the sides so the
+    // bands and photo keep the same weight as on desktop (the bands continue off-screen)
+    const sw = S.width / rw, sh = S.height / rh;
+    const s = Math.min(sh, sw * Math.min(1.8, Math.max(1, sh / sw * 0.62)));
     const vbX = rx + rw / 2 - (S.left - H.left + S.width / 2) / s;
     const vbY = ry + rh / 2 - (S.top - H.top + S.height / 2) / s;
     const vbW = H.width / s, vbH = H.height / s;
@@ -493,14 +537,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const narrow = innerWidth < 700;
   const ribs = {
     identity: new Ribbons($('[data-rib="identity"]'), ['group', 'agency', 'interlink', 'logistics'], { over: 1.08, fill: 0.2, ay: narrow ? 0.54 : 0.56 }),
-    tAgency: new Ribbons($('[data-rib="t-agency"]'), ['agencyT'], { fill: 1.05, ay: 0.42 }),
-    tInterlink: new Ribbons($('[data-rib="t-interlink"]'), ['interlinkT'], { fill: 1.6, ay: 0.44 }),
-    tLogistics: new Ribbons($('[data-rib="t-logistics"]'), ['logisticsT'], { fill: 1.2, ay: 0.36 })
+    // tiles: drawn a little wider than the tile, so the scroll and the mouse can move them sideways
+    tAgency: new Ribbons($('[data-rib="t-agency"]'), ['agencyT'], { over: 1.3, fill: 1.05, ay: 0.42 }),
+    tInterlink: new Ribbons($('[data-rib="t-interlink"]'), ['interlinkT'], { over: 1.3, fill: 1.6, ay: 0.44 }),
+    tLogistics: new Ribbons($('[data-rib="t-logistics"]'), ['logisticsT'], { over: 1.3, fill: 1.2, ay: 0.36 }),
+    menu: new Ribbons($('[data-rib="menu"]'), ['group'], { over: 1.06, ay: narrow ? 0.84 : 0.88 })
   };
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
     const r = e.target._rib; r.vis = e.isIntersecting; if (r.vis && r.stale) request(r);
   }), { rootMargin: '25% 0px' }) : null;
-  Object.values(ribs).forEach(r => { r.svg._rib = r; r.vis = !io; if (io) io.observe(r.svg); });
+  Object.values(ribs).forEach(r => { if (r === ribs.menu) return; r.svg._rib = r; r.vis = !io; if (io) io.observe(r.svg); });
   const layoutAll = () => { heroLayout(); Object.values(ribs).forEach(r => r.layout()); };
   layoutAll();
   let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutAll, 120); });
@@ -515,6 +561,29 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#idBg').style.background = ID_COLS[k];
     ribs.identity.st.m = k; ribs.identity.render(); markTab(k);
   }
+
+  // the menu ribbon is drawn only when the menu opens
+  ribs.menu.st.pan = 0.5;
+  onMenu = open => { if (open) { ribs.menu.vis = true; ribs.menu.layout(); } };
+
+  /* ---------------- burger: light or dark lines for what is under it; hides while scrolling down ---------------- */
+  let lastY = scrollY, navQueued = false;
+  function navTick() {
+    navQueued = false;
+    const y = scrollY, b = burger.getBoundingClientRect();
+    root.classList.toggle('nav-hide', y > 80 && y > lastY + 2 && !root.classList.contains('menu-open'));
+    if (y < lastY - 2 || y <= 80) root.classList.remove('nav-hide');
+    lastY = y;
+    let tone = null;
+    for (const el of document.elementsFromPoint(b.left + b.width / 2, b.top + b.height / 2)) {
+      if (el === burger || burger.contains(el)) continue;
+      const t = el.closest('[data-tone]'); tone = t ? t.dataset.tone : 'light'; break;
+    }
+    root.classList.toggle('nav-light', tone === 'dark');
+  }
+  const queueNav = () => { if (!navQueued) { navQueued = true; requestAnimationFrame(navTick); } };
+  addEventListener('scroll', queueNav, { passive: true });
+  queueNav();
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!window.gsap || !window.ScrollTrigger || reduce) {
@@ -538,6 +607,14 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.ticker.lagSmoothing(0);
   }
   const goTo = y => lenis ? lenis.scrollTo(y, { duration: 1.6 }) : scrollTo({ top: y, behavior: 'smooth' });
+  onMenu = open => {
+    const r = ribs.menu;
+    r.vis = true;
+    if (lenis) open ? lenis.stop() : lenis.start();
+    gsap.killTweensOf(r.st);
+    if (open) { r.layout(); gsap.fromTo(r.st, { q: 0, pan: 0.15 }, { q: 1, pan: 0.85, duration: 2.4, delay: 0.3, ease: 'expo.out', onUpdate: () => touch(r) }); }
+    else queueNav();
+  };
 
   const dirty = new Set();
   const touch = c => dirty.add(c);
@@ -578,7 +655,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const shade = $('#shade'), twoWords = splitWords($('#sceneTwo h2')), twoP = $('#sceneTwo p');
   const hsc = { e: 0 };
   gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: '+=320%', pin: true, scrub: 0.8 } })
-    .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { hs.eT = hero.eTmax * hsc.e; hs.eB = hero.eBmax * hsc.e; hs.z = 1 + 0.08 * hsc.e; H(); } }, 0)
+    .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { hs.eT = hero.eTmax * hsc.e; hs.eB = hero.eBmax * hsc.e; hs.z = 1 + 0.08 * hsc.e; H();
+      const tone = hsc.e > 0.18 ? 'dark' : 'light'; if (hero.el.dataset.tone !== tone) { hero.el.dataset.tone = tone; queueNav(); } } }, 0)
     .to('#heroTitle', { y: -60, opacity: 0, duration: 0.35, ease: 'power2.in' }, 0)
     .to('.top', { opacity: 0, duration: 0.3 }, 0)
     .to(shade, { opacity: 1, duration: 0.45, ease: 'none' }, 0.5)
@@ -654,9 +732,25 @@ document.addEventListener('DOMContentLoaded', () => {
     r.st.q = 0; r.render();
     const R = () => touch(r);
     gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: drawStart, end: drawEnd, scrub: 0.8 } });
-    gsap.fromTo(r.st, { pan: 0 }, { pan: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
+    gsap.fromTo(r.st, { pan: 0.3 }, { pan: 0.7, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
+    // hover: the ribbon follows the mouse left and right
+    const mx = gsap.quickTo(r.st, 'mx', { duration: 1.2, ease: 'power3.out', onUpdate: R });
+    sec.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; const b = sec.getBoundingClientRect(); mx(((e.clientX - b.left) / b.width - 0.5) * -0.6); });
+    sec.addEventListener('pointerleave', () => mx(0));
   }
   [['tAgency', 't-agency'], ['tInterlink', 't-interlink'], ['tLogistics', 't-logistics']].forEach(([k, a]) => later(() => ribbonScroll(ribs[k], $(`[data-rib="${a}"]`).closest('.tile'))));
+  // the figures count up once, one after the other, when they come into view
+  later(() => {
+    const nums = $$('[data-tiles] strong').map(el => ({ el, node: el.firstChild, to: parseInt(el.firstChild.textContent.replace(/\D/g, ''), 10) }));
+    const vw = root.clientWidth;
+    nums.forEach(n => {
+      if (n.el.getBoundingClientRect().top < innerHeight * 0.96) return;   // already on screen: leave the value
+      n.node.textContent = '0';
+      const o = { v: 0 }, side = n.el.getBoundingClientRect().left > vw * 0.45 ? 0.35 : 0;
+      ScrollTrigger.create({ trigger: n.el, start: 'top 96%', once: true,
+        onEnter: () => gsap.to(o, { v: n.to, duration: 2, delay: 0.25 + side, ease: 'power3.out', onUpdate: () => { n.node.textContent = Math.round(o.v).toLocaleString('en-US'); } }) });
+    });
+  });
   $$('[data-tiles] .tile').forEach((t, i) => later(() => {
     gsap.from(t, { y: 70, opacity: 0, ease: 'none', scrollTrigger: { trigger: t, start: `top ${100 - (i % 2) * 3}%`, end: `top ${76 - (i % 2) * 3}%`, scrub: 0.6 } });
     gsap.from($$('strong, small, .lbl', t), { y: 30, opacity: 0, ease: 'none', stagger: 0.12, scrollTrigger: { trigger: t, start: 'top 85%', end: 'top 55%', scrub: 0.6 } });

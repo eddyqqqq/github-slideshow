@@ -14,11 +14,19 @@
 2. **Group + companies** (one pinned scene). The blue scene slides up over the end of the hero while the gradient is still filling, so the Group text arrives with the fill, not after it. One ribbon pair then flows Group (`Group_32`) → Shipping Agency (`Group_11`) → Interlink (`Group_12`) → Logistics (`Group_13`) while the background colour, logo and text change. Every shape is scaled to the same width and the ribbon SVG covers the whole section, so shapes are only ever cut by the screen edge. The tabs (top right), the menu and the footer links jump to a state.
 3. **Statements, figure tiles** (ribbons `Group_33` / `34` / `35`), **service cards**: the section pins and the row slides sideways with the scroll (progress bar underneath); the diagonal photo cut opens as each card comes in and swings open with an elastic bounce on hover. Then the **footer**.
 
+**Navigation.** Burger as in the design (three plain lines, top right, aligned with the logo); its lines turn white over photo and colour, it hides while scrolling down and returns when scrolling up. The menu is a full-screen blue panel that wipes down from the top: white logo, three columns (Aries Group / Companies with their colour squares / Activity), the Group ribbon drawing along the bottom, slogan and e-mail.
+
+**Hover.** Links turn the design blue and a 2 px bar draws in from the left (and leaves to the right); on the coloured company backgrounds the text stays white and the bar is white. The figure tiles' ribbons follow the mouse left and right; the service cards' diagonal cut swings open with an elastic bounce.
+
+**Figures** count up once, one after the other, as they come into view (tabular figures, so the digits don't jitter).
+
+**Responsive.** Fluid type and content width (`--cw: max(1440px, 76vw)`), so 1920 and 2560 screens get the 1440 design scaled up instead of a narrow column; the hero composition keeps the same weight on phones and tablets; short landscape screens get a compact layout. Checked at 320, 390, 768, 1024, 1280, 1440, 1920, 2560 and 844×390.
+
 Colours (sampled from the design): Group `#145fad`, Shipping Agency `#3089a9`, Interlink `#2aa8da`, Logistics `#42979c`.
 
 Build: `python3 tools/build_home.py` (reads `design/ribbons/*.svg` through `tools/design_svg.py`, writes `index.html`). To change a ribbon, replace its SVG and rebuild.
 
-Lighthouse (local): mobile performance 83–88, desktop 99; accessibility, SEO and best practices 100.
+Lighthouse (local): mobile performance 84–88, desktop 99; accessibility, SEO and best practices 100.
 
 # First concept (v1)
 
