@@ -41,7 +41,8 @@
   /* --u: one design pixel. The hero is laid out on the 1440-wide design and scaled so that its whole stack
      (logo, bands, title and the white space under it: 1170 design px) fits the screen: by the width, or by the height on wide, short screens */
   --u: min(100vw / 1440, 100vh / 1170);
-  --logo-w: max(28px, 54 * var(--u));
+  /* logos at their design size (the SVGs are 74–75 × 129–143 px at 1440), smaller only on narrow screens */
+  --logo-w: clamp(44px, 5.2vw, 75px);
   --logo-top: max(20px, 60 * var(--u));
   color-scheme: light;
 }
@@ -80,7 +81,7 @@ html.lenis, html.lenis body { height: auto; }
 
 /* logos: the design files (Group in colour on white, the companies in white); 72 px wide at 1440 */
 .logo { display: block; width: var(--logo-w); height: auto; }
-@media (orientation: portrait) { :root { --logo-w: max(40px, 54 * var(--u)); } }
+.logo[viewBox^="0 0 74 "] { width: calc(var(--logo-w) * 74 / 75); }   /* Shipping Agency: 74 px wide in the design */
 .logo-link { display: inline-block; }
 
 /* ---------- header + menu ---------- */
