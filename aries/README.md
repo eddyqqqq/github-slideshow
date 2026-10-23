@@ -2,7 +2,7 @@
 
 `index.html` is the **homepage built from the design** (`design/images/homepage-design.jpg`), played as a scroll sequence. The first concept from the brochure is kept in `v1/index.html`; its ideas and motion (below) carry over.
 
-- `index.html` — the homepage (self-contained apart from `img/*.webp`; GSAP, ScrollTrigger and Lenis from jsDelivr).
+- `index.html` — the homepage (needs `img/*.webp`, `vendor/*.js` and `fonts/*.woff2` next to it).
 - `v1/index.html` — the first concept (brochure draft 2).
 - `design/` — the design file, its photos and the designer's ribbon SVGs.
 - `img/` — the Aries mark (`mark.png`, an alpha mask recoloured with CSS) and the web-compressed photos.
@@ -14,19 +14,23 @@
 2. **Group + companies** (one pinned scene). The blue scene slides up over the end of the hero while the gradient is still filling, so the Group text arrives with the fill, not after it. One ribbon pair then flows Group (`Group_32`) → Shipping Agency (`Group_11`) → Interlink (`Group_12`) → Logistics (`Group_13`) while the background colour, logo and text change. Every shape is scaled to the same width and the ribbon SVG covers the whole section, so shapes are only ever cut by the screen edge. The tabs (top right), the menu and the footer links jump to a state.
 3. **Statements, figure tiles** (ribbons `Group_33` / `34` / `35`), **service cards**: the section pins and the row slides sideways with the scroll (progress bar underneath); the diagonal photo cut opens as each card comes in and swings open with an elastic bounce on hover. Then the **footer**.
 
-**Navigation.** Burger as in the design (three plain lines, top right, aligned with the logo); its lines turn white over photo and colour, it hides while scrolling down and returns when scrolling up. The menu is a full-screen blue panel that wipes down from the top: white logo, three columns (Aries Group / Companies with their colour squares / Activity), the Group ribbon drawing along the bottom, slogan and e-mail.
+**Navigation.** Burger as in the design (three plain lines, top right, aligned with the logo); its lines turn white over photo and colour, it hides while scrolling down and returns when scrolling up. The menu is a full-screen blue panel that slides down from the top (transform only, no scroll lock that would remove the scrollbar): white logo, three columns (Aries Group / Companies with their colour squares / Activity), the Group ribbon drawing along the bottom, slogan and e-mail.
 
-**Hover.** Links turn the design blue and a 2 px bar draws in from the left (and leaves to the right); on the coloured company backgrounds the text stays white and the bar is white. The figure tiles' ribbons follow the mouse left and right; the service cards' diagonal cut swings open with an elastic bounce.
+**Hover.** Buttons and links behave the same: the text turns the header blue and a 2 px bar draws in from the left (and leaves to the right); inside the blue menu the bar is white. The figure tiles' ribbons follow the mouse left and right; the service cards' diagonal cut eases open a little.
 
-**Figures** count up once, one after the other, as they come into view (tabular figures, so the digits don't jitter).
+**Figures** appear at 0 and count up once they are fully on screen, one after the other (tabular figures, so the digits don't jitter).
 
 **Responsive.** Fluid type and content width (`--cw: max(1440px, 76vw)`), so 1920 and 2560 screens get the 1440 design scaled up instead of a narrow column; the hero composition keeps the same weight on phones and tablets; short landscape screens get a compact layout. Checked at 320, 390, 768, 1024, 1280, 1440, 1920, 2560 and 844×390.
+
+**Type.** Area Normal: titles Bold 48 px and text Regular 20 px at 1440 (hero title 60, labels 14, links 16), fluid above and below. The fonts are self-hosted as subset WOFF2 (`fonts/area-regular.woff2`, `fonts/area-bold.woff2`, about 32 KB each, Latin + Romanian), preloaded, with metric-matched Arial fallbacks so nothing moves when they swap in. **They are not in this repository**: Area Normal is a commercial typeface whose embedding is restricted, so it needs a web licence; the files are git-ignored and go on the server.
+
+**Libraries** are self-hosted in `vendor/` (GSAP 3.12.5, ScrollTrigger, Lenis 1.1.13): no third-party hosts, nothing render-blocking.
 
 Colours (sampled from the design): Group `#145fad`, Shipping Agency `#3089a9`, Interlink `#2aa8da`, Logistics `#42979c`.
 
 Build: `python3 tools/build_home.py` (reads `design/ribbons/*.svg` through `tools/design_svg.py`, writes `index.html`). To change a ribbon, replace its SVG and rebuild.
 
-Lighthouse (local): mobile performance 84–88, desktop 99; accessibility, SEO and best practices 100.
+Lighthouse (local, simulated slow 4G for mobile): mobile performance 82–85, desktop 99; accessibility, SEO and best practices 100.
 
 # First concept (v1)
 
