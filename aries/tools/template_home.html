@@ -148,18 +148,18 @@ html.lenis, html.lenis body { height: auto; }
    its caption right under it; in the wide tile the second figure starts just past the middle */
 .figs .wrap { gap: clamp(10px, 1.4vw, 28px); }
 .tile { position: relative; overflow: hidden; color: var(--on); padding: clamp(22px, 4.2vw, 96px) clamp(22px, 4.2vw, 96px) clamp(22px, 4.6vw, 104px);
-  aspect-ratio: 642 / 415; display: grid; grid-template-rows: auto 1fr; }
-.tile.wide { grid-column: span 2; aspect-ratio: auto; min-height: 0; height: clamp(260px, 28.8vw, 700px); }
+  aspect-ratio: 241 / 159; display: grid; grid-template-rows: auto 1fr; border-radius: 3px; }
+.tile.wide { grid-column: span 2; aspect-ratio: 488 / 160; }
 .tile.agency { background: var(--agency); } .tile.interlink { background: var(--interlink); } .tile.logistics { background: var(--logistics); }
-.tile .lbl { position: relative; font-size: var(--link); }
+.tile .lbl { position: relative; font-size: var(--body); }
 .tile .nums { position: relative; align-self: end; display: grid; grid-template-columns: minmax(0, 1fr); }
 .tile.wide .nums { grid-template-columns: 54fr 46fr; }
 .tile strong { display: block; font: 400 clamp(52px, 7.5vw, 180px)/0.9 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; white-space: nowrap; }
-.tile strong sup { font-size: .5em; line-height: 0; vertical-align: top; position: relative; top: .06em; margin-left: .06em; }
-.tile small { display: block; font-size: var(--link); margin-top: clamp(8px, .8vw, 18px); }
+.tile strong sup { font-size: .72em; line-height: 0; vertical-align: baseline; position: relative; top: -.74em; margin-left: .05em; }
+.tile small { display: block; font-size: var(--body); margin-top: clamp(8px, .8vw, 18px); }
 @media (max-width: 760px) {
   .figs .wrap { grid-template-columns: minmax(0, 1fr); }
-  .tile, .tile.wide { grid-column: auto; aspect-ratio: auto; height: auto; min-height: 300px; }
+  .tile.wide { grid-column: auto; aspect-ratio: 241 / 200; }
   .tile.wide .nums { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
 }
 
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
   class Ribbons {
     constructor(svg, keys, o = {}) {
       this.svg = svg; this.keys = keys;
-      this.fill = o.fill || 0; this.over = o.over || 1; this.ay = o.ay || 0.5;
+      this.fill = o.fill || 0; this.over = o.over || 1; this.ay = o.ay || 0.5; this.place = o.place || null;
       this.SW = Math.min(...keys.map(k => RIB[k].w));
       this.f = {}; let span = 0;
       keys.forEach(k => { const s = RIB[k], f = this.SW / s.w; this.f[k] = f; span = Math.max(span, (Math.max(...s.lo.b) - Math.min(...s.up.t)) * f); });
@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const r = this.svg.getBoundingClientRect();
       if (!r.width || !r.height) return;
       this.W = r.width; this.H = r.height;
-      this.s = Math.max(this.W * this.over / this.SW, (this.H * this.fill) / this.span);
+      this.s = this.place ? this.place.w * this.W / this.SW : Math.max(this.W * this.over / this.SW, (this.H * this.fill) / this.span);
       // maxH (the menu): on short screens the ribbon is flattened a little to fit its band instead of covering text
       const sy = this.maxH ? Math.min(this.s, this.maxH / this.span) : this.s;
       this.svg.setAttribute('preserveAspectRatio', sy < this.s ? 'none' : 'xMidYMid slice');
@@ -431,7 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!this.vis) { this.stale = true; return; }
       this.stale = false;
       const st = this.st, last = this.keys.length - 1;
-      const vbX = (this.SW - this.vbW) * clamp01(st.pan + st.mx), vbY = -this.vbH * this.ay;
+      const P = this.place;
+      const vbX = P ? -P.x * this.vbW : (this.SW - this.vbW) * clamp01(st.pan + st.mx), vbY = P ? -P.y * this.vbH : -this.vbH * this.ay;
       this.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(this.vbW)} ${f1(this.vbH)}`);
       const m = Math.max(0, Math.min(st.m, last));
       const i = Math.min(Math.floor(m), last), t = m - i;
@@ -527,9 +528,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const narrow = innerWidth < 700;
   const ribs = {
     identity: new Ribbons($('[data-rib="identity"]'), ['group', 'agency', 'interlink', 'logistics'], { over: 1.08, fill: 0.2, ay: narrow ? 0.54 : 0.56 }),
-    tAgency: new Ribbons($('[data-rib="t-agency"]'), ['agencyT'], { fill: 1.05, ay: 0.42 }),
-    tInterlink: new Ribbons($('[data-rib="t-interlink"]'), ['interlinkT'], { fill: 1.6, ay: 0.44 }),
-    tLogistics: new Ribbons($('[data-rib="t-logistics"]'), ['logisticsT'], { fill: 1.2, ay: 0.36 }),
+    // tiles: each ribbon placed exactly as in the design, measured on the design file (fit of the SVG shape to the
+    // tile, IoU 0.99): w = ribbon width / tile width, x = left edge / tile width, y = ribbon centre / tile height
+    tAgency: new Ribbons($('[data-rib="t-agency"]'), ['agencyT'], { place: { w: 1.545, x: -0.272, y: 0.508 } }),
+    tInterlink: new Ribbons($('[data-rib="t-interlink"]'), ['interlinkT'], { place: { w: 2.966, x: -1.092, y: 0.433 } }),
+    tLogistics: new Ribbons($('[data-rib="t-logistics"]'), ['logisticsT'], { place: { w: 3.217, x: -1.106, y: 0.722 } }),
   };
   if (menu) ribs.menu = new Ribbons($('[data-rib="menu"]'), ['group'], { over: 1.06, ay: narrow ? 0.84 : 0.88 });
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
@@ -734,11 +737,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
   $$('[data-fade]').forEach(el => later(() => gsap.from(el, { y: 24, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 82%', scrub: 0.6 } })));
-  function ribbonScroll(r, sec, drawStart = 'top 90%', drawEnd = 'top 30%') {
+  // tile ribbons stay where the design puts them; they only draw in along their length with the scroll
+  function ribbonScroll(r, sec, drawStart = 'top 92%', drawEnd = 'top 45%') {
     r.st.q = 0; r.render();
-    const R = () => touch(r);
-    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: drawStart, end: drawEnd, scrub: 0.8 } });
-    gsap.fromTo(r.st, { pan: 0 }, { pan: 1, ease: 'none', onUpdate: R, scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
+    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: sec, start: drawStart, end: drawEnd, scrub: 0.8 } });
   }
   [['tAgency', 't-agency'], ['tInterlink', 't-interlink'], ['tLogistics', 't-logistics']].forEach(([k, a]) => later(() => ribbonScroll(ribs[k], $(`[data-rib="${a}"]`).closest('.tile'))));
   // tiles rise in, label and caption fade up; the figures count from 0 to their value when the tile is well

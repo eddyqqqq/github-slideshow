@@ -22,7 +22,7 @@
 
 **Hover.** Buttons and links behave the same: the text turns the header blue and a 2 px bar draws in from the left (and leaves to the right). The service cards' diagonal cut eases open a little. The figure tiles have no hover.
 
-**Figure tiles** follow the design layout (label top left, figure low with its caption under it, the wide tile's second figure just past the middle). The figures count from 0 when a tile is well in view, one after the other, and reset when it leaves below, so the count plays every time you scroll down to it (tabular figures, so the digits don't jitter).
+**Figure tiles** keep the design proportions (wide 488 × 160, small 241 × 159) and each ribbon sits exactly where the design has it: the placement (scale and offset of the SVG shape in the tile) was measured on the design file by fitting the shape to it (IoU ≥ 0.99), and the ribbons only draw in with the scroll. The tiles follow the design layout (label top left, figure low with its caption under it, the wide tile's second figure just past the middle). The figures count from 0 when a tile is well in view, one after the other, and reset when it leaves below, so the count plays every time you scroll down to it (tabular figures, so the digits don't jitter).
 
 **Responsive.** Fluid type and content width (`--cw: max(1440px, 76vw)`), so 1920 and 2560 screens get the 1440 design scaled up instead of a narrow column; the hero composition keeps the same weight on phones and tablets; short landscape screens get a compact layout. Checked at 320, 390, 768, 1024, 1280, 1440, 1920, 2560 and 844×390.
 
