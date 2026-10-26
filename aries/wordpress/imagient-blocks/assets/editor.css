@@ -99,3 +99,33 @@
 .igs-color-pop { padding: 14px; width: 260px; }
 .igs-image img { display: block; width: 100%; max-height: 100px; object-fit: cover; margin-bottom: 6px; cursor: pointer; }
 .igs-css textarea { font-family: ui-monospace, monospace; font-size: 12px; }
+
+/* ================= icon layout controls (layout-ui.js) ================= */
+.igl-devices { display: flex; align-items: center; gap: 2px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #e0e0e0; }
+.igl-devices .components-button { position: relative; min-width: 34px; justify-content: center; }
+.igl-devices .components-button.has-values::after { content: ""; position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: #145fad; }
+.igl-devices .components-button.is-pressed.has-values::after { background: #fff; }
+.igl-device-note { margin-left: auto; font-size: 11px; color: #757575; }
+.igl-row { display: grid; gap: 6px; margin-bottom: 14px; }
+.igl-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .03em; color: #50575e; }
+.igl-label.is-set { color: #145fad; }
+.igl-icons { display: flex; flex-wrap: wrap; gap: 2px; padding: 2px; background: #f0f0f0; border-radius: 4px; width: fit-content; max-width: 100%; }
+.igl-icon.components-button { width: 34px; height: 30px; min-width: 0; padding: 0; justify-content: center; color: #50575e; border-radius: 3px; }
+.igl-icon.components-button:hover { color: #1e1e1e; background: #fff; }
+.igl-icon.is-active.components-button { background: #fff; color: var(--wp-admin-theme-color, #3858e9); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.igl-icon.is-inherited.components-button { box-shadow: inset 0 0 0 1px #b0b0b0; }
+.igl-icons.is-column .igl-icon svg { transform: rotate(90deg); }
+.igl-matrix-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.igl-matrix { display: grid; grid-template-columns: repeat(3, 26px); grid-template-rows: repeat(3, 26px); gap: 3px; padding: 6px; background: #f0f0f0; border-radius: 6px; }
+.igl-cell { border: 0; border-radius: 3px; background: #fff; cursor: pointer; display: grid; place-items: center; padding: 0; }
+.igl-cell span { width: 6px; height: 6px; border-radius: 50%; background: #c3c4c7; transition: transform .15s; }
+.igl-cell:hover span { background: #50575e; transform: scale(1.3); }
+.igl-cell.is-on { background: var(--wp-admin-theme-color, #3858e9); }
+.igl-cell.is-on span { background: #fff; width: 10px; height: 10px; border-radius: 2px; }
+.igl-matrix-help { font-size: 12px; color: #757575; line-height: 1.4; }
+.igl-gap { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.igl-chip { border: 1px solid #ddd; background: #fff; border-radius: 3px; min-width: 32px; height: 28px; font-size: 12px; cursor: pointer; padding: 0 6px; color: #1e1e1e; }
+.igl-chip:hover { border-color: #949494; }
+.igl-chip.is-active { background: var(--wp-admin-theme-color, #3858e9); border-color: var(--wp-admin-theme-color, #3858e9); color: #fff; }
+.igl-chip.is-inherited { border-color: #949494; border-style: dashed; }
+.igl-input { width: 92px; height: 28px; border: 1px solid #949494; border-radius: 3px; padding: 0 6px; font-size: 12px; }

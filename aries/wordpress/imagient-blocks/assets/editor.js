@@ -106,48 +106,65 @@
     save: saveInner
   });
 
+  /* ---------------- shared by Flex, Box and Grid: own value at a breakpoint, and what it inherits ---------------- */
+  const UI = window.IMAGIENT_UI;
+  const norm = v => v === true ? 'wrap' : v === false ? 'nowrap' : (v === undefined || v === null ? '' : String(v));
+  const own = (l, bp, k) => norm(l && l[bp] && l[bp][k]);
+  const inh = (l, bp, k, def) => { if (bp === 'd') return def; const o = bp === 'm' ? ['t', 'd'] : ['d']; for (const b of o) { const v = own(l, b, k); if (v) return v; } return def; };
+  const eff = (l, bp, k, def) => own(l, bp, k) || inh(l, bp, k, def);
+  const usedBps = l => ['d', 't', 'm'].filter(b => l && l[b] && Object.keys(l[b]).some(k => l[b][k] !== '' && l[b][k] !== undefined));
+  const gapCss = v => /^\d$/.test(v) ? space(v) : v;
+  const CHILD_FLEX = { equal: '1 1 0', auto: '0 1 auto', fill: '1 1 auto', none: '0 0 auto' };
+  // set one or several keys at the current breakpoint (an empty value clears it)
+  const layoutSetter = (l, bp, setAttributes) => obj => {
+    let n = { d: { ...(l && l.d) }, t: { ...(l && l.t) }, m: { ...(l && l.m) } };
+    Object.keys(obj).forEach(k => { const v = obj[k]; if (v === '' || v === undefined) delete n[bp][k]; else n[bp][k] = v; });
+    setAttributes({ layout: n });
+  };
+
   /* ================================ FLEX ================================ */
+  const FLEX_DEF = { dir: 'row', justify: 'flex-start', align: 'stretch', gap: '4', wrap: 'nowrap', child: 'equal' };
   registerBlockType('imagient/flex', {
     icon: ICONS.flex,
     edit({ attributes: a, setAttributes }) {
       const [bp, setBp] = useState('d');
-      const l = a.layout, g = (k, d) => rget(l, bp, k, d);
-      const style = { '--ig-dir-d': g('dir', 'row'), '--ig-justify-d': g('justify', 'flex-start'), '--ig-align-d': g('align', 'stretch'), '--ig-gap-d': space(g('gap', '4')), '--ig-wrap-d': g('wrap', true) ? 'wrap' : 'nowrap' };
+      const l = a.layout, E = k => eff(l, bp, k, FLEX_DEF[k]);
+      const style = { '--ig-dir-d': E('dir'), '--ig-justify-d': E('justify'), '--ig-align-d': E('align'), '--ig-gap-d': gapCss(E('gap')), '--ig-wrap-d': E('wrap'), '--ig-child-d': /^column/.test(E('dir')) ? '0 0 auto' : (CHILD_FLEX[E('child')] || '1 1 0') };
       const props = useBlockProps({ className: 'ig-flex', style });
-      const inner = useInnerBlocksProps(props, { orientation: g('dir', 'row').indexOf('row') === 0 ? 'horizontal' : 'vertical', template: [['core/paragraph'], ['core/paragraph']] });
-      const C = (type, label, k, def, options) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options });
+      const inner = useInnerBlocksProps(props, { orientation: /^row/.test(E('dir')) ? 'horizontal' : 'vertical', template: [['imagient/box'], ['imagient/box']] });
+      const setMany = layoutSetter(l, bp, setAttributes);
       return el(Fragment, {},
         el(InspectorControls, {},
-          el(PanelBody, { title: 'Flex layout', initialOpen: true },
-            el(BreakpointTabs, { bp, setBp }),
-            C('select', 'Direction', 'dir', 'row', DIRS),
-            C('select', 'Justify (main axis)', 'justify', 'flex-start', JUSTIFY),
-            C('select', 'Align (cross axis)', 'align', 'stretch', ALIGN),
-            C('select', 'Gap', 'gap', '4', SPACES),
-            C('toggle', 'Wrap onto new lines', 'wrap', true))),
+          el(PanelBody, { title: 'Flex layout', initialOpen: true, className: 'igl-panel' },
+            el(UI.Devices, { bp, setBp, used: usedBps(l) }),
+            el(UI.FlexControls, { get: k => own(l, bp, k), inh: k => inh(l, bp, k, FLEX_DEF[k]), set: (k, v) => setMany({ [k]: v }), setMany, child: true }))),
         el('div', inner));
     },
     save: saveInner
   });
 
   /* ================================ GRID ================================ */
+  const GRID_DEF = { cols: '3', gap: '4', rowGap: '', align: 'stretch' };
+  const GRID_ALIGN = [{ value: 'start', icon: 'a-flex-start', label: 'Top' }, { value: 'center', icon: 'a-center', label: 'Middle' }, { value: 'end', icon: 'a-flex-end', label: 'Bottom' }, { value: 'stretch', icon: 'a-stretch', label: 'Stretch' }];
   registerBlockType('imagient/grid', {
     icon: ICONS.grid,
     edit({ attributes: a, setAttributes }) {
       const [bp, setBp] = useState('d');
-      const l = a.layout, g = (k, d) => rget(l, bp, k, d);
-      const style = { '--ig-cols-d': parseInt(g('cols', '3'), 10), '--ig-gap-d': space(g('gap', '4')), '--ig-rgap-d': space(g('rowGap', '') || g('gap', '4')), '--ig-align-d': g('align', 'stretch') };
+      const l = a.layout, E = k => eff(l, bp, k, GRID_DEF[k]);
+      const style = { '--ig-cols-d': parseInt(E('cols'), 10) || 1, '--ig-gap-d': gapCss(E('gap')), '--ig-rgap-d': gapCss(E('rowGap') || E('gap')), '--ig-align-d': E('align') };
       const props = useBlockProps({ className: 'ig-grid', style });
-      const inner = useInnerBlocksProps(props, { renderAppender: InnerBlocks.ButtonBlockAppender, template: [['imagient/grid-item', {}, [['core/paragraph']]], ['imagient/grid-item', {}, [['core/paragraph']]], ['imagient/grid-item', {}, [['core/paragraph']]]] });
-      const C = (type, label, k, def, options, min, max) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options, min, max });
+      const inner = useInnerBlocksProps(props, { renderAppender: InnerBlocks.ButtonBlockAppender, template: [['imagient/grid-item', {}, [['imagient/box']]], ['imagient/grid-item', {}, [['imagient/box']]], ['imagient/grid-item', {}, [['imagient/box']]]] });
+      const setMany = layoutSetter(l, bp, setAttributes);
+      const cols = own(l, bp, 'cols');
       return el(Fragment, {},
         el(InspectorControls, {},
-          el(PanelBody, { title: 'Grid layout', initialOpen: true },
-            el(BreakpointTabs, { bp, setBp }),
-            C('range', 'Columns', 'cols', '3', null, 1, 12),
-            C('select', 'Column gap', 'gap', '4', SPACES),
-            C('select', 'Row gap', 'rowGap', '', [{ value: '', label: 'Same as column gap' }].concat(SPACES)),
-            C('select', 'Align items', 'align', 'stretch', ALIGN))),
+          el(PanelBody, { title: 'Grid layout', initialOpen: true, className: 'igl-panel' },
+            el(UI.Devices, { bp, setBp, used: usedBps(l) }),
+            el('div', { className: 'igl-row' }, el('span', { className: 'igl-label' + (cols ? ' is-set' : '') }, 'Columns'),
+              el('div', { className: 'igl-gap' }, ['1', '2', '3', '4', '5', '6', '12'].map(c => el('button', { key: c, type: 'button', className: 'igl-chip' + (cols === c ? ' is-active' : '') + (!cols && inh(l, bp, 'cols', '3') === c ? ' is-inherited' : ''), onClick: () => setMany({ cols: cols === c ? '' : c }) }, c)))),
+            el(UI.Icons, { label: 'Align items', value: own(l, bp, 'align'), inherit: inh(l, bp, 'align', 'stretch'), options: GRID_ALIGN, onChange: v => setMany({ align: v }) }),
+            el(UI.Gap, { label: 'Column gap', value: own(l, bp, 'gap'), inherit: inh(l, bp, 'gap', '4'), onChange: v => setMany({ gap: v }) }),
+            el(UI.Gap, { label: 'Row gap', value: own(l, bp, 'rowGap'), inherit: inh(l, bp, 'rowGap', '') || inh(l, bp, 'gap', '4'), onChange: v => setMany({ rowGap: v }) }))),
         el('div', inner));
     },
     save: saveInner
@@ -157,32 +174,34 @@
     icon: ICONS.item,
     edit({ attributes: a, setAttributes }) {
       const [bp, setBp] = useState('d');
-      const l = a.layout, g = (k, d) => rget(l, bp, k, d);
-      const props = useBlockProps({ className: 'ig-grid-item', style: { '--ig-span-d': parseInt(g('span', '1'), 10), '--ig-rows-d': parseInt(g('rows', '1'), 10), '--ig-self-d': g('align', '') || 'auto' } });
+      const l = a.layout, E = (k, d) => eff(l, bp, k, d);
+      const props = useBlockProps({ className: 'ig-grid-item', style: { '--ig-span-d': parseInt(E('span', '1'), 10), '--ig-rows-d': parseInt(E('rows', '1'), 10), '--ig-self-d': E('align', '') || 'auto' } });
       const inner = useInnerBlocksProps(props, {});
-      const C = (type, label, k, def, options, min, max) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options, min, max });
+      const setMany = layoutSetter(l, bp, setAttributes);
+      const chips = (k, list, def) => el('div', { className: 'igl-gap' }, list.map(c => el('button', { key: c, type: 'button', className: 'igl-chip' + (own(l, bp, k) === c ? ' is-active' : '') + (!own(l, bp, k) && inh(l, bp, k, def) === c ? ' is-inherited' : ''), onClick: () => setMany({ [k]: own(l, bp, k) === c ? '' : c }) }, c)));
       return el(Fragment, {},
         el(InspectorControls, {},
-          el(PanelBody, { title: 'Grid item', initialOpen: true },
-            el(BreakpointTabs, { bp, setBp }),
-            C('range', 'Column span', 'span', '1', null, 1, 12),
-            C('range', 'Row span', 'rows', '1', null, 1, 6),
-            C('select', 'Vertical alignment', 'align', '', SELF))),
+          el(PanelBody, { title: 'Grid item', initialOpen: true, className: 'igl-panel' },
+            el(UI.Devices, { bp, setBp, used: usedBps(l) }),
+            el('div', { className: 'igl-row' }, el('span', { className: 'igl-label' }, 'Column span'), chips('span', ['1', '2', '3', '4', '6', '12'], '1')),
+            el('div', { className: 'igl-row' }, el('span', { className: 'igl-label' }, 'Row span'), chips('rows', ['1', '2', '3', '4'], '1')),
+            el(UI.Icons, { label: 'Vertical align', value: own(l, bp, 'align'), inherit: inh(l, bp, 'align', ''), options: GRID_ALIGN, onChange: v => setMany({ align: v }) }))),
         el('div', inner));
     },
     save: saveInner
   });
 
   /* ================================ BOX ================================ */
+  const BOX_DEF = { dir: 'column', justify: 'flex-start', align: 'stretch', gap: '3', pad: '5', wrap: 'nowrap' };
   registerBlockType('imagient/box', {
     icon: ICONS.box,
     edit({ attributes: a, setAttributes }) {
       const [bp, setBp] = useState('d');
-      const l = a.layout, g = (k, d) => rget(l, bp, k, d);
-      const style = { '--ig-pad-d': space(g('pad', '5')), '--ig-dir-d': g('dir', 'column'), '--ig-justify-d': g('justify', 'flex-start'), '--ig-gap-d': space(g('gap', '3')), '--ig-radius': (parseInt(a.radius, 10) || 0) + 'px', background: colorOf(a.background) || undefined, minHeight: a.minHeight ? parseInt(a.minHeight, 10) + 'px' : undefined };
+      const l = a.layout, E = k => eff(l, bp, k, BOX_DEF[k]);
+      const style = { '--ig-pad-d': gapCss(E('pad')), '--ig-dir-d': E('dir'), '--ig-justify-d': E('justify'), '--ig-align-d': E('align'), '--ig-gap-d': gapCss(E('gap')), '--ig-radius': (parseInt(a.radius, 10) || 0) + 'px', background: colorOf(a.background) || undefined, minHeight: a.minHeight ? parseInt(a.minHeight, 10) + 'px' : undefined };
       const props = useBlockProps({ className: 'ig-box tone-' + a.tone, style });
       const inner = useInnerBlocksProps(props, { template: [['core/heading', { level: 3 }], ['core/paragraph']] });
-      const C = (type, label, k, def, options) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options });
+      const setMany = layoutSetter(l, bp, setAttributes);
       return el(Fragment, {},
         el(InspectorControls, {},
           el(PanelBody, { title: 'Box', initialOpen: true },
@@ -191,12 +210,10 @@
             el(RangeControl, { label: 'Corner radius (px)', value: parseInt(a.radius, 10) || 0, min: 0, max: 40, onChange: v => setAttributes({ radius: String(v) }) }),
             el(RangeControl, { label: 'Minimum height (px, 0 = auto)', value: parseInt(a.minHeight, 10) || 0, min: 0, max: 900, step: 10, onChange: v => setAttributes({ minHeight: v ? String(v) : '' }) }),
             el(TextControl, { label: 'Link (the whole box)', value: a.link, onChange: v => setAttributes({ link: v }), placeholder: 'https://… or #section' })),
-          el(PanelBody, { title: 'Layout', initialOpen: true },
-            el(BreakpointTabs, { bp, setBp }),
-            C('select', 'Padding', 'pad', '5', SPACES),
-            C('select', 'Direction', 'dir', 'column', DIRS),
-            C('select', 'Justify', 'justify', 'flex-start', JUSTIFY),
-            C('select', 'Gap', 'gap', '3', SPACES))),
+          el(PanelBody, { title: 'Layout', initialOpen: true, className: 'igl-panel' },
+            el(UI.Devices, { bp, setBp, used: usedBps(l) }),
+            el(UI.Gap, { label: 'Padding', value: own(l, bp, 'pad'), inherit: inh(l, bp, 'pad', '5'), onChange: v => setMany({ pad: v }) }),
+            el(UI.FlexControls, { get: k => own(l, bp, k), inh: k => inh(l, bp, k, BOX_DEF[k]), set: (k, v) => setMany({ [k]: v }), setMany, hide: ['wrap'] }))),
         el('div', inner));
     },
     save: saveInner

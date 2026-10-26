@@ -109,7 +109,16 @@ function imagient_vars( $name, $resolved, $map = null ) {
 	return $out;
 }
 
+/** A spacing value: a scale step (0–9) or a free CSS length typed in the editor (24px, 2rem, clamp(…)). */
 function imagient_space_var( $step ) {
+	$step = (string) $step;
+	if ( ! preg_match( '/^\d$/', $step ) ) {
+		$v = function_exists( 'imagient_style_value' ) ? imagient_style_value( $step ) : '';
+		return '' !== $v ? $v : 'var(--ig-s4)';
+	}
+	return imagient_space_step( $step );
+}
+function imagient_space_step( $step ) {
 	$step = (string) intval( $step );
 	return 'var(--ig-s' . max( 0, min( 9, (int) $step ) ) . ')';
 }

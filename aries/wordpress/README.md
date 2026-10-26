@@ -24,12 +24,14 @@ The theme ships with the Area Normal font files (`assets/fonts`). Area Normal is
 | Block | Use |
 |---|---|
 | Section | A band of the page: background colour, text tone, inner width (page margins / 1440 / 960 / edge to edge), space above and below per breakpoint, full-screen height, rounded corners. |
-| Flex | Row or column of blocks: direction, justify, align, gap, wrap, per breakpoint. |
+| Flex | Row or column of blocks, with icon controls: direction arrows, a 3 × 3 alignment matrix, justify / align / wrap icons, children sizing (Equal widths, Fit content, Fill, Fixed) and gap presets or any value, per breakpoint. |
 | Grid / Grid item | CSS grid: columns, column and row gap, alignment per breakpoint; items span columns and rows per breakpoint. |
 | Box | Card or panel: background, text tone, padding, direction, gap, radius, minimum height, whole-box link. |
 | Logo | Group or company logo, in colour or white. |
 | Ribbon | Decorative Aries ribbon behind the content of a Section or Box: shape, size, position, opacity, optional drift. |
 | Aries hero, company scene, figures, service cards | The designed scenes: texts and photos edited in place, lists (companies, tiles, figures, cards) added, removed and reordered; the motion is built in. |
+
+**Structure** (as in Webflow or Elementor containers): **Section** (the band: background, width, space above and below) → **Flex** or **Grid** (how the children sit: side by side, stacked, in columns) → **Box** (each column or card; it is also a small flex container) → content (headings, text, images, buttons, logos). A Flex in a row puts its children side by side as equal columns by default; set *Direction* to the down arrow on Mobile to stack them there. Select the parent with the *Select parent* arrow in the block toolbar, or in *List view* (top left).
 
 **Breakpoints:** desktop, tablet (≤ 1024 px), mobile (≤ 640 px). Desktop values apply everywhere; tablet and mobile only override what they change (the settings show a "Use desktop" link where they do).
 

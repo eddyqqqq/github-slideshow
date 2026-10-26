@@ -15,6 +15,7 @@
   const { PanelBody, SelectControl, TextControl, TextareaControl, Button, Dropdown, ColorPalette, ColorIndicator, Tooltip } = C;
   const CFG = window.IMAGIENT || { palette: [] };
   const PAL = (CFG.palette || []).map(c => ({ name: c.name, color: c.color, slug: c.slug }));
+  const UI = window.IMAGIENT_UI;
 
   /* ---------------- the CSS model (mirrors inc/style.php) ---------------- */
   const PROPS = {
@@ -140,7 +141,15 @@
       if (isEmpty(next[key])) delete next[key];
       setAttributes({ igStyle: isEmpty(next) && !next.css ? undefined : next });
     };
-    const ctx = { style, bp: key, cur, setProp };
+    // several keys in one update (the matrix sets justify and align together)
+    const setMany = obj => {
+      const n = { ...cur, ...obj };
+      Object.keys(n).forEach(x => { if (n[x] === '' || n[x] === undefined) delete n[x]; });
+      const next = { ...style, [key]: n };
+      if (isEmpty(next[key])) delete next[key];
+      setAttributes({ igStyle: isEmpty(next) && !next.css ? undefined : next });
+    };
+    const ctx = { style, bp: key, cur, setProp, setMany };
     const used = ['d', 't', 'm', 'h'].filter(b => !isEmpty(style[b]));
     const opts = list => list;
     return el(Fragment, {},
@@ -154,10 +163,13 @@
 
       el(Group, { title: 'Layout', ctx, keys: ['display', 'flexDirection', 'justifyContent', 'alignItems', 'flexWrap', 'gap', 'gridTemplateColumns', 'alignSelf', 'order'] },
         el(Select, { label: 'Display', k: 'display', ctx, options: ['block', 'flex', 'grid', 'inline-block', 'inline-flex', 'inline', 'none'] }),
-        el(Select, { label: 'Direction', k: 'flexDirection', ctx, options: ['row', 'column', 'row-reverse', 'column-reverse'] }),
-        el(Select, { label: 'Justify', k: 'justifyContent', ctx, options: ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly'] }),
-        el(Select, { label: 'Align items', k: 'alignItems', ctx, options: ['stretch', 'flex-start', 'center', 'flex-end', 'baseline'] }),
-        el(Select, { label: 'Wrap', k: 'flexWrap', ctx, options: ['nowrap', 'wrap', 'wrap-reverse'] }),
+        // flex settings as icons, with the 3 × 3 matrix (shown when Display is flex)
+        (ctx.cur.display || inherited(ctx.style, ctx.bp, s => s.display)) === 'flex' || (ctx.cur.display || inherited(ctx.style, ctx.bp, s => s.display)) === 'inline-flex' ? el(Fragment, {},
+          el(UI.Icons, { label: 'Direction', value: ctx.cur.flexDirection || '', inherit: inherited(ctx.style, ctx.bp, s => s.flexDirection), options: UI.DIRS, onChange: v => ctx.setProp('flexDirection', v) }),
+          el(UI.Matrix, { dir: ctx.cur.flexDirection || inherited(ctx.style, ctx.bp, s => s.flexDirection) || 'row', justify: ctx.cur.justifyContent || inherited(ctx.style, ctx.bp, s => s.justifyContent), align: ctx.cur.alignItems || inherited(ctx.style, ctx.bp, s => s.alignItems), onChange: (j, a) => ctx.setMany({ justifyContent: j, alignItems: a }) }),
+          el(UI.Icons, { label: 'Justify', value: ctx.cur.justifyContent || '', inherit: inherited(ctx.style, ctx.bp, s => s.justifyContent), options: UI.JUSTIFY, rotate: /^column/.test(ctx.cur.flexDirection || ''), onChange: v => ctx.setProp('justifyContent', v) }),
+          el(UI.Icons, { label: 'Align', value: ctx.cur.alignItems || '', inherit: inherited(ctx.style, ctx.bp, s => s.alignItems), options: UI.ALIGN, rotate: /^column/.test(ctx.cur.flexDirection || ''), onChange: v => ctx.setProp('alignItems', v) }),
+          el(UI.Icons, { label: 'Wrap', value: ctx.cur.flexWrap || '', inherit: inherited(ctx.style, ctx.bp, s => s.flexWrap), options: UI.WRAP, onChange: v => ctx.setProp('flexWrap', v) })) : null,
         el(Value, { label: 'Gap', k: 'gap', ctx, placeholder: 'e.g. 24px' }),
         el(Value, { label: 'Grid columns', k: 'gridTemplateColumns', ctx, placeholder: 'e.g. repeat(3, 1fr)' }),
         el(Value, { label: 'Grid column (child)', k: 'gridColumn', ctx, placeholder: 'e.g. span 2' }),

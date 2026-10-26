@@ -215,24 +215,28 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-flex { display: flex; flex-direction: var(--ig-dir-d); justify-content: var(--ig-justify-d); align-items: var(--ig-align-d); gap: var(--ig-gap-d); flex-wrap: var(--ig-wrap-d); }
 .ig-grid { display: grid; grid-template-columns: repeat(var(--ig-cols-d), minmax(0, 1fr)); column-gap: var(--ig-gap-d); row-gap: var(--ig-rgap-d); align-items: var(--ig-align-d); }
 .ig-grid-item { grid-column: span var(--ig-span-d); grid-row: span var(--ig-rows-d); align-self: var(--ig-self-d); min-width: 0; }
-.ig-box { position: relative; display: flex; flex-direction: var(--ig-dir-d); justify-content: var(--ig-justify-d); gap: var(--ig-gap-d); padding: var(--ig-pad-d); border-radius: var(--ig-radius, 0); overflow: hidden; }
+.ig-box { position: relative; display: flex; flex-direction: var(--ig-dir-d); justify-content: var(--ig-justify-d); align-items: var(--ig-align-d, stretch); gap: var(--ig-gap-d); padding: var(--ig-pad-d); border-radius: var(--ig-radius, 0); overflow: hidden; }
 .ig-box > :not(.ig-ribbon):not(.ig-box-link) { position: relative; z-index: 1; }
 .ig-box-link { position: absolute; inset: 0; z-index: 2; }
 .ig-flex > *, .ig-grid > *, .ig-box > * { margin-block: 0; }
+/* flex children share the row as chosen in the editor (equal / fit / fill / fixed) */
+.ig-flex > * { flex: var(--ig-child-d, 1 1 0); min-width: 0; }
 
 @media (max-width: 1024px) {
   .ig-section { padding-top: var(--ig-pt-t); padding-bottom: var(--ig-pb-t); }
   .ig-flex { flex-direction: var(--ig-dir-t); justify-content: var(--ig-justify-t); align-items: var(--ig-align-t); gap: var(--ig-gap-t); flex-wrap: var(--ig-wrap-t); }
   .ig-grid { grid-template-columns: repeat(var(--ig-cols-t), minmax(0, 1fr)); column-gap: var(--ig-gap-t); row-gap: var(--ig-rgap-t); align-items: var(--ig-align-t); }
   .ig-grid-item { grid-column: span min(var(--ig-span-t), var(--ig-cols-t, 12)); grid-row: span var(--ig-rows-t); align-self: var(--ig-self-t); }
-  .ig-box { flex-direction: var(--ig-dir-t); justify-content: var(--ig-justify-t); gap: var(--ig-gap-t); padding: var(--ig-pad-t); }
+  .ig-box { flex-direction: var(--ig-dir-t); justify-content: var(--ig-justify-t); align-items: var(--ig-align-t, stretch); gap: var(--ig-gap-t); padding: var(--ig-pad-t); }
+  .ig-flex > * { flex: var(--ig-child-t, 1 1 0); }
 }
 @media (max-width: 640px) {
   .ig-section { padding-top: var(--ig-pt-m); padding-bottom: var(--ig-pb-m); }
   .ig-flex { flex-direction: var(--ig-dir-m); justify-content: var(--ig-justify-m); align-items: var(--ig-align-m); gap: var(--ig-gap-m); flex-wrap: var(--ig-wrap-m); }
   .ig-grid { grid-template-columns: repeat(var(--ig-cols-m), minmax(0, 1fr)); column-gap: var(--ig-gap-m); row-gap: var(--ig-rgap-m); align-items: var(--ig-align-m); }
   .ig-grid-item { grid-column: span var(--ig-span-m); grid-row: span var(--ig-rows-m); align-self: var(--ig-self-m); }
-  .ig-box { flex-direction: var(--ig-dir-m); justify-content: var(--ig-justify-m); gap: var(--ig-gap-m); padding: var(--ig-pad-m); }
+  .ig-box { flex-direction: var(--ig-dir-m); justify-content: var(--ig-justify-m); align-items: var(--ig-align-m, stretch); gap: var(--ig-gap-m); padding: var(--ig-pad-m); }
+  .ig-flex > * { flex: var(--ig-child-m, 1 1 0); }
 }
 
 /* logo block */

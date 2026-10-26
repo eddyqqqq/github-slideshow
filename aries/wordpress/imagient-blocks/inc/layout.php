@@ -42,7 +42,7 @@ function imagient_register_layout_blocks() {
 		'title'           => 'Flex',
 		'description'     => 'Lays its blocks out in a row or a column, with alignment, gap and wrapping per breakpoint.',
 		'attributes'      => array(
-			'layout' => imagient_responsive_attr( array( 'dir' => 'row', 'justify' => 'flex-start', 'align' => 'stretch', 'gap' => '4', 'wrap' => true ) ),
+			'layout' => imagient_responsive_attr( array( 'dir' => 'row', 'justify' => 'flex-start', 'align' => 'stretch', 'gap' => '4', 'wrap' => 'nowrap', 'child' => 'equal' ) ),
 		),
 		'render_callback' => 'imagient_render_flex',
 	) ) );
@@ -75,7 +75,7 @@ function imagient_register_layout_blocks() {
 			'radius'     => array( 'type' => 'string', 'default' => '0' ),
 			'minHeight'  => array( 'type' => 'string', 'default' => '' ),
 			'link'       => array( 'type' => 'string', 'default' => '' ),
-			'layout'     => imagient_responsive_attr( array( 'pad' => '5', 'dir' => 'column', 'justify' => 'flex-start', 'gap' => '3' ) ),
+			'layout'     => imagient_responsive_attr( array( 'pad' => '5', 'dir' => 'column', 'justify' => 'flex-start', 'align' => 'stretch', 'gap' => '3' ) ),
 		),
 		'render_callback' => 'imagient_render_box',
 	) ) );
@@ -110,7 +110,8 @@ function imagient_render_flex( $a, $content ) {
 		. imagient_vars( 'ig-justify', imagient_resolve( $l, 'justify', 'flex-start' ) )
 		. imagient_vars( 'ig-align', imagient_resolve( $l, 'align', 'stretch' ) )
 		. imagient_vars( 'ig-gap', imagient_resolve( $l, 'gap', '4' ), 'imagient_space_var' )
-		. imagient_vars( 'ig-wrap', imagient_resolve( $l, 'wrap', true ), function ( $v ) { return '1' === (string) $v || true === $v ? 'wrap' : 'nowrap'; } );
+		. imagient_vars( 'ig-wrap', imagient_resolve( $l, 'wrap', 'nowrap' ), function ( $v ) { return in_array( (string) $v, array( '1', 'wrap', 'wrap-reverse' ), true ) || true === $v ? 'wrap' : 'nowrap'; } )
+		. imagient_flex_child_vars( $l );
 	return sprintf( '<div %s>%s</div>', imagient_wrapper( null, 'ig-flex', imagient_safe_css( $style ) ), $content );
 }
 
@@ -143,6 +144,7 @@ function imagient_render_box( $a, $content ) {
 	$style = imagient_vars( 'ig-pad', imagient_resolve( $l, 'pad', '5' ), 'imagient_space_var' )
 		. imagient_vars( 'ig-dir', imagient_resolve( $l, 'dir', 'column' ), 'imagient_css_dir' )
 		. imagient_vars( 'ig-justify', imagient_resolve( $l, 'justify', 'flex-start' ), 'imagient_css_justify' )
+		. imagient_vars( 'ig-align', imagient_resolve( $l, 'align', 'stretch' ), 'imagient_css_align' )
 		. imagient_vars( 'ig-gap', imagient_resolve( $l, 'gap', '3' ), 'imagient_space_var' );
 	if ( $bg = imagient_color( $a['background'] ) ) {
 		$style .= 'background:' . $bg . ';';
@@ -159,6 +161,19 @@ function imagient_render_box( $a, $content ) {
 		$html = preg_replace( '/<\/div>$/', '<a class="ig-box-link" href="' . esc_url( $a['link'] ) . '" aria-hidden="true" tabindex="-1"></a></div>', $html );
 	}
 	return $html;
+}
+
+/** Child sizing per breakpoint; in a column the children keep their natural height whatever the setting. */
+function imagient_flex_child_vars( $l ) {
+	$dir   = imagient_resolve( $l, 'dir', 'row' );
+	$child = imagient_resolve( $l, 'child', 'equal' );
+	$map   = array( 'equal' => '1 1 0', 'auto' => '0 1 auto', 'fill' => '1 1 auto', 'none' => '0 0 auto' );
+	$out   = '';
+	foreach ( array( 'd', 't', 'm' ) as $bp ) {
+		$v    = 0 === strpos( (string) $dir[ $bp ], 'column' ) ? '0 0 auto' : ( $map[ $child[ $bp ] ] ?? '1 1 0' );
+		$out .= '--ig-child-' . $bp . ':' . $v . ';';
+	}
+	return $out;
 }
 
 /** Layout keywords are taken from fixed lists, so an attribute can never carry other CSS. */

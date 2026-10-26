@@ -3,7 +3,7 @@
  * Plugin Name:       Imagient Blocks
  * Plugin URI:        https://imagient.ro
  * Description:       Native Gutenberg blocks by Imagient: responsive layout (Section, Flex, Grid, Box), scroll animations for every block, and the Aries scenes (hero, company scene, figures, service cards, ribbons).
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Imagient
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'IMAGIENT_BLOCKS_VERSION', '1.1.0' );
+define( 'IMAGIENT_BLOCKS_VERSION', '1.2.0' );
 define( 'IMAGIENT_BLOCKS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'IMAGIENT_BLOCKS_URL', plugin_dir_url( __FILE__ ) );
 
@@ -42,11 +42,14 @@ add_action( 'init', function () {
 	wp_register_script( 'imagient-aries', $url . 'aries.js', array( 'imagient-gsap', 'imagient-scrolltrigger', 'imagient-lenis', 'imagient-shapes' ), $v, array( 'strategy' => 'defer', 'in_footer' => false ) );
 	wp_register_style( 'imagient-aries', $url . 'aries.css', array(), $v );
 
+	// editor: the icon controls shared by the blocks and the Style tab
+	wp_register_script( 'imagient-layout-ui', $url . 'layout-ui.js', array( 'wp-element', 'wp-components' ), $v, true );
+
 	// editor: one script for every block (plain JS on the WordPress globals, no build step)
 	wp_register_script(
 		'imagient-blocks-editor',
 		$url . 'editor.js',
-		array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-hooks', 'wp-compose', 'wp-data', 'imagient-shapes' ),
+		array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-hooks', 'wp-compose', 'wp-data', 'imagient-shapes', 'imagient-layout-ui' ),
 		$v,
 		true
 	);
