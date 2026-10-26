@@ -33,6 +33,9 @@ The theme ships with the Area Normal font files (`assets/fonts`). Area Normal is
 
 **Breakpoints:** desktop, tablet (≤ 1024 px), mobile (≤ 640 px). Desktop values apply everywhere; tablet and mobile only override what they change (the settings show a "Use desktop" link where they do).
 
+**Style tab on every block (Imagient Style, like Elementor's Style tab):** select any block → sidebar → *Styles* tab → *Imagient Style*. Pick the device (Desktop / Tablet / Mobile) or *Hover*, then type any value (`24px`, `3rem`, `50%`, `clamp(28px, 3.3vw, 72px)`, a brand colour or `#hex`):
+Layout (display, direction, justify, align, wrap, gap, grid columns, order), Spacing (margin and padding per side, linkable), Size (width, height, min/max, overflow, aspect ratio, object fit), Position (position, offsets, z-index), Typography (font, size, weight, line height, letter spacing, transform, decoration, align, colour), Background (colour, image, gradient, size, position), Border (style, width per side, colour, radius per corner), Effects (opacity, shadow, transform, transition, filters, cursor) and Custom CSS (`selector` = this block). A bare number means px. Tablet and Mobile show the inherited value in grey; set fields are marked blue, and the device buttons show a dot when they hold values. The editor previews the result live; on the site the rules go into the page head, once per distinct style.
+
 **Animation on any block:** select it → *Animation (Imagient)*: fade up, words rising one by one (headings), numbers counting up, scale in. In the editor, animated blocks carry a small ✦ badge.
 
 **Link styles:** Button → style *Aries link* (the underline that draws in on hover); List → style *Aries links* (for link lists).

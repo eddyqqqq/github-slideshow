@@ -3,7 +3,7 @@
  * Plugin Name:       Imagient Blocks
  * Plugin URI:        https://imagient.ro
  * Description:       Native Gutenberg blocks by Imagient: responsive layout (Section, Flex, Grid, Box), scroll animations for every block, and the Aries scenes (hero, company scene, figures, service cards, ribbons).
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Imagient
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'IMAGIENT_BLOCKS_VERSION', '1.0.0' );
+define( 'IMAGIENT_BLOCKS_VERSION', '1.1.0' );
 define( 'IMAGIENT_BLOCKS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'IMAGIENT_BLOCKS_URL', plugin_dir_url( __FILE__ ) );
 
@@ -22,6 +22,7 @@ require_once IMAGIENT_BLOCKS_DIR . 'inc/helpers.php';
 require_once IMAGIENT_BLOCKS_DIR . 'inc/layout.php';
 require_once IMAGIENT_BLOCKS_DIR . 'inc/aries.php';
 require_once IMAGIENT_BLOCKS_DIR . 'inc/animations.php';
+require_once IMAGIENT_BLOCKS_DIR . 'inc/style.php';
 
 /** One block category for everything Imagient, first in the inserter. */
 add_filter( 'block_categories_all', function ( $categories ) {
@@ -57,6 +58,9 @@ add_action( 'init', function () {
 	) ) . ';', 'before' );
 	wp_register_style( 'imagient-blocks-editor', $url . 'editor.css', array( 'imagient-aries' ), $v );
 
+	// the Style tab on every block (Elementor-like): its own script, after the blocks
+	wp_register_script( 'imagient-style-panel', $url . 'style-panel.js', array( 'imagient-blocks-editor' ), $v, true );
+
 	imagient_register_layout_blocks();
 	imagient_register_aries_blocks();
 
@@ -73,6 +77,7 @@ add_action( 'wp_enqueue_scripts', function () {
 
 add_action( 'enqueue_block_editor_assets', function () {
 	wp_enqueue_script( 'imagient-blocks-editor' );
+	wp_enqueue_script( 'imagient-style-panel' );
 	wp_enqueue_style( 'imagient-blocks-editor' );
 } );
 
