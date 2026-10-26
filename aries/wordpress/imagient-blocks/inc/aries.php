@@ -171,7 +171,7 @@ function imagient_render_hero( $a ) {
 	}
 	ob_start();
 	?>
-<section <?php echo imagient_wrapper( null, 'hero', '', array( 'id' => 'hero', 'data-wide' => in_array( $a['wide'], array( 'full', 'stretch', 'contain' ), true ) ? $a['wide'] : 'full' ) ); ?>>
+<section <?php echo imagient_wrapper( null, 'hero', '', array( 'id' => 'hero', 'data-wide' => in_array( $a['wide'], array( 'full', 'stretch', 'contain', 'scale' ), true ) ? $a['wide'] : 'full' ) ); ?>>
   <div class="hero-stage">
     <svg class="hero-svg" id="heroSvg" viewBox="0 -120 1442 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs><clipPath id="hClip"><path id="hRegion" d="M0 0Z"/></clipPath></defs>

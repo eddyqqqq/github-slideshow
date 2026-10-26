@@ -117,11 +117,14 @@ document.addEventListener('DOMContentLoaded', () => {
   } : null;
   if (hero) {
     // wide screens: "full" (bands run on to the right edge), "stretch" (the drawing widens to the screen),
-    // "contain" (the drawing as designed, centred; it opens to the full width on scroll). ?hero=… tries one.
+    // "contain" (the drawing as designed, centred; it opens to the full width on scroll), "scale" (the drawing as
+    // designed, edge to edge at every width: the hero grows taller than the screen where the screen is wider than
+    // the design). ?hero=… tries one.
+    const MODES = ['full', 'stretch', 'contain', 'scale'];
     const q = new URLSearchParams(location.search).get('hero');
-    hero.mode = ['full', 'stretch', 'contain'].includes(q) ? q : (['stretch', 'contain'].includes(heroEl.dataset.wide) ? heroEl.dataset.wide : 'full');
+    hero.mode = MODES.includes(q) ? q : (MODES.includes(heroEl.dataset.wide) ? heroEl.dataset.wide : 'full');
     heroEl.classList.add('is-' + hero.mode);
-    root.classList.toggle('hero-contain', hero.mode === 'contain');
+    root.classList.add('hero-' + hero.mode);
   }
   if (hero && hero.src) {
     // the photo the browser chose from the srcset (format and size), already loading

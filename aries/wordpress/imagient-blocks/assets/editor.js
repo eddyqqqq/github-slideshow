@@ -308,8 +308,9 @@
             el(SelectControl, { label: 'On screens wider than the design', value: a.wide || 'full', onChange: v => setAttributes({ wide: v }), options: [
               { value: 'full', label: 'Full width: the bands run on to the right edge' },
               { value: 'stretch', label: 'Stretch: the drawing widens to the screen' },
-              { value: 'contain', label: 'Contained from 1600 px: as designed, centred; opens on scroll' }] }),
-            el('p', { className: 'ig-help' }, 'To compare on the site without saving, add ?hero=full, ?hero=stretch or ?hero=contain to the address.'))),
+              { value: 'contain', label: 'Contained from 1600 px: as designed, centred; opens on scroll' },
+              { value: 'scale', label: 'Scale: as designed, edge to edge at every width (taller than the screen on wide screens)' }] }),
+            el('p', { className: 'ig-help' }, 'To compare on the site without saving, add ?hero=full, ?hero=stretch, ?hero=contain or ?hero=scale to the address.'))),
         el('div', props,
           el('div', { className: 'ig-hero-edit__bands' }, a.imageUrl ? el('img', { src: a.imageUrl, alt: '' }) : null, el('span', { className: 'ig-badge' }, 'Bands + photo · animated on the site')),
           el('div', { className: 'ig-hero-edit__title' },
