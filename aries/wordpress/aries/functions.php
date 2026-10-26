@@ -8,7 +8,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ARIES_VERSION', '1.0.0' );
+// the theme's version plus the stylesheet's upload time: every upload gets a new URL, so browsers and the host's
+// week-long cache never keep an old stylesheet
+define( 'ARIES_VERSION', wp_get_theme( 'aries' )->get( 'Version' ) . '.' . filemtime( __DIR__ . '/style.css' ) );
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'wp-block-styles' );
