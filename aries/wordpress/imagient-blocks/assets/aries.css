@@ -34,6 +34,8 @@
   /* --u: one design pixel. The hero is laid out on the 1440-wide design and scaled so that its whole stack
      (logo, bands, title and the white space under it: 1170 design px) fits the screen: by the width, or by the height on wide, short screens */
   --u: min(100vw / 1440, 100vh / 1170);
+  /* --ig-fu: one design pixel for spacing: the screen's rate below 1440, half of it above (Style tab: calc(40 * var(--ig-fu))) */
+  --ig-fu: max(.62px, min(100vw / 1440, .5px + 100vw / 2880));
   /* logos at their design size (the SVGs are 74–75 × 129–143 px at 1440), smaller only on narrow screens */
   --logo-w: clamp(44px, 5.2vw, 75px);
   --logo-top: max(20px, 60 * var(--u));
@@ -95,6 +97,14 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .hero-title { padding-block: calc(30 * var(--u)) 0; gap: calc(10 * var(--u)); }
   .hero-title h1 { font-size: max(22px, 60 * var(--u)); }
   .hero-title p { font-size: max(14px, 20 * var(--u)); }
+}
+
+/* wide screens, "contain": from 1600 px the drawing stays exactly as designed, centred in a frame its own width
+   (logo and title aligned to it); on scroll the frame opens to the full width as the bands fly apart */
+@media (min-aspect-ratio: 1/1) and (min-width: 1600px) {
+  .hero.is-contain { --frame: min(100vw, 1440 * var(--u)); --gut: calc(68 * var(--u)); --gut-r: calc(68 * var(--u)); }
+  .hero.is-contain .hero-stage { width: calc(var(--frame) + (100% - var(--frame)) * var(--open, 0)); margin-inline: auto; }
+  .hero-contain .home .ig-top, .hero-contain .ig-top { padding-left: calc((100vw - min(100vw, 1440 * var(--u))) / 2 + 68 * var(--u)); }
 }
 
 /* ---------- scene 2: Group and the three companies, one ribbon through four shapes ---------- */

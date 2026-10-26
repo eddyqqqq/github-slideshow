@@ -7,7 +7,7 @@ Description:       Block theme for Aries Group, designed and built by Imagient. 
 Requires at least: 6.5
 Tested up to:      6.8
 Requires PHP:      7.4
-Version:           1.0.1
+Version:           1.0.2
 License:           GNU General Public License v2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:       aries
@@ -31,13 +31,24 @@ img, svg { max-width: 100%; }
 .home .ig-top a { pointer-events: auto; }
 .admin-bar.home .ig-top { top: var(--wp-admin--admin-bar--height, 32px); }
 
-/* footer */
-.ig-footer h3, .ig-footer .wp-block-heading { font-size: var(--wp--preset--font-size--link); margin: 0 0 14px; color: var(--wp--preset--color--ink); }
+/* footer: the design's rhythm at 1440 (logo, three link columns, the slogan, the legal line), in design pixels
+   (--ig-fu) that grow at half the screen's rate above 1440 and shrink with it below, so large screens get room
+   to breathe without the footer turning into a poster. The Style tab still overrides any of it. */
+.ig-footer { --fu: var(--ig-fu, 1px); }
+.ig-section.ig-footer { padding-top: calc(160 * var(--fu)); padding-bottom: calc(72 * var(--fu)); }
+@media (min-width: 641px) {
+  .ig-footer .ig-grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, .9fr); column-gap: calc(24 * var(--fu)); }
+}
+.ig-footer h3, .ig-footer .wp-block-heading { font-size: var(--wp--preset--font-size--link); font-weight: 700; margin: 0 0 calc(28 * var(--fu)); color: var(--wp--preset--color--ink); }
+.ig-footer .is-style-aries-links { list-style: none; margin: 0; padding: 0; display: grid; gap: calc(22 * var(--fu)); }
+.ig-footer li { line-height: 1.3; }
 .ig-footer a { color: var(--wp--preset--color--text); text-decoration: none; font-size: var(--wp--preset--font-size--link); }
-.ig-footer .ig-slogan { color: var(--wp--preset--color--group); font-size: var(--wp--preset--font-size--xl); line-height: 1.05; font-weight: 400; }
+.ig-footer .ig-slogan { color: var(--wp--preset--color--group); font-size: var(--wp--preset--font-size--l); line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; margin: calc(170 * var(--fu)) 0 0; }
+.ig-footer .ig-legal { margin-top: calc(84 * var(--fu)); row-gap: calc(18 * var(--fu)); }
 .ig-footer .ig-legal, .ig-footer .ig-legal a { font-size: var(--wp--preset--font-size--small); color: var(--wp--preset--color--muted); }
-.ig-footer .ig-legal .is-style-aries-links { display: flex; gap: 14px; flex-wrap: wrap; }
-.ig-linkedin a { display: inline-grid; place-content: center; width: 22px; height: 22px; background: var(--wp--preset--color--group); color: #fff !important; border-radius: 3px; font: 700 12px/1 var(--wp--preset--font-family--area); }
+.ig-footer .ig-legal p { margin: 0; }
+.ig-footer .ig-legal .is-style-aries-links { display: flex; flex-wrap: wrap; gap: calc(14 * var(--fu)) calc(32 * var(--fu)); }
+.ig-linkedin a { display: inline-grid; place-content: center; width: max(22px, calc(24 * var(--ig-fu, 1px))); height: max(22px, calc(24 * var(--ig-fu, 1px))); background: var(--wp--preset--color--group); color: #fff !important; border-radius: 3px; font: 700 12px/1 var(--wp--preset--font-family--area); }
 .ig-linkedin a::after { display: none; }
 
 /* inner pages and posts */

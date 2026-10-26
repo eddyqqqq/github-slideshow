@@ -83,6 +83,7 @@ function imagient_register_aries_blocks() {
 			'sceneText'  => array( 'type' => 'string', 'default' => 'Established in 2003, Aries Group operates across the Black Sea and Danube region.' ),
 			'imageId'    => array( 'type' => 'number', 'default' => 0 ),
 			'imageUrl'   => array( 'type' => 'string', 'default' => $d['heroImage'] ),
+			'wide'       => array( 'type' => 'string', 'default' => 'full' ),
 		),
 		'render_callback' => 'imagient_render_hero',
 	) ) );
@@ -170,11 +171,11 @@ function imagient_render_hero( $a ) {
 	}
 	ob_start();
 	?>
-<section <?php echo imagient_wrapper( null, 'hero', '', array( 'id' => 'hero' ) ); ?>>
+<section <?php echo imagient_wrapper( null, 'hero', '', array( 'id' => 'hero', 'data-wide' => in_array( $a['wide'], array( 'full', 'stretch', 'contain' ), true ) ? $a['wide'] : 'full' ) ); ?>>
   <div class="hero-stage">
     <svg class="hero-svg" id="heroSvg" viewBox="0 -120 1442 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs><clipPath id="hClip"><path id="hRegion" d="M0 0Z"/></clipPath></defs>
-      <g clip-path="url(#hClip)"><g id="hZoom"><g id="hImgWrap"><image id="hImg" x="0" y="0" width="1500" height="1020" preserveAspectRatio="none"/></g></g></g>
+      <g clip-path="url(#hClip)"><g id="hZoom"><g id="hImgWrap"><g id="hRot"><image id="hImg" x="0" y="0" width="1500" height="1020" preserveAspectRatio="none"/><use id="hImgL" href="#hImg"/><use id="hImgR" href="#hImg"/></g></g></g></g>
       <path id="hTop" fill="#145FAD" d="M0 0Z"/>
       <path id="hBot" fill="#145FAD" d="M0 0Z"/>
     </svg>
