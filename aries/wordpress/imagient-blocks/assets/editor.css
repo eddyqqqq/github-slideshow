@@ -62,3 +62,11 @@
 .ig-cards-edit__row { display: flex; gap: 14px; overflow-x: auto; padding: 10px var(--gut, 68px) 4px; align-items: center; }
 .ig-cards-edit .card { flex: none; width: min(560px, 80%); cursor: pointer; }
 .ig-cards-edit .card .pi img { width: 104%; max-width: none; height: 100%; margin-left: 11%; object-fit: cover; }
+
+/* the editor canvas: page sections span the whole width, as on the site (the page content is otherwise 960 px) */
+.editor-styles-wrapper .is-root-container > .wp-block:is([data-type="imagient/section"], [data-type="imagient/hero"], [data-type="imagient/identity"], [data-type="imagient/figures"], [data-type="imagient/cards"]),
+.editor-styles-wrapper .is-root-container > .wp-block.ig-section { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
+.editor-styles-wrapper .is-root-container { padding-left: 0; padding-right: 0; }
+/* list buttons: compact, at the start of the row */
+.ig-add { justify-self: start; width: auto !important; }
+.ig-figures-edit .ig-add, .ig-scene-edit .ig-add { margin-left: var(--gut, 68px); }

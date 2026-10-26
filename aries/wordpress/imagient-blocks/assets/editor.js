@@ -88,7 +88,7 @@
       const sp = a.spacing;
       const style = { '--ig-pt-d': space(rget(sp, bp, 'pt', '7')), '--ig-pb-d': space(rget(sp, bp, 'pb', '7')), background: colorOf(a.background) || undefined };
       const props = useBlockProps({ className: 'ig-section tone-' + a.tone + (a.radius ? ' is-rounded' : '') + (a.minHeight === 'screen' ? ' is-screen' : ''), style });
-      const inner = useInnerBlocksProps({ className: 'ig-container is-' + a.container }, { templateLock: false, renderAppender: InnerBlocks.ButtonBlockAppender });
+      const inner = useInnerBlocksProps({ className: 'ig-container is-' + a.container }, { templateLock: false });
       return el(Fragment, {},
         el(InspectorControls, {},
           el(PanelBody, { title: 'Section', initialOpen: true },
@@ -114,7 +114,7 @@
       const l = a.layout, g = (k, d) => rget(l, bp, k, d);
       const style = { '--ig-dir-d': g('dir', 'row'), '--ig-justify-d': g('justify', 'flex-start'), '--ig-align-d': g('align', 'stretch'), '--ig-gap-d': space(g('gap', '4')), '--ig-wrap-d': g('wrap', true) ? 'wrap' : 'nowrap' };
       const props = useBlockProps({ className: 'ig-flex', style });
-      const inner = useInnerBlocksProps(props, { orientation: g('dir', 'row').indexOf('row') === 0 ? 'horizontal' : 'vertical', renderAppender: InnerBlocks.ButtonBlockAppender, template: [['core/paragraph'], ['core/paragraph']] });
+      const inner = useInnerBlocksProps(props, { orientation: g('dir', 'row').indexOf('row') === 0 ? 'horizontal' : 'vertical', template: [['core/paragraph'], ['core/paragraph']] });
       const C = (type, label, k, def, options) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options });
       return el(Fragment, {},
         el(InspectorControls, {},
@@ -159,7 +159,7 @@
       const [bp, setBp] = useState('d');
       const l = a.layout, g = (k, d) => rget(l, bp, k, d);
       const props = useBlockProps({ className: 'ig-grid-item', style: { '--ig-span-d': parseInt(g('span', '1'), 10), '--ig-rows-d': parseInt(g('rows', '1'), 10), '--ig-self-d': g('align', '') || 'auto' } });
-      const inner = useInnerBlocksProps(props, { renderAppender: InnerBlocks.ButtonBlockAppender });
+      const inner = useInnerBlocksProps(props, {});
       const C = (type, label, k, def, options, min, max) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options, min, max });
       return el(Fragment, {},
         el(InspectorControls, {},
@@ -181,7 +181,7 @@
       const l = a.layout, g = (k, d) => rget(l, bp, k, d);
       const style = { '--ig-pad-d': space(g('pad', '5')), '--ig-dir-d': g('dir', 'column'), '--ig-justify-d': g('justify', 'flex-start'), '--ig-gap-d': space(g('gap', '3')), '--ig-radius': (parseInt(a.radius, 10) || 0) + 'px', background: colorOf(a.background) || undefined, minHeight: a.minHeight ? parseInt(a.minHeight, 10) + 'px' : undefined };
       const props = useBlockProps({ className: 'ig-box tone-' + a.tone, style });
-      const inner = useInnerBlocksProps(props, { renderAppender: InnerBlocks.ButtonBlockAppender, template: [['core/heading', { level: 3 }], ['core/paragraph']] });
+      const inner = useInnerBlocksProps(props, { template: [['core/heading', { level: 3 }], ['core/paragraph']] });
       const C = (type, label, k, def, options) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options });
       return el(Fragment, {},
         el(InspectorControls, {},
