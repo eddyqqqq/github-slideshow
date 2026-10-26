@@ -357,7 +357,8 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ---- hero · scroll: the bands fly apart → the photo with its text → the gradient fills the screen ---- */
     const shade = $('#shade'), twoWords = splitWords($('#sceneTwo h2')), twoP = $('#sceneTwo p');
     const hsc = { e: 0 };
-    gsap.timeline({ scrollTrigger: { trigger: hero.el, start: 'bottom bottom', end: '+=320%', pin: true, scrub: 0.8 } })
+    // pinned from the top (the stage fills the screen); in Scale the hero is taller than the screen: pinned at its bottom
+    gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => hero.el.offsetHeight > innerHeight * 1.15 ? 'bottom bottom' : 'top top', end: '+=320%', pin: true, scrub: 0.8, invalidateOnRefresh: true } })
       .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { hs.eT = hero.eTmax * hsc.e; hs.eB = hero.eBmax * hsc.e; hs.z = 1 + (hero.zc - 1) * hsc.e; H(); } }, 0)
       .to(hs, { open: 1, duration: 0.5, ease: 'power2.inOut', onUpdate: () => { if (hero.mode === 'contain') { hero.stage.style.setProperty('--open', hs.open.toFixed(4)); heroLayout(); } } }, 0)
       .to('#heroTitle', { y: -60, opacity: 0, duration: 0.35, ease: 'power2.in' }, 0)
@@ -472,14 +473,13 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollTrigger: { trigger: sec, start: 'center center', end: () => '+=' + dist(), pin: true, scrub: 0.8, invalidateOnRefresh: true } });
     const vw = root.clientWidth;
     cards.forEach((c, i) => {
-      const img = $('.pi img', c), pi = $('.pi', c), h3 = $('h3', c);
+      const pi = $('.pi', c), h3 = $('h3', c);
       if (c.getBoundingClientRect().left < vw * 0.85) {
         gsap.from(c, { y: 80, opacity: 0, ease: 'none', scrollTrigger: { trigger: sec, start: `top ${100 - i * 4}%`, end: `top ${60 - i * 4}%`, scrub: 0.6 } });
         gsap.fromTo(c, { '--o': 0 }, { '--o': 1, ease: 'none', scrollTrigger: { trigger: sec, start: `top ${85 - i * 6}%`, end: `top ${30 - i * 6}%`, scrub: 0.6 } });
       } else {
         gsap.fromTo(c, { '--o': 0 }, { '--o': 1, ease: 'none', scrollTrigger: { trigger: c, containerAnimation: hz, start: 'left 95%', end: 'left 45%', scrub: 0.6 } });
       }
-      if (img) gsap.fromTo(img, { xPercent: -4 }, { xPercent: 4, ease: 'none', scrollTrigger: { trigger: c, containerAnimation: hz, start: 'left right', end: 'right left', scrub: true } });
       // hover: the cut eases open a little, the photo and title follow
       c.addEventListener('pointerenter', e => {
         if (e.pointerType !== 'mouse') return;
