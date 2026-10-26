@@ -1,0 +1,269 @@
+/*
+ * Imagient Blocks — front-end styles: brand tokens, the layout blocks (Section, Flex, Grid, Box), the Aries scenes
+ * and the scroll animations. Imagient · https://imagient.ro
+ */
+
+/* Layout: the homepage design, played as a scroll sequence. Hero bands open onto the photo, the blue
+   gradient fills the screen, Group and the three companies pass through one pinned ribbon scene,
+   then figures, services and footer. Colours sampled from the design file. */
+:root {
+  --blue: var(--wp--preset--color--group, #145fad);        /* Aries Group */
+  --agency: var(--wp--preset--color--agency, #3089a9);      /* Shipping Agency */
+  --interlink: var(--wp--preset--color--interlink, #2aa8da);   /* Interlink */
+  --logistics: var(--wp--preset--color--logistics, #42979c);   /* Logistics */
+  --ink: #111418;
+  --text: #2a2f36;
+  --muted: #6a7280;
+  --paper: #ffffff;
+  --line: #d9dee5;
+  --on: #ffffff;
+  --font: var(--wp--preset--font-family--area, "Area Normal", "Area Fallback", "Helvetica Neue", Arial, sans-serif);
+  /* the design is 1440 wide with 68 px margins: the layout scales with the screen width (4.7 vw margins) */
+  --gut: max(20px, 4.7vw, env(safe-area-inset-left, 0px));
+  --gut-r: max(20px, 4.7vw, env(safe-area-inset-right, 0px));
+  /* fluid type from the 1440 design: titles Area Bold 48, text Area Regular 20 (hero title 60, labels 14,
+     links 16); larger on 1920 / 2560, smaller on phones */
+  /* type: the design sizes at 1440, scaling with the width below it and at half that rate above it, so text
+     on 1920 / 2560 screens grows a little rather than in step with the screen */
+  --h-xl: clamp(34px, min(4.167vw, 30px + 2.083vw), 92px);
+  --h-l: clamp(28px, min(3.333vw, 24px + 1.667vw), 72px);
+  --body: clamp(16px, min(1.389vw, 10px + .694vw), 24px);
+  --small: clamp(12px, min(.972vw, 7px + .486vw), 17px);
+  --link: clamp(14px, min(1.111vw, 8px + .556vw), 19px);
+  --cw: 100vw;  /* content width: full width minus the margins, as in the design */
+  /* --u: one design pixel. The hero is laid out on the 1440-wide design and scaled so that its whole stack
+     (logo, bands, title and the white space under it: 1170 design px) fits the screen: by the width, or by the height on wide, short screens */
+  --u: min(100vw / 1440, 100vh / 1170);
+  /* logos at their design size (the SVGs are 74–75 × 129–143 px at 1440), smaller only on narrow screens */
+  --logo-w: clamp(44px, 5.2vw, 75px);
+  --logo-top: max(20px, 60 * var(--u));
+  color-scheme: light;
+}
+.hero, .identity, .figs, .cards, .ig-section, .ig-box { box-sizing: border-box; }
+:where(.hero, .identity, .figs, .cards) :is(h1, h2, h3, p) { margin: 0; }
+:where(.hero, .identity, .figs, .cards) :is(h1, h2, h3) { font-weight: 700; letter-spacing: -0.02em; text-wrap: balance; }
+:where(.hero, .identity, .figs, .cards) * { box-sizing: border-box; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.wrap { width: 100%; margin-inline: auto; padding-left: var(--gut); padding-right: var(--gut-r); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.wi { display: inline-block; }
+.more { position: relative; display: inline-block; font-size: var(--link); text-decoration: none; padding: 4px 2px 7px; transition: color .35s;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; }
+/* hover, on buttons and links alike: the text turns the header blue and a bar draws in from the left
+   (and leaves to the right) */
+.more::after, .ul::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--blue);
+  transform: scaleX(0); transform-origin: 100% 50%; transition: transform .5s cubic-bezier(.65, 0, .25, 1); }
+a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(--blue); }
+.more:hover::after, .more:focus-visible::after, .ul:hover::after, .ul:focus-visible::after { transform: scaleX(1); transform-origin: 0 50%; }
+.ul { position: relative; display: inline-block; padding-bottom: 3px; transition: color .35s; }
+.statement .more, .co-item .more { padding-bottom: 8px; }
+
+/* logos: the design files (Group in colour on white, the companies in white); 72 px wide at 1440 */
+.logo { display: block; width: var(--logo-w); height: auto; }
+.logo[viewBox^="0 0 74 "] { width: calc(var(--logo-w) * 74 / 75); }   /* Shipping Agency: 74 px wide in the design */
+.logo-link { display: inline-block; }
+
+/* ---------- scene 1: hero → photo → blue (one pinned sequence) ---------- */
+.hero { position: relative; background: var(--paper); }
+.hero-stage { position: relative; height: 100vh; height: 100svh; min-height: 340px; overflow: hidden; }
+.hero-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero-src { position: absolute; left: 0; top: 0; width: 15px; opacity: 0; pointer-events: none; }
+.hero-src img { display: block; width: 100%; height: auto; }
+.hero-layout { position: absolute; inset: 0; display: flex; flex-direction: column; pointer-events: none;
+  padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top) + var(--logo-w) * 1.76 + clamp(8px, 2vh, 28px)); }  /* phones: the bands start below the logo */
+.hero-slot { flex: 1 1 auto; min-height: 0; }
+.hero-title { padding-block: clamp(18px, 3vh, 34px) clamp(28px, 6vh, 64px); display: grid; gap: 10px; }
+.hero-title h1 { color: var(--blue); font-size: var(--h-xl); line-height: 1.05; }
+.hero-title p { font-size: var(--body); color: var(--text); }
+.shade { position: absolute; inset: 0; pointer-events: none; --a: 0%; --b: 62%;
+  background: linear-gradient(158deg, var(--blue) 0%, var(--blue) var(--a), rgb(20 95 173 / .78) calc(var(--a) + (var(--b) - var(--a)) * .45), rgb(20 95 173 / 0) var(--b)); }
+.scene-two { color: var(--on); background: var(--blue); padding-block: 120px 160px; }
+.scene-two h2 { font-size: var(--h-l); line-height: 1.15; max-width: 16ch; }
+.scene-two p { font-size: var(--body); max-width: 46ch; margin-top: 18px; }
+.anim .shade { opacity: 0; }
+.anim .scene-two { position: absolute; inset: 0; background: none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); }
+.pre #hTop, .pre #hBot, .pre #hImgWrap { opacity: 0; }
+/* landscape screens: the hero is the design, scaled by --u so it always fits one screen: logo at the top left,
+   the band composition from the left edge exactly as drawn (747 design px tall, from 180), the title under it.
+   On screens wider than the composition the bands simply run on to the right edge: that part of the drawing is
+   two straight bands, so it continues seamlessly. */
+@media (min-aspect-ratio: 1/1) and (min-width: 760px) {
+  .hero-layout { padding-top: calc(180 * var(--u)); }
+  .hero-slot { flex: none; height: calc(747 * var(--u)); }
+  .hero-title { padding-block: calc(30 * var(--u)) 0; gap: calc(10 * var(--u)); }
+  .hero-title h1 { font-size: max(22px, 60 * var(--u)); }
+  .hero-title p { font-size: max(14px, 20 * var(--u)); }
+}
+
+/* ---------- scene 2: Group and the three companies, one ribbon through four shapes ---------- */
+.identity { position: relative; overflow: hidden; color: var(--on); background: var(--blue); }
+.id-bg { position: absolute; inset: 0; background: var(--blue); }
+.rib-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+.id-top, .id-foot { position: relative; }
+.id-top { padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top)); }
+.id-top .wrap { position: relative; }
+.co-tabs { position: absolute; top: 4px; right: var(--gut-r); }
+.id-foot { padding-block: 60px clamp(36px, 8vh, 90px); }
+.id-states { display: grid; gap: 40px; }
+.g-intro { padding-top: clamp(30px, 6vh, 70px); display: grid; gap: 18px; justify-items: start; }
+.g-intro h2 { font-size: var(--h-l); line-height: 1.15; max-width: 19ch; }
+.g-intro p, .g-foot p { font-size: var(--body); max-width: 46ch; }
+.co-item { display: grid; gap: 16px; justify-items: start; }
+.co-item h2 { font-size: var(--h-l); line-height: 1.1; }
+.co-item p { font-size: var(--body); max-width: 46ch; }
+.co-tabs { list-style: none; margin: 0; padding: 0; display: flex; gap: clamp(14px, 2.6vw, 64px); }
+.co-tabs button { font: 400 var(--small)/1 var(--font); color: var(--on); background: none; border: 0; padding: 6px 0; cursor: pointer; display: flex; align-items: center; gap: 10px; opacity: .85; }
+.co-tabs button::before { content: ""; width: 10px; height: 10px; border: 1px solid currentColor; transition: background .3s; }
+.co-tabs button[aria-current="true"] { opacity: 1; }
+.co-tabs button[aria-current="true"]::before { background: var(--on); }
+/* with script: one full-screen scene, the four states stacked */
+.js .identity { height: 100vh; height: 100svh; min-height: 360px; }
+.js .id-top { position: absolute; left: 0; right: 0; top: 0; }
+.js .id-foot { position: absolute; left: 0; right: 0; bottom: 0; padding-top: 0; }
+.js .id-states { gap: 0; }
+.js .id-foot .id-states { align-items: end; }
+.js .id-top .id-states > * { align-self: start; justify-self: start; }
+/* the blue scene slides over the end of the hero while the gradient is still filling (its own background
+   fades in only as the hero lets go), so the Group text arrives with the fill, not after it */
+.anim .hero + .identity { margin-top: -80vh; margin-top: -80svh; background: none; }
+.anim .hero + .identity .id-bg { opacity: 0; }
+.js .id-states > * { grid-area: 1 / 1; }
+.js .id-states > :not(:first-child) { opacity: 0; visibility: hidden; }
+.anim .co-tabs { opacity: 0; visibility: hidden; }
+@media (max-width: 760px) { .co-tabs { display: none; } }
+
+/* ---------- statements ---------- */
+.statement { padding-block: clamp(90px, 11vw, 160px) clamp(50px, 6vw, 80px); }
+.statement h2 { color: var(--ink); font-size: var(--h-l); line-height: 1.15; max-width: 22ch; }
+.statement .more { color: var(--ink); margin-top: 22px; }
+
+/* ---------- figures ---------- */
+.figs .wrap { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+/* as in the design (1440): tiles about 415 px tall, 60 px inner margin, label top left, the figure low with
+   its caption right under it; in the wide tile the second figure starts just past the middle */
+.figs .wrap { gap: clamp(10px, 1.4vw, 28px); }
+.tile { position: relative; overflow: hidden; color: var(--on); padding: clamp(22px, 4.2vw, 96px) clamp(22px, 4.2vw, 96px) clamp(22px, 4.6vw, 104px);
+  aspect-ratio: 241 / 159; display: grid; grid-template-rows: auto 1fr; border-radius: 3px; }
+.tile.wide { grid-column: span 2; aspect-ratio: 488 / 160; }
+.tile.agency { background: var(--agency); } .tile.interlink { background: var(--interlink); } .tile.logistics { background: var(--logistics); }
+.tile .lbl { position: relative; font-size: var(--body); }
+.tile .nums { position: relative; align-self: end; display: grid; grid-template-columns: minmax(0, 1fr); }
+.tile.wide .nums { grid-template-columns: 54fr 46fr; }
+.tile strong { display: block; font: 400 clamp(52px, 7.5vw, 180px)/0.9 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; white-space: nowrap; }
+.tile strong sup { font-size: .72em; line-height: 0; vertical-align: baseline; position: relative; top: -.74em; margin-left: .05em; }
+.tile small { display: block; font-size: var(--body); margin-top: clamp(8px, .8vw, 18px); }
+@media (max-width: 760px) {
+  .figs .wrap { grid-template-columns: minmax(0, 1fr); }
+  .tile.wide { grid-column: auto; aspect-ratio: 241 / 200; }
+  .tile.wide .nums { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+}
+
+/* ---------- services cards: a row that slides sideways while the section is pinned ---------- */
+.cards { padding-block: clamp(24px, 4vw, 50px) clamp(90px, 10vw, 150px); overflow: hidden; }
+.cards-track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  padding-left: var(--gut); padding-right: var(--gut-r); }
+.cards-track::-webkit-scrollbar { display: none; }
+.anim .cards-track { overflow: visible; scroll-snap-type: none; width: max-content; will-change: transform; }
+/* cards keep the design proportions (752 × 515) at every size; their content scales with the card (cqi) */
+.card { --o: 1; --h: 0; flex: none; border-radius: 6px; width: min(max(752px, 39vw), 84vw, 85vh); aspect-ratio: 752 / 515; container-type: inline-size; position: relative; overflow: hidden; background: var(--blue); color: var(--on); scroll-snap-align: start; }
+.card h3 { position: relative; z-index: 1; font-size: max(16px, 4.4cqi); line-height: 1.15; font-weight: 400; padding: 7.7cqi; max-width: 50%; }   /* as in the design: 33 px type, 58 px margin on a 752 card; inside the straight blue part */
+/* the diagonal cut: --o opens it on scroll, --h swings it on hover */
+/* the blue zone as in the design: a straight left part (47 % of the card) and, over the top 70 %, a diagonal
+   that leans out to 68 % at the top edge; the photo is the rest. --o opens it on scroll, --h on hover. */
+.card .ph { position: absolute; inset: 0; clip-path: polygon(calc(100% - var(--o) * 31.7% - var(--h) * 4%) 0, 100% 0, 100% 100%,
+  calc(100% - var(--o) * 53% - var(--h) * 4%) 100%, calc(100% - var(--o) * 53% - var(--h) * 4%) 70.4%); }
+.card .pi { position: absolute; inset: 0; overflow: hidden; transform-origin: 75% 50%; }
+.card .pi img { display: block; width: 104%; max-width: none; height: 100%; margin-left: 11%; object-fit: cover; object-position: 50% 50%; }   /* placed as in the design: the photo's right part shows beside the diagonal */
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .g-intro { padding-top: 8px; gap: 8px; } .g-intro h2, .co-item h2 { font-size: clamp(22px, 2.6vw, 30px); }
+  .js .id-foot { padding-bottom: 18px; } .co-item { gap: 8px; } .id-top { padding-top: 18px; }
+}
+
+
+/* ======================================================================
+   SPACING SCALE (fluid: the design values at 1440, smaller on phones)
+   ====================================================================== */
+:root {
+  --ig-s0: 0px; --ig-s1: 4px; --ig-s2: 8px;
+  --ig-s3: clamp(12px, 1.11vw, 20px);
+  --ig-s4: clamp(16px, 1.67vw, 30px);
+  --ig-s5: clamp(24px, 2.78vw, 50px);
+  --ig-s6: clamp(36px, 4.44vw, 80px);
+  --ig-s7: clamp(48px, 6.67vw, 120px);
+  --ig-s8: clamp(64px, 8.89vw, 160px);
+  --ig-s9: clamp(80px, 11.1vw, 200px);
+}
+
+/* ======================================================================
+   LAYOUT BLOCKS — every value has a desktop (-d), tablet (-t, ≤ 1024 px) and mobile (-m, ≤ 640 px) version
+   ====================================================================== */
+.ig-section { position: relative; padding-top: var(--ig-pt-d); padding-bottom: var(--ig-pb-d); }
+.ig-section.is-screen { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
+.ig-section.is-rounded { border-radius: 6px; overflow: hidden; }
+.ig-section > .ig-container { position: static; }
+.ig-section > .ig-container > :not(.ig-ribbon) { position: relative; z-index: 1; }   /* a ribbon fills the whole section, behind */
+.ig-container.is-gutter { padding-left: var(--gut); padding-right: var(--gut-r); }
+.ig-container.is-wide { padding-left: var(--gut); padding-right: var(--gut-r); max-width: 1440px; margin-inline: auto; }
+.ig-container.is-narrow { padding-left: var(--gut); padding-right: var(--gut-r); max-width: 960px; margin-inline: auto; }
+.ig-container.is-full { padding: 0; }
+.tone-dark { color: var(--on); }
+.tone-dark :is(h1, h2, h3, h4, h5, h6, a) { color: inherit; }
+
+.ig-flex { display: flex; flex-direction: var(--ig-dir-d); justify-content: var(--ig-justify-d); align-items: var(--ig-align-d); gap: var(--ig-gap-d); flex-wrap: var(--ig-wrap-d); }
+.ig-grid { display: grid; grid-template-columns: repeat(var(--ig-cols-d), minmax(0, 1fr)); column-gap: var(--ig-gap-d); row-gap: var(--ig-rgap-d); align-items: var(--ig-align-d); }
+.ig-grid-item { grid-column: span var(--ig-span-d); grid-row: span var(--ig-rows-d); align-self: var(--ig-self-d); min-width: 0; }
+.ig-box { position: relative; display: flex; flex-direction: var(--ig-dir-d); justify-content: var(--ig-justify-d); gap: var(--ig-gap-d); padding: var(--ig-pad-d); border-radius: var(--ig-radius, 0); overflow: hidden; }
+.ig-box > :not(.ig-ribbon):not(.ig-box-link) { position: relative; z-index: 1; }
+.ig-box-link { position: absolute; inset: 0; z-index: 2; }
+.ig-flex > *, .ig-grid > *, .ig-box > * { margin-block: 0; }
+
+@media (max-width: 1024px) {
+  .ig-section { padding-top: var(--ig-pt-t); padding-bottom: var(--ig-pb-t); }
+  .ig-flex { flex-direction: var(--ig-dir-t); justify-content: var(--ig-justify-t); align-items: var(--ig-align-t); gap: var(--ig-gap-t); flex-wrap: var(--ig-wrap-t); }
+  .ig-grid { grid-template-columns: repeat(var(--ig-cols-t), minmax(0, 1fr)); column-gap: var(--ig-gap-t); row-gap: var(--ig-rgap-t); align-items: var(--ig-align-t); }
+  .ig-grid-item { grid-column: span min(var(--ig-span-t), var(--ig-cols-t, 12)); grid-row: span var(--ig-rows-t); align-self: var(--ig-self-t); }
+  .ig-box { flex-direction: var(--ig-dir-t); justify-content: var(--ig-justify-t); gap: var(--ig-gap-t); padding: var(--ig-pad-t); }
+}
+@media (max-width: 640px) {
+  .ig-section { padding-top: var(--ig-pt-m); padding-bottom: var(--ig-pb-m); }
+  .ig-flex { flex-direction: var(--ig-dir-m); justify-content: var(--ig-justify-m); align-items: var(--ig-align-m); gap: var(--ig-gap-m); flex-wrap: var(--ig-wrap-m); }
+  .ig-grid { grid-template-columns: repeat(var(--ig-cols-m), minmax(0, 1fr)); column-gap: var(--ig-gap-m); row-gap: var(--ig-rgap-m); align-items: var(--ig-align-m); }
+  .ig-grid-item { grid-column: span var(--ig-span-m); grid-row: span var(--ig-rows-m); align-self: var(--ig-self-m); }
+  .ig-box { flex-direction: var(--ig-dir-m); justify-content: var(--ig-justify-m); gap: var(--ig-gap-m); padding: var(--ig-pad-m); }
+}
+
+/* logo block */
+.ig-logo { line-height: 0; }
+.ig-logo.is-white .logo path { fill: var(--on); }
+
+/* decorative ribbon: fills its Section or Box, behind the content */
+.ig-ribbon { z-index: 0; }
+
+/* state anchors of the company scene (targets for #links) */
+.ig-anchor { position: absolute; top: 0; width: 1px; height: 1px; pointer-events: none; }
+
+/* ======================================================================
+   LINK STYLES for core blocks: Button › "Aries link", List › "Aries links"
+   ====================================================================== */
+.wp-block-button.is-style-aries-link .wp-block-button__link { position: relative; display: inline-block; background: none; color: inherit; border-radius: 0;
+  font-size: var(--link); padding: 4px 2px 8px; text-decoration: none; transition: color .35s;
+  background-image: linear-gradient(currentColor, currentColor); background-position: 0 100%; background-size: 100% 1px; background-repeat: no-repeat; }
+.is-style-aries-links { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.is-style-aries-links a { position: relative; display: inline-block; padding-bottom: 3px; text-decoration: none; transition: color .35s; }
+.wp-block-button.is-style-aries-link .wp-block-button__link::after, .is-style-aries-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--blue);
+  transform: scaleX(0); transform-origin: 100% 50%; transition: transform .5s cubic-bezier(.65, 0, .25, 1); }
+.wp-block-button.is-style-aries-link .wp-block-button__link:is(:hover, :focus-visible), .is-style-aries-links a:is(:hover, :focus-visible) { color: var(--blue); }
+.wp-block-button.is-style-aries-link .wp-block-button__link:is(:hover, :focus-visible)::after, .is-style-aries-links a:is(:hover, :focus-visible)::after { transform: scaleX(1); transform-origin: 0 50%; }
+
+/* ======================================================================
+   ANIMATIONS (data-anim, set from the editor on any block). Initial states apply only once the runtime has
+   started (.anim on <html>), so without JavaScript everything is simply visible.
+   ====================================================================== */
+.anim [data-anim="fade-up"], .anim [data-anim="scale-in"] { will-change: transform, opacity; }
+
+/* the scenes set their own text colours (the theme's heading colour does not apply inside them) */
+.scene-two :is(h1, h2, h3), .identity :is(h1, h2, h3), .figs .tile :is(h2, h3), .card h3 { color: inherit; }
+.hero-title h1 { color: var(--blue); }

@@ -1,0 +1,46 @@
+/*
+Theme Name:        Aries
+Theme URI:         https://imagient.ro
+Author:            Imagient
+Author URI:        https://imagient.ro
+Description:       Block theme for Aries Group, designed and built by Imagient. Brand design system in theme.json (colours, Area Normal type, fluid spacing), header and footer as editable template parts, and a pattern library of the homepage sections. Works with the Imagient Blocks plugin (layout blocks, Aries scenes, scroll animations).
+Requires at least: 6.5
+Tested up to:      6.8
+Requires PHP:      7.4
+Version:           1.0.0
+License:           GNU General Public License v2 or later
+License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain:       aries
+Tags:              block-patterns, full-site-editing, custom-colors, wide-blocks
+*/
+
+/* metric-matched stand-ins while Area loads, so nothing moves when it swaps in */
+@font-face { font-family: "Area Fallback"; src: local("Arial"), local("ArialMT"), local("Helvetica"), local("Liberation Sans"); font-weight: 400; size-adjust: 111.8%; ascent-override: 98.4%; descent-override: 21.1%; line-gap-override: 0%; }
+@font-face { font-family: "Area Fallback"; src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Bold"), local("Liberation Sans Bold"); font-weight: 700; size-adjust: 104.6%; ascent-override: 105.2%; descent-override: 22.6%; line-gap-override: 0%; }
+
+body { overflow-x: clip; -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 2px solid var(--wp--preset--color--group); outline-offset: 3px; border-radius: 2px; }
+img, svg { max-width: 100%; }
+.wp-site-blocks { padding: 0; }
+.wp-site-blocks > * + * { margin-block-start: 0; }
+.wp-block-post-content > * + * { margin-block-start: 0; }
+
+/* header: the logo over the hero on the home page, a normal bar elsewhere */
+.ig-top { position: relative; z-index: 40; padding: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 40px)) var(--gut, 68px) 0; }
+.home .ig-top { position: absolute; top: 0; left: 0; right: 0; pointer-events: none; }
+.home .ig-top a { pointer-events: auto; }
+.admin-bar.home .ig-top { top: var(--wp-admin--admin-bar--height, 32px); }
+
+/* footer */
+.ig-footer h3, .ig-footer .wp-block-heading { font-size: var(--wp--preset--font-size--link); margin: 0 0 14px; color: var(--wp--preset--color--ink); }
+.ig-footer a { color: var(--wp--preset--color--text); text-decoration: none; font-size: var(--wp--preset--font-size--link); }
+.ig-footer .ig-slogan { color: var(--wp--preset--color--group); font-size: var(--wp--preset--font-size--xl); line-height: 1.05; font-weight: 400; }
+.ig-footer .ig-legal, .ig-footer .ig-legal a { font-size: var(--wp--preset--font-size--small); color: var(--wp--preset--color--muted); }
+.ig-footer .ig-legal .is-style-aries-links { display: flex; gap: 14px; flex-wrap: wrap; }
+.ig-linkedin a { display: inline-grid; place-content: center; width: 22px; height: 22px; background: var(--wp--preset--color--group); color: #fff !important; border-radius: 3px; font: 700 12px/1 var(--wp--preset--font-family--area); }
+.ig-linkedin a::after { display: none; }
+
+/* inner pages and posts */
+.ig-page-title { padding-top: var(--ig-s8); }
+.ig-statement { max-width: 22ch; color: var(--wp--preset--color--ink); margin: 0 0 22px; }
+.ig-section .wp-block-buttons { margin: 0; }

@@ -3,3 +3,8 @@ __pycache__/
 # Area Normal is a licensed typeface (embedding restricted): the WOFF2 files are kept out of this
 # public repository. Put area-regular.woff2 and area-bold.woff2 in fonts/ on the server.
 fonts/
+
+# built packages
+dist/
+# licensed fonts copied into the theme by tools/build_wp.py
+wordpress/aries/assets/fonts/

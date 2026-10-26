@@ -1,0 +1,64 @@
+/* Imagient Blocks — editor only: previews of the Aries scenes and the settings UI. Imagient · https://imagient.ro */
+
+/* settings */
+.ig-bp-tabs { margin-bottom: 14px; }
+.ig-bp-tabs .components-button-group { display: flex; width: 100%; }
+.ig-bp-tabs .components-button { flex: 1; justify-content: center; }
+.ig-bp-help, .ig-help { font-size: 12px; color: #757575; margin: 8px 0 0; }
+.ig-rcontrol { margin-bottom: 14px; }
+.ig-rcontrol.is-inherited .components-base-control__label, .ig-rcontrol.is-inherited label { opacity: .6; }
+.ig-rcontrol.is-own:not(:first-child) { border-left: 2px solid var(--wp-admin-theme-color, #3858e9); padding-left: 8px; }
+.ig-reset { font-size: 12px; margin-top: 4px; }
+.ig-image-picker img { display: block; width: 100%; max-height: 180px; object-fit: cover; margin-bottom: 8px; cursor: pointer; border-radius: 2px; }
+
+/* layout blocks: outline empty or hovered containers so they can be found */
+.editor-styles-wrapper .ig-flex:empty, .editor-styles-wrapper .ig-grid:empty, .editor-styles-wrapper .ig-box:empty { min-height: 60px; outline: 1px dashed rgba(20, 95, 173, .35); }
+.editor-styles-wrapper .ig-grid-item { outline: 1px dashed rgba(20, 95, 173, .18); outline-offset: -1px; min-height: 30px; }
+.editor-styles-wrapper .ig-section > .ig-container > .block-list-appender { position: relative; }
+.ig-has-anim::after { content: "✦ " attr(data-ig-anim); position: absolute; top: -9px; right: 4px; z-index: 5; font: 600 10px/1 system-ui, sans-serif; letter-spacing: .02em;
+  color: #fff; background: #145fad; padding: 3px 6px; border-radius: 9px; pointer-events: none; opacity: .85; }
+
+/* badges and list tools */
+.ig-badge { position: absolute; top: 10px; right: 10px; z-index: 3; font: 600 11px/1 system-ui, sans-serif; color: #fff; background: rgba(17, 20, 24, .55); padding: 5px 8px; border-radius: 10px; }
+.ig-item-tools { position: absolute; top: 8px; right: 8px; z-index: 4; display: flex; gap: 2px; background: rgba(255, 255, 255, .92); border-radius: 4px; opacity: 0; transition: opacity .2s; }
+.is-selected > .ig-item-tools, :hover > .ig-item-tools { opacity: 1; }
+.ig-item-tools .components-button { color: #1e1e1e; }
+.ig-add { margin: 14px 0; }
+.is-selected.tile, .is-selected.card, .ig-scene-edit__state.is-selected { outline: 3px solid var(--wp-admin-theme-color, #3858e9); outline-offset: 3px; }
+
+/* ribbon previews */
+.ig-ribbon-preview { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.ig-ribbon-edit { position: absolute; inset: 0; min-height: 80px; }
+.ig-ribbon-edit .ig-ribbon-label { position: absolute; left: 8px; top: 8px; font: 600 11px/1 system-ui, sans-serif; color: #fff; background: rgba(17, 20, 24, .5); padding: 4px 7px; border-radius: 9px; }
+:is(.ig-section, .ig-box) > .ig-container > .ig-ribbon-edit, .ig-box > .ig-ribbon-edit { z-index: 0; }
+.editor-styles-wrapper .ig-section:not(:has(> .ig-container > .ig-ribbon-edit)) .ig-ribbon-edit { position: relative; height: 200px; background: #145fad; }
+
+/* hero */
+.ig-hero-edit { position: relative; background: #fff; padding-bottom: 30px; }
+.ig-hero-edit__bands { position: relative; height: 340px; overflow: hidden; border-top: 26px solid #145fad; border-bottom: 26px solid #145fad; border-radius: 0 0 200px 0; }
+.ig-hero-edit__bands img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ig-hero-edit__title { padding: 30px var(--gut, 68px) 20px; }
+.ig-hero-edit__title h1 { color: var(--blue, #145fad); font-size: var(--h-xl, 60px); margin: 0 0 10px; }
+.ig-hero-edit__scene { position: relative; margin: 10px var(--gut, 68px) 0; padding: 40px; color: #fff; background: linear-gradient(158deg, #145fad 0%, rgba(20, 95, 173, .78) 60%), #0b3e72; border-radius: 6px; }
+.ig-hero-edit__scene h2 { font-size: var(--h-l, 44px); margin: 0 0 12px; max-width: 16ch; color: #fff; }
+
+/* company scene */
+.ig-scene-edit { display: grid; gap: 12px; padding: 12px 0; }
+.ig-scene-edit__state { position: relative; overflow: hidden; color: #fff; padding: 36px var(--gut, 68px); min-height: 300px; display: grid; align-content: end; gap: 10px; cursor: pointer; }
+.ig-scene-edit__state > :not(.ig-ribbon-preview) { position: relative; z-index: 1; }
+.ig-scene-edit__state h2 { font-size: var(--h-l, 44px); margin: 0; color: #fff; max-width: 20ch; }
+.ig-scene-edit__state p { margin: 0; max-width: 46ch; }
+.ig-scene-edit__state .ig-foot { margin-top: 60px; }
+.ig-scene-edit__state:first-child { align-content: start; }
+.ig-scene-edit__logo { position: absolute !important; top: 30px; left: var(--gut, 68px); width: 60px; filter: brightness(0) invert(1); }
+.ig-more { border-bottom: 1px solid currentColor; justify-self: start; font-size: 14px; padding-bottom: 4px; }
+
+/* figures: the front-end tile styles apply; only the editing aids here */
+.ig-figures-edit .tile { cursor: pointer; }
+.ig-figures-edit .tile .ig-fig .components-button { color: #fff; }
+.ig-figures-edit .nums { gap: 18px; }
+
+/* service cards */
+.ig-cards-edit__row { display: flex; gap: 14px; overflow-x: auto; padding: 10px var(--gut, 68px) 4px; align-items: center; }
+.ig-cards-edit .card { flex: none; width: min(560px, 80%); cursor: pointer; }
+.ig-cards-edit .card .pi img { width: 104%; max-width: none; height: 100%; margin-left: 11%; object-fit: cover; }

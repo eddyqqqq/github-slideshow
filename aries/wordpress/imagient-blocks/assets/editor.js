@@ -1,0 +1,414 @@
+/*
+ * Imagient Blocks — editor (Imagient · https://imagient.ro)
+ * Plain JavaScript on the WordPress globals: no build step. Block attributes, titles and categories come from the
+ * PHP registration; this file adds the editing UI. Every block is dynamic (rendered in PHP), so `save` returns
+ * only the inner blocks, if any.
+ */
+(function (wp) {
+  const el = wp.element.createElement, Fragment = wp.element.Fragment;
+  const { registerBlockType } = wp.blocks;
+  const { useBlockProps, useInnerBlocksProps, InspectorControls, InnerBlocks, RichText, MediaUpload, MediaUploadCheck, BlockControls } = wp.blockEditor;
+  const { PanelBody, SelectControl, RangeControl, ToggleControl, TextControl, Button, ButtonGroup, ColorPalette, BaseControl, Placeholder, ToolbarGroup, ToolbarButton } = wp.components;
+  const { useState } = wp.element;
+  const { addFilter } = wp.hooks;
+  const { createHigherOrderComponent } = wp.compose;
+  const CFG = window.IMAGIENT || { logos: {}, palette: [], spaces: [], assets: '' };
+  const PAL = CFG.palette.map(c => ({ name: c.name, color: c.color, slug: c.slug }));
+  const colorOf = v => { const c = CFG.palette.find(p => p.slug === v); return c ? c.color : (v || ''); };
+  const slugOf = hex => { const c = CFG.palette.find(p => p.color.toLowerCase() === String(hex || '').toLowerCase()); return c ? c.slug : (hex || ''); };
+  const SPACES = CFG.spaces.map(s => ({ value: s.value, label: s.label }));
+  const SPACE_PX = ['0px', '4px', '8px', '16px', '24px', '40px', '64px', '96px', '128px', '160px'];
+  const space = v => `var(--ig-s${parseInt(v, 10) || 0}, ${SPACE_PX[parseInt(v, 10) || 0]})`;
+  const LOGOS = Object.keys(CFG.logos).map(k => ({ value: k, label: CFG.logos[k] }));
+  const SHAPES = [
+    { value: 'group', label: 'Group (arc and peak)' }, { value: 'agency', label: 'Shipping Agency (wave)' },
+    { value: 'interlink', label: 'Interlink (zigzag)' }, { value: 'logistics', label: 'Logistics (peak)' },
+    { value: 'agencyT', label: 'Shipping Agency, tile' }, { value: 'interlinkT', label: 'Interlink, tile' }, { value: 'logisticsT', label: 'Logistics, tile' }
+  ];
+  const COLOR_OPTS = CFG.palette.map(c => ({ value: c.slug, label: c.name }));
+  const icon = d => el('svg', { viewBox: '0 0 24 24', width: 24, height: 24 }, el('path', { d }));
+  const ICONS = {
+    section: icon('M3 5h18v14H3z M5 8h14v8H5z'),
+    flex: icon('M3 6h5v12H3zM10 6h5v12h-5zM17 6h4v12h-4z'),
+    grid: icon('M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z'),
+    item: icon('M4 4h16v16H4z'),
+    box: icon('M4 4h16v16H4zM7 7v10h10V7z'),
+    logo: icon('M4 3h16v8c-3 3-5 3-8 1-3 2-5 2-8-1z M4 15h16v2H4zM4 19h16v2H4z'),
+    hero: icon('M2 9c5-6 9 4 20-4v5c-11 8-15-2-20 4z'),
+    ribbon: icon('M2 14c6-8 12 2 20-6v4c-8 8-14-2-20 6z'),
+    figures: icon('M3 3h18v8H3zM3 13h8v8H3zM13 13h8v8h-8z'),
+    cards: icon('M2 5h13v14H2zM17 5h5v14h-5z'),
+    scene: icon('M3 3h18v18H3zM5 14c4-5 8 1 14-4v3c-6 5-10-1-14 4z')
+  };
+
+  /* ---------------- responsive values: {d:{…}, t:{…}, m:{…}}, tablet falls back to desktop, mobile to tablet ------- */
+  const BPS = [{ k: 'd', label: 'Desktop' }, { k: 't', label: 'Tablet' }, { k: 'm', label: 'Mobile' }];
+  const rget = (o, bp, key, def) => {
+    const order = bp === 'm' ? ['m', 't', 'd'] : bp === 't' ? ['t', 'd'] : ['d'];
+    for (const b of order) { const v = o && o[b] && o[b][key]; if (v !== undefined && v !== '') return v; }
+    return def;
+  };
+  const rset = (o, bp, key, val) => {
+    const n = { d: { ...(o && o.d) }, t: { ...(o && o.t) }, m: { ...(o && o.m) } };
+    if (val === undefined || (bp !== 'd' && val === '')) delete n[bp][key]; else n[bp][key] = val;
+    return n;
+  };
+  const isOwn = (o, bp, key) => bp === 'd' || (o && o[bp] && o[bp][key] !== undefined && o[bp][key] !== '');
+
+  function BreakpointTabs({ bp, setBp }) {
+    return el('div', { className: 'ig-bp-tabs' },
+      el(ButtonGroup, {}, BPS.map(b => el(Button, { key: b.k, isPressed: bp === b.k, variant: bp === b.k ? 'primary' : 'secondary', size: 'small', onClick: () => setBp(b.k) }, b.label))),
+      el('p', { className: 'ig-bp-help' }, bp === 'd' ? 'Desktop values apply everywhere unless tablet or mobile change them.' : (bp === 't' ? 'Tablet (≤ 1024 px). Empty fields use the desktop value.' : 'Mobile (≤ 640 px). Empty fields use the tablet value.')));
+  }
+  // one responsive control: shows the inherited value and a reset when this breakpoint overrides it
+  function RControl({ type, label, attr, setAttr, bp, k, def, options, min, max }) {
+    const value = rget(attr, bp, k, def), own = isOwn(attr, bp, k);
+    const set = v => setAttr(rset(attr, bp, k, v));
+    const reset = !own || bp === 'd' ? null : el(Button, { variant: 'link', isDestructive: true, onClick: () => set(''), className: 'ig-reset' }, 'Use ' + (bp === 'm' ? 'tablet' : 'desktop'));
+    let ctl;
+    if (type === 'select') ctl = el(SelectControl, { label, value, options, onChange: set, __nextHasNoMarginBottom: true });
+    else if (type === 'range') ctl = el(RangeControl, { label, value: parseInt(value, 10), min, max, onChange: v => set(String(v)), __nextHasNoMarginBottom: true });
+    else if (type === 'toggle') ctl = el(ToggleControl, { label, checked: !!value, onChange: set, __nextHasNoMarginBottom: true });
+    return el('div', { className: 'ig-rcontrol' + (own ? ' is-own' : ' is-inherited') }, ctl, reset);
+  }
+  const DIRS = [{ value: 'row', label: 'Row →' }, { value: 'column', label: 'Column ↓' }, { value: 'row-reverse', label: 'Row ←' }, { value: 'column-reverse', label: 'Column ↑' }];
+  const JUSTIFY = [{ value: 'flex-start', label: 'Start' }, { value: 'center', label: 'Center' }, { value: 'flex-end', label: 'End' }, { value: 'space-between', label: 'Space between' }, { value: 'space-around', label: 'Space around' }, { value: 'space-evenly', label: 'Space evenly' }];
+  const ALIGN = [{ value: 'stretch', label: 'Stretch' }, { value: 'flex-start', label: 'Start' }, { value: 'center', label: 'Center' }, { value: 'flex-end', label: 'End' }, { value: 'baseline', label: 'Baseline' }];
+  const SELF = [{ value: '', label: 'Inherit' }, { value: 'stretch', label: 'Stretch' }, { value: 'start', label: 'Start' }, { value: 'center', label: 'Center' }, { value: 'end', label: 'End' }];
+  const ColorControl = ({ label, value, onChange }) => el(BaseControl, { label, __nextHasNoMarginBottom: true },
+    el(ColorPalette, { colors: PAL, value: colorOf(value), onChange: c => onChange(c ? slugOf(c) : '') }));
+
+  const saveInner = () => el(InnerBlocks.Content);
+
+  /* ================================ SECTION ================================ */
+  registerBlockType('imagient/section', {
+    icon: ICONS.section,
+    edit({ attributes: a, setAttributes }) {
+      const [bp, setBp] = useState('d');
+      const sp = a.spacing;
+      const style = { '--ig-pt-d': space(rget(sp, bp, 'pt', '7')), '--ig-pb-d': space(rget(sp, bp, 'pb', '7')), background: colorOf(a.background) || undefined };
+      const props = useBlockProps({ className: 'ig-section tone-' + a.tone + (a.radius ? ' is-rounded' : '') + (a.minHeight === 'screen' ? ' is-screen' : ''), style });
+      const inner = useInnerBlocksProps({ className: 'ig-container is-' + a.container }, { templateLock: false, renderAppender: InnerBlocks.ButtonBlockAppender });
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Section', initialOpen: true },
+            el(ColorControl, { label: 'Background', value: a.background, onChange: v => setAttributes({ background: v }) }),
+            el(SelectControl, { label: 'Text tone', value: a.tone, options: [{ value: 'light', label: 'Dark text (light background)' }, { value: 'dark', label: 'White text (dark background)' }], onChange: v => setAttributes({ tone: v }) }),
+            el(SelectControl, { label: 'Inner width', value: a.container, options: [{ value: 'gutter', label: 'Full width with page margins (design)' }, { value: 'wide', label: 'Contained, 1440 px' }, { value: 'narrow', label: 'Narrow, 960 px (text)' }, { value: 'full', label: 'Edge to edge, no margins' }], onChange: v => setAttributes({ container: v }) }),
+            el(ToggleControl, { label: 'At least one screen tall', checked: a.minHeight === 'screen', onChange: v => setAttributes({ minHeight: v ? 'screen' : '' }) }),
+            el(ToggleControl, { label: 'Rounded corners', checked: !!a.radius, onChange: v => setAttributes({ radius: v }) })),
+          el(PanelBody, { title: 'Spacing', initialOpen: true },
+            el(BreakpointTabs, { bp, setBp }),
+            el(RControl, { type: 'select', label: 'Space above', attr: sp, setAttr: v => setAttributes({ spacing: v }), bp, k: 'pt', def: '7', options: SPACES }),
+            el(RControl, { type: 'select', label: 'Space below', attr: sp, setAttr: v => setAttributes({ spacing: v }), bp, k: 'pb', def: '7', options: SPACES }))),
+        el('section', props, el('div', inner)));
+    },
+    save: saveInner
+  });
+
+  /* ================================ FLEX ================================ */
+  registerBlockType('imagient/flex', {
+    icon: ICONS.flex,
+    edit({ attributes: a, setAttributes }) {
+      const [bp, setBp] = useState('d');
+      const l = a.layout, g = (k, d) => rget(l, bp, k, d);
+      const style = { '--ig-dir-d': g('dir', 'row'), '--ig-justify-d': g('justify', 'flex-start'), '--ig-align-d': g('align', 'stretch'), '--ig-gap-d': space(g('gap', '4')), '--ig-wrap-d': g('wrap', true) ? 'wrap' : 'nowrap' };
+      const props = useBlockProps({ className: 'ig-flex', style });
+      const inner = useInnerBlocksProps(props, { orientation: g('dir', 'row').indexOf('row') === 0 ? 'horizontal' : 'vertical', renderAppender: InnerBlocks.ButtonBlockAppender, template: [['core/paragraph'], ['core/paragraph']] });
+      const C = (type, label, k, def, options) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options });
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Flex layout', initialOpen: true },
+            el(BreakpointTabs, { bp, setBp }),
+            C('select', 'Direction', 'dir', 'row', DIRS),
+            C('select', 'Justify (main axis)', 'justify', 'flex-start', JUSTIFY),
+            C('select', 'Align (cross axis)', 'align', 'stretch', ALIGN),
+            C('select', 'Gap', 'gap', '4', SPACES),
+            C('toggle', 'Wrap onto new lines', 'wrap', true))),
+        el('div', inner));
+    },
+    save: saveInner
+  });
+
+  /* ================================ GRID ================================ */
+  registerBlockType('imagient/grid', {
+    icon: ICONS.grid,
+    edit({ attributes: a, setAttributes }) {
+      const [bp, setBp] = useState('d');
+      const l = a.layout, g = (k, d) => rget(l, bp, k, d);
+      const style = { '--ig-cols-d': parseInt(g('cols', '3'), 10), '--ig-gap-d': space(g('gap', '4')), '--ig-rgap-d': space(g('rowGap', '') || g('gap', '4')), '--ig-align-d': g('align', 'stretch') };
+      const props = useBlockProps({ className: 'ig-grid', style });
+      const inner = useInnerBlocksProps(props, { renderAppender: InnerBlocks.ButtonBlockAppender, template: [['imagient/grid-item', {}, [['core/paragraph']]], ['imagient/grid-item', {}, [['core/paragraph']]], ['imagient/grid-item', {}, [['core/paragraph']]]] });
+      const C = (type, label, k, def, options, min, max) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options, min, max });
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Grid layout', initialOpen: true },
+            el(BreakpointTabs, { bp, setBp }),
+            C('range', 'Columns', 'cols', '3', null, 1, 12),
+            C('select', 'Column gap', 'gap', '4', SPACES),
+            C('select', 'Row gap', 'rowGap', '', [{ value: '', label: 'Same as column gap' }].concat(SPACES)),
+            C('select', 'Align items', 'align', 'stretch', ALIGN))),
+        el('div', inner));
+    },
+    save: saveInner
+  });
+
+  registerBlockType('imagient/grid-item', {
+    icon: ICONS.item,
+    edit({ attributes: a, setAttributes }) {
+      const [bp, setBp] = useState('d');
+      const l = a.layout, g = (k, d) => rget(l, bp, k, d);
+      const props = useBlockProps({ className: 'ig-grid-item', style: { '--ig-span-d': parseInt(g('span', '1'), 10), '--ig-rows-d': parseInt(g('rows', '1'), 10), '--ig-self-d': g('align', '') || 'auto' } });
+      const inner = useInnerBlocksProps(props, { renderAppender: InnerBlocks.ButtonBlockAppender });
+      const C = (type, label, k, def, options, min, max) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options, min, max });
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Grid item', initialOpen: true },
+            el(BreakpointTabs, { bp, setBp }),
+            C('range', 'Column span', 'span', '1', null, 1, 12),
+            C('range', 'Row span', 'rows', '1', null, 1, 6),
+            C('select', 'Vertical alignment', 'align', '', SELF))),
+        el('div', inner));
+    },
+    save: saveInner
+  });
+
+  /* ================================ BOX ================================ */
+  registerBlockType('imagient/box', {
+    icon: ICONS.box,
+    edit({ attributes: a, setAttributes }) {
+      const [bp, setBp] = useState('d');
+      const l = a.layout, g = (k, d) => rget(l, bp, k, d);
+      const style = { '--ig-pad-d': space(g('pad', '5')), '--ig-dir-d': g('dir', 'column'), '--ig-justify-d': g('justify', 'flex-start'), '--ig-gap-d': space(g('gap', '3')), '--ig-radius': (parseInt(a.radius, 10) || 0) + 'px', background: colorOf(a.background) || undefined, minHeight: a.minHeight ? parseInt(a.minHeight, 10) + 'px' : undefined };
+      const props = useBlockProps({ className: 'ig-box tone-' + a.tone, style });
+      const inner = useInnerBlocksProps(props, { renderAppender: InnerBlocks.ButtonBlockAppender, template: [['core/heading', { level: 3 }], ['core/paragraph']] });
+      const C = (type, label, k, def, options) => el(RControl, { type, label, attr: l, setAttr: v => setAttributes({ layout: v }), bp, k, def, options });
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Box', initialOpen: true },
+            el(ColorControl, { label: 'Background', value: a.background, onChange: v => setAttributes({ background: v }) }),
+            el(SelectControl, { label: 'Text tone', value: a.tone, options: [{ value: 'light', label: 'Dark text' }, { value: 'dark', label: 'White text' }], onChange: v => setAttributes({ tone: v }) }),
+            el(RangeControl, { label: 'Corner radius (px)', value: parseInt(a.radius, 10) || 0, min: 0, max: 40, onChange: v => setAttributes({ radius: String(v) }) }),
+            el(RangeControl, { label: 'Minimum height (px, 0 = auto)', value: parseInt(a.minHeight, 10) || 0, min: 0, max: 900, step: 10, onChange: v => setAttributes({ minHeight: v ? String(v) : '' }) }),
+            el(TextControl, { label: 'Link (the whole box)', value: a.link, onChange: v => setAttributes({ link: v }), placeholder: 'https://… or #section' })),
+          el(PanelBody, { title: 'Layout', initialOpen: true },
+            el(BreakpointTabs, { bp, setBp }),
+            C('select', 'Padding', 'pad', '5', SPACES),
+            C('select', 'Direction', 'dir', 'column', DIRS),
+            C('select', 'Justify', 'justify', 'flex-start', JUSTIFY),
+            C('select', 'Gap', 'gap', '3', SPACES))),
+        el('div', inner));
+    },
+    save: saveInner
+  });
+
+  /* ================================ LOGO ================================ */
+  registerBlockType('imagient/logo', {
+    icon: ICONS.logo,
+    edit({ attributes: a, setAttributes }) {
+      const props = useBlockProps({ className: 'ig-logo' + (a.white ? ' is-white' : '') });
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Logo', initialOpen: true },
+            el(SelectControl, { label: 'Logo', value: a.logo, options: LOGOS, onChange: v => setAttributes({ logo: v }) }),
+            el(ToggleControl, { label: 'White (on colour)', checked: a.white, onChange: v => setAttributes({ white: v }) }),
+            el(RangeControl, { label: 'Width at 1440 px (px)', value: a.width, min: 30, max: 200, onChange: v => setAttributes({ width: v }) }),
+            el(ToggleControl, { label: 'Links to the home page', checked: a.link, onChange: v => setAttributes({ link: v }) }))),
+        el('div', props, el('img', { src: CFG.assets + 'logos/' + a.logo + '.svg', alt: '', style: { width: a.width + 'px', display: 'block', filter: a.white ? 'brightness(0) invert(1)' : 'none' } })));
+    },
+    save: () => null
+  });
+
+  /* ---------------- ribbon preview in the editor (static, fully drawn) ---------------- */
+  function bandD(xs, t, b) { const T = xs.map((x, k) => x + ' ' + t[k]), B = xs.map((x, k) => x + ' ' + b[k]).reverse(); return 'M' + T.join('L') + 'L' + B.join('L') + 'Z'; }
+  function RibbonPreview({ shape, place, opacity }) {
+    const S = window.ARIES_SHAPES && window.ARIES_SHAPES.ribbons[shape];
+    if (!S) return null;
+    // place: w = ribbon width / box width, x = left edge / box width, y = centre / box height (box = 1000 × 600)
+    const W = 1000, H = 600, s = place.w * W / S.w, vbW = W / s, vbH = H / s;
+    const gid = 'igp' + shape + Math.round(place.w * 100) + Math.round(place.x * 100);
+    const grad = (id, g) => el('linearGradient', { id, gradientUnits: 'userSpaceOnUse', x1: g.c[0], y1: g.c[1], x2: g.c[2], y2: g.c[3] }, g.s.map((st, i) => el('stop', { key: i, offset: st[0], stopColor: '#fff', stopOpacity: st[1] })));
+    return el('svg', { className: 'rib-svg ig-ribbon-preview', viewBox: `${-place.x * vbW} ${-place.y * vbH} ${vbW} ${vbH}`, preserveAspectRatio: 'xMidYMid slice', style: { opacity: (opacity === undefined ? 100 : opacity) / 100 }, 'aria-hidden': true },
+      el('defs', {}, grad(gid + 'u', S.gu), grad(gid + 'l', S.gl)),
+      el('path', { d: bandD(S.up.x, S.up.t, S.up.b), fill: `url(#${gid}u)` }),
+      el('path', { d: bandD(S.lo.x, S.lo.t, S.lo.b), fill: `url(#${gid}l)` }));
+  }
+  const TILE_PLACE = { agencyT: { w: 1.545, x: -0.272, y: 0.508 }, interlinkT: { w: 2.966, x: -1.092, y: 0.433 }, logisticsT: { w: 3.217, x: -1.106, y: 0.722 } };
+
+  /* ================================ RIBBON ================================ */
+  registerBlockType('imagient/ribbon', {
+    icon: ICONS.ribbon,
+    edit({ attributes: a, setAttributes }) {
+      const props = useBlockProps({ className: 'ig-ribbon-edit' });
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Ribbon', initialOpen: true },
+            el(SelectControl, { label: 'Shape', value: a.shape, options: SHAPES, onChange: v => setAttributes({ shape: v }) }),
+            el(RangeControl, { label: 'Width (% of the box)', value: a.size, min: 20, max: 400, onChange: v => setAttributes({ size: v }) }),
+            el(RangeControl, { label: 'Left edge (% of the box)', value: a.x, min: -300, max: 80, onChange: v => setAttributes({ x: v }) }),
+            el(RangeControl, { label: 'Vertical centre (% of the box)', value: a.y, min: -30, max: 130, onChange: v => setAttributes({ y: v }) }),
+            el(RangeControl, { label: 'Opacity (%)', value: a.opacity, min: 5, max: 100, onChange: v => setAttributes({ opacity: v }) }),
+            el(ToggleControl, { label: 'Drift sideways with the scroll', checked: a.pan, onChange: v => setAttributes({ pan: v }) }),
+            el('p', { className: 'ig-help' }, 'Place it first inside a Section or Box with a coloured background: it fills the box and sits behind the content.'))),
+        el('div', props, el(RibbonPreview, { shape: a.shape, place: { w: a.size / 100, x: a.x / 100, y: a.y / 100 }, opacity: a.opacity }), el('span', { className: 'ig-ribbon-label' }, 'Ribbon · ' + a.shape)));
+    },
+    save: () => null
+  });
+
+  /* ---------------- shared bits for the Aries scenes ---------------- */
+  function ImagePicker({ id, url, onSelect, label }) {
+    return el(MediaUploadCheck, {}, el(MediaUpload, {
+      onSelect: m => onSelect(m), allowedTypes: ['image'], value: id,
+      render: ({ open }) => el('div', { className: 'ig-image-picker' },
+        url ? el('img', { src: url, alt: '', onClick: open }) : null,
+        el(Button, { variant: 'secondary', onClick: open }, url ? 'Replace ' + (label || 'image') : 'Choose ' + (label || 'image')))
+    }));
+  }
+  const listOps = (list, setList) => ({
+    update: (i, patch) => setList(list.map((it, j) => j === i ? { ...it, ...patch } : it)),
+    remove: i => setList(list.filter((_, j) => j !== i)),
+    move: (i, d) => { const n = list.slice(); const j = i + d; if (j < 0 || j >= n.length) return; [n[i], n[j]] = [n[j], n[i]]; setList(n); },
+    add: item => setList(list.concat([item]))
+  });
+  const ItemTools = ({ i, n, ops, label }) => el('div', { className: 'ig-item-tools' },
+    el(Button, { size: 'small', icon: 'arrow-left-alt2', label: 'Move ' + label + ' earlier', disabled: i === 0, onClick: () => ops.move(i, -1) }),
+    el(Button, { size: 'small', icon: 'arrow-right-alt2', label: 'Move ' + label + ' later', disabled: i === n - 1, onClick: () => ops.move(i, 1) }),
+    el(Button, { size: 'small', icon: 'trash', label: 'Remove ' + label, isDestructive: true, onClick: () => ops.remove(i) }));
+  const RT = (props) => el(RichText, Object.assign({ allowedFormats: ['core/bold', 'core/italic', 'core/link'] }, props));
+
+  /* ================================ HERO ================================ */
+  registerBlockType('imagient/hero', {
+    icon: ICONS.hero,
+    edit({ attributes: a, setAttributes }) {
+      const props = useBlockProps({ className: 'ig-hero-edit' });
+      const pick = m => setAttributes({ imageId: m.id, imageUrl: m.url });
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Photo', initialOpen: true },
+            el(ImagePicker, { id: a.imageId, url: a.imageUrl, onSelect: pick, label: 'photo' }),
+            el('p', { className: 'ig-help' }, 'Upload the photo large (3000 px wide or more): WordPress makes the smaller sizes and the browser picks the one the screen needs.'))),
+        el('div', props,
+          el('div', { className: 'ig-hero-edit__bands' }, a.imageUrl ? el('img', { src: a.imageUrl, alt: '' }) : null, el('span', { className: 'ig-badge' }, 'Bands + photo · animated on the site')),
+          el('div', { className: 'ig-hero-edit__title' },
+            RT({ tagName: 'h1', value: a.title, onChange: v => setAttributes({ title: v }), placeholder: 'Title' }),
+            RT({ tagName: 'p', value: a.subtitle, onChange: v => setAttributes({ subtitle: v }), placeholder: 'Subtitle' })),
+          el('div', { className: 'ig-hero-edit__scene' },
+            el('span', { className: 'ig-badge' }, 'Over the photo, on scroll'),
+            RT({ tagName: 'h2', value: a.sceneTitle, onChange: v => setAttributes({ sceneTitle: v }), placeholder: 'Title over the photo' }),
+            RT({ tagName: 'p', value: a.sceneText, onChange: v => setAttributes({ sceneText: v }), placeholder: 'Text over the photo' }))));
+    },
+    save: () => null
+  });
+
+  /* ================================ COMPANY SCENE ================================ */
+  registerBlockType('imagient/identity', {
+    icon: ICONS.scene,
+    edit({ attributes: a, setAttributes }) {
+      const props = useBlockProps({ className: 'ig-scene-edit' });
+      const list = a.companies || [], ops = listOps(list, v => setAttributes({ companies: v }));
+      const [sel, setSel] = useState(0);
+      const c = list[sel];
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Scene', initialOpen: true },
+            el(TextControl, { label: 'Anchor (for links: #anchor, #anchor-1 …)', value: a.anchor, onChange: v => setAttributes({ anchor: v.replace(/[^\w-]/g, '') }) })),
+          c ? el(PanelBody, { title: 'Company ' + (sel + 1), initialOpen: true },
+            el(SelectControl, { label: 'Logo', value: c.logo, options: LOGOS, onChange: v => ops.update(sel, { logo: v }) }),
+            el(SelectControl, { label: 'Ribbon shape', value: c.shape, options: SHAPES.slice(0, 4), onChange: v => ops.update(sel, { shape: v }) }),
+            el(SelectControl, { label: 'Background colour', value: c.color, options: COLOR_OPTS, onChange: v => ops.update(sel, { color: v }) }),
+            el(TextControl, { label: 'Link text', value: c.linkText, onChange: v => ops.update(sel, { linkText: v }) }),
+            el(TextControl, { label: 'Link URL', value: c.linkUrl, onChange: v => ops.update(sel, { linkUrl: v }) })) : null),
+        el('div', props,
+          el('div', { className: 'ig-scene-edit__state', style: { background: colorOf('group') } },
+            el(RibbonPreview, { shape: 'group', place: { w: 1.1, x: -0.05, y: 0.55 } }),
+            el('span', { className: 'ig-badge' }, 'Group'),
+            RT({ tagName: 'h2', value: a.introTitle, onChange: v => setAttributes({ introTitle: v }), placeholder: 'Group title' }),
+            RT({ tagName: 'p', value: a.introText, onChange: v => setAttributes({ introText: v }), placeholder: 'Group text' }),
+            RT({ tagName: 'p', className: 'ig-foot', value: a.footText, onChange: v => setAttributes({ footText: v }), placeholder: 'Bottom text' })),
+          list.map((co, i) => el('div', { key: i, className: 'ig-scene-edit__state' + (i === sel ? ' is-selected' : ''), style: { background: colorOf(co.color) }, onClick: () => setSel(i) },
+            el(RibbonPreview, { shape: co.shape, place: { w: 1.1, x: -0.05, y: 0.5 } }),
+            el('img', { className: 'ig-scene-edit__logo', src: CFG.assets + 'logos/' + co.logo + '.svg', alt: '' }),
+            el(ItemTools, { i, n: list.length, ops, label: 'company' }),
+            RT({ tagName: 'h2', value: co.name, onChange: v => ops.update(i, { name: v }), placeholder: 'Company name' }),
+            RT({ tagName: 'p', value: co.text, onChange: v => ops.update(i, { text: v }), placeholder: 'Description' }),
+            co.linkText ? el('span', { className: 'ig-more' }, co.linkText) : null)),
+          el(Button, { variant: 'secondary', className: 'ig-add', onClick: () => { ops.add({ name: 'New company', text: '', linkText: 'View more', linkUrl: '#', logo: 'group', shape: 'group', color: 'group' }); setSel(list.length); } }, '+ Add company')));
+    },
+    save: () => null
+  });
+
+  /* ================================ FIGURES ================================ */
+  registerBlockType('imagient/figures', {
+    icon: ICONS.figures,
+    edit({ attributes: a, setAttributes }) {
+      const props = useBlockProps({ className: 'figs ig-figures-edit' });
+      const list = a.tiles || [], ops = listOps(list, v => setAttributes({ tiles: v }));
+      const [sel, setSel] = useState(0);
+      const t = list[sel];
+      const figOps = i => listOps(list[i].figures || [], v => ops.update(i, { figures: v }));
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          t ? el(PanelBody, { title: 'Tile ' + (sel + 1), initialOpen: true },
+            el(SelectControl, { label: 'Colour', value: t.color, options: COLOR_OPTS, onChange: v => ops.update(sel, { color: v }) }),
+            el(SelectControl, { label: 'Ribbon', value: t.shape, options: SHAPES.slice(4), onChange: v => ops.update(sel, { shape: v }) }),
+            el(ToggleControl, { label: 'Full width (two columns)', checked: !!t.wide, onChange: v => ops.update(sel, { wide: v }) }),
+            el('p', { className: 'ig-help' }, 'Figures count from 0 when the tile comes into view. Write them as they should end, e.g. 800,000.')) : null),
+        el('div', props, el('div', { className: 'wrap' },
+          list.map((tile, i) => el('article', { key: i, className: 'tile' + (tile.wide ? ' wide' : '') + (i === sel ? ' is-selected' : ''), style: { background: colorOf(tile.color) }, onClick: () => setSel(i) },
+            el(RibbonPreview, { shape: tile.shape, place: TILE_PLACE[tile.shape] || { w: 1.5, x: -0.25, y: 0.5 } }),
+            el(ItemTools, { i, n: list.length, ops, label: 'tile' }),
+            RT({ tagName: 'span', className: 'lbl', value: tile.label, onChange: v => ops.update(i, { label: v }), placeholder: 'Label' }),
+            el('div', { className: 'nums' },
+              (tile.figures || []).map((f, j) => el('div', { key: j, className: 'ig-fig' },
+                el('strong', {}, RT({ tagName: 'span', value: f.value, allowedFormats: [], onChange: v => figOps(i).update(j, { value: v }), placeholder: '000' }),
+                  el('sup', {}, RT({ tagName: 'span', value: f.suffix, allowedFormats: [], onChange: v => figOps(i).update(j, { suffix: v }), placeholder: '+' }))),
+                RT({ tagName: 'small', value: f.caption, onChange: v => figOps(i).update(j, { caption: v }), placeholder: 'Caption' }),
+                el(Button, { size: 'small', isDestructive: true, variant: 'link', onClick: () => figOps(i).remove(j) }, 'Remove figure'))),
+              el(Button, { size: 'small', variant: 'secondary', onClick: () => figOps(i).add({ value: '100', suffix: '+', caption: '' }) }, '+ Figure')))),
+          el(Button, { variant: 'secondary', className: 'ig-add', onClick: () => { ops.add({ label: 'New tile', shape: 'agencyT', color: 'agency', wide: false, figures: [{ value: '100', suffix: '+', caption: '' }] }); setSel(list.length); } }, '+ Add tile'))));
+    },
+    save: () => null
+  });
+
+  /* ================================ SERVICE CARDS ================================ */
+  registerBlockType('imagient/cards', {
+    icon: ICONS.cards,
+    edit({ attributes: a, setAttributes }) {
+      const props = useBlockProps({ className: 'ig-cards-edit' });
+      const list = a.cards || [], ops = listOps(list, v => setAttributes({ cards: v }));
+      const [sel, setSel] = useState(0);
+      const c = list[sel];
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          c ? el(PanelBody, { title: 'Card ' + (sel + 1), initialOpen: true },
+            el(ImagePicker, { id: c.imageId, url: c.imageUrl, onSelect: m => ops.update(sel, { imageId: m.id, imageUrl: m.url, alt: m.alt || c.alt }), label: 'photo' }),
+            el(TextControl, { label: 'Image description (alt)', value: c.alt, onChange: v => ops.update(sel, { alt: v }) }),
+            el(TextControl, { label: 'Link (optional)', value: c.url, onChange: v => ops.update(sel, { url: v }) })) : null),
+        el('div', props, el('div', { className: 'ig-cards-edit__row' },
+          list.map((card, i) => el('div', { key: i, className: 'card' + (i === sel ? ' is-selected' : ''), onClick: () => setSel(i) },
+            RT({ tagName: 'h3', value: card.title, onChange: v => ops.update(i, { title: v }), placeholder: 'Card title' }),
+            el('div', { className: 'ph' }, el('div', { className: 'pi' }, card.imageUrl ? el('img', { src: card.imageUrl, alt: '' }) : null)),
+            el(ItemTools, { i, n: list.length, ops, label: 'card' }))),
+          el(Button, { variant: 'secondary', className: 'ig-add', onClick: () => { ops.add({ title: 'New service.', imageId: 0, imageUrl: '', alt: '', url: '' }); setSel(list.length); } }, '+ Add card'))));
+    },
+    save: () => null
+  });
+
+  /* ================================ ANIMATION SETTING ON EVERY BLOCK ================================ */
+  addFilter('blocks.registerBlockType', 'imagient/anim-attribute', (settings) => {
+    settings.attributes = Object.assign({}, settings.attributes, { igAnim: { type: 'string', default: '' } });
+    return settings;
+  });
+  const ANIMS = [{ value: '', label: 'None' }, { value: 'fade-up', label: 'Fade up' }, { value: 'split', label: 'Words rise one by one (headings)' }, { value: 'count', label: 'Numbers count up' }, { value: 'scale-in', label: 'Scale in' }];
+  addFilter('editor.BlockEdit', 'imagient/anim-control', createHigherOrderComponent(BlockEdit => props => {
+    if (!props.isSelected) return el(BlockEdit, props);
+    return el(Fragment, {}, el(BlockEdit, props),
+      el(InspectorControls, {}, el(PanelBody, { title: 'Animation (Imagient)', initialOpen: !!props.attributes.igAnim },
+        el(SelectControl, { label: 'On scroll', value: props.attributes.igAnim || '', options: ANIMS, onChange: v => props.setAttributes({ igAnim: v }) }),
+        el('p', { className: 'ig-help' }, 'Plays on the site as the block scrolls into view.'))));
+  }, 'withImagientAnimation'));
+  addFilter('editor.BlockListBlock', 'imagient/anim-badge', createHigherOrderComponent(BlockListBlock => props => {
+    const a = props.attributes && props.attributes.igAnim;
+    return a ? el(BlockListBlock, Object.assign({}, props, { className: [props.className, 'ig-has-anim'].filter(Boolean).join(' '), wrapperProps: Object.assign({}, props.wrapperProps, { 'data-ig-anim': a }) })) : el(BlockListBlock, props);
+  }, 'withImagientAnimBadge'));
+})(window.wp);
