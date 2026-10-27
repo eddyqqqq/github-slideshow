@@ -206,8 +206,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // as the halves part, each bar stretches between them (the bars are upright, so this is exact): the frame stays
     // one piece instead of breaking at the bars
     const yl = yAt(MX, MY, FR.bars[0] / 2), yr = yAt(MX, MY, (FR.bars[1] + FR.w) / 2), open = st.eB - st.eT > 0.5;
-    e.brL.setAttribute('d', open && st.dT > 0.02 ? `M-1 ${f1(yl + st.eT - 1)}H${f1(FR.bars[0] + 0.3)}V${f1(yl + st.eB + 1)}H-1Z` : 'M0 0Z');
-    e.brR.setAttribute('d', open && st.dB > 0.999 ? `M${f1(FR.bars[1] - 0.3)} ${f1(yr + st.eT - 1)}H${FR.w + 1}V${f1(yr + st.eB + 1)}H${f1(FR.bars[1] - 0.3)}Z` : 'M0 0Z');
+    // exactly on the bars' edges in the designer's path (left 0–44, right 1964–2008): a bridge any wider shows a step
+    e.brL.setAttribute('d', open && st.dT > 0.02 ? `M0 ${f1(yl + st.eT - 1)}H44V${f1(yl + st.eB + 1)}H0Z` : 'M0 0Z');
+    e.brR.setAttribute('d', open && st.dB > 0.999 ? `M1964 ${f1(yr + st.eT - 1)}H2008V${f1(yr + st.eB + 1)}H1964Z` : 'M0 0Z');
     // the photo shows inside the frame: under band a, over band b, between the bars
     // the window between the bands (they part on scroll), reaching a few units under them and the bars so no hairline
     // of page shows at its edges
