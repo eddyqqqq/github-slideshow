@@ -130,15 +130,20 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .co-tabs button[aria-current="true"] { opacity: 1; }
 .co-tabs button[aria-current="true"]::before { background: var(--on); }
 /* with script: one full-screen scene, the four states stacked */
-.js .identity { height: 100vh; height: 100svh; min-height: 360px; }
+/* the scene fills the large viewport (mobile toolbars hidden, as while it is pinned) so no strip of page shows below it;
+   its bottom text keeps to the small viewport, above the toolbars */
+.js .identity { height: 100vh; height: 100lvh; min-height: 360px; }
 .js .id-top { position: absolute; left: 0; right: 0; top: 0; }
-.js .id-foot { position: absolute; left: 0; right: 0; bottom: 0; padding-top: 0; }
+.js .id-foot { position: absolute; left: 0; right: 0; bottom: 0; bottom: calc(100lvh - 100svh); padding-top: 0; }
 .js .id-states { gap: 0; }
 .js .id-foot .id-states { align-items: end; }
 .js .id-top .id-states > * { align-self: start; justify-self: start; }
 /* the blue scene slides over the end of the hero while the gradient is still filling (its own background
    fades in only as the hero lets go), so the Group text arrives with the fill, not after it */
-.anim .identity.after-hero { margin-top: -55vh; margin-top: -55svh; background: none; }
+.anim .identity.after-hero { margin-top: -55vh; margin-top: -55svh; background: none;
+  /* its upper part slides over the hero's end (see-through until its own background fades in); the part below the
+     hero's end is blue from the start, so the page never shows between them while scrolling either way */
+  background: linear-gradient(transparent 0, transparent 55vh, var(--blue) 55vh); background: linear-gradient(transparent 0, transparent 55svh, var(--blue) 55svh); }
 .anim .identity.after-hero .id-bg { opacity: 0; }
 .js .id-states > * { grid-area: 1 / 1; }
 .js .id-states > :not(:first-child) { opacity: 0; visibility: hidden; }
@@ -193,7 +198,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
    the space above the ribbon (the ribbon keeps clear of them), and the list of companies beside them, one under the
    other, the current one marked */
 @media (max-width: 760px) and (orientation: portrait) {
-  :root { --m-logo: clamp(64px, 20.5vw, 84px); }
+  :root { --m-logo: clamp(56px, 17.5vw, 72px); }
   .ig-top .logo, .co-logo .logo { width: var(--m-logo); }
   .ig-top .logo[viewBox^="0 0 74 "], .co-logo .logo[viewBox^="0 0 74 "] { width: calc(var(--m-logo) * 74 / 75); }
   .co-logo { padding-top: clamp(24px, 9vh, 96px); }

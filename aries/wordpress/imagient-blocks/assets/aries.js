@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const [x0, x1] = FR.bars, n = A.x.length - 1, m = B.x.length - 1;
     e.barL.setAttribute('d', `M0 ${f1(FR.left[0] + st.eT)}L${f1(x0 + 1)} ${f1(A.t[0] + st.eT)}L${f1(x0 + 1)} ${f1(B.b[0] + st.eB)}L0 ${f1(FR.left[1] + st.eB)}Z`);
     e.barR.setAttribute('d', `M${f1(x1 - 1)} ${f1(A.t[n] + st.eT)}L${FR.w} ${f1(FR.right[0] + st.eT)}L${FR.w} ${f1(FR.right[1] + st.eB)}L${f1(x1 - 1)} ${f1(B.b[m] + st.eB)}Z`);
-    e.barL.style.opacity = clamp01(st.dT * 12); e.barR.style.opacity = clamp01((st.dB - 0.94) * 16);
+    e.barL.style.opacity = clamp01(st.dT * 12); e.barR.style.opacity = clamp01((st.dB - 0.94) / 0.06);   // both reach 1: a bar at 0.96 shows lighter than the bands
     // the photo shows inside the frame: under band a, over band b, between the bars
     const top = A.x.map((x, k) => f1(x) + ' ' + f1(A.b[k] + st.eT));
     const bot = B.x.map((x, k) => f1(x) + ' ' + f1(B.t[k] + st.eB)).reverse();
