@@ -1,7 +1,8 @@
 """
-The hero frame (2026 design): two bands closed by a bar at each end, traced from the designer's outline
-(design/hero-frame.png: 4096 px wide for a 2007-unit artboard; the space between the bars, 1918.8 units, is the
-1920 px screen). Writes tools/hero_frame.json, which build_wp.py puts into shapes.js as ARIES_SHAPES.frame.
+The hero frame (2026 design): two bands closed by a bar at each end. The designer's vector is design/hero-frame.svg
+(one closed outline, artboard 2008 × 878.48; the 1920 units between the bars are the 1920 px screen);
+design/hero-frame.png is it rendered 4096 px wide, which this script traces into band edges.
+Writes tools/hero_frame.json, which build_wp.py puts into shapes.js as ARIES_SHAPES.frame.
 
   python3 tools/hero_frame.py
 
@@ -17,9 +18,9 @@ from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, '..', 'design', 'hero-frame.png')
 OUT = os.path.join(HERE, 'hero_frame.json')
-ART_W, ART_H = 2007.0, 876.0
-PHOTO = {'rot': 20.7, 'k': 1.47, 'cx': 1066.1, 'cy': 476.0}   # fitted on the mockup (photo 1500 px wide)
-TOP_1080 = 102.0                                               # artboard top on the 1920 × 1080 mockup
+ART_W, ART_H = 2008.0, 878.48   # the viewBox of design/hero-frame.svg
+PHOTO = {'rot': 20.7, 'k': 1.47, 'cx': 1066.1, 'cy': 478.0}   # fitted on the mockup (photo 1500 px wide)
+TOP_1080 = 100.0                                               # artboard top on the 1920 × 1080 mockup
 
 
 def runs(col):

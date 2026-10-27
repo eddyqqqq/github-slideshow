@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // pinned from the top; on a landscape screen shorter than the hero, pinned at its bottom (the title in view)
     gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: '+=270%', pin: true, scrub: 0.8, invalidateOnRefresh: true } })
       .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { const k = hsc.e; hs.eT = hero.eTmax * k; hs.eB = hero.eBmax * k; hs.z = 1 + (hero.zEnd - 1) * k; hs.p = 1 + (hero.pEnd - 1) * k; H(); } }, 0)
-      .to('#heroTitle', { y: -60, opacity: 0, duration: 0.35, ease: 'power2.in' }, 0)
+      .to('#heroTitle', { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in' }, 0)   // gone before the lower band reaches it
       .to('.ig-top', { opacity: 0, duration: 0.3 }, 0)
       .to(shade, { opacity: 1, duration: 0.45, ease: 'none' }, 0.5)
       .fromTo(twoWords, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out' }, 0.62)
