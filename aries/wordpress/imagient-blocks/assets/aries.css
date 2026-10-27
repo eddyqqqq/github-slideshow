@@ -94,17 +94,17 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .pre #hTop, .pre #hBot, .pre #hImgWrap { opacity: 0; }
 /* landscape screens: the Aries frame as drawn. Its artboard is 2008 × 878.48 units and the 1920 units between its bars
    are the 1920 px screen, so --hu (one unit) is the screen's width / 1920 up to 1920 px and stays there beyond: the
-   frame is centred and its bars come into view. Logo at the top left, the frame from 125 units down (clear of it), the title under
+   frame is centred and its bars come into view. Logo at the top left, the frame from 98 units down (clear of it), the title under
    the left curve. On a screen shorter than the whole (1080 units) the hero is taller than the screen: the title is a
    short scroll away and the sequence pins at the hero's bottom, so the shade and the second scene keep to that screen. */
 @media (min-aspect-ratio: 1/1) and (min-width: 760px) {
   /* --hdy: on a screen taller than the whole (1078 units), the whole is centred in it */
   :root { --hu: calc(min(100vw, 1920px) / 1919.76); --hdy: max(0px, (100vh - 1080 * var(--hu)) / 2); }
   .hero-stage { height: max(100vh, 1080 * var(--hu)); }
-  .hero-layout { inset: 0; height: auto; padding-top: calc(125 * var(--hu) + var(--hdy)); }
+  .hero-layout { inset: 0; height: auto; padding-top: calc(98 * var(--hu) + var(--hdy)); }
   .hero-layout { justify-content: flex-start; }
   .hero-slot { flex: none; height: calc(878.48 * var(--hu)); }
-  .hero-title { margin-top: calc(-44 * var(--hu)); padding: 0 0 0 calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); gap: calc(10 * var(--hu)); }
+  .hero-title { margin-top: calc(-14 * var(--hu)); padding: 0 0 0 calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); gap: calc(10 * var(--hu)); }
   .hero-title h1 { font-size: max(24px, 70 * var(--hu)); }
   .hero-title p { font-size: max(14px, 22 * var(--hu)); }
   .shade { top: auto; height: 100vh; }
