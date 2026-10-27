@@ -141,7 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!hero) return;
     const H = hero.stage.getBoundingClientRect(), S = hero.slot.getBoundingClientRect();
     if (!H.width || !S.height) return;
-    const land = isLand(), A = FR.a, B = FR.b, ph = FR.photo;
+    const land = isLand(), A = FR.a, B = FR.b;
+    // portrait: the photo a little smaller and further right, so the train, the ship and the truck all show in the part
+    // of the window a phone sees (fitted on the frame; the designed placement is for landscape)
+    const ph = land ? FR.photo : Object.assign({}, FR.photo, { k: 1.27, cx: 895, cy: 460 });
     // landscape: the slot is FR.h units tall (CSS), the middle between the bars at the screen's centre.
     // portrait: PORTRAIT_W units across the screen from PORTRAIT_X (the whole curve, the peak and the start of the
     // diagonal with the truck), centred in the slot's height
@@ -163,7 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let iw = 1500 * ph.k, ih = iw * hero.IMG.h / hero.IMG.w, grow = 1;
     const edgePts = [];
     A.x.forEach((x, i) => edgePts.push([x, A.b[i]])); B.x.forEach((x, i) => edgePts.push([x, B.t[i]]));
-    edgePts.forEach(([x, y]) => { const [p, q] = uv(x, y); grow = Math.max(grow, 2.02 * p / iw, 2.02 * q / ih); });
+    // only the part of the window on screen has to be covered
+    edgePts.filter(([x]) => x >= vbX - 20 && x <= vbX + vbW + 20).forEach(([x, y]) => { const [p, q] = uv(x, y); grow = Math.max(grow, 2.02 * p / iw, 2.02 * q / ih); });
     iw *= grow; ih *= grow;
     hero.img.setAttribute('x', f1(ph.cx - iw / 2)); hero.img.setAttribute('y', f1(ph.cy - ih / 2));
     hero.img.setAttribute('width', f1(iw)); hero.img.setAttribute('height', f1(ih));
