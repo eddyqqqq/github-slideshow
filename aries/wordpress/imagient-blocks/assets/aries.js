@@ -236,7 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (idEl) {
     let shapes = ['group', 'agency', 'interlink', 'logistics'];
     try { shapes = JSON.parse(idEl.dataset.shapes); } catch (e) {}
-    identity = add(new Ribbons($('[data-rib="identity"]', idEl), shapes, { over: 1.08, fill: 0.2, ay: narrow ? 0.54 : 0.56 }));
+    // phones: each shape sized by the width, so the whole of it shows (sized by the height it was cut to a fragment)
+    identity = add(new Ribbons($('[data-rib="identity"]', idEl), shapes, { over: narrow ? 1.2 : 1.08, fill: narrow ? 0 : 0.2, ay: narrow ? 0.54 : 0.56 }));
   }
   // tiles: each ribbon placed exactly as in the design, measured on the design file (fit of the SVG shape to the
   // tile, IoU 0.99): w = ribbon width / tile width, x = left edge / tile width, y = ribbon centre / tile height
