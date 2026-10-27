@@ -131,9 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroEl = FR ? $('#hero.hero') : null;
   const hero = heroEl ? {
     el: heroEl, stage: $('.hero-stage', heroEl), svg: $('#heroSvg'), slot: $('#heroSlot'), top: $('#hTop'), bot: $('#hBot'),
-    topG: $('#hTopG'), botG: $('#hBotG'), cutT: $('#hCutT'), cutB: $('#hCutB'), region: $('#hRegion'), zoom: $('#hZoom'), photo: $('#hPhoto'), wrap: $('#hImgWrap'),
+    topG: $('#hTopG'), botG: $('#hBotG'), full: $('#hFull'), cutT: $('#hCutT'), cutB: $('#hCutB'), region: $('#hRegion'), zoom: $('#hZoom'), photo: $('#hPhoto'), wrap: $('#hImgWrap'),
     img: $('#hImg'), src: $('#heroSrc'),
-    st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1, p: 1 }, IMG: { w: 1500, h: 1020 }
+    st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1, p: 1, fo: 1, fi: 0 }, IMG: { w: 1500, h: 1020 }
   } : null;
   const yAt = (xs, ys, x) => { let k = 1; while (k < xs.length - 1 && xs[k] < x) k++; return ys[k - 1] + (ys[k] - ys[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]); };
   const isLand = () => matchMedia('(min-aspect-ratio: 1/1) and (min-width: 760px)').matches;
@@ -172,13 +172,10 @@ document.addEventListener('DOMContentLoaded', () => {
     hero.img.setAttribute('x', f1(ph.cx - iw / 2)); hero.img.setAttribute('y', f1(ph.cy - ih / 2));
     hero.img.setAttribute('width', f1(iw)); hero.img.setAttribute('height', f1(ih));
     hero.img.setAttribute('transform', `rotate(${ph.rot} ${ph.cx} ${ph.cy})`);
-    // scrolled: the frame grows from the screen's centre until the space between the bars spans the screen, the bands
-    // leave it at the top and bottom, and the photo (growing from the same centre) fills it
-    hero.zEnd = Math.max(1.12, scr[2] / (FR.bars[1] - FR.bars[0]) * 1.04);
+    // scrolled: the frame stays whole (it does not open); the view zooms gently from the screen's centre while the
+    // frame fades and the photo grows to fill the screen
+    hero.zEnd = 1.12;
     const [cx, cy] = hero.S0, hw = scr[2] / 2 / hero.zEnd, hh = scr[3] / 2 / hero.zEnd;
-    const xsIn = Array.from({ length: 41 }, (_, i) => cx - hw + 2 * hw * i / 40);
-    hero.eTmax = (cy - hh - 30) - Math.max(...xsIn.map(x => yAt(A.x, A.b, x)));
-    hero.eBmax = (cy + hh + 30) - Math.min(...xsIn.map(x => yAt(B.x, B.t, x)));
     // the photo's growth: the least that covers the end screen (corners mapped back through the zoom about S0)
     const covers = p => [[-1, -1], [1, -1], [-1, 1], [1, 1]].every(([sx, sy2]) => {
       const [q1, q2] = uv(cx + sx * hw / p, cy + sy2 * hh / p); return q1 <= iw / 2 && q2 <= ih / 2; });
@@ -204,9 +201,16 @@ document.addEventListener('DOMContentLoaded', () => {
     e.cutT.setAttribute('d', halfCut(st.dT, true)); e.cutB.setAttribute('d', halfCut(st.dB, false));
     e.topG.setAttribute('transform', `translate(0 ${f1(st.eT)})`); e.botG.setAttribute('transform', `translate(0 ${f1(st.eB)})`);
     // the photo shows inside the frame: under band a, over band b, between the bars
-    const top = A.x.map((x, k) => f1(x) + ' ' + f1(A.b[k] + st.eT));
-    const bot = B.x.map((x, k) => f1(x) + ' ' + f1(B.t[k] + st.eB)).reverse();
-    e.region.setAttribute('d', 'M' + top.join('L') + 'L' + bot.join('L') + 'Z');
+    // the window, reaching a few units under the bands and the bars so no hairline of page shows at its edges
+    if (!e.region._d) {
+      const G = 4, n = A.x.length - 1, m = B.x.length - 1;
+      const top = A.x.map((x, k) => f1(x) + ' ' + f1(A.b[k] - G));
+      const bot = B.x.map((x, k) => f1(x) + ' ' + f1(B.t[k] + G)).reverse();
+      e.region.setAttribute('d', `M${f1(A.x[0] - G)} ${f1(A.b[0] - G)}L` + top.join('L') + `L${f1(A.x[n] + G)} ${f1(A.b[n] - G)}L${f1(B.x[m] + G)} ${f1(B.t[m] + G)}L` + bot.join('L') + `L${f1(B.x[0] - G)} ${f1(B.t[0] + G)}Z`);
+      e.region._d = 1;
+    }
+    e.topG.style.opacity = e.botG.style.opacity = st.fo;
+    e.full.style.opacity = st.fi;
     const [cx, cy] = e.S0, about = k => `translate(${f1(cx)} ${f1(cy)}) scale(${k.toFixed(4)}) translate(${f1(-cx)} ${f1(-cy)})`;
     e.zoom.setAttribute('transform', about(st.z));
     e.photo.setAttribute('transform', about(st.p * st.zi));
@@ -376,8 +380,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const hsc = { e: 0 };
     const heroLand = isLand();
     // pinned from the top; on a landscape screen shorter than the hero, pinned at its bottom (the title in view)
+    // the photo spreads past the frame first (fi), then the frame fades (fo); the frame never opens
     gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: heroLand ? '+=320%' : '+=270%', pin: true, scrub: 0.8, invalidateOnRefresh: true } })
-      .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { const k = hsc.e; hs.eT = hero.eTmax * k; hs.eB = hero.eBmax * k; hs.z = 1 + (hero.zEnd - 1) * k; hs.p = 1 + (hero.pEnd - 1) * k; H(); } }, 0)
+      .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { const k = hsc.e; hs.z = 1 + (hero.zEnd - 1) * k; hs.p = 1 + (hero.pEnd - 1) * k; hs.fi = clamp01(k * 2.4); hs.fo = 1 - clamp01((k - 0.3) * 2.6); H(); } }, 0)
       .to('#heroTitle', { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in' }, 0)   // gone before the lower band reaches it
       .to('.ig-top', { opacity: 0, duration: 0.3 }, 0)
       .to(shade, { opacity: 1, duration: 0.45, ease: 'none' }, 0.5)
