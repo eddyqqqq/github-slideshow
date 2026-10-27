@@ -207,13 +207,12 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .card h3 { font-size: 6.4cqi; line-height: 1.15; padding: 8.5cqi 0 0 8.5cqi; max-width: 60%; }
   .card .pi img { width: 100%; height: 100%; margin-left: 0; object-fit: cover; object-position: 72% 50%; }
 }
-}
 
 /* phones: one logo size everywhere (the header and the company scene, --m-logo), the company logos lower so they hold
    the space above the ribbon (the ribbon keeps clear of them), and the list of companies beside them, one under the
    other, the current one marked */
 @media (max-width: 760px) and (orientation: portrait) {
-  :root { --m-logo: clamp(48px, 14.5vw, 60px); }
+  :root { --m-logo: clamp(52px, 15.5vw, 64px); }
   .ig-top .logo, .co-logo .logo { width: var(--m-logo); }
   .ig-top .logo[viewBox^="0 0 74 "], .co-logo .logo[viewBox^="0 0 74 "] { width: calc(var(--m-logo) * 74 / 75); }
   .co-logo { padding-top: clamp(24px, 9vh, 96px); }

@@ -27,8 +27,24 @@ def copy(src, dst):
     shutil.copyfile(src, dst)
 
 
+def check_css(path):
+    """Stop the build on unbalanced braces: one stray } makes browsers drop the rule after it (Safari did)."""
+    import re
+    text = re.sub(r'/\*.*?\*/', '', open(path).read(), flags=re.S)
+    text = re.sub(r'"[^"]*"|\'[^\']*\'', '', text)
+    depth = 0
+    for i, c in enumerate(text):
+        depth += (c == '{') - (c == '}')
+        if depth < 0:
+            sys.exit('%s: stray } at line %d' % (path, text.count('\n', 0, i) + 1))
+    if depth:
+        sys.exit('%s: %d unclosed {' % (path, depth))
+
+
 def main():
     plugin, theme = os.path.join(WP, 'imagient-blocks'), os.path.join(WP, 'aries')
+    for css in (os.path.join(plugin, 'assets', 'aries.css'), os.path.join(plugin, 'assets', 'editor.css'), os.path.join(theme, 'style.css')):
+        check_css(css)
     data = json.dumps(design_svg.data(), separators=(',', ':'))
     with open(os.path.join(plugin, 'assets', 'shapes.js'), 'w') as f:
         f.write('/* Aries shapes, from the design SVGs (tools/design_svg.py) — Imagient */\nwindow.ARIES_SHAPES=' + data + ';\n')
