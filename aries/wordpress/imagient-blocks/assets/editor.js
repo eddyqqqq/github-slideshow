@@ -411,7 +411,7 @@
         el('div', props, el('div', { className: 'ig-cards-edit__row' },
           list.map((card, i) => el('div', { key: i, className: 'card' + (i === sel ? ' is-selected' : ''), onClick: () => setSel(i) },
             RT({ tagName: 'h3', value: card.title, onChange: v => ops.update(i, { title: v }), placeholder: 'Card title' }),
-            el('div', { className: 'ph' }, el('div', { className: 'pi' }, card.imageUrl ? el('img', { src: card.imageUrl, alt: '' }) : null)),
+            el('div', { className: 'pi' }, card.imageUrl ? el('img', { src: card.imageUrl, alt: '' }) : null), el('div', { className: 'bl' }),
             el(ItemTools, { i, n: list.length, ops, label: 'card' }))),
           el(Button, { variant: 'secondary', className: 'ig-add', onClick: () => { ops.add({ title: 'New service.', imageId: 0, imageUrl: '', alt: '', url: '' }); setSel(list.length); } }, '+ Add card'))));
     },

@@ -474,12 +474,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const vw = root.clientWidth;
     cards.forEach((c, i) => {
       const pi = $('.pi', c), h3 = $('h3', c);
-      if (c.getBoundingClientRect().left < vw * 0.85) {
-        gsap.from(c, { y: 80, opacity: 0, ease: 'none', scrollTrigger: { trigger: sec, start: `top ${100 - i * 4}%`, end: `top ${60 - i * 4}%`, scrub: 0.6 } });
-        gsap.fromTo(c, { '--o': 0 }, { '--o': 1, ease: 'none', scrollTrigger: { trigger: sec, start: `top ${85 - i * 6}%`, end: `top ${30 - i * 6}%`, scrub: 0.6 } });
-      } else {
-        gsap.fromTo(c, { '--o': 0 }, { '--o': 1, ease: 'none', scrollTrigger: { trigger: c, containerAnimation: hz, start: 'left 95%', end: 'left 45%', scrub: 0.6 } });
-      }
+      // the blue shape opens once as the card arrives and then stays as designed; the photo under it never moves
+      const first = c.getBoundingClientRect().left < vw * 0.85;
+      gsap.set(c, { '--o': 0 });
+      const tl = gsap.timeline({ scrollTrigger: first ? { trigger: c, start: 'top 88%', once: true } : { trigger: c, containerAnimation: hz, start: 'left 80%', once: true } });
+      if (first) tl.from(c, { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out' }, i * 0.1);
+      tl.to(c, { '--o': 1, duration: 1.3, ease: 'expo.inOut' }, first ? 0.2 + i * 0.1 : 0);
       // hover: the cut eases open a little, the photo and title follow
       c.addEventListener('pointerenter', e => {
         if (e.pointerType !== 'mouse') return;

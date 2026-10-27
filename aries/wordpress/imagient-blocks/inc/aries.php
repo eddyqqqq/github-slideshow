@@ -297,7 +297,7 @@ function imagient_render_cards( $a ) {
 		$tag = ! empty( $c['url'] ) ? 'a href="' . esc_url( $c['url'] ) . '"' : 'article';
 		$end = ! empty( $c['url'] ) ? 'a' : 'article';
 		?>
-    <<?php echo $tag; ?> class="card" data-tone="dark"><h3><?php echo imagient_text( $c['title'] ?? '' ); ?></h3><div class="ph"><div class="pi"><?php echo $img; // phpcs:ignore ?></div></div></<?php echo $end; ?>>
+    <<?php echo $tag; ?> class="card" data-tone="dark"><div class="pi"><?php echo $img; // phpcs:ignore ?></div><div class="bl" aria-hidden="true"></div><h3><?php echo imagient_text( $c['title'] ?? '' ); ?></h3></<?php echo $end; ?>>
 	<?php endforeach; ?>
   </div>
 </section>

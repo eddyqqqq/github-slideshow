@@ -194,13 +194,15 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .anim .cards-track { overflow: visible; scroll-snap-type: none; width: max-content; will-change: transform; }
 /* cards keep the design proportions (752 × 515) at every size; their content scales with the card (cqi) */
 .card { --o: 1; --h: 0; flex: none; border-radius: 6px; width: min(max(752px, 39vw), 84vw, 85vh); aspect-ratio: 752 / 515; container-type: inline-size; position: relative; overflow: hidden; clip-path: inset(0 round 6px); isolation: isolate; background: var(--blue); color: var(--on); scroll-snap-align: start; }
-.card h3 { position: relative; z-index: 1; font-size: max(16px, 4.4cqi); line-height: 1.15; font-weight: 400; padding: 7.7cqi; max-width: 50%; }   /* as in the design: 33 px type, 58 px margin on a 752 card; inside the straight blue part */
-/* the diagonal cut: --o opens it on scroll, --h swings it on hover */
-/* the blue zone as in the design: a straight left part (47 % of the card) and, over the top 70 %, a diagonal
-   that leans out to 68 % at the top edge; the photo is the rest. --o opens it on scroll, --h on hover. */
-.card .ph { position: absolute; inset: 0; clip-path: polygon(calc(100% - var(--o) * 31.7% - var(--h) * 4%) 0, 100% 0, 100% 100%,
-  calc(100% - var(--o) * 53% - var(--h) * 4%) 100%, calc(100% - var(--o) * 53% - var(--h) * 4%) 70.4%); }
-.card .pi { position: absolute; inset: -1px; overflow: hidden; transform-origin: 75% 50%; }   /* 1 px past the card: no hairline of blue at the edges */
+.card h3 { position: relative; z-index: 2; font-size: max(16px, 4.4cqi); line-height: 1.15; font-weight: 400; padding: 7.7cqi; max-width: 50%; }   /* as in the design: 33 px type, 58 px margin on a 752 card; inside the straight blue part */
+/* three layers: the photo underneath, fixed and covering the whole card; the blue shape over it; the title on top.
+   The blue shape as in the design: a straight left part (47 % of the card) and, over the top 70 %, a diagonal that
+   leans out to 68 % at the top edge. --o opens it once as the card arrives (from a full blue card), --h swings it on
+   hover. Both layers reach 1 px past the card so no hairline shows at the rounded edges. */
+.card .pi { position: absolute; inset: -1px; z-index: 0; overflow: hidden; transform-origin: 75% 50%; }
+.card .bl { position: absolute; inset: -1px; z-index: 1; background: var(--blue); pointer-events: none;
+  clip-path: polygon(0 0, calc(100% - var(--o) * 31.7% - var(--h) * 4%) 0, calc(100% - var(--o) * 53% - var(--h) * 4%) 70.4%,
+    calc(100% - var(--o) * 53% - var(--h) * 4%) 100%, 0 100%); }
 .card .pi img { display: block; width: 104%; max-width: none; height: 100%; margin-left: 11%; object-fit: cover; object-position: 50% 50%; }   /* placed as in the design: the photo's right part shows beside the diagonal */
 
 /* phones: the company logos larger and lower, so they hold the space above the ribbon (the ribbon keeps clear of them) */
