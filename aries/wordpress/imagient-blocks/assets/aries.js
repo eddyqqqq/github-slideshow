@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // landscape: the slot is FR.h units tall (CSS), the middle between the bars at the screen's centre.
     // portrait: PORTRAIT_W units across the screen from PORTRAIT_X (the whole curve, the peak and the start of the
     // diagonal with the truck), centred in the slot's height
-    const PORTRAIT_W = 1220, PORTRAIT_X = 150;   // width: same as the slot's height in CSS (portrait)
+    const PORTRAIT_W = 1220, PORTRAIT_X = 300;   // width: same as the slot's height in CSS (portrait)
     const u = land ? S.height / FR.h : Math.min(S.height / FR.h, S.width / PORTRAIT_W);
     const vbX = land ? (FR.bars[0] + FR.bars[1]) / 2 - (S.left - H.left + S.width / 2) / u : PORTRAIT_X - (S.left - H.left) / u;
     const vbY = -(S.top - H.top + (land ? 0 : (S.height - FR.h * u) / 2)) / u;
@@ -386,10 +386,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroLand = isLand();
     // pinned from the top; on a landscape screen shorter than the hero, pinned at its bottom (the title in view)
     gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: heroLand ? '+=320%' : '+=270%', pin: true, scrub: 1.2, invalidateOnRefresh: true } })
-      // smooth: the zoom starts at once and eases throughout; the halves part a little later, slowly at first and last
+      // smooth: the zoom and the parting move together on one gentle curve
       .to(hsc, { e: 1, duration: 1.1, ease: 'none', onUpdate: () => {
-        const k = hsc.e, z = gsap.parseEase('sine.inOut')(k), o = gsap.parseEase('power3.inOut')(clamp01((k - 0.08) / 0.92));
-        hs.eT = hero.eTmax * o; hs.eB = hero.eBmax * o; hs.z = 1 + (hero.zEnd - 1) * z; hs.p = 1 + (hero.pEnd - 1) * z; H(); } }, 0)
+        const k = gsap.parseEase('sine.inOut')(hsc.e);
+        hs.eT = hero.eTmax * k; hs.eB = hero.eBmax * k; hs.z = 1 + (hero.zEnd - 1) * k; hs.p = 1 + (hero.pEnd - 1) * k; H(); } }, 0)
       .to('#heroTitle', { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in' }, 0)   // gone before the lower band reaches it
       .to('.ig-top', { opacity: 0, duration: 0.3 }, 0)
       .to(shade, { opacity: 1, duration: 0.45, ease: 'none' }, 0.5)
