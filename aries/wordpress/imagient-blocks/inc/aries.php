@@ -179,8 +179,9 @@ function imagient_render_hero( $a ) {
         <clipPath id="hClipB"><path id="hCutB" d="M0 0Z"/></clipPath>
       </defs>
       <g id="hZoom">
-        <use id="hFull" href="#hPhoto" style="opacity:0"/>
         <g clip-path="url(#hClip)"><g id="hPhoto"><g id="hImgWrap"><image id="hImg" x="0" y="0" width="1500" height="1020" preserveAspectRatio="none"/></g></g></g>
+        <path id="hBridgeL" fill="#145FAD" d="M0 0Z"/>
+        <path id="hBridgeR" fill="#145FAD" d="M0 0Z"/>
         <g id="hTopG"><path id="hTop" fill="#145FAD" fill-rule="evenodd" clip-path="url(#hClipT)" d="M0 0Z"/></g>
         <g id="hBotG"><path id="hBot" fill="#145FAD" fill-rule="evenodd" clip-path="url(#hClipB)" d="M0 0Z"/></g>
       </g>
