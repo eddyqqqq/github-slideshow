@@ -131,3 +131,20 @@ function imagient_wrapper( $block, $class, $style = '', $extra = array() ) {
 	}
 	return get_block_wrapper_attributes( array_merge( $attrs, $extra ) );
 }
+
+/**
+ * A theme image URL with its file time as a version: the host caches images for a week, so a replaced file gets a
+ * new URL. Other URLs (the media library, other sites) are returned as they are.
+ */
+function imagient_versioned( $url ) {
+	if ( ! function_exists( 'get_theme_file_uri' ) || ! is_string( $url ) || '' === $url ) {
+		return $url;
+	}
+	$base = get_theme_file_uri( 'assets/' );
+	if ( 0 !== strpos( $url, $base ) ) {
+		return $url;
+	}
+	$rel  = strtok( substr( $url, strlen( $base ) ), '?' );
+	$file = get_theme_file_path( 'assets/' . $rel );
+	return file_exists( $file ) ? add_query_arg( 'v', filemtime( $file ), $base . $rel ) : $url;
+}

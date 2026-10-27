@@ -51,13 +51,35 @@ document.addEventListener('DOMContentLoaded', () => {
       const id = 'rb' + (uid++);
       const mk = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const a in attrs) e.setAttribute(a, attrs[a]); parent.appendChild(e); return e; };
       const defs = mk('defs', {}, svg);
+      this.defs = defs;
       const grad = (gid, g) => { const e = mk('linearGradient', { id: gid, gradientUnits: 'userSpaceOnUse', x1: g.c[0], y1: g.c[1], x2: g.c[2], y2: g.c[3] }, defs); g.s.forEach(([off, a]) => mk('stop', { offset: off, 'stop-color': '#fff', 'stop-opacity': a }, e)); };
       this.gid = id;
       [...new Set(this.keys)].forEach(k => { grad(id + k + 'u', RIB[k].gu); grad(id + k + 'l', RIB[k].gl); });
       this.ga = mk('g', {}, svg); this.gb = mk('g', {}, svg);
       this.pu = mk('path', { d: 'M0 0Z' }, this.ga); this.pl = mk('path', { d: 'M0 0Z' }, this.ga);
       this.pu2 = mk('path', { d: 'M0 0Z' }, this.gb); this.pl2 = mk('path', { d: 'M0 0Z' }, this.gb);
+      [this.pu, this.pl, this.pu2, this.pl2].forEach(p => this.fader(p, mk));
       svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    }
+    // a band that is being drawn in or leaving has soft ends instead of a straight cut: a mask whose gradient runs
+    // along the band, clear where the band is cut and opaque a little further in
+    fader(path, mk) {
+      const id = 'rf' + (uid++), big = { x: -1e4, y: -1e4, width: 3e4, height: 3e4 };
+      const g = mk('linearGradient', { id: id + 'g', gradientUnits: 'userSpaceOnUse', x1: 0, y1: 0, x2: 1, y2: 0 }, this.defs);
+      path._fs = [0, 0, 1, 1, 0, 0].map(a => mk('stop', { offset: 0, 'stop-color': '#fff', 'stop-opacity': a }, g));
+      path._fg = g;
+      const m = mk('mask', Object.assign({ id, maskUnits: 'userSpaceOnUse' }, big), this.defs);
+      mk('rect', Object.assign({ fill: `url(#${id}g)` }, big), m);
+      path.setAttribute('mask', `url(#${id})`);
+    }
+    fade(path, xs, a, b) {
+      // a, b: where the band starts and ends, as fractions of its length; the soft end grows to 20 % of it
+      const F = 0.2, x0 = xs[0], x1 = xs[xs.length - 1];
+      let tb = a + Math.min(F, a), tc = b - Math.min(F, 1 - b);
+      if (tb > tc) tb = tc = (tb + tc) / 2;
+      const off = [0, a, tb, tc, b, 1];
+      path._fg.setAttribute('x1', f1(x0)); path._fg.setAttribute('x2', f1(x1));
+      path._fs.forEach((st, i) => st.setAttribute('offset', off[i].toFixed(4)));
     }
     layout() {
       const r = this.svg.getBoundingClientRect();
@@ -71,8 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const sp = RIB[key];
       if (g._k !== key) { g._k = key; g.setAttribute('transform', `scale(${this.f[key].toFixed(5)})`); pl.setAttribute('fill', `url(#${this.gid}${key}l)`); pu.setAttribute('fill', `url(#${this.gid}${key}u)`); }
       const lo0 = q0 <= 0 ? 0 : clamp01(q0 * 1.08), up0 = q0 <= 0 ? 0 : clamp01(q0 * 1.12 - 0.12);
-      pl.setAttribute('d', bandD(sp.lo.x, sp.lo.t, sp.lo.b, clamp01(q1 * 1.08), 0, 0, lo0));
-      pu.setAttribute('d', bandD(sp.up.x, sp.up.t, sp.up.b, clamp01(q1 * 1.12 - 0.12), 0, 0, up0));
+      const lo1 = clamp01(q1 * 1.08), up1 = clamp01(q1 * 1.12 - 0.12);
+      pl.setAttribute('d', bandD(sp.lo.x, sp.lo.t, sp.lo.b, lo1, 0, 0, lo0));
+      pu.setAttribute('d', bandD(sp.up.x, sp.up.t, sp.up.b, up1, 0, 0, up0));
+      this.fade(pl, sp.lo.x, lo0, lo1); this.fade(pu, sp.up.x, up0, up1);
     }
     render() {
       if (!this.s) return;
@@ -189,6 +213,9 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---------------- build the ribbons on the page ---------------- */
   const narrow = innerWidth < 700;
   const idEl = $('section.identity[data-shapes]');
+  // the company scene right after the hero slides over its end; marked now, before the hero's pin wraps it (after
+  // that the two are no longer siblings and '.hero + .identity' stops matching)
+  if (idEl && heroEl && heroEl.nextElementSibling === idEl) idEl.classList.add('after-hero');
   const ribs = [];
   const add = r => { ribs.push(r); return r; };
   let identity = null;
@@ -333,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const shade = $('#shade'), twoWords = splitWords($('#sceneTwo h2')), twoP = $('#sceneTwo p');
     const hsc = { e: 0 };
     // pinned from the top; on a landscape screen shorter than the hero, pinned at its bottom (the title in view)
-    gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: '+=320%', pin: true, scrub: 0.8, invalidateOnRefresh: true } })
+    gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: '+=270%', pin: true, scrub: 0.8, invalidateOnRefresh: true } })
       .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { const k = hsc.e; hs.eT = hero.eTmax * k; hs.eB = hero.eBmax * k; hs.z = 1 + (hero.zEnd - 1) * k; hs.p = 1 + (hero.pEnd - 1) * k; H(); } }, 0)
       .to('#heroTitle', { y: -60, opacity: 0, duration: 0.35, ease: 'power2.in' }, 0)
       .to('.ig-top', { opacity: 0, duration: 0.3 }, 0)
@@ -342,8 +369,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .fromTo(twoP, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' }, 0.85)
       .to(twoWords, { yPercent: -115, duration: 0.3, stagger: 0.015, ease: 'power2.in' }, 1.42)
       .to(twoP, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in' }, 1.42)
-      .to(shade, { '--a': '100%', '--b': '160%', duration: 0.7, ease: 'power1.inOut' }, 1.5)
-      .to({}, { duration: 0.01 }, 2.25);
+      // the blue fills the screen as the text leaves, and the hero lets go as soon as it has (no empty blue screen)
+      .to(shade, { '--a': '100%', '--b': '160%', duration: 0.42, ease: 'power1.inOut' }, 1.46)
+      .to({}, { duration: 0.01 }, 1.88);
   }
   root.classList.remove('pre');
 
@@ -368,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const r = identity, R = () => touch(r), bg = $('#idBg', idEl);
     r.st.q = 0; r.st.m = 0; r.st.pan = 0; r.render();
     gsap.to(r.st, { q: 1, pan: 0.04, ease: 'none', onUpdate: R, scrollTrigger: { trigger: idEl, start: 'top bottom', end: 'top top', scrub: 0.8 } });
-    if (idEl.matches('.hero + .identity')) gsap.to(bg, { opacity: 1, ease: 'none', scrollTrigger: { trigger: idEl, start: 'top 32%', end: 'top 21%', scrub: true } });
+    if (idEl.classList.contains('after-hero')) gsap.to(bg, { opacity: 1, ease: 'none', scrollTrigger: { trigger: idEl, start: 'top 32%', end: 'top 21%', scrub: true } });
     gsap.from(splitWords($('.g-intro h2', idEl)), { yPercent: 115, ease: 'none', stagger: 0.05, scrollTrigger: { trigger: idEl, start: 'top 98%', end: 'top 40%', scrub: 0.6 } });
     gsap.from([$('.g-intro p', idEl), $('.g-foot p', idEl)], { y: 36, opacity: 0, ease: 'none', stagger: 0.3, scrollTrigger: { trigger: idEl, start: 'top 75%', end: 'top 10%', scrub: 0.6 } });
 

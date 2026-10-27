@@ -105,7 +105,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .hero-title p { font-size: max(14px, 22 * var(--hu)); }
   .shade { top: auto; height: 100vh; }
   .anim .scene-two { top: auto; height: 100vh; }
-  .home .ig-top { padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); --logo-top: max(20px, 40 * var(--hu) + var(--hdy)); --logo-w: max(44px, 80 * var(--hu)); }
+  .home .ig-top { padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); --logo-top: max(16px, 22 * var(--hu) + var(--hdy)); --logo-w: max(44px, 80 * var(--hu)); }
 }
 
 /* ---------- scene 2: Group and the three companies, one ribbon through four shapes ---------- */
@@ -138,12 +138,11 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .js .id-top .id-states > * { align-self: start; justify-self: start; }
 /* the blue scene slides over the end of the hero while the gradient is still filling (its own background
    fades in only as the hero lets go), so the Group text arrives with the fill, not after it */
-.anim .hero + .identity { margin-top: -80vh; margin-top: -80svh; background: none; }
-.anim .hero + .identity .id-bg { opacity: 0; }
+.anim .identity.after-hero { margin-top: -55vh; margin-top: -55svh; background: none; }
+.anim .identity.after-hero .id-bg { opacity: 0; }
 .js .id-states > * { grid-area: 1 / 1; }
 .js .id-states > :not(:first-child) { opacity: 0; visibility: hidden; }
 .anim .co-tabs { opacity: 0; visibility: hidden; }
-@media (max-width: 760px) { .co-tabs { display: none; } }
 
 /* ---------- statements ---------- */
 .statement { padding-block: clamp(90px, 11vw, 160px) clamp(50px, 6vw, 80px); }
@@ -190,11 +189,17 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
     calc(100% - var(--o) * 53% - var(--h) * 4%) 100%, 0 100%); }
 .card .pi img { display: block; width: 104%; max-width: none; height: 100%; margin-left: 11%; object-fit: cover; object-position: 50% 50%; }   /* placed as in the design: the photo's right part shows beside the diagonal */
 
-/* phones: the company logos larger and lower, so they hold the space above the ribbon (the ribbon keeps clear of them) */
+/* phones: one logo size everywhere (the header and the company scene, --m-logo), the company logos lower so they hold
+   the space above the ribbon (the ribbon keeps clear of them), and the list of companies beside them, one under the
+   other, the current one marked */
 @media (max-width: 760px) and (orientation: portrait) {
+  :root { --m-logo: clamp(64px, 20.5vw, 84px); }
+  .ig-top .logo, .co-logo .logo { width: var(--m-logo); }
+  .ig-top .logo[viewBox^="0 0 74 "], .co-logo .logo[viewBox^="0 0 74 "] { width: calc(var(--m-logo) * 74 / 75); }
   .co-logo { padding-top: clamp(24px, 9vh, 96px); }
-  .co-logo .logo { width: clamp(64px, 19vw, 92px); }
-  .co-logo .logo[viewBox^="0 0 74 "] { width: calc(clamp(64px, 19vw, 92px) * 74 / 75); }
+  .co-tabs { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; top: clamp(24px, 9vh, 96px); max-width: 52%; }
+  .co-tabs button { font-size: 13px; line-height: 1.25; text-align: left; padding: 4px 0; }
+  .co-tabs button::before { flex: none; }
 }
 
 @media (max-height: 520px) and (orientation: landscape) {
