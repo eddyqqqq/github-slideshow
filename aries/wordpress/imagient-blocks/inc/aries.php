@@ -172,14 +172,16 @@ function imagient_render_hero( $a ) {
 	?>
 <section <?php echo imagient_wrapper( null, 'hero', '', array( 'id' => 'hero' ) ); ?>>
   <div class="hero-stage">
-    <svg class="hero-svg" id="heroSvg" viewBox="0 0 2007 876" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <defs><clipPath id="hClip"><path id="hRegion" d="M0 0Z"/></clipPath></defs>
+    <svg class="hero-svg" id="heroSvg" viewBox="0 0 2008 878.48" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <clipPath id="hClip"><path id="hRegion" d="M0 0Z"/></clipPath>
+        <clipPath id="hClipT"><path id="hCutT" d="M0 0Z"/></clipPath>
+        <clipPath id="hClipB"><path id="hCutB" d="M0 0Z"/></clipPath>
+      </defs>
       <g id="hZoom">
         <g clip-path="url(#hClip)"><g id="hPhoto"><g id="hImgWrap"><image id="hImg" x="0" y="0" width="1500" height="1020" preserveAspectRatio="none"/></g></g></g>
-        <path id="hTop" fill="#145FAD" d="M0 0Z"/>
-        <path id="hBot" fill="#145FAD" d="M0 0Z"/>
-        <path id="hBarL" fill="#145FAD" d="M0 0Z"/>
-        <path id="hBarR" fill="#145FAD" d="M0 0Z"/>
+        <g id="hTopG"><path id="hTop" fill="#145FAD" fill-rule="evenodd" clip-path="url(#hClipT)" d="M0 0Z"/></g>
+        <g id="hBotG"><path id="hBot" fill="#145FAD" fill-rule="evenodd" clip-path="url(#hClipB)" d="M0 0Z"/></g>
       </g>
     </svg>
     <div class="hero-src" aria-hidden="true"><?php echo $img; // phpcs:ignore -- core-escaped ?></div>

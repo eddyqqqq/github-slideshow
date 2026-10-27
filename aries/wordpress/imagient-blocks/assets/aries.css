@@ -88,7 +88,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .scene-two p { font-size: var(--body); max-width: 46ch; margin-top: 18px; }
 .anim .shade { opacity: 0; }
 .anim .scene-two { position: absolute; inset: 0; background: none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); }
-.pre #hTop, .pre #hBot, .pre #hBarL, .pre #hBarR, .pre #hImgWrap { opacity: 0; }
+.pre #hTop, .pre #hBot, .pre #hImgWrap { opacity: 0; }
 /* landscape screens: the Aries frame as drawn. Its artboard is 2008 × 878.48 units and the 1920 units between its bars
    are the 1920 px screen, so --hu (one unit) is the screen's width / 1920 up to 1920 px and stays there beyond: the
    frame is centred and its bars come into view. Logo at the top left, the frame from 100 units down, the title under

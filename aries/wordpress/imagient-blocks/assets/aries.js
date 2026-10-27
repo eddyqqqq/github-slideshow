@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroEl = FR ? $('#hero.hero') : null;
   const hero = heroEl ? {
     el: heroEl, stage: $('.hero-stage', heroEl), svg: $('#heroSvg'), slot: $('#heroSlot'), top: $('#hTop'), bot: $('#hBot'),
-    barL: $('#hBarL'), barR: $('#hBarR'), region: $('#hRegion'), zoom: $('#hZoom'), photo: $('#hPhoto'), wrap: $('#hImgWrap'),
+    topG: $('#hTopG'), botG: $('#hBotG'), cutT: $('#hCutT'), cutB: $('#hCutB'), region: $('#hRegion'), zoom: $('#hZoom'), photo: $('#hPhoto'), wrap: $('#hImgWrap'),
     img: $('#hImg'), src: $('#heroSrc'),
     st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1, p: 1 }, IMG: { w: 1500, h: 1020 }
   } : null;
@@ -180,16 +180,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!covers(lo)) { for (let i = 0; i < 30; i++) { const m = (lo + hi) / 2; covers(m) ? hi = m : lo = m; } hero.pEnd = hi * 1.03; } else hero.pEnd = 1;
     heroRender();
   }
+  // the designer's outline, exactly as drawn, split along the middle of its window into an upper and a lower half
+  // (the halves overlap by a unit, so no seam shows where they meet); q: how much of each half is drawn, left to right
+  const MX = FR ? FR.mid.map(p => p[0]) : [], MY = FR ? FR.mid.map(p => p[1]) : [];
+  function halfCut(q, up) {
+    const xr = MX[0] + (MX[MX.length - 1] - MX[0]) * clamp01(q);
+    if (q <= 0.0005) return 'M0 0Z';
+    const off = up ? 0.6 : -0.6, far = up ? -4000 : 5000, pts = [];
+    pts.push(`${f1(xr)} ${f1(yAt(MX, MY, xr) + off)}`);
+    for (let i = MX.length - 1; i >= 0; i--) if (MX[i] < xr) pts.push(`${f1(MX[i])} ${f1(MY[i] + off)}`);
+    return `M${f1(MX[0])} ${far}L${f1(xr)} ${far}L` + pts.join('L') + 'Z';
+  }
   function heroRender() {
     if (!hero || !hero.vb) return;
     const st = hero.st, A = FR.a, B = FR.b, e = hero;
-    e.top.setAttribute('d', bandD(A.x, A.t, A.b, st.dT, st.eT, st.eT));
-    e.bot.setAttribute('d', bandD(B.x, B.t, B.b, st.dB, st.eB, st.eB));
-    // the bars join the ends of the two bands (they stretch as the bands part)
-    const [x0, x1] = FR.bars, n = A.x.length - 1, m = B.x.length - 1;
-    e.barL.setAttribute('d', `M0 ${f1(FR.left[0] + st.eT)}L${f1(x0 + 1)} ${f1(A.t[0] + st.eT)}L${f1(x0 + 1)} ${f1(B.b[0] + st.eB)}L0 ${f1(FR.left[1] + st.eB)}Z`);
-    e.barR.setAttribute('d', `M${f1(x1 - 1)} ${f1(A.t[n] + st.eT)}L${FR.w} ${f1(FR.right[0] + st.eT)}L${FR.w} ${f1(FR.right[1] + st.eB)}L${f1(x1 - 1)} ${f1(B.b[m] + st.eB)}Z`);
-    e.barL.style.opacity = clamp01(st.dT * 12); e.barR.style.opacity = clamp01((st.dB - 0.94) / 0.06);   // both reach 1: a bar at 0.96 shows lighter than the bands
+    if (!e.top._d) { e.top.setAttribute('d', FR.path); e.bot.setAttribute('d', FR.path); e.top._d = 1; }
+    e.cutT.setAttribute('d', halfCut(st.dT, true)); e.cutB.setAttribute('d', halfCut(st.dB, false));
+    e.topG.setAttribute('transform', `translate(0 ${f1(st.eT)})`); e.botG.setAttribute('transform', `translate(0 ${f1(st.eB)})`);
     // the photo shows inside the frame: under band a, over band b, between the bars
     const top = A.x.map((x, k) => f1(x) + ' ' + f1(A.b[k] + st.eT));
     const bot = B.x.map((x, k) => f1(x) + ' ' + f1(B.t[k] + st.eB)).reverse();

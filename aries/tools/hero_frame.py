@@ -95,7 +95,18 @@ def trace():
         # the ends meet the bars' inner edges exactly
         bx[0], bx[-1] = bar0, bar1
         bands.append({'x': [round(v, 2) for v in bx], 't': [round(v, 2) for v in t], 'b': [round(v, 2) for v in b]})
+    # the designer's outline itself (outer edge and the window, one path): drawn as it is; the bands above are for the
+    # photo window and the motion. mid: the middle of the window, where the outline is split into an upper and a
+    # lower half that part on scroll
+    import re
+    svg = open(os.path.join(HERE, '..', 'design', 'hero-frame.svg')).read()
+    path = re.search(r' d="([^"]+)"', svg).group(1)
+    mx = np.linspace(-20, ART_W + 20, 161)
+    ab = np.interp(mx, bands[0]['x'], bands[0]['b'])
+    bt = np.interp(mx, bands[1]['x'], bands[1]['t'])
+    mid = [[round(float(x), 1), round(float((u + v) / 2), 1)] for x, u, v in zip(mx, ab, bt)]
     return {
+        'path': path, 'mid': mid,
         'w': ART_W, 'h': ART_H, 'bars': [round(bar0, 2), round(bar1, 2)],
         # outer corners of the bars: left (top, bottom) at x = 0, right (top, bottom) at x = w
         'left': [round(left[0] / S, 2), round((left[1] + 1) / S, 2)],
