@@ -142,11 +142,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const H = hero.stage.getBoundingClientRect(), S = hero.slot.getBoundingClientRect();
     if (!H.width || !S.height) return;
     const land = isLand(), A = FR.a, B = FR.b, ph = FR.photo;
-    // the slot is FR.h units tall (CSS); landscape: the middle between the bars at the screen's centre;
-    // portrait: centred on the ship, the frame running past both sides
-    const u = S.height / FR.h;
-    const mid = land ? (FR.bars[0] + FR.bars[1]) / 2 : ph.cx - 40;
-    const vbX = mid - (S.left - H.left + S.width / 2) / u, vbY = -(S.top - H.top) / u;
+    // landscape: the slot is FR.h units tall (CSS), the middle between the bars at the screen's centre.
+    // portrait: PORTRAIT_W units across the screen from PORTRAIT_X (the whole curve, the peak and the start of the
+    // diagonal with the truck), centred in the slot's height
+    const PORTRAIT_W = 1220, PORTRAIT_X = 150;   // width: same as the slot's height in CSS (portrait)
+    const u = land ? S.height / FR.h : Math.min(S.height / FR.h, S.width / PORTRAIT_W);
+    const vbX = land ? (FR.bars[0] + FR.bars[1]) / 2 - (S.left - H.left + S.width / 2) / u : PORTRAIT_X - (S.left - H.left) / u;
+    const vbY = -(S.top - H.top + (land ? 0 : (S.height - FR.h * u) / 2)) / u;
     const vbW = H.width / u, vbH = H.height / u;
     hero.vb = [vbX, vbY, vbW, vbH];
     hero.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(vbW)} ${f1(vbH)}`);
@@ -222,7 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const idEl = $('section.identity[data-shapes]');
   // the company scene right after the hero slides over its end; marked now, before the hero's pin wraps it (after
   // that the two are no longer siblings and '.hero + .identity' stops matching)
-  if (idEl && heroEl && heroEl.nextElementSibling === idEl) idEl.classList.add('after-hero');
+  // (phones only: on wider screens the scene follows the hero's sequence, as designed)
+  if (idEl && heroEl && heroEl.nextElementSibling === idEl && !isLand()) idEl.classList.add('after-hero');
   const ribs = [];
   const add = r => { ribs.push(r); return r; };
   let identity = null;
@@ -366,8 +369,9 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ---- hero · scroll: the bands fly apart → the photo with its text → the gradient fills the screen ---- */
     const shade = $('#shade'), twoWords = splitWords($('#sceneTwo h2')), twoP = $('#sceneTwo p');
     const hsc = { e: 0 };
+    const heroLand = isLand();
     // pinned from the top; on a landscape screen shorter than the hero, pinned at its bottom (the title in view)
-    gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: '+=270%', pin: true, scrub: 0.8, invalidateOnRefresh: true } })
+    gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: heroLand ? '+=320%' : '+=270%', pin: true, scrub: 0.8, invalidateOnRefresh: true } })
       .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { const k = hsc.e; hs.eT = hero.eTmax * k; hs.eB = hero.eBmax * k; hs.z = 1 + (hero.zEnd - 1) * k; hs.p = 1 + (hero.pEnd - 1) * k; H(); } }, 0)
       .to('#heroTitle', { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in' }, 0)   // gone before the lower band reaches it
       .to('.ig-top', { opacity: 0, duration: 0.3 }, 0)
@@ -376,9 +380,10 @@ document.addEventListener('DOMContentLoaded', () => {
       .fromTo(twoP, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' }, 0.85)
       .to(twoWords, { yPercent: -115, duration: 0.3, stagger: 0.015, ease: 'power2.in' }, 1.42)
       .to(twoP, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in' }, 1.42)
-      // the blue fills the screen as the text leaves, and the hero lets go as soon as it has (no empty blue screen)
-      .to(shade, { '--a': '100%', '--b': '160%', duration: 0.42, ease: 'power1.inOut' }, 1.46)
-      .to({}, { duration: 0.01 }, 1.88);
+      // the blue fills the screen as the text leaves; on phones the hero lets go as soon as it has (a long scroll on an
+      // empty blue screen there), on wider screens the gradient takes its time, as designed
+      .to(shade, { '--a': '100%', '--b': '160%', duration: heroLand ? 0.7 : 0.42, ease: 'power1.inOut' }, heroLand ? 1.5 : 1.46)
+      .to({}, { duration: 0.01 }, heroLand ? 2.25 : 1.88);
   }
   root.classList.remove('pre');
 

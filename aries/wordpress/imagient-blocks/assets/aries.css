@@ -77,7 +77,10 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .hero-src img { display: block; width: 100%; height: auto; }
 .hero-layout { position: absolute; inset: 0 0 auto; height: 100vh; height: 100svh; display: flex; flex-direction: column; pointer-events: none;
   padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top) + var(--logo-w) * 1.76 + clamp(8px, 2vh, 28px)); }  /* phones: the bands start below the logo */
-.hero-slot { flex: 1 1 auto; min-height: 0; }
+/* portrait: the frame shown 1220 units across the screen (the whole curve, the peak and the truck), the frame and the
+   title centred together in the space under the logo */
+.hero-layout { justify-content: center; }
+.hero-slot { flex: none; height: calc(100vw * 878.48 / 1220); min-height: 0; }
 .hero-title { padding-block: clamp(18px, 3vh, 34px) clamp(28px, 6vh, 64px); display: grid; gap: 10px; }
 .hero-title h1 { color: var(--blue); font-size: var(--h-xl); line-height: 1.05; }
 .hero-title p { font-size: var(--body); color: var(--text); }
@@ -99,6 +102,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   :root { --hu: calc(min(100vw, 1920px) / 1919.76); --hdy: max(0px, (100vh - 1078 * var(--hu)) / 2); }
   .hero-stage { height: max(100vh, 1078 * var(--hu)); }
   .hero-layout { inset: 0; height: auto; padding-top: calc(100 * var(--hu) + var(--hdy)); }
+  .hero-layout { justify-content: flex-start; }
   .hero-slot { flex: none; height: calc(878.48 * var(--hu)); }
   .hero-title { margin-top: calc(-29 * var(--hu)); padding: 0 0 0 calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); gap: calc(10 * var(--hu)); }
   .hero-title h1 { font-size: max(24px, 70 * var(--hu)); }
@@ -140,9 +144,10 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .js .id-top .id-states > * { align-self: start; justify-self: start; }
 /* the blue scene slides over the end of the hero while the gradient is still filling (its own background
    fades in only as the hero lets go), so the Group text arrives with the fill, not after it */
-.anim .identity.after-hero { margin-top: -55vh; margin-top: -55svh; background: none;
-  /* its upper part slides over the hero's end (see-through until its own background fades in); the part below the
-     hero's end is blue from the start, so the page never shows between them while scrolling either way */
+/* phones: the company scene slides over the end of the hero (no long scroll on an empty blue screen); the part of it
+   below the hero's end is blue from the start (while it is see-through, the mobile toolbars moving the screen's
+   height could show the page under it) */
+.anim .identity.after-hero { margin-top: -55vh; margin-top: -55svh;
   background: linear-gradient(transparent 0, transparent 55vh, var(--blue) 55vh); background: linear-gradient(transparent 0, transparent 55svh, var(--blue) 55svh); }
 .anim .identity.after-hero .id-bg { opacity: 0; }
 .js .id-states > * { grid-area: 1 / 1; }
