@@ -88,39 +88,24 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .scene-two p { font-size: var(--body); max-width: 46ch; margin-top: 18px; }
 .anim .shade { opacity: 0; }
 .anim .scene-two { position: absolute; inset: 0; background: none; padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); }
-.pre #hTop, .pre #hBot, .pre #hImgWrap { opacity: 0; }
-/* landscape screens: the hero is the design, scaled by --u so it always fits one screen: logo at the top left,
-   the band composition from the left edge exactly as drawn (747 design px tall, from 180), the title under it.
-   On screens wider than the composition the bands simply run on to the right edge: that part of the drawing is
-   two straight bands, so it continues seamlessly. */
+.pre #hTop, .pre #hBot, .pre #hBarL, .pre #hBarR, .pre #hImgWrap { opacity: 0; }
+/* landscape screens: the Aries frame as drawn. Its artboard is 2007 × 876 units and the 1918.8 units between its bars
+   are the 1920 px screen, so --hu (one unit) is the screen's width / 1918.8 up to 1920 px and stays there beyond: the
+   frame is centred and its bars come into view. Logo at the top left, the frame from 102 units down, the title under
+   the left curve. On a screen shorter than the whole (1078 units) the hero is taller than the screen: the title is a
+   short scroll away and the sequence pins at the hero's bottom, so the shade and the second scene keep to that screen. */
 @media (min-aspect-ratio: 1/1) and (min-width: 760px) {
-  .hero-layout { padding-top: calc(180 * var(--u)); }
-  .hero-slot { flex: none; height: calc(747 * var(--u)); }
-  .hero-title { padding-block: calc(30 * var(--u)) 0; gap: calc(10 * var(--u)); }
-  .hero-title h1 { font-size: max(22px, 60 * var(--u)); }
-  .hero-title p { font-size: max(14px, 20 * var(--u)); }
-}
-
-/* wide screens, "contain": from 1600 px the drawing stays exactly as designed, centred in a frame its own width
-   (logo and title aligned to it); on scroll the frame opens to the full width as the bands fly apart */
-@media (min-aspect-ratio: 1/1) and (min-width: 1600px) {
-  .hero.is-contain { --frame: min(100vw, 1440 * var(--u)); --gut: calc(68 * var(--u)); --gut-r: calc(68 * var(--u)); }
-  .hero.is-contain .hero-stage { width: calc(var(--frame) + (100% - var(--frame)) * var(--open, 0)); margin-inline: auto; }
-  .hero-contain .home .ig-top, .hero-contain .ig-top { padding-left: calc((100vw - min(100vw, 1440 * var(--u))) / 2 + 68 * var(--u)); }
-}
-
-/* wide screens, "scale": the drawing exactly as designed at every width, from the left edge to the right edge
-   (one design pixel = 1/1440 of the hero's width); where the screen is wider than the design the hero is taller
-   than the screen: the title is reached by scrolling, then the sequence pins at the bottom of the hero */
-@media (min-aspect-ratio: 1/1) and (min-width: 760px) {
-  .hero.is-scale { container-type: inline-size; }
-  .hero.is-scale .hero-stage { --u: calc(100cqw / 1440); height: max(100vh, 1170 * var(--u)); height: max(100svh, 1170 * var(--u)); }
-  .hero.is-scale .hero-layout { height: auto; bottom: 0; }
-  .hero.is-scale .hero-title h1 { font-size: var(--h-xl); }
-  .hero.is-scale .hero-title p { font-size: var(--body); }
-  .hero.is-scale .shade { top: auto; height: 100vh; height: 100svh; }
-  .anim .hero.is-scale .scene-two { top: auto; height: 100vh; height: 100svh; }
-  .hero-scale .ig-top { --logo-top: max(20px, 60 * 100vw / 1440); }
+  /* --hdy: on a screen taller than the whole (1078 units), the whole is centred in it */
+  :root { --hu: calc(min(100vw, 1920px) / 1918.8); --hdy: max(0px, (100vh - 1078 * var(--hu)) / 2); }
+  .hero-stage { height: max(100vh, 1078 * var(--hu)); }
+  .hero-layout { inset: 0; height: auto; padding-top: calc(102 * var(--hu) + var(--hdy)); }
+  .hero-slot { flex: none; height: calc(876 * var(--hu)); }
+  .hero-title { margin-top: calc(-28 * var(--hu)); padding: 0 0 0 calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); gap: calc(10 * var(--hu)); }
+  .hero-title h1 { font-size: max(24px, 70 * var(--hu)); }
+  .hero-title p { font-size: max(14px, 22 * var(--hu)); }
+  .shade { top: auto; height: 100vh; }
+  .anim .scene-two { top: auto; height: 100vh; }
+  .home .ig-top { padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); --logo-top: max(20px, 40 * var(--hu) + var(--hdy)); --logo-w: max(44px, 80 * var(--hu)); }
 }
 
 /* ---------- scene 2: Group and the three companies, one ribbon through four shapes ---------- */

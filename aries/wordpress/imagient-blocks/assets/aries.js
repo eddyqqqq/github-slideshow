@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const root = document.documentElement;
   const DATA = window.ARIES_SHAPES;
   if (!DATA) { root.classList.remove('pre'); return; }
-  const RIB = DATA.ribbons, HB = DATA.hero;
+  const RIB = DATA.ribbons;
 
   // polygon for a band between two edges, visible between fractions q0..q1 of its length (left to right)
   function bandD(xs, t, b, q1, dyT, dyB, q0 = 0) {
@@ -100,32 +100,82 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let request = c => c.render();
 
-  /* ---------------- hero: two design bands with the photo between them ---------------- */
-  const GAP = 464;                       // vertical offset of the lower band (design file)
-  const COMP = [0, 0, HB.w, GAP + Math.max(...HB.b)];
-  const ROT = 21;                        // the photo's angle: the slope of the bands' straight part
-  // the photo's scale in the design, in drawing units per photo pixel (measured on the design: ship → truck),
-  // so the road with the truck, the ship and the railway all show between the bands, as drawn
-  const K_DESIGN = 1.3;
-  // y of an edge at x
-  const yAt = (e, x) => { const xs = e.xs; let k = 1; while (k < xs.length - 1 && xs[k] < x) k++; return e.ys[k - 1] + (e.ys[k] - e.ys[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]); };
-  const heroEl = $('#hero.hero');
+  /* ---------------- hero: the frame (two bands closed by a bar at each end) with the photo inside ---------------- */
+  // Drawn in artboard units (FR.w × FR.h). The space between the bars (FR.bars) is the 1920 px screen: up to 1920 the
+  // frame spans the screen and the bars sit just outside it; wider screens keep the 1920 size, centred, bars in view.
+  const FR = DATA.frame;
+  const heroEl = FR ? $('#hero.hero') : null;
   const hero = heroEl ? {
-    el: heroEl, stage: $('.hero-stage', heroEl), svg: $('#heroSvg'), slot: $('#heroSlot'), top: $('#hTop'), bot: $('#hBot'), region: $('#hRegion'),
-    zoom: $('#hZoom'), wrap: $('#hImgWrap'), rot: $('#hRot'), img: $('#hImg'), imgL: $('#hImgL'), imgR: $('#hImgR'), src: $('#heroSrc'),
-    st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1, open: 0 }, eTmax: -400, eBmax: 400, zc: 1.1, IMG: { w: 1500, h: 1020 }
+    el: heroEl, stage: $('.hero-stage', heroEl), svg: $('#heroSvg'), slot: $('#heroSlot'), top: $('#hTop'), bot: $('#hBot'),
+    barL: $('#hBarL'), barR: $('#hBarR'), region: $('#hRegion'), zoom: $('#hZoom'), photo: $('#hPhoto'), wrap: $('#hImgWrap'),
+    img: $('#hImg'), src: $('#heroSrc'),
+    st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1, p: 1 }, IMG: { w: 1500, h: 1020 }
   } : null;
-  if (hero) {
-    // wide screens: "full" (bands run on to the right edge), "stretch" (the drawing widens to the screen),
-    // "contain" (the drawing as designed, centred; it opens to the full width on scroll), "scale" (the drawing as
-    // designed, edge to edge at every width: the hero grows taller than the screen where the screen is wider than
-    // the design). ?hero=… tries one.
-    const MODES = ['full', 'stretch', 'contain', 'scale'];
-    const q = new URLSearchParams(location.search).get('hero');
-    hero.mode = MODES.includes(q) ? q : (MODES.includes(heroEl.dataset.wide) ? heroEl.dataset.wide : 'full');
-    heroEl.classList.add('is-' + hero.mode);
-    root.classList.add('hero-' + hero.mode);
+  const yAt = (xs, ys, x) => { let k = 1; while (k < xs.length - 1 && xs[k] < x) k++; return ys[k - 1] + (ys[k] - ys[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]); };
+  const isLand = () => matchMedia('(min-aspect-ratio: 1/1) and (min-width: 760px)').matches;
+  function heroLayout() {
+    if (!hero) return;
+    const H = hero.stage.getBoundingClientRect(), S = hero.slot.getBoundingClientRect();
+    if (!H.width || !S.height) return;
+    const land = isLand(), A = FR.a, B = FR.b, ph = FR.photo;
+    // the slot is FR.h units tall (CSS); landscape: the middle between the bars at the screen's centre;
+    // portrait: centred on the ship, the frame running past both sides
+    const u = S.height / FR.h;
+    const mid = land ? (FR.bars[0] + FR.bars[1]) / 2 : ph.cx - 40;
+    const vbX = mid - (S.left - H.left + S.width / 2) / u, vbY = -(S.top - H.top) / u;
+    const vbW = H.width / u, vbH = H.height / u;
+    hero.vb = [vbX, vbY, vbW, vbH];
+    hero.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(vbW)} ${f1(vbH)}`);
+    // the screen while the hero is pinned (a hero taller than the screen pins at its bottom) and its centre: the zoom origin
+    const sh = Math.min(H.height, innerHeight) / u, sy = H.height > innerHeight + 4 ? vbY + vbH - sh : vbY;
+    const scr = [vbX, sy, vbW, sh];
+    hero.S0 = [vbX + vbW / 2, sy + sh / 2];
+    // the photo at its designed place and size (k: its width in units for a 1500 px photo), rotated with the bands;
+    // larger only if a different photo would leave a corner of the frame uncovered
+    const rot = ph.rot * Math.PI / 180, RC = Math.cos(rot), RS = Math.sin(rot);
+    const uv = (x, y) => { const dx = x - ph.cx, dy = y - ph.cy; return [Math.abs(dx * RC + dy * RS), Math.abs(-dx * RS + dy * RC)]; };
+    let iw = 1500 * ph.k, ih = iw * hero.IMG.h / hero.IMG.w, grow = 1;
+    const edgePts = [];
+    A.x.forEach((x, i) => edgePts.push([x, A.b[i]])); B.x.forEach((x, i) => edgePts.push([x, B.t[i]]));
+    edgePts.forEach(([x, y]) => { const [p, q] = uv(x, y); grow = Math.max(grow, 2.02 * p / iw, 2.02 * q / ih); });
+    iw *= grow; ih *= grow;
+    hero.img.setAttribute('x', f1(ph.cx - iw / 2)); hero.img.setAttribute('y', f1(ph.cy - ih / 2));
+    hero.img.setAttribute('width', f1(iw)); hero.img.setAttribute('height', f1(ih));
+    hero.img.setAttribute('transform', `rotate(${ph.rot} ${ph.cx} ${ph.cy})`);
+    // scrolled: the frame grows from the screen's centre until the space between the bars spans the screen, the bands
+    // leave it at the top and bottom, and the photo (growing from the same centre) fills it
+    hero.zEnd = Math.max(1.12, scr[2] / (FR.bars[1] - FR.bars[0]) * 1.04);
+    const [cx, cy] = hero.S0, hw = scr[2] / 2 / hero.zEnd, hh = scr[3] / 2 / hero.zEnd;
+    const xsIn = Array.from({ length: 41 }, (_, i) => cx - hw + 2 * hw * i / 40);
+    hero.eTmax = (cy - hh - 30) - Math.max(...xsIn.map(x => yAt(A.x, A.b, x)));
+    hero.eBmax = (cy + hh + 30) - Math.min(...xsIn.map(x => yAt(B.x, B.t, x)));
+    // the photo's growth: the least that covers the end screen (corners mapped back through the zoom about S0)
+    const covers = p => [[-1, -1], [1, -1], [-1, 1], [1, 1]].every(([sx, sy2]) => {
+      const [q1, q2] = uv(cx + sx * hw / p, cy + sy2 * hh / p); return q1 <= iw / 2 && q2 <= ih / 2; });
+    let lo = 1, hi = 12;
+    if (!covers(lo)) { for (let i = 0; i < 30; i++) { const m = (lo + hi) / 2; covers(m) ? hi = m : lo = m; } hero.pEnd = hi * 1.03; } else hero.pEnd = 1;
+    heroRender();
   }
+  function heroRender() {
+    if (!hero || !hero.vb) return;
+    const st = hero.st, A = FR.a, B = FR.b, e = hero;
+    e.top.setAttribute('d', bandD(A.x, A.t, A.b, st.dT, st.eT, st.eT));
+    e.bot.setAttribute('d', bandD(B.x, B.t, B.b, st.dB, st.eB, st.eB));
+    // the bars join the ends of the two bands (they stretch as the bands part)
+    const [x0, x1] = FR.bars, n = A.x.length - 1, m = B.x.length - 1;
+    e.barL.setAttribute('d', `M0 ${f1(FR.left[0] + st.eT)}L${f1(x0 + 1)} ${f1(A.t[0] + st.eT)}L${f1(x0 + 1)} ${f1(B.b[0] + st.eB)}L0 ${f1(FR.left[1] + st.eB)}Z`);
+    e.barR.setAttribute('d', `M${f1(x1 - 1)} ${f1(A.t[n] + st.eT)}L${FR.w} ${f1(FR.right[0] + st.eT)}L${FR.w} ${f1(FR.right[1] + st.eB)}L${f1(x1 - 1)} ${f1(B.b[m] + st.eB)}Z`);
+    e.barL.style.opacity = clamp01(st.dT * 12); e.barR.style.opacity = clamp01((st.dB - 0.94) * 16);
+    // the photo shows inside the frame: under band a, over band b, between the bars
+    const top = A.x.map((x, k) => f1(x) + ' ' + f1(A.b[k] + st.eT));
+    const bot = B.x.map((x, k) => f1(x) + ' ' + f1(B.t[k] + st.eB)).reverse();
+    e.region.setAttribute('d', 'M' + top.join('L') + 'L' + bot.join('L') + 'Z');
+    const [cx, cy] = e.S0, about = k => `translate(${f1(cx)} ${f1(cy)}) scale(${k.toFixed(4)}) translate(${f1(-cx)} ${f1(-cy)})`;
+    e.zoom.setAttribute('transform', about(st.z));
+    e.photo.setAttribute('transform', about(st.p * st.zi));
+    e.wrap.style.opacity = st.io;
+  }
+
   if (hero && hero.src) {
     // the photo the browser chose from the srcset (format and size), already loading
     const useSrc = () => {
@@ -134,81 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     useSrc();
     if (!hero.src.complete) hero.src.addEventListener('load', useSrc, { once: true });
-  }
-  // an edge of the band, widened by f along x, from xa to xb
-  function edge(arr, xa, xb, f = 1) {
-    const xs = [], ys = [], n = HB.x.length;
-    // past the left end the bands bend gently towards horizontal instead of climbing on
-    if (xa < 0) {
-      const L = 140 * f, pts = [];
-      for (let dx = -12; dx > xa - 5; dx *= 1.6) pts.push(dx);
-      pts.push(xa - 5);
-      pts.reverse().forEach(dx => { xs.push(dx); ys.push(arr[0] + HB.sl / f * L * (Math.exp(dx / L) - 1)); });
-    }
-    for (let k = 0; k < n; k++) { xs.push(HB.x[k] * f); ys.push(arr[k]); }
-    // past the right end the drawing is two straight bands: continue each edge along its own last segment
-    if (xb > HB.w * f) { const sr = (arr[n - 1] - arr[n - 2]) / ((HB.x[n - 1] - HB.x[n - 2]) * f); xs.push(xb + 5); ys.push(arr[n - 1] + sr * (xb + 5 - HB.w * f)); }
-    return { xs, ys };
-  }
-  function heroLayout() {
-    if (!hero) return;
-    const H = hero.stage.getBoundingClientRect(), S = hero.slot.getBoundingClientRect();
-    if (!H.width || !S.height) return;
-    const [rx, ry, rw, rh] = COMP;
-    // landscape: the composition fills the slot's height, from the left edge (as in the design);
-    // portrait: fit the slot and let it grow past the sides, centred
-    const sw = S.width / rw, sh = S.height / rh, land = matchMedia('(min-aspect-ratio: 1/1) and (min-width: 760px)').matches;
-    const s = land ? sh : Math.min(sh, sw * Math.min(1.8, Math.max(1, sh / sw * 0.62)));
-    // stretch: on screens wider than the drawing, the drawing widens (along x only) to reach the right edge, up to 1.5 ×
-    const f = land && hero.mode === 'stretch' ? Math.min(1.5, Math.max(1, (H.left + H.width - S.left) / (rw * s))) : 1;
-    const vbX = land ? rx - (S.left - H.left) / s : rx + rw / 2 - (S.left - H.left + S.width / 2) / s;
-    const vbY = ry + rh / 2 - (S.top - H.top + S.height / 2) / s;
-    const vbW = H.width / s, vbH = H.height / s;
-    hero.vb = [vbX, vbY, vbW, vbH];
-    hero.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(vbW)} ${f1(vbH)}`);
-    const xa = vbX - vbW * 0.3, xb = vbX + vbW * 1.3;
-    hero.T = edge(HB.t, xa, xb, f); hero.B = edge(HB.b, xa, xb, f);
-    const smp = e => Array.from({ length: 81 }, (_, i) => yAt(e, vbX + vbW * i / 80));
-    hero.eTmax = -(Math.max(...smp(hero.B)) - vbY) - 40;
-    hero.eBmax = (vbY + vbH) - (Math.min(...smp(hero.T)) + GAP) + 40;
-    // the photo: rotated to the bands' angle, centred on the composition
-    const rot = Math.atan(Math.tan(ROT * Math.PI / 180) / f), RC = Math.cos(rot), RS = Math.sin(rot);
-    const IMG = hero.IMG, cx = (rx + rw / 2) * f, cy = ry + rh / 2;
-    const uv = (x, y) => { const dx = x - cx, dy = y - cy; return [Math.abs(dx * RC + dy * RS), Math.abs(-dx * RS + dy * RC)]; };
-    // at rest: the design's scale, larger only where the gap between the bands would otherwise show an edge
-    // of the photo (mirrored copies continue it along the bands, so only its height has to reach)
-    let k = K_DESIGN;
-    for (let i = 0; i <= 80; i++) {
-      const x = vbX + vbW * i / 80, y0 = Math.max(vbY, yAt(hero.B, x)), y1 = Math.min(vbY + vbH, yAt(hero.T, x) + GAP);
-      if (y1 <= y0) continue;
-      [y0, y1].forEach(y => { const [u, v] = uv(x, y); k = Math.max(k, 2.04 * v / IMG.h, 2.04 * u / (IMG.w * 2.8)); });
-    }
-    // scrolled: the photo alone fills the screen (no copies in view)
-    let kc = 0;
-    [[vbX, vbY], [vbX + vbW, vbY], [vbX, vbY + vbH], [vbX + vbW, vbY + vbH]].forEach(([x, y]) => { const [u, v] = uv(x, y); kc = Math.max(kc, 2 * u / IMG.w, 2 * v / IMG.h); });
-    hero.zc = Math.max(1, kc * 1.06 / k);
-    const iw = IMG.w * k, ih = IMG.h * k, x0 = cx - iw / 2;
-    hero.img.setAttribute('x', f1(x0)); hero.img.setAttribute('y', f1(cy - ih / 2));
-    hero.img.setAttribute('width', f1(iw)); hero.img.setAttribute('height', f1(ih));
-    // the copies are mirrored about a line just inside each edge, which also hides the photo's own edge
-    const mR = x0 + iw * 0.95, mL = x0 + iw * 0.01;
-    hero.imgR.setAttribute('transform', `translate(${f1(2 * mR)} 0) scale(-1 1)`);
-    hero.imgL.setAttribute('transform', `translate(${f1(2 * mL)} 0) scale(-1 1)`);
-    hero.rot.setAttribute('transform', `rotate(${f1(rot * 180 / Math.PI)} ${f1(cx)} ${f1(cy)})`);
-    hero.c = [cx, cy];
-    heroRender();
-  }
-  function heroRender() {
-    if (!hero || !hero.vb) return;
-    const st = hero.st, e = hero;
-    e.top.setAttribute('d', bandD(e.T.xs, e.T.ys, e.B.ys, st.dT, st.eT, st.eT));
-    e.bot.setAttribute('d', bandD(e.T.xs, e.T.ys, e.B.ys, st.dB, GAP + st.eB, GAP + st.eB));
-    const top = e.B.xs.map((x, k) => f1(x) + ' ' + f1(e.B.ys[k] + st.eT));
-    const bot = e.T.xs.map((x, k) => f1(x) + ' ' + f1(e.T.ys[k] + GAP + st.eB)).reverse();
-    e.region.setAttribute('d', 'M' + top.join('L') + 'L' + bot.join('L') + 'Z');
-    const [cx, cy] = e.c, z = (st.z * st.zi).toFixed(4);
-    e.zoom.setAttribute('transform', `translate(${f1(cx)} ${f1(cy)}) scale(${z}) translate(${f1(-cx)} ${f1(-cy)})`);
-    e.wrap.style.opacity = st.io;
   }
 
   /* ---------------- build the ribbons on the page ---------------- */
@@ -357,10 +332,9 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ---- hero · scroll: the bands fly apart → the photo with its text → the gradient fills the screen ---- */
     const shade = $('#shade'), twoWords = splitWords($('#sceneTwo h2')), twoP = $('#sceneTwo p');
     const hsc = { e: 0 };
-    // pinned from the top (the stage fills the screen); in Scale the hero is taller than the screen: pinned at its bottom
-    gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => hero.el.offsetHeight > innerHeight * 1.15 ? 'bottom bottom' : 'top top', end: '+=320%', pin: true, scrub: 0.8, invalidateOnRefresh: true } })
-      .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { hs.eT = hero.eTmax * hsc.e; hs.eB = hero.eBmax * hsc.e; hs.z = 1 + (hero.zc - 1) * hsc.e; H(); } }, 0)
-      .to(hs, { open: 1, duration: 0.5, ease: 'power2.inOut', onUpdate: () => { if (hero.mode === 'contain') { hero.stage.style.setProperty('--open', hs.open.toFixed(4)); heroLayout(); } } }, 0)
+    // pinned from the top; on a landscape screen shorter than the hero, pinned at its bottom (the title in view)
+    gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: '+=320%', pin: true, scrub: 0.8, invalidateOnRefresh: true } })
+      .to(hsc, { e: 1, duration: 1, ease: 'power2.inOut', onUpdate: () => { const k = hsc.e; hs.eT = hero.eTmax * k; hs.eB = hero.eBmax * k; hs.z = 1 + (hero.zEnd - 1) * k; hs.p = 1 + (hero.pEnd - 1) * k; H(); } }, 0)
       .to('#heroTitle', { y: -60, opacity: 0, duration: 0.35, ease: 'power2.in' }, 0)
       .to('.ig-top', { opacity: 0, duration: 0.3 }, 0)
       .to(shade, { opacity: 1, duration: 0.45, ease: 'none' }, 0.5)

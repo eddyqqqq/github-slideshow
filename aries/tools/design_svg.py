@@ -5,6 +5,7 @@
   and simplified with RDP. Gradients are taken from the file (fill="url(#...)").
 - Vector.svg is the single solid band of the hero (used twice: top and bottom band).
 """
+import json
 import os
 import re
 import xml.etree.ElementTree as ET
@@ -92,7 +93,11 @@ RIBBONS = {
 
 
 def data():
-    return {'ribbons': {k: ribbon(v) for k, v in RIBBONS.items()}, 'hero': band('Vector')}
+    # the hero frame is traced once (tools/hero_frame.py) and read from its JSON
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hero_frame.json')) as f:
+        frame = json.load(f)
+    # 'hero' (the first design's single band) stays for the static pages (build_home.py)
+    return {'ribbons': {k: ribbon(v) for k, v in RIBBONS.items()}, 'hero': band('Vector'), 'frame': frame}
 
 
 if __name__ == '__main__':

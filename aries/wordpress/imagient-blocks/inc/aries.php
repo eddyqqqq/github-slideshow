@@ -73,7 +73,7 @@ function imagient_register_aries_blocks() {
 
 	register_block_type( 'imagient/hero', array_merge( $common, array(
 		'title'           => 'Aries hero',
-		'description'     => 'The cover: the two design bands with the photo between them. On scroll the bands open, the photo fills the screen with its own text, then the blue fills the screen.',
+		'description'     => 'The cover: the Aries frame (two bands closed by a bar at each end) with the photo inside. On scroll the frame grows from the centre, the bands open, the photo fills the screen with its own text, then the blue fills the screen.',
 		'supports'        => array( 'className' => true, 'html' => false, 'align' => array( 'full' ), 'multiple' => false ),
 		'attributes'      => array(
 			'align'      => array( 'type' => 'string', 'default' => 'full' ),
@@ -83,7 +83,6 @@ function imagient_register_aries_blocks() {
 			'sceneText'  => array( 'type' => 'string', 'default' => 'Established in 2003, Aries Group operates across the Black Sea and Danube region.' ),
 			'imageId'    => array( 'type' => 'number', 'default' => 0 ),
 			'imageUrl'   => array( 'type' => 'string', 'default' => $d['heroImage'] ),
-			'wide'       => array( 'type' => 'string', 'default' => 'full' ),
 		),
 		'render_callback' => 'imagient_render_hero',
 	) ) );
@@ -171,13 +170,17 @@ function imagient_render_hero( $a ) {
 	}
 	ob_start();
 	?>
-<section <?php echo imagient_wrapper( null, 'hero', '', array( 'id' => 'hero', 'data-wide' => in_array( $a['wide'], array( 'full', 'stretch', 'contain', 'scale' ), true ) ? $a['wide'] : 'full' ) ); ?>>
+<section <?php echo imagient_wrapper( null, 'hero', '', array( 'id' => 'hero' ) ); ?>>
   <div class="hero-stage">
-    <svg class="hero-svg" id="heroSvg" viewBox="0 -120 1442 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <svg class="hero-svg" id="heroSvg" viewBox="0 0 2007 876" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs><clipPath id="hClip"><path id="hRegion" d="M0 0Z"/></clipPath></defs>
-      <g clip-path="url(#hClip)"><g id="hZoom"><g id="hImgWrap"><g id="hRot"><image id="hImg" x="0" y="0" width="1500" height="1020" preserveAspectRatio="none"/><use id="hImgL" href="#hImg"/><use id="hImgR" href="#hImg"/></g></g></g></g>
-      <path id="hTop" fill="#145FAD" d="M0 0Z"/>
-      <path id="hBot" fill="#145FAD" d="M0 0Z"/>
+      <g id="hZoom">
+        <g clip-path="url(#hClip)"><g id="hPhoto"><g id="hImgWrap"><image id="hImg" x="0" y="0" width="1500" height="1020" preserveAspectRatio="none"/></g></g></g>
+        <path id="hTop" fill="#145FAD" d="M0 0Z"/>
+        <path id="hBot" fill="#145FAD" d="M0 0Z"/>
+        <path id="hBarL" fill="#145FAD" d="M0 0Z"/>
+        <path id="hBarR" fill="#145FAD" d="M0 0Z"/>
+      </g>
     </svg>
     <div class="hero-src" aria-hidden="true"><?php echo $img; // phpcs:ignore -- core-escaped ?></div>
     <div class="shade" id="shade"></div>
