@@ -133,10 +133,36 @@ document.addEventListener('DOMContentLoaded', () => {
     el: heroEl, stage: $('.hero-stage', heroEl), svg: $('#heroSvg'), slot: $('#heroSlot'), top: $('#hTop'), bot: $('#hBot'),
     topG: $('#hTopG'), botG: $('#hBotG'), brL: $('#hBridgeL'), brR: $('#hBridgeR'), cutT: $('#hCutT'), cutB: $('#hCutB'), region: $('#hRegion'), zoom: $('#hZoom'), photo: $('#hPhoto'), wrap: $('#hImgWrap'),
     img: $('#hImg'), src: $('#heroSrc'),
-    st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1, p: 1 }, IMG: { w: 1500, h: 1020 }
+    st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1, p: 0 }, IMG: { w: 1500, h: 1020 }
   } : null;
   const yAt = (xs, ys, x) => { let k = 1; while (k < xs.length - 1 && xs[k] < x) k++; return ys[k - 1] + (ys[k] - ys[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]); };
   const isLand = () => matchMedia('(min-aspect-ratio: 1/1) and (min-width: 760px)').matches;
+  // the photo's subjects, in its pixels (1500 × 1020): the truck, the ship and the railway (a train along most of it)
+  const SUBJ = { truck: [930, 330, 1050, 372], ship: [640, 505, 862, 560] }, RAIL = [380, 1490, 742, 790];
+  // where the scrolled photo settles: the point P of the photo at the screen's centre and the scale s (units per pixel)
+  // that cover the screen (hw × hh, half sizes) at rotation r (degrees); the smallest s that keeps every subject in view
+  // with a margin, or, where none can, the placement that comes closest
+  function endCamera(hw, hh, r, Hp) {
+    const R = r * Math.PI / 180, c = Math.cos(R), n = Math.sin(R), sy = Hp / 1020;
+    const toScreen = (P, k, x, y) => { const dx = x - P[0], dy = y * sy - P[1]; return [(dx * c - dy * n) * k, (dx * n + dy * c) * k]; };
+    let best = null;
+    for (let px = 420; px <= 1080; px += 12) for (let py = Hp * 0.3; py <= Hp * 0.7; py += Hp / 100) {
+      let k = 0;
+      [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([a, b]) => {
+        const vx = (a * hw * c + b * hh * n), vy = (-a * hw * n + b * hh * c);   // the screen corner in photo directions
+        k = Math.max(k, vx > 0 ? vx / (1500 - px) : -vx / px, vy > 0 ? vy / (Hp - py) : -vy / py);
+      });
+      k *= 1.03;
+      const P = [px, py], rx = Math.min(Math.max(px, RAIL[0] + 90), RAIL[1] - 90);
+      const boxes = [SUBJ.truck, SUBJ.ship, [rx - 90, RAIL[2], rx + 90, RAIL[3]]];
+      let slack = Infinity;
+      boxes.forEach(([x0, y0, x1, y1]) => [[x0, y0], [x1, y0], [x0, y1], [x1, y1]].forEach(([x, y]) => {
+        const [X, Y] = toScreen(P, k, x, y); slack = Math.min(slack, (hw - Math.abs(X)) / hw, (hh - Math.abs(Y)) / hh); }));
+      const score = slack >= 0.06 ? 1000 - k : slack;
+      if (!best || score > best.score) best = { score, P, s: k };
+    }
+    return { P: best.P, s: best.s };
+  }
   function heroLayout() {
     if (!hero) return;
     const H = hero.stage.getBoundingClientRect(), S = hero.slot.getBoundingClientRect();
@@ -155,35 +181,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const vbW = H.width / u, vbH = H.height / u;
     hero.vb = [vbX, vbY, vbW, vbH];
     hero.svg.setAttribute('viewBox', `${f1(vbX)} ${f1(vbY)} ${f1(vbW)} ${f1(vbH)}`);
-    // the screen while the hero is pinned (a hero taller than the screen pins at its bottom) and its centre: the zoom origin
-    const sh = Math.min(H.height, innerHeight) / u, sy = H.height > innerHeight + 4 ? vbY + vbH - sh : vbY;
+    // the screen while the hero is pinned and its centre (the zoom origin): a landscape hero taller than the screen pins
+    // at its bottom; a phone's stage fills the large viewport (toolbars hidden), all of which can show
+    const tallPin = land && H.height > innerHeight + 4;
+    const sh = (tallPin ? innerHeight : H.height) / u, sy = tallPin ? vbY + vbH - sh : vbY;
     const scr = [vbX, sy, vbW, sh];
     hero.S0 = [vbX + vbW / 2, sy + sh / 2];
-    // the photo at its designed place and size (k: its width in units for a 1500 px photo), rotated with the bands;
-    // larger only if a different photo would leave a corner of the frame uncovered
+    // the photo in its own pixels (1500 wide): at rest at its designed place and size (k: units per pixel), rotated with
+    // the bands; larger only if a different photo would leave a corner of the frame uncovered
+    const Hp = 1500 * hero.IMG.h / hero.IMG.w;
     const rot = ph.rot * Math.PI / 180, RC = Math.cos(rot), RS = Math.sin(rot);
     const uv = (x, y) => { const dx = x - ph.cx, dy = y - ph.cy; return [Math.abs(dx * RC + dy * RS), Math.abs(-dx * RS + dy * RC)]; };
-    let iw = 1500 * ph.k, ih = iw * hero.IMG.h / hero.IMG.w, grow = 1;
+    let iw = 1500 * ph.k, ih = iw * Hp / 1500, grow = 1;
     const edgePts = [];
     A.x.forEach((x, i) => edgePts.push([x, A.b[i]])); B.x.forEach((x, i) => edgePts.push([x, B.t[i]]));
     // only the part of the window on screen has to be covered
     edgePts.filter(([x]) => x >= vbX - 20 && x <= vbX + vbW + 20).forEach(([x, y]) => { const [p, q] = uv(x, y); grow = Math.max(grow, 2.02 * p / iw, 2.02 * q / ih); });
-    iw *= grow; ih *= grow;
-    hero.img.setAttribute('x', f1(ph.cx - iw / 2)); hero.img.setAttribute('y', f1(ph.cy - ih / 2));
-    hero.img.setAttribute('width', f1(iw)); hero.img.setAttribute('height', f1(ih));
-    hero.img.setAttribute('transform', `rotate(${ph.rot} ${ph.cx} ${ph.cy})`);
-    // scrolled: the frame grows from the screen's centre until the space between the bars spans the screen, the bands
-    // leave it at the top and bottom, and the photo (growing from the same centre) fills it
+    hero.img.setAttribute('x', 0); hero.img.setAttribute('y', 0);
+    hero.img.setAttribute('width', 1500); hero.img.setAttribute('height', f1(Hp));
+    hero.cam0 = { C: [ph.cx, ph.cy], r: ph.rot, s: ph.k * grow, P: [750, Hp / 2] };
+    // scrolled: the frame grows from the screen's centre, the bands leave it at the top and bottom
     hero.zEnd = Math.max(1.12, scr[2] / (FR.bars[1] - FR.bars[0]) * 1.04);
     const [cx, cy] = hero.S0, hw = scr[2] / 2 / hero.zEnd, hh = scr[3] / 2 / hero.zEnd;
     const xsIn = Array.from({ length: 41 }, (_, i) => cx - hw + 2 * hw * i / 40);
-    hero.eTmax = (cy - hh - 30) - Math.max(...xsIn.map(x => yAt(A.x, A.b, x)));
-    hero.eBmax = (cy + hh + 30) - Math.min(...xsIn.map(x => yAt(B.x, B.t, x)));
-    // the photo's growth: the least that covers the end screen (corners mapped back through the zoom about S0)
-    const covers = p => [[-1, -1], [1, -1], [-1, 1], [1, 1]].every(([sx, sy2]) => {
-      const [q1, q2] = uv(cx + sx * hw / p, cy + sy2 * hh / p); return q1 <= iw / 2 && q2 <= ih / 2; });
-    let lo = 1, hi = 12;
-    if (!covers(lo)) { for (let i = 0; i < 30; i++) { const m = (lo + hi) / 2; covers(m) ? hi = m : lo = m; } hero.pEnd = hi * 1.03; } else hero.pEnd = 1;
+    hero.eTmax = (cy - hh - 40) - Math.max(...xsIn.map(x => yAt(A.x, A.b, x)));
+    hero.eBmax = (cy + hh + 40) - Math.min(...xsIn.map(x => yAt(B.x, B.t, x)));
+    // ... and the photo settles, straightened a little, so the road with the truck, the river with the ship and the
+    // railway all show on the screen (the meaning of the cover: every mode of transport), as little enlarged as can be
+    hero.cam1 = Object.assign({ C: [cx, cy], r: ph.rot * 0.38 }, endCamera(hw, hh, ph.rot * 0.38, Hp));
     heroRender();
   }
   // the designer's outline, exactly as drawn, split along the middle of its window into an upper and a lower half
@@ -218,7 +243,10 @@ document.addEventListener('DOMContentLoaded', () => {
     e.region.setAttribute('d', `M${f1(A.x[0] - G)} ${f1(A.b[0] - G + st.eT)}L` + top.join('L') + `L${f1(A.x[n] + G)} ${f1(A.b[n] - G + st.eT)}L${f1(B.x[m] + G)} ${f1(B.t[m] + G + st.eB)}L` + bot.join('L') + `L${f1(B.x[0] - G)} ${f1(B.t[0] + G + st.eB)}Z`);
     const [cx, cy] = e.S0, about = k => `translate(${f1(cx)} ${f1(cy)}) scale(${k.toFixed(4)}) translate(${f1(-cx)} ${f1(-cy)})`;
     e.zoom.setAttribute('transform', about(st.z));
-    e.photo.setAttribute('transform', about(st.p * st.zi));
+    e.photo.setAttribute('transform', about(st.zi));
+    // the photo moves from its place in the frame to where it settles on the screen (st.p: 0 → 1)
+    const c0 = e.cam0, c1 = e.cam1 || c0, t = st.p, L = (a, b) => a + (b - a) * t;
+    e.img.setAttribute('transform', `translate(${f1(L(c0.C[0], c1.C[0]))} ${f1(L(c0.C[1], c1.C[1]))}) rotate(${L(c0.r, c1.r).toFixed(3)}) scale(${L(c0.s, c1.s).toFixed(5)}) translate(${f1(-L(c0.P[0], c1.P[0]))} ${f1(-L(c0.P[1], c1.P[1]))})`);
     e.wrap.style.opacity = st.io;
   }
 
@@ -290,7 +318,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const lowB = ed(sp.lo.x, sp.lo.b, Math.max(0, fb.left - x0 - m), fb.right - x0 + m, 'max');
       const topT = ed(sp.up.x, sp.up.t, Math.max(0, tb.left - x0 - m), tb.right - x0 + m, 'min');
       const hi = (fb.top - sec.top - m - lowB) / H, lo = (tb.bottom - sec.top + m - topT) / H;
-      const ay = lo <= hi ? Math.min(Math.max(0.55, lo), hi) : (lo + hi) / 2;
+      // phones: the ribbon centred between the logo and the text below; wider screens: as designed (at least 0.55)
+      const ay = lo > hi || narrow ? (lo + hi) / 2 : Math.min(Math.max(0.55, lo), hi);
       return Math.min(0.85, Math.max(0.15, ay));
     });
     request(r);
@@ -387,9 +416,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // pinned from the top; on a landscape screen shorter than the hero, pinned at its bottom (the title in view)
     gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: heroLand ? '+=320%' : '+=270%', pin: true, scrub: 1.2, invalidateOnRefresh: true } })
       // smooth: the zoom and the parting move together on one gentle curve
-      .to(hsc, { e: 1, duration: 1.1, ease: 'none', onUpdate: () => {
+      .to(hsc, { e: 1, duration: 0.8, ease: 'none', onUpdate: () => {
         const k = gsap.parseEase('sine.inOut')(hsc.e);
-        hs.eT = hero.eTmax * k; hs.eB = hero.eBmax * k; hs.z = 1 + (hero.zEnd - 1) * k; hs.p = 1 + (hero.pEnd - 1) * k; H(); } }, 0)
+        hs.eT = hero.eTmax * k; hs.eB = hero.eBmax * k; hs.z = 1 + (hero.zEnd - 1) * k; hs.p = k; H(); } }, 0)
       .to('#heroTitle', { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in' }, 0)   // gone before the lower band reaches it
       .to('.ig-top', { opacity: 0, duration: 0.3 }, 0)
       .to(shade, { opacity: 1, duration: 0.45, ease: 'none' }, 0.5)
