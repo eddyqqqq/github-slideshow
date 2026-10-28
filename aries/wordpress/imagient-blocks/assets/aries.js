@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el: heroEl, stage: $('.hero-stage', heroEl), svg: $('#heroSvg'), slot: $('#heroSlot'), top: $('#hTop'), bot: $('#hBot'),
     topG: $('#hTopG'), botG: $('#hBotG'), brL: $('#hBridgeL'), brR: $('#hBridgeR'), cutT: $('#hCutT'), cutB: $('#hCutB'), region: $('#hRegion'), zoom: $('#hZoom'), photo: $('#hPhoto'), wrap: $('#hImgWrap'),
     img: $('#hImg'), src: $('#heroSrc'),
-    st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1, p: 0 }, IMG: { w: 1500, h: 1020 }
+    st: { dT: 1, dB: 1, io: 1, zi: 1, eT: 0, eB: 0, z: 1, p: 0, ld: 0 }, IMG: { w: 1500, h: 1020 }
   } : null;
   const yAt = (xs, ys, x) => { let k = 1; while (k < xs.length - 1 && xs[k] < x) k++; return ys[k - 1] + (ys[k] - ys[k - 1]) * (x - xs[k - 1]) / (xs[k] - xs[k - 1]); };
   const isLand = () => matchMedia('(min-aspect-ratio: 1/1) and (min-width: 760px)').matches;
@@ -162,6 +162,29 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!best || score > best.score) best = { score, P, s: k };
     }
     return { P: best.P, s: best.s };
+  }
+  // how much the photo must grow, along the scroll (k: 0 → 1), to keep covering all that shows between the parting
+  // bands on the screen: sampled once per layout, then made to only ever grow, and smoothed, so the photo eases
+  // larger instead of jumping when the bands uncover more of it
+  function heroCoverage(Hp) {
+    const N = 48, out = [], A = FR.a, B = FR.b, c0 = hero.cam0, c1 = hero.cam1, [sx, sy] = hero.S0;
+    for (let j = 0; j <= N; j++) {
+      const k = j / N, L = (a, b) => a + (b - a) * k, z = 1 + (hero.zEnd - 1) * k, eT = hero.eTmax * k, eB = hero.eBmax * k;
+      const C = [L(c0.C[0], c1.C[0]), L(c0.C[1], c1.C[1])], P = [L(c0.P[0], c1.P[0]), L(c0.P[1], c1.P[1])], s0 = L(c0.s, c1.s);
+      const R = L(c0.r, c1.r) * Math.PI / 180, co = Math.cos(R), si = Math.sin(R);
+      const hw = hero.scrH[0] / z + 6, hh = hero.scrH[1] / z + 6;
+      let need = s0;
+      for (let i = 0; i <= 64; i++) {
+        const x = sx - hw + 2 * hw * i / 64, y0 = Math.max(sy - hh, yAt(A.x, A.b, x) + eT - 5), y1 = Math.min(sy + hh, yAt(B.x, B.t, x) + eB + 5);
+        if (y1 <= y0) continue;
+        [y0, y1].forEach(y => { const dx = x - C[0], dy = y - C[1], u = dx * co + dy * si, v = -dx * si + dy * co;
+          need = Math.max(need, u > 0 ? u / (1500 - P[0]) : -u / P[0], v > 0 ? v / (Hp - P[1]) : -v / P[1]); });
+      }
+      out.push(need > s0 * 1.0001 ? need * 1.03 / s0 : 1);   // at rest (nothing to cover beyond the frame): as designed
+    }
+    for (let j = 1; j <= N; j++) out[j] = Math.max(out[j], out[j - 1]);                       // only ever grows
+    // smoothed with a window looking ahead: on a curve that only grows that stays at or above the need, without steps
+    return out.map((v, j) => { let a = 0; for (let d = 0; d <= 6; d++) a += out[Math.min(N, j + d)]; return a / 7; });
   }
   function heroLayout() {
     if (!hero) return;
@@ -217,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const P = [c0.P[0] + (dx * Math.cos(R0) + dy * Math.sin(R0)) / c0.s, c0.P[1] + (-dx * Math.sin(R0) + dy * Math.cos(R0)) / c0.s];
       hero.cam1 = { C: [cx, cy], r: c0.r, s: c0.s, P };
     } else hero.cam1 = Object.assign({ C: [cx, cy], r: ph.rot * 0.38 }, endCamera(hw, hh, ph.rot * 0.38, Hp));
+    hero.cov = heroCoverage(Hp);
     heroRender();
   }
   // the designer's outline, exactly as drawn, split along the middle of its window into an upper and a lower half
@@ -256,31 +280,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const c0 = e.cam0, c1 = e.cam1 || c0, t = st.p, L = (a, b) => a + (b - a) * t;
     const C = [L(c0.C[0], c1.C[0]), L(c0.C[1], c1.C[1])], r = L(c0.r, c1.r), P = [L(c0.P[0], c1.P[0]), L(c0.P[1], c1.P[1])];
     let sc = L(c0.s, c1.s);
-    // on the way the photo turns and moves: it grows wherever needed to keep covering all that shows between the parting
-    // bands on the screen, so its edges never show
-    if (t > 0 && e.scrH) {
-      const R = r * Math.PI / 180, co = Math.cos(R), si = Math.sin(R), hw = e.scrH[0] / st.z, hh = e.scrH[1] / st.z;
-      const [sx, sy] = e.S0, top = sy - hh - 6, bot = sy + hh + 6, Hp = e.Hp;
-      const need = (x, y) => { const dx = x - C[0], dy = y - C[1], u = dx * co + dy * si, v = -dx * si + dy * co;
-        sc = Math.max(sc, u > 0 ? u / (1500 - P[0]) : -u / P[0], v > 0 ? v / (Hp - P[1]) : -v / P[1]); };
-      for (let i = 0; i <= 64; i++) {
-        const x = sx - (hw + 6) + 2 * (hw + 6) * i / 64, y0 = Math.max(top, yAt(A.x, A.b, x) + st.eT - 5), y1 = Math.min(bot, yAt(B.x, B.t, x) + st.eB + 5);   // the window reaches 4 under the bands
-        if (y1 > y0) { need(x, y0); need(x, y1); }
-      }
-      sc *= 1.03;
-    }
+    // on the way it grows as the precomputed, smooth coverage curve says (heroCoverage)
+    if (e.cov) { const q = clamp01(t) * (e.cov.length - 1), i = Math.min(Math.floor(q), e.cov.length - 2); sc *= e.cov[i] + (e.cov[i + 1] - e.cov[i]) * (q - i); }
     e.img.setAttribute('transform', `translate(${f1(C[0])} ${f1(C[1])}) rotate(${r.toFixed(3)}) scale(${sc.toFixed(5)}) translate(${f1(-P[0])} ${f1(-P[1])})`);
-    e.wrap.style.opacity = st.io;
+    e.wrap.style.opacity = st.io * st.ld;
   }
 
   if (hero && hero.src) {
     // the photo the browser chose from the srcset (format and size), already loading
+    // once, when it has loaded (before that the <picture> may not have picked its source yet: setting the WebP first
+    // and the AVIF later downloaded the photo twice and swapped it in view); then it fades in
     const useSrc = () => {
+      if (hero.ready || !hero.src.naturalWidth) return;
+      hero.ready = true;
       hero.img.setAttribute('href', hero.src.currentSrc || hero.src.src);
-      if (hero.src.naturalWidth) { hero.IMG = { w: hero.src.naturalWidth, h: hero.src.naturalHeight }; heroLayout(); }
+      hero.IMG = { w: hero.src.naturalWidth, h: hero.src.naturalHeight };
+      heroLayout();
+      gsap.to(hero.st, { ld: 1, duration: 0.6, ease: 'power1.out', onUpdate: () => touch(hero) });
     };
-    useSrc();
-    if (!hero.src.complete) hero.src.addEventListener('load', useSrc, { once: true });
+    if (hero.src.complete) useSrc(); else hero.src.addEventListener('load', useSrc, { once: true });
   }
 
   /* ---------------- build the ribbons on the page ---------------- */
