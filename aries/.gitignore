@@ -8,3 +8,6 @@ fonts/
 dist/
 # licensed fonts copied into the theme by tools/build_wp.py
 wordpress/aries/assets/fonts/
+
+# the full-size stock photo (licensed): kept off this public repository; the site ships sized variants (img/hero-*)
+design/images/*-5040.*

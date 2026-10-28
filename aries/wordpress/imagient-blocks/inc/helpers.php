@@ -160,13 +160,24 @@ function imagient_picture( $url, $attrs ) {
 		$img .= ' ' . $k . '="' . esc_attr( $v ) . '"';
 	}
 	$img .= '>';
-	$avif = preg_replace( '/\.webp(\?.*)?$/i', '.avif', (string) $url );
-	if ( $avif === $url || ! function_exists( 'get_theme_file_uri' ) || 0 !== strpos( $url, get_theme_file_uri( 'assets/' ) ) ) {
+	if ( ! function_exists( 'get_theme_file_uri' ) || ! preg_match( '/\.webp(\?.*)?$/i', (string) $url ) || 0 !== strpos( $url, get_theme_file_uri( 'assets/' ) ) ) {
 		return $img;
 	}
-	$rel = substr( strtok( $avif, '?' ), strlen( get_theme_file_uri( 'assets/' ) ) );
-	if ( ! file_exists( get_theme_file_path( 'assets/' . $rel ) ) ) {
+	$base = preg_replace( '/\.webp(\?.*)?$/i', '', substr( $url, strlen( get_theme_file_uri( 'assets/' ) ) ) );
+	// sized AVIF variants (name-1600.avif, name-2400.avif …) for a srcset, or one name.avif
+	$set = array();
+	foreach ( glob( get_theme_file_path( 'assets/' . $base . '-*.avif' ) ) ?: array() as $file ) {
+		if ( preg_match( '/-(\d+)\.avif$/', $file, $m ) ) {
+			$set[ (int) $m[1] ] = esc_url( imagient_versioned( get_theme_file_uri( 'assets/' . $base . '-' . $m[1] . '.avif' ) ) ) . ' ' . $m[1] . 'w';
+		}
+	}
+	if ( $set ) {
+		ksort( $set );
+		$sizes = isset( $attrs['sizes'] ) ? ' sizes="' . esc_attr( $attrs['sizes'] ) . '"' : '';
+		return '<picture><source type="image/avif" srcset="' . implode( ', ', $set ) . '"' . $sizes . '>' . $img . '</picture>';
+	}
+	if ( ! file_exists( get_theme_file_path( 'assets/' . $base . '.avif' ) ) ) {
 		return $img;
 	}
-	return '<picture><source type="image/avif" srcset="' . esc_url( imagient_versioned( $avif ) ) . '">' . $img . '</picture>';
+	return '<picture><source type="image/avif" srcset="' . esc_url( imagient_versioned( get_theme_file_uri( 'assets/' . $base . '.avif' ) ) ) . '">' . $img . '</picture>';
 }

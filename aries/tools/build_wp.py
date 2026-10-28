@@ -73,7 +73,7 @@ def main():
     images = os.path.join(theme, 'assets', 'images')
     for f in os.listdir(images):
         os.remove(os.path.join(images, f))
-    for f in ('hero.avif', 'hero.webp', 'card-stacker.avif', 'card-stacker.webp', 'card-vessel.avif', 'card-vessel.webp'):
+    for f in ('hero-1600.avif', 'hero-2400.avif', 'hero-3600.avif', 'hero.webp', 'card-stacker.avif', 'card-stacker.webp', 'card-vessel.avif', 'card-vessel.webp'):
         copy(os.path.join(ROOT, 'img', f), os.path.join(theme, 'assets', 'images', f))
 
     dist = os.path.join(ROOT, 'dist')

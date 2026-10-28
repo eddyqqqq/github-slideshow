@@ -166,7 +166,8 @@ function imagient_render_hero( $a ) {
 		) );
 	}
 	if ( ! $img ) {
-		$img = imagient_picture( $a['imageUrl'], array( 'id' => 'heroSrc', 'alt' => '', 'width' => 1500, 'height' => 1020, 'fetchpriority' => 'high', 'decoding' => 'async' ) );
+		// the photo shows about 1.2 × the screen's width (2 × on phones, where the scroll ends closer in)
+		$img = imagient_picture( $a['imageUrl'], array( 'id' => 'heroSrc', 'alt' => '', 'width' => 1500, 'height' => 1020, 'sizes' => '(orientation: portrait) 200vw, 120vw', 'fetchpriority' => 'high', 'decoding' => 'async' ) );
 	}
 	ob_start();
 	?>

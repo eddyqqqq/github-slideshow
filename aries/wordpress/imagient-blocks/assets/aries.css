@@ -110,6 +110,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .shade { top: auto; height: 100vh; }
   .anim .scene-two { top: auto; height: 100vh; }
   .home .ig-top { padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); --logo-top: max(14px, 22 * var(--hu)); --logo-w: max(44px, 80 * var(--hu)); }
+  .home .ig-top .logo { width: calc(var(--logo-w) * .88); }   /* a touch smaller than elsewhere: it sits over the frame */
 }
 
 /* ---------- scene 2: Group and the three companies, one ribbon through four shapes ---------- */
