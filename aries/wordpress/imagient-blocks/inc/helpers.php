@@ -148,3 +148,25 @@ function imagient_versioned( $url ) {
 	$file = get_theme_file_path( 'assets/' . $rel );
 	return file_exists( $file ) ? add_query_arg( 'v', filemtime( $file ), $base . $rel ) : $url;
 }
+
+/**
+ * An <img> for a URL, wrapped in a <picture> with an AVIF source when the theme ships an .avif beside a .webp (the
+ * default photos): browsers that read AVIF get the smaller file, the others the WebP. $attrs are the <img>'s
+ * attributes (escaped here).
+ */
+function imagient_picture( $url, $attrs ) {
+	$img = '<img src="' . esc_url( imagient_versioned( $url ) ) . '"';
+	foreach ( $attrs as $k => $v ) {
+		$img .= ' ' . $k . '="' . esc_attr( $v ) . '"';
+	}
+	$img .= '>';
+	$avif = preg_replace( '/\.webp(\?.*)?$/i', '.avif', (string) $url );
+	if ( $avif === $url || ! function_exists( 'get_theme_file_uri' ) || 0 !== strpos( $url, get_theme_file_uri( 'assets/' ) ) ) {
+		return $img;
+	}
+	$rel = substr( strtok( $avif, '?' ), strlen( get_theme_file_uri( 'assets/' ) ) );
+	if ( ! file_exists( get_theme_file_path( 'assets/' . $rel ) ) ) {
+		return $img;
+	}
+	return '<picture><source type="image/avif" srcset="' . esc_url( imagient_versioned( $avif ) ) . '">' . $img . '</picture>';
+}

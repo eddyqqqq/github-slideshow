@@ -166,7 +166,7 @@ function imagient_render_hero( $a ) {
 		) );
 	}
 	if ( ! $img ) {
-		$img = '<img id="heroSrc" src="' . esc_url( imagient_versioned( $a['imageUrl'] ) ) . '" alt="" width="1500" height="1020" fetchpriority="high" decoding="async">';
+		$img = imagient_picture( $a['imageUrl'], array( 'id' => 'heroSrc', 'alt' => '', 'width' => 1500, 'height' => 1020, 'fetchpriority' => 'high', 'decoding' => 'async' ) );
 	}
 	ob_start();
 	?>
@@ -299,7 +299,7 @@ function imagient_render_cards( $a ) {
 	<?php foreach ( $cards as $c ) :
 		$img = ! empty( $c['imageId'] ) ? wp_get_attachment_image( $c['imageId'], 'large', false, array( 'alt' => $c['alt'] ?? '', 'sizes' => '(max-width: 760px) 84vw, 40vw', 'loading' => 'lazy', 'decoding' => 'async' ) ) : '';
 		if ( ! $img && ! empty( $c['imageUrl'] ) ) {
-			$img = '<img src="' . esc_url( imagient_versioned( $c['imageUrl'] ) ) . '" alt="' . esc_attr( $c['alt'] ?? '' ) . '" loading="lazy" decoding="async">';
+			$img = imagient_picture( $c['imageUrl'], array( 'alt' => $c['alt'] ?? '', 'loading' => 'lazy', 'decoding' => 'async' ) );
 		}
 		$tag = ! empty( $c['url'] ) ? 'a href="' . esc_url( $c['url'] ) . '"' : 'article';
 		$end = ! empty( $c['url'] ) ? 'a' : 'article';

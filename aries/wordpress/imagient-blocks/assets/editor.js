@@ -71,10 +71,6 @@
     else if (type === 'toggle') ctl = el(ToggleControl, { label, checked: !!value, onChange: set, __nextHasNoMarginBottom: true });
     return el('div', { className: 'ig-rcontrol' + (own ? ' is-own' : ' is-inherited') }, ctl, reset);
   }
-  const DIRS = [{ value: 'row', label: 'Row →' }, { value: 'column', label: 'Column ↓' }, { value: 'row-reverse', label: 'Row ←' }, { value: 'column-reverse', label: 'Column ↑' }];
-  const JUSTIFY = [{ value: 'flex-start', label: 'Start' }, { value: 'center', label: 'Center' }, { value: 'flex-end', label: 'End' }, { value: 'space-between', label: 'Space between' }, { value: 'space-around', label: 'Space around' }, { value: 'space-evenly', label: 'Space evenly' }];
-  const ALIGN = [{ value: 'stretch', label: 'Stretch' }, { value: 'flex-start', label: 'Start' }, { value: 'center', label: 'Center' }, { value: 'flex-end', label: 'End' }, { value: 'baseline', label: 'Baseline' }];
-  const SELF = [{ value: '', label: 'Inherit' }, { value: 'stretch', label: 'Stretch' }, { value: 'start', label: 'Start' }, { value: 'center', label: 'Center' }, { value: 'end', label: 'End' }];
   const ColorControl = ({ label, value, onChange }) => el(BaseControl, { label, __nextHasNoMarginBottom: true },
     el(ColorPalette, { colors: PAL, value: colorOf(value), onChange: c => onChange(c ? slugOf(c) : '') }));
 

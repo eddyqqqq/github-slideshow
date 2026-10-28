@@ -194,3 +194,20 @@ function imagient_css_align( $v ) {
 function imagient_safe_css( $css ) {
 	return preg_replace( '/[<>"]/', '', $css );
 }
+
+/**
+ * The "HTML anchor" field on the Imagient blocks: rendered on the server, they get it as an id here (WordPress adds it
+ * only when a block saves its own markup), so links such as #contact reach them.
+ */
+add_filter( 'render_block', function ( $html, $block ) {
+	$anchor = $block['attrs']['anchor'] ?? '';
+	if ( '' === $anchor || 0 !== strpos( $block['blockName'] ?? '', 'imagient/' ) || ! class_exists( 'WP_HTML_Tag_Processor' ) ) {
+		return $html;
+	}
+	$p = new WP_HTML_Tag_Processor( $html );
+	if ( $p->next_tag() && null === $p->get_attribute( 'id' ) ) {
+		$p->set_attribute( 'id', sanitize_html_class( $anchor ) );
+		return $p->get_updated_html();
+	}
+	return $html;
+}, 10, 2 );

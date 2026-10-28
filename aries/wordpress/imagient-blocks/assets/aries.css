@@ -30,9 +30,8 @@
   --body: clamp(16px, min(1.389vw, 10px + .694vw), 24px);
   --small: clamp(12px, min(.972vw, 7px + .486vw), 17px);
   --link: clamp(14px, min(1.111vw, 8px + .556vw), 19px);
-  --cw: 100vw;  /* content width: full width minus the margins, as in the design */
-  /* --u: one design pixel. The hero is laid out on the 1440-wide design and scaled so that its whole stack
-     (logo, bands, title and the white space under it: 1170 design px) fits the screen: by the width, or by the height on wide, short screens */
+  /* --u: one pixel of the 1440 design, by the width or, on wide short screens, the height (the logo's distance from
+     the top; the hero itself uses --hu, one unit of its frame) */
   --u: min(100vw / 1440, 100vh / 1170);
   /* --ig-fu: one design pixel for spacing: the screen's rate below 1440, half of it above (Style tab: calc(40 * var(--ig-fu))) */
   --ig-fu: max(.62px, min(100vw / 1440, .5px + 100vw / 2880));
@@ -75,6 +74,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .hero-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .hero-src { position: absolute; left: 0; top: 0; width: 15px; opacity: 0; pointer-events: none; }
 .hero-src img { display: block; width: 100%; height: auto; }
+.hero-src picture, .card .pi picture { display: contents; }   /* the AVIF/WebP wrapper takes no part in the layout */
 .hero-layout { position: absolute; inset: 0 0 auto; height: 100vh; height: 100svh; display: flex; flex-direction: column; pointer-events: none;
   padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top) + var(--logo-w) * 1.76 + clamp(8px, 2vh, 28px)); }  /* phones: the bands start below the logo */
 /* portrait: the frame shown 1220 units across the screen (the whole curve, the peak and the truck), the frame and the

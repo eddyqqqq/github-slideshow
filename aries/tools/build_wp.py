@@ -11,6 +11,7 @@ Usage: python3 tools/build_wp.py
 """
 import json
 import os
+import re
 import shutil
 import sys
 import zipfile
@@ -46,20 +47,33 @@ def main():
     plugin, theme = os.path.join(WP, 'imagient-blocks'), os.path.join(WP, 'aries')
     for css in (os.path.join(plugin, 'assets', 'aries.css'), os.path.join(plugin, 'assets', 'editor.css'), os.path.join(theme, 'style.css')):
         check_css(css)
-    data = json.dumps(design_svg.data(), separators=(',', ':'))
+    shapes = design_svg.data()
+    shapes.pop('hero', None)   # the first design's band: the static pages only
+    data = json.dumps(shapes, separators=(',', ':'))
     with open(os.path.join(plugin, 'assets', 'shapes.js'), 'w') as f:
         f.write('/* Aries shapes, from the design SVGs (tools/design_svg.py) — Imagient */\nwindow.ARIES_SHAPES=' + data + ';\n')
     for f in ('gsap.min.js', 'ScrollTrigger.min.js', 'lenis.min.js'):
         copy(os.path.join(ROOT, 'vendor', f), os.path.join(plugin, 'assets', 'vendor', f))
+    # the logos go inline into every page: their coordinates rounded to 0.01 of a design pixel (they show at most
+    # ~90 px wide) and the white space between their tags dropped
     for f in os.listdir(os.path.join(ROOT, 'design', 'logos')):
-        copy(os.path.join(ROOT, 'design', 'logos', f), os.path.join(plugin, 'assets', 'logos', f))
+        svg = open(os.path.join(ROOT, 'design', 'logos', f)).read()
+        svg = re.sub(r'-?\d+\.\d{3,}', lambda m: ('%.2f' % float(m.group(0))).rstrip('0').rstrip('.'), svg)
+        svg = re.sub(r'>\s+<', '><', svg).strip() + '\n'
+        os.makedirs(os.path.join(plugin, 'assets', 'logos'), exist_ok=True)
+        with open(os.path.join(plugin, 'assets', 'logos', f), 'w') as out:
+            out.write(svg)
     fonts = os.path.join(ROOT, 'fonts')
     if os.path.isdir(fonts):
         for f in os.listdir(fonts):
             copy(os.path.join(fonts, f), os.path.join(theme, 'assets', 'fonts', f))
     else:
         print('warning: fonts/ missing, the theme will use the fallback font')
-    for f in ('hero.webp', 'hero-900.webp', 'hero-900.avif', 'card-stacker.webp', 'card-vessel.webp'):
+    # the default photos, each as AVIF (served first) and WebP (older browsers); the 900 px hero is for the static pages
+    images = os.path.join(theme, 'assets', 'images')
+    for f in os.listdir(images):
+        os.remove(os.path.join(images, f))
+    for f in ('hero.avif', 'hero.webp', 'card-stacker.avif', 'card-stacker.webp', 'card-vessel.avif', 'card-vessel.webp'):
         copy(os.path.join(ROOT, 'img', f), os.path.join(theme, 'assets', 'images', f))
 
     dist = os.path.join(ROOT, 'dist')
