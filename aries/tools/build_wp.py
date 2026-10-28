@@ -30,7 +30,8 @@ def copy(src, dst):
 def check_css(path):
     """Stop the build on unbalanced braces: one stray } makes browsers drop the rule after it (Safari did)."""
     import re
-    text = re.sub(r'/\*.*?\*/', '', open(path).read(), flags=re.S)
+    # comments blanked, their line breaks kept, so the reported line is the file's
+    text = re.sub(r'/\*.*?\*/', lambda m: '\n' * m.group(0).count('\n'), open(path).read(), flags=re.S)
     text = re.sub(r'"[^"]*"|\'[^\']*\'', '', text)
     depth = 0
     for i, c in enumerate(text):

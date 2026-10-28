@@ -200,15 +200,23 @@ document.addEventListener('DOMContentLoaded', () => {
     hero.img.setAttribute('x', 0); hero.img.setAttribute('y', 0);
     hero.img.setAttribute('width', 1500); hero.img.setAttribute('height', f1(Hp));
     hero.cam0 = { C: [ph.cx, ph.cy], r: ph.rot, s: ph.k * grow, P: [750, Hp / 2] };
+    hero.Hp = Hp;
     // scrolled: the frame grows from the screen's centre, the bands leave it at the top and bottom
     hero.zEnd = Math.max(1.12, scr[2] / (FR.bars[1] - FR.bars[0]) * 1.04);
+    hero.scrH = [scr[2] / 2, scr[3] / 2];
     const [cx, cy] = hero.S0, hw = scr[2] / 2 / hero.zEnd, hh = scr[3] / 2 / hero.zEnd;
     const xsIn = Array.from({ length: 41 }, (_, i) => cx - hw + 2 * hw * i / 40);
     hero.eTmax = (cy - hh - 40) - Math.max(...xsIn.map(x => yAt(A.x, A.b, x)));
     hero.eBmax = (cy + hh + 40) - Math.min(...xsIn.map(x => yAt(B.x, B.t, x)));
-    // ... and the photo settles, straightened a little, so the road with the truck, the river with the ship and the
-    // railway all show on the screen (the meaning of the cover: every mode of transport), as little enlarged as can be
-    hero.cam1 = Object.assign({ C: [cx, cy], r: ph.rot * 0.38 }, endCamera(hw, hh, ph.rot * 0.38, Hp));
+    // ... and the photo settles. On phones it is straightened a little, so the road with the truck, the river with the
+    // ship and the railway all show (the meaning of the cover: every mode of transport), as little enlarged as can be
+    // wide screens: it keeps its angle and grows from the screen's centre (the render makes it cover the screen);
+    // phones: it settles straightened, framed so all three show
+    if (land) {
+      const c0 = hero.cam0, R0 = c0.r * Math.PI / 180, dx = cx - c0.C[0], dy = cy - c0.C[1];
+      const P = [c0.P[0] + (dx * Math.cos(R0) + dy * Math.sin(R0)) / c0.s, c0.P[1] + (-dx * Math.sin(R0) + dy * Math.cos(R0)) / c0.s];
+      hero.cam1 = { C: [cx, cy], r: c0.r, s: c0.s, P };
+    } else hero.cam1 = Object.assign({ C: [cx, cy], r: ph.rot * 0.38 }, endCamera(hw, hh, ph.rot * 0.38, Hp));
     heroRender();
   }
   // the designer's outline, exactly as drawn, split along the middle of its window into an upper and a lower half
@@ -246,7 +254,22 @@ document.addEventListener('DOMContentLoaded', () => {
     e.photo.setAttribute('transform', about(st.zi));
     // the photo moves from its place in the frame to where it settles on the screen (st.p: 0 → 1)
     const c0 = e.cam0, c1 = e.cam1 || c0, t = st.p, L = (a, b) => a + (b - a) * t;
-    e.img.setAttribute('transform', `translate(${f1(L(c0.C[0], c1.C[0]))} ${f1(L(c0.C[1], c1.C[1]))}) rotate(${L(c0.r, c1.r).toFixed(3)}) scale(${L(c0.s, c1.s).toFixed(5)}) translate(${f1(-L(c0.P[0], c1.P[0]))} ${f1(-L(c0.P[1], c1.P[1]))})`);
+    const C = [L(c0.C[0], c1.C[0]), L(c0.C[1], c1.C[1])], r = L(c0.r, c1.r), P = [L(c0.P[0], c1.P[0]), L(c0.P[1], c1.P[1])];
+    let sc = L(c0.s, c1.s);
+    // on the way the photo turns and moves: it grows wherever needed to keep covering all that shows between the parting
+    // bands on the screen, so its edges never show
+    if (t > 0 && e.scrH) {
+      const R = r * Math.PI / 180, co = Math.cos(R), si = Math.sin(R), hw = e.scrH[0] / st.z, hh = e.scrH[1] / st.z;
+      const [sx, sy] = e.S0, top = sy - hh - 6, bot = sy + hh + 6, Hp = e.Hp;
+      const need = (x, y) => { const dx = x - C[0], dy = y - C[1], u = dx * co + dy * si, v = -dx * si + dy * co;
+        sc = Math.max(sc, u > 0 ? u / (1500 - P[0]) : -u / P[0], v > 0 ? v / (Hp - P[1]) : -v / P[1]); };
+      for (let i = 0; i <= 64; i++) {
+        const x = sx - (hw + 6) + 2 * (hw + 6) * i / 64, y0 = Math.max(top, yAt(A.x, A.b, x) + st.eT - 5), y1 = Math.min(bot, yAt(B.x, B.t, x) + st.eB + 5);   // the window reaches 4 under the bands
+        if (y1 > y0) { need(x, y0); need(x, y1); }
+      }
+      sc *= 1.03;
+    }
+    e.img.setAttribute('transform', `translate(${f1(C[0])} ${f1(C[1])}) rotate(${r.toFixed(3)}) scale(${sc.toFixed(5)}) translate(${f1(-P[0])} ${f1(-P[1])})`);
     e.wrap.style.opacity = st.io;
   }
 
