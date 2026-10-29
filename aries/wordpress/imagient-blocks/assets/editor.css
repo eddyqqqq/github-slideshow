@@ -132,7 +132,8 @@
 
 /* ================= company pages ================= */
 .ig-phero-edit { position: relative; padding: 24px 0 40px; background: #fff; overflow: hidden; }
-.ig-phero-edit__logo { padding: 0 24px 24px; } .ig-phero-edit__logo img { width: 60px; height: auto; filter: invert(30%) sepia(90%) saturate(900%) hue-rotate(190deg); }
+.ig-phero-edit__logo { padding: 0 24px 24px; min-height: 116px; } .ig-phero-edit__logo svg { display: block; width: 60px; height: auto; }
+.ig-phero-edit__logo .s { fill: #005dac; } .ig-phero-edit__logo .t { fill: #000; }
 .ig-phero-edit__svg { display: block; width: 100%; height: auto; }
 .ig-phero-edit__title { margin: 40px 24px 0 !important; color: #145fad; font-weight: 400 !important; }
 .ig-cover-edit { position: relative; min-height: 420px; background: var(--cv-img) var(--cv-pos, 50% 50%) / cover no-repeat, #3189a9; color: #fff; }

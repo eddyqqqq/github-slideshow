@@ -408,6 +408,19 @@
   });
 
   /* ================================ COMPANY PAGES ================================ */
+  // a logo inline, so the editor can colour its mark (.s) and name (.t) the way the page does
+  const logoCache = {};
+  function InlineLogo({ name, className }) {
+    const [svg, setSvg] = useState(logoCache[name] || '');
+    wp.element.useEffect(() => {
+      if (logoCache[name]) { setSvg(logoCache[name]); return; }
+      if (!window.fetch) return;
+      let live = true;
+      window.fetch(CFG.assets + 'logos/' + name + '.svg').then(r => r.text()).then(t => { logoCache[name] = t; if (live) setSvg(t); }).catch(() => {});
+      return () => { live = false; };
+    }, [name]);
+    return el(wp.element.RawHTML, { className }, svg);
+  }
   const FRAMES = CFG.frames || {};
   const PH_ANIMS = [
     { value: '1', label: '1 · The frame draws in, the photo settles' }, { value: '2', label: '2 · Curtain: the colour slides off the photo' },
@@ -440,7 +453,7 @@
             el(SelectControl, { label: 'Logo (top left)', value: a.logo, options: logoOpts, onChange: v => setAttributes({ logo: v }) }),
             el(RangeControl, { label: 'Phones: part of the frame shown (centre, in frame units)', value: a.portraitX, min: 400, max: 1600, step: 10, onChange: v => setAttributes({ portraitX: v }) }))),
         el('div', props,
-          a.logo && CFG.logos[a.logo] ? el('div', { className: 'ig-phero-edit__logo' }, el('img', { src: CFG.assets + 'logos/' + a.logo + '.svg', alt: '' })) : null,
+          a.logo && CFG.logos[a.logo] ? el(InlineLogo, { name: a.logo, className: 'ig-phero-edit__logo' }) : null,
           f ? el('svg', { className: 'ig-phero-edit__svg', viewBox: `${f.x0} 0 ${f.x1 - f.x0} ${f.h}`, preserveAspectRatio: 'xMidYMid slice' },
             el('defs', {}, el('clipPath', { id: 'phe-w' }, el('path', { d: f.window }))),
             el('g', { clipPath: 'url(#phe-w)' }, a.imageUrl ? el('image', { href: a.imageUrl, x: f.x0, y: 0, width: f.x1 - f.x0, height: f.h, preserveAspectRatio: 'xMidYMid slice' }) : null),
