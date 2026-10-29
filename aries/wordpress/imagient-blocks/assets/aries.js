@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutAll, 120); });
 
   /* ---------------- company scene states ---------------- */
-  let COLS = ['#145fad', '#3089a9', '#2aa8da', '#42979c'];
+  let COLS = ['#145fad', '#3189a9', '#2aa8da', '#42979c'];
   if (idEl) { try { COLS = JSON.parse(idEl.dataset.colors); } catch (e) {} }
   const tabs = idEl ? $$('.co-tabs button', idEl) : [];
   const markTab = k => tabs.forEach((t, i) => t.setAttribute('aria-current', String(i + 1 === k)));
@@ -390,6 +390,66 @@ document.addEventListener('DOMContentLoaded', () => {
     if (t === idEl) return 0;
     return t && t.classList.contains('ig-anchor') ? +t.dataset.state : null;
   };
+
+  /* ---------------- company pages: the page hero's photo, the menu, the accordion (all work without motion) ---------------- */
+  const phEls = $$('.ig-phero');
+  phEls.forEach(ph => {
+    const src = $('.ig-phero__src img', ph), img = $('.ph-img', ph), box = $('.ph-wbox', ph);
+    const [fx, fy] = (ph.dataset.focus || '50 50').split(' ').map(v => +v / 100), zoom = +ph.dataset.zoom || 1;
+    // the photo covers the frame's window with room to drift (1.16 ×), its focus point where the editor set it
+    ph._place = () => {
+      if (!src || !src.naturalWidth) return;
+      const b = box.getBBox(), ar = src.naturalWidth / src.naturalHeight, k = zoom * 1.16;
+      let w = b.width * k, h = w / ar;
+      if (h < b.height * k) { h = b.height * k; w = h * ar; }
+      img.setAttribute('x', f1(b.x - (w - b.width) * fx)); img.setAttribute('y', f1(b.y - (h - b.height) * fy));
+      img.setAttribute('width', f1(w)); img.setAttribute('height', f1(h)); img.setAttribute('preserveAspectRatio', 'none');
+    };
+    // set once the <picture> has loaded its source (format and size chosen by the browser), then shown
+    const use = () => {
+      if (ph._ready || !src.naturalWidth) return;
+      ph._ready = true; img.setAttribute('href', src.currentSrc || src.src); ph._place(); img.classList.add('is-ready');
+    };
+    if (src) { if (src.complete) use(); else src.addEventListener('load', use, { once: true }); }
+  });
+  $$('.ig-menu').forEach(m => {
+    const btn = $('.ig-menu__btn', m), panel = $('.ig-menu__panel', m);
+    const set = open => {
+      root.classList.toggle('menu-open', open);
+      btn.setAttribute('aria-expanded', String(open)); btn.setAttribute('aria-label', open ? 'Close the menu' : 'Open the menu');
+      panel.setAttribute('aria-hidden', String(!open));
+      if (open) panel.removeAttribute('inert'); else panel.setAttribute('inert', '');
+      const l = window.__igLenis; if (l) { if (open) l.stop(); else l.start(); }
+      if (open) setTimeout(() => { const a = $('a', panel); if (a) a.focus({ preventScroll: true }); }, 450); else btn.focus({ preventScroll: true });
+    };
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('menu-open')) set(false); });
+    panel.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
+  });
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches || !window.gsap;
+  let rfAcc = 0;
+  $$('.ig-svc.is-accordion').forEach(list => {
+    const rows = $$('.ig-svc__row', list);
+    const toggle = (row, open) => {
+      const b = $('button', row), p = $('.ig-svc__panel', row), path = $('.ig-svc__wave path', row);
+      if (open === row.classList.contains('is-open')) return;
+      row.classList.toggle('is-open', open); b.setAttribute('aria-expanded', String(open));
+      if (still) { p.hidden = !open; return; }
+      gsap.killTweensOf(p);
+      const after = () => { clearTimeout(rfAcc); rfAcc = setTimeout(() => window.ScrollTrigger && ScrollTrigger.refresh(), 60); };
+      if (open) {
+        p.hidden = false;
+        gsap.fromTo(p, { height: 0 }, { height: 'auto', duration: 0.75, ease: 'power3.inOut', onComplete: after });
+        if (path) gsap.fromTo(path, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut', delay: 0.2 });
+        gsap.fromTo($('.ig-svc__text', row), { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out', delay: 0.25 });
+      } else gsap.to(p, { height: 0, duration: 0.6, ease: 'power3.inOut', onComplete: () => { p.hidden = true; gsap.set(p, { clearProps: 'height' }); after(); } });
+    };
+    rows.forEach(row => $('button', row).addEventListener('click', () => {
+      const open = !row.classList.contains('is-open');
+      rows.forEach(r => { if (r !== row) toggle(r, false); });
+      toggle(row, open);
+    }));
+  });
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!window.gsap || !window.ScrollTrigger || reduce) {
@@ -409,6 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.Lenis) {
     lenis = new Lenis({ lerp: 0.09 });
     lenis.on('scroll', ScrollTrigger.update);
+    window.__igLenis = lenis;   // the menu stops the page's scroll while it is open
     gsap.ticker.add(t => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
   }
@@ -472,6 +533,41 @@ document.addEventListener('DOMContentLoaded', () => {
       .to(shade, { '--a': '100%', '--b': '160%', duration: 0.42, ease: 'power1.inOut' }, 1.46)
       .to({}, { duration: 0.01 }, 1.88);
   }
+  /* ---- page hero: five openings (data-anim 1–5, set in the editor or ?anim=N) and the photo's drift with the scroll ---- */
+  phEls.forEach(ph => {
+    const v = ph.dataset.anim || '1', art = $('.ph-art', ph), photo = $('.ph-photo', ph), draw = $('.ph-draw', ph), cur = $('.ph-curtain', ph);
+    const vb = $('.ig-phero__svg', ph).viewBox.baseVal, W = vb.width, Hh = vb.height, mid = `${f1(W / 2)} ${f1(Hh / 2)}`;
+    const words = splitWords($('.ig-phero__title', ph));
+    const tl = gsap.timeline({ delay: 0.1 });
+    const titleIn = at => tl.fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.95, stagger: 0.06, ease: 'power3.out' }, at);
+    if (v === '2') {          // curtain: the company colour slides off the photo along a slant
+      gsap.set(cur, { opacity: 1, skewX: -16, svgOrigin: `0 ${f1(Hh / 2)}` });
+      tl.fromTo(art, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power1.out' }, 0)
+        .fromTo(cur, { x: 0 }, { x: W + 420, duration: 1.7, ease: 'expo.inOut' }, 0.35)
+        .fromTo(photo, { scale: 1.14, svgOrigin: mid }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0.55);
+      titleIn(1.15);
+    } else if (v === '3') {   // parallax: a soft rise; the layers then move at different speeds with the scroll
+      tl.fromTo(art, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1.5, ease: 'power3.out' }, 0)
+        .fromTo(photo, { scale: 1.08, svgOrigin: mid }, { scale: 1, duration: 2, ease: 'power2.out' }, 0);
+      titleIn(0.45);
+      gsap.to(art, { y: -Hh * 0.1, ease: 'none', scrollTrigger: { trigger: ph, start: 'top top', end: 'bottom top', scrub: true } });
+      gsap.to($('.ig-phero__title', ph), { y: -40, ease: 'none', scrollTrigger: { trigger: ph, start: 'top top', end: 'bottom top', scrub: true } });
+    } else if (v === '4') {   // the frame opens from a thin line, the photo settles in it
+      tl.fromTo(art, { scaleY: 0.03, opacity: 0.6, svgOrigin: mid }, { scaleY: 1, opacity: 1, duration: 1.6, ease: 'expo.inOut' }, 0.1)
+        .fromTo(photo, { scale: 1.3, svgOrigin: mid }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0.55);
+      titleIn(1.1);
+    } else if (v === '5') {   // the title first, then the frame glides in from the right
+      titleIn(0.1);
+      tl.fromTo(art, { x: W * 0.3, opacity: 0 }, { x: 0, opacity: 1, duration: 1.9, ease: 'expo.out' }, 0.55)
+        .fromTo(photo, { x: -W * 0.06 }, { x: 0, duration: 2.4, ease: 'expo.out' }, 0.55);
+    } else {                  // 1 · the frame draws in from the left, the photo settles in it
+      tl.fromTo(draw, { attr: { width: 0 } }, { attr: { width: W + 40 }, duration: 1.7, ease: 'expo.inOut' }, 0)
+        .fromTo(photo, { opacity: 0, scale: 1.16, svgOrigin: mid }, { opacity: 1, scale: 1, duration: 2, ease: 'expo.out' }, 0.6);
+      titleIn(1.05);
+    }
+    // all: the photo drifts down a little inside the frame as the page scrolls on
+    gsap.fromTo(photo, { y: 0 }, { y: Hh * (v === '3' ? 0.09 : 0.05), ease: 'none', immediateRender: false, scrollTrigger: { trigger: ph, start: 'top top', end: 'bottom top', scrub: true } });
+  });
   root.classList.remove('pre');
 
   /* ---- everything below is set up in idle slices ---- */
@@ -528,8 +624,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const atEnd = el => el.getBoundingClientRect().bottom + scrollY > document.documentElement.scrollHeight - innerHeight * 0.4;
   $$('[data-anim="split"]').forEach(el => later(() => {
     const last = atEnd(el);   // near the very end of the page: finish by the time the page ends
-    splitTargets(el).forEach(h => gsap.from(splitWords(h), { yPercent: 115, ease: 'none', stagger: 0.04,
-      scrollTrigger: { trigger: h, start: last ? 'top bottom' : 'top 94%', end: last ? 'bottom bottom' : 'top 62%', scrub: 0.6 } }));
+    splitTargets(el).forEach(h => {
+      // already on the first screen at load (a short page hero on phones): play once, so it never rests half revealed
+      if (scrollY < 10 && h.getBoundingClientRect().top < innerHeight * 0.94) {
+        gsap.from(splitWords(h), { yPercent: 115, duration: 1.1, ease: 'power3.out', stagger: 0.05, delay: 0.9 });
+        return;
+      }
+      gsap.from(splitWords(h), { yPercent: 115, ease: 'none', stagger: 0.04,
+        scrollTrigger: { trigger: h, start: last ? 'top bottom' : 'top 94%', end: last ? 'bottom bottom' : 'top 62%', scrub: 0.6 } });
+    });
   }));
   $$('[data-anim="fade-up"]').forEach(el => later(() => gsap.from(el, { y: 32, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 78%', scrub: 0.6 } })));
@@ -627,6 +730,31 @@ document.addEventListener('DOMContentLoaded', () => {
         gsap.to(pi, { scale: 1, duration: 1.2, ease: 'power2.out', overwrite: 'auto' });
         gsap.to(h3, { x: 0, duration: 1, ease: 'power3.out', overwrite: 'auto' });
       });
+    });
+  }));
+
+  /* ---- company pages: covers drift, services come in row by row (their wave draws) ---- */
+  $$('.ig-cover.is-parallax .ig-cover__media img').forEach(img => later(() => {
+    gsap.fromTo(img, { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: img.closest('.ig-cover'), start: 'top bottom', end: 'bottom top', scrub: true } });
+  }));
+  $$('.ig-svc').forEach(list => later(() => {
+    const draw = (tl, path, at) => { if (path) tl.fromTo(path, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.3, ease: 'power2.inOut' }, at); };
+    if (list.dataset.svc === 'cards') {
+      const cards = $$('.ig-svc__card', list);
+      const tl = gsap.timeline({ scrollTrigger: { trigger: list, start: 'top 82%', once: true } });
+      tl.from(cards, { y: 70, opacity: 0, duration: 1.1, stagger: 0.09, ease: 'power3.out' }, 0);
+      cards.forEach((c, i) => draw(tl, $('.ig-svc__wave path', c), 0.35 + i * 0.09));
+      return;
+    }
+    $$('.ig-svc__row', list).forEach(row => {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 86%', once: true } });
+      const rule = $('.ig-svc__rule', row);
+      if (rule) tl.from(rule, { scaleX: 0, duration: 1.3, ease: 'expo.inOut' }, 0);
+      tl.from($$('.ig-svc__num, .ig-svc__title, .ig-svc__label', row).filter(e => !e.closest('.ig-svc__panel')), { y: 36, opacity: 0, duration: 0.95, stagger: 0.06, ease: 'power3.out' }, 0.05);
+      if (!row.closest('.is-accordion')) {
+        draw(tl, $('.ig-svc__wave path', row), 0.2);
+        tl.from($('.ig-svc__text', row), { y: 22, opacity: 0, duration: 0.9, ease: 'power2.out' }, 0.3);
+      }
     });
   }));
 

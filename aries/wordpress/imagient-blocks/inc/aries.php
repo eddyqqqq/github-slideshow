@@ -11,7 +11,7 @@ function imagient_aries_defaults() {
 	$img = function_exists( 'get_theme_file_uri' ) ? get_theme_file_uri( 'assets/images/' ) : '';
 	return array(
 		'companies' => array(
-			array( 'name' => 'Aries Shipping Agency', 'text' => 'Maritime and river agency providing comprehensive agency services in all Romanian Black Sea and Danube ports.', 'linkText' => 'View more', 'linkUrl' => '#contact', 'logo' => 'agency', 'shape' => 'agency', 'color' => 'agency' ),
+			array( 'name' => 'Aries Shipping Agency', 'text' => 'Maritime and river agency providing comprehensive agency services in all Romanian Black Sea and Danube ports.', 'linkText' => 'View more', 'linkUrl' => '/aries-shipping-agency/', 'logo' => 'agency', 'shape' => 'agency', 'color' => 'agency' ),
 			array( 'name' => 'Aries Interlink', 'text' => 'Supply chain support across Romania, with expertise in rail transport and rail operations mainly for grains, steel products and fertilizers.', 'linkText' => 'View more', 'linkUrl' => '#contact', 'logo' => 'interlink', 'shape' => 'interlink', 'color' => 'interlink' ),
 			array( 'name' => 'Aries Logistics', 'text' => 'Bulk and break-bulk logistics, including stevedoring, transport, customs brokerage, warehousing, freight forwarding and door-to-door delivery.', 'linkText' => 'View more', 'linkUrl' => '#contact', 'logo' => 'logistics', 'shape' => 'logistics', 'color' => 'logistics' ),
 		),

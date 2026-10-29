@@ -8,7 +8,7 @@
    then figures, services and footer. Colours sampled from the design file. */
 :root {
   --blue: var(--wp--preset--color--group, #145fad);        /* Aries Group */
-  --agency: var(--wp--preset--color--agency, #3089a9);      /* Shipping Agency */
+  --agency: var(--wp--preset--color--agency, #3189a9);      /* Shipping Agency */
   --interlink: var(--wp--preset--color--interlink, #2aa8da);   /* Interlink */
   --logistics: var(--wp--preset--color--logistics, #42979c);   /* Logistics */
   --ink: #111418;
@@ -339,3 +339,174 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 /* the scenes set their own text colours (the theme's heading colour does not apply inside them) */
 .scene-two :is(h1, h2, h3), .identity :is(h1, h2, h3), .figs .tile :is(h2, h3), .card h3 { color: inherit; }
 .hero-title h1 { color: var(--blue); }
+
+/* ======================= company pages: page hero, cover, figures, services, menu ======================= */
+/* --pu: one pixel of the 1440 design, growing with the screen up to 1920 */
+:root { --pu: calc(min(100vw, 1920px) / 1440); }
+
+/* page hero: the logo, the company frame (its window, x0–x1, spans the screen up to 1920 px; wider screens keep that
+   size, centred, the frame's ends in view) and the title */
+.ig-phero { position: relative; overflow: hidden; background: var(--paper);
+  padding: calc(env(safe-area-inset-top, 0px) + max(20px, 68 * var(--pu))) 0 calc(150 * var(--pu)); }
+.ig-phero__logo { display: block; width: var(--logo-w); margin-left: max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu)); position: relative; z-index: 2; }
+.ig-phero__logo .logo { width: 100%; }
+.logo-link.is-colour .logo .s { fill: #005dac; }
+.logo-link.is-colour .logo .t { fill: #000; }
+.ig-phero__stage { position: relative; margin-top: calc(80 * var(--pu));
+  --svgw: calc(min(100vw, 1920px) * var(--fw) / (var(--fx1) - var(--fx0))); }
+.ig-phero__svg { display: block; width: var(--svgw); max-width: none; height: auto; margin-left: calc(50% - var(--svgw) / 2); overflow: visible; }
+.ig-phero__src { position: absolute; left: 0; top: 0; width: 15px; opacity: 0; pointer-events: none; }
+.ig-phero__src img { display: block; width: 100%; height: auto; }
+.ph-frame { fill: var(--accent, var(--agency)); }
+.ph-curtain { fill: var(--accent, var(--agency)); opacity: 0; }
+.ph-img { opacity: 0; }
+.ph-img.is-ready { opacity: 1; transition: opacity .5s; }
+.ig-phero__title { margin: calc(130 * var(--pu)) 0 0; padding: 0 var(--gut-r) 0 max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu));
+  color: var(--blue); font-size: max(34px, 60 * var(--pu)); line-height: 1.05; font-weight: 400; letter-spacing: -0.02em; }
+.pre .ig-phero .ph-art, .pre .ig-phero__title { opacity: 0; }
+/* phones: the frame shown 1300 units across the screen, centred on --fpx (the ship), the logo and title smaller */
+@media (max-width: 760px) and (orientation: portrait) {
+  .ig-phero { padding-top: calc(env(safe-area-inset-top, 0px) + 20px); padding-bottom: 64px; }
+  .ig-phero__logo { width: var(--m-logo, 56px); margin-left: var(--gut); }
+  .ig-phero__stage { margin-top: 36px; --svgw: calc(100vw * var(--fw) / 1300); }
+  .ig-phero__svg { margin-left: calc(50% - var(--fpx) * 100vw / 1300); }
+  .ig-phero__title { margin-top: 40px; font-size: var(--h-xl); }
+}
+
+/* the header of company pages: only the menu button, over the page hero at the top right */
+.ig-top.ig-top-company { position: absolute; top: 0; left: auto; right: 0; z-index: 60; pointer-events: none;
+  padding: calc(env(safe-area-inset-top, 0px) + max(20px, 68 * var(--pu))) max(var(--gut-r), (100% - 1920px) / 2 + 68 * var(--pu)) 0 0; }
+.admin-bar .ig-top.ig-top-company { top: var(--wp-admin--admin-bar--height, 32px); }
+.ig-top-company > * { pointer-events: auto; }
+@media (max-width: 760px) and (orientation: portrait) { .ig-top.ig-top-company { padding-top: calc(env(safe-area-inset-top, 0px) + 20px); } }
+
+/* menu: three lines that turn into a cross; the full-screen panel opens from the button's corner */
+.ig-menu__btn { position: relative; z-index: 2; width: 44px; height: 44px; margin: -12px -10px 0 0; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ink); }
+.ig-menu__btn span { position: absolute; left: 10px; right: 10px; height: 2px; background: currentColor; border-radius: 1px; transition: transform .45s cubic-bezier(.65, 0, .25, 1), opacity .3s, top .45s cubic-bezier(.65, 0, .25, 1); }
+.ig-menu__btn span:nth-child(1) { top: 14px; } .ig-menu__btn span:nth-child(2) { top: 21px; } .ig-menu__btn span:nth-child(3) { top: 28px; }
+.menu-open .ig-menu__btn { color: var(--on); }
+.menu-open .ig-menu__btn span:nth-child(1) { top: 21px; transform: rotate(45deg); }
+.menu-open .ig-menu__btn span:nth-child(2) { opacity: 0; transform: scaleX(.2); }
+.menu-open .ig-menu__btn span:nth-child(3) { top: 21px; transform: rotate(-45deg); }
+.ig-menu__panel { position: fixed; inset: 0; z-index: 1; display: flex; flex-direction: column; justify-content: center; gap: 48px;
+  padding: 120px max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu)) 48px; background: var(--menu-bg, var(--blue)); color: var(--on);
+  clip-path: circle(0 at calc(100% - 40px) 40px); visibility: hidden; transition: clip-path .8s cubic-bezier(.65, 0, .25, 1), visibility 0s .8s; }
+.menu-open .ig-menu__panel { clip-path: circle(150% at calc(100% - 40px) 40px); visibility: visible; transition: clip-path .9s cubic-bezier(.65, 0, .25, 1); }
+.ig-menu { position: relative; }
+.ig-menu__panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(6px, 1.4vh, 16px); }
+.ig-menu__panel li { overflow: hidden; }
+.ig-menu__panel a { display: inline-block; color: inherit; text-decoration: none; font-size: clamp(30px, 3.6vw, 64px); line-height: 1.12; letter-spacing: -0.02em; }
+.ig-menu__panel li a span { display: inline-block; transform: translateY(110%); transition: transform .7s cubic-bezier(.2, .7, .2, 1); position: relative; }
+.ig-menu__panel li a span::after { content: ""; position: absolute; left: 0; right: 0; bottom: .02em; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: 100% 50%; transition: transform .5s cubic-bezier(.65, 0, .25, 1); }
+.ig-menu__panel li a:is(:hover, :focus-visible) span::after { transform: scaleX(1); transform-origin: 0 50%; }
+.menu-open .ig-menu__panel li a span { transform: none; }
+.menu-open .ig-menu__panel li:nth-child(1) a span { transition-delay: .25s; } .menu-open .ig-menu__panel li:nth-child(2) a span { transition-delay: .3s; }
+.menu-open .ig-menu__panel li:nth-child(3) a span { transition-delay: .35s; } .menu-open .ig-menu__panel li:nth-child(4) a span { transition-delay: .4s; }
+.menu-open .ig-menu__panel li:nth-child(5) a span { transition-delay: .45s; } .menu-open .ig-menu__panel li:nth-child(n+6) a span { transition-delay: .5s; }
+.ig-menu__foot { display: flex; align-items: center; justify-content: space-between; gap: 24px; opacity: 0; transition: opacity .4s; }
+.menu-open .ig-menu__foot { opacity: 1; transition: opacity .6s .55s; }
+.ig-menu__slogan { margin: 0; font-size: var(--link); opacity: .85; }
+.ig-menu__li { display: block; width: 32px; line-height: 0; } .ig-menu__li svg { width: 100%; height: auto; }
+html.menu-open, html.menu-open body { overflow: hidden; }
+
+/* cover: a photo band, its own height ("image"), the screen's, or its content's; a colour gradient over the photo;
+   its blocks on top */
+.ig-cover { position: relative; overflow: hidden; background: var(--cv-from, var(--blue)); }
+.ig-cover__media { position: absolute; inset: 0; overflow: hidden; }
+.ig-cover__media picture { display: contents; }
+.ig-cover__media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--cv-pos, 50% 50%); }
+.ig-cover.is-image .ig-cover__media { position: relative; }
+.ig-cover.is-image .ig-cover__media img { height: auto; }
+.ig-cover.is-screen { min-height: 100vh; min-height: 100svh; }
+.ig-cover.is-parallax .ig-cover__media img { transform: scale(1.1); will-change: transform; }
+.ig-cover__shade { position: absolute; inset: 0; opacity: var(--cv-o, 1); pointer-events: none;
+  background: linear-gradient(var(--cv-angle, 100deg), var(--cv-from) 0%, color-mix(in srgb, var(--cv-from) 72%, transparent) 30%,
+    color-mix(in srgb, var(--cv-to) 16%, transparent) 64%, color-mix(in srgb, var(--cv-to) 38%, transparent) 100%); }
+.ig-cover__inner { position: relative; z-index: 1; padding-top: calc(120 * var(--pu)); padding-bottom: calc(120 * var(--pu)); }
+.ig-cover.is-image .ig-cover__inner { position: absolute; inset: 0; }
+.ig-cover.tone-dark { color: var(--on); }
+.ig-cover.tone-dark :is(h1, h2, h3, h4, p, a) { color: inherit; }
+.ig-cover:not(.has-content) .ig-cover__inner { display: none; }
+/* phones: a band with content is at least as tall as it needs, the gradient runs down from the top */
+@media (max-width: 760px) and (orientation: portrait) {
+  .ig-cover.has-content.is-image .ig-cover__media { position: absolute; }
+  .ig-cover.has-content.is-image .ig-cover__media img { height: 100%; }
+  .ig-cover.has-content.is-image .ig-cover__inner { position: relative; min-height: 128vw; padding-top: 64px; padding-bottom: 72px; }
+  .ig-cover__shade { background: linear-gradient(172deg, var(--cv-from) 0%, color-mix(in srgb, var(--cv-from) 78%, transparent) 38%,
+    color-mix(in srgb, var(--cv-to) 12%, transparent) 72%, color-mix(in srgb, var(--cv-to) 30%, transparent) 100%); }
+}
+
+/* the statements on company pages: large and light, as in the design */
+.ig-page-statement { font-size: var(--h-l); line-height: 1.15; font-weight: 400; letter-spacing: -0.02em; max-width: 13.2em; margin: 0 0 calc(30 * var(--pu)); }
+.ig-section .ig-page-statement { color: inherit; }
+.ig-cover .wp-block-buttons, .ig-page-figures .wp-block-buttons { margin-top: 0; }
+.ig-page-notes { max-width: 640px; margin-top: calc(470 * var(--pu)); display: grid; gap: 18px; }
+.ig-page-notes p { margin: 0; font-size: var(--link); line-height: 1.5; }
+@media (max-width: 760px) and (orientation: portrait) { .ig-page-notes { margin-top: 300px; } .ig-page-notes p { font-size: var(--body); } }
+
+/* services list: four layouts */
+.ig-svc { --accent: var(--agency); margin: 0; padding: 0; list-style: none; }
+.ig-svc__title { margin: 0; font-size: var(--h-l); line-height: 1.12; font-weight: 400; letter-spacing: -0.02em; color: var(--ink); }
+.ig-svc__text { margin: 0; font-size: var(--link); line-height: 1.5; color: var(--text); }
+.ig-svc__wave { display: block; width: 212px; max-width: 100%; height: auto; overflow: visible; }
+.ig-svc__wave path { fill: none; stroke: currentColor; stroke-width: 1px; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.ig-svc__num { font-size: var(--small); letter-spacing: .06em; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* 1 · as designed: title, the wave, the text */
+.ig-svc.is-design { display: grid; gap: calc(110 * var(--pu)); }
+.is-design .ig-svc__row { display: grid; grid-template-columns: minmax(0, 335fr) minmax(0, 324fr) minmax(0, 475fr) minmax(0, 170fr); align-items: center; }
+.is-design .ig-svc__wave { justify-self: center; color: var(--ink); }
+@media (max-width: 1024px) { .is-design .ig-svc__row { grid-template-columns: minmax(0, 1.1fr) minmax(0, .6fr) minmax(0, 1.2fr); } }
+@media (max-width: 760px) {
+  .ig-svc.is-design { gap: 56px; }
+  .is-design .ig-svc__row { grid-template-columns: 1fr; gap: 18px; }
+  .is-design .ig-svc__wave { justify-self: start; width: 150px; }
+}
+
+/* 2 · editorial: numbered rows between lines; the line draws in, the row answers the pointer */
+.ig-svc.is-editorial { counter-reset: svc; border-bottom: 1px solid var(--line); }
+.is-editorial .ig-svc__row { position: relative; display: grid; grid-template-columns: minmax(0, 90px) minmax(0, 1fr) minmax(0, 1fr); gap: 24px 40px; align-items: baseline;
+  padding: calc(44 * var(--pu)) 0; transition: background-color .5s; }
+.is-editorial .ig-svc__rule { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--ink); transform-origin: 0 50%; }
+.is-editorial .ig-svc__title { font-size: calc(var(--h-l) * .82); transition: translate .6s cubic-bezier(.2, .7, .2, 1), color .4s; }   /* translate, not transform: the entrance animates transform */
+.is-editorial .ig-svc__row:hover .ig-svc__title { translate: 10px 0; color: var(--accent); }
+.is-editorial .ig-svc__text { max-width: 46ch; }
+@media (max-width: 760px) { .is-editorial .ig-svc__row { grid-template-columns: 1fr; gap: 12px; padding: 32px 0; } }
+
+/* 3 · accordion: one service open at a time; the wave draws as it opens */
+.ig-svc.is-accordion { border-top: 1px solid var(--line); }
+.is-accordion .ig-svc__row { border-bottom: 1px solid var(--line); }
+.is-accordion .ig-svc__title button { all: unset; box-sizing: border-box; width: 100%; display: grid; grid-template-columns: minmax(0, 90px) minmax(0, 1fr) 44px; align-items: center; gap: 24px;
+  padding: calc(36 * var(--pu)) 0; cursor: pointer; }
+.is-accordion .ig-svc__title button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.is-accordion .ig-svc__label { font-size: calc(var(--h-l) * .78); line-height: 1.15; transition: color .4s; }
+.is-accordion .ig-svc__row:hover .ig-svc__label, .is-accordion .is-open .ig-svc__label { color: var(--accent); }
+.ig-svc__plus { position: relative; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); transition: background-color .4s, border-color .4s; }
+.ig-svc__plus::before, .ig-svc__plus::after { content: ""; position: absolute; left: 14px; right: 14px; top: 21px; height: 2px; background: var(--ink); transition: transform .45s cubic-bezier(.65, 0, .25, 1), background-color .4s; }
+.ig-svc__plus::after { transform: rotate(90deg); }
+.is-open .ig-svc__plus { background: var(--accent); border-color: var(--accent); }
+.is-open .ig-svc__plus::before, .is-open .ig-svc__plus::after { background: var(--on); }
+.is-open .ig-svc__plus::after { transform: rotate(0); }
+.is-accordion .ig-svc__panel { overflow: hidden; }
+.is-accordion .ig-svc__body { display: grid; grid-template-columns: minmax(0, 90px) minmax(0, 212px) minmax(0, 1fr); gap: 24px; align-items: center; padding: 0 0 calc(40 * var(--pu)); }
+.is-accordion .ig-svc__body .ig-svc__wave { grid-column: 2; color: var(--accent); }
+.is-accordion .ig-svc__body .ig-svc__text { max-width: 52ch; }
+@media (max-width: 760px) {
+  .is-accordion .ig-svc__title button { grid-template-columns: 34px minmax(0, 1fr) 40px; gap: 12px; padding: 24px 0; }
+  .ig-svc__plus { width: 40px; height: 40px; } .ig-svc__plus::before, .ig-svc__plus::after { left: 12px; right: 12px; top: 19px; }
+  .is-accordion .ig-svc__body { grid-template-columns: 1fr; gap: 14px; padding-bottom: 28px; }
+  .is-accordion .ig-svc__body .ig-svc__wave { grid-column: 1; width: 120px; }
+}
+
+/* 4 · cards: a grid of tinted cards that fill with the company colour under the pointer */
+.ig-svc.is-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 24px); }
+.ig-svc__card { position: relative; display: flex; flex-direction: column; gap: 18px; min-height: clamp(300px, 26vw, 420px); padding: clamp(24px, 2.8vw, 44px);
+  border-radius: 6px; background: color-mix(in srgb, var(--accent) 8%, #fff); color: var(--ink); overflow: hidden;
+  transition: background-color .55s, color .55s, translate .6s cubic-bezier(.2, .7, .2, 1); }
+.ig-svc__card .ig-svc__wave { color: var(--accent); width: 150px; transition: color .55s; }
+.ig-svc__card .ig-svc__title { font-size: calc(var(--h-l) * .62); margin-top: auto; transition: color .55s; }
+.ig-svc__card .ig-svc__text { transition: color .55s; }
+.ig-svc__card:hover { background: var(--accent); color: var(--on); translate: 0 -6px; }
+.ig-svc__card:hover :is(.ig-svc__title, .ig-svc__text, .ig-svc__num, .ig-svc__wave) { color: var(--on); }
+@media (max-width: 1024px) { .ig-svc.is-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .ig-svc.is-cards { grid-template-columns: 1fr; } .ig-svc__card { min-height: 0; } }

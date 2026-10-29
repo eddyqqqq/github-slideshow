@@ -8,7 +8,7 @@
       "defaultPalette": false, "defaultGradients": false, "custom": true,
       "palette": [
         { "slug": "group", "name": "Aries Group", "color": "#145fad" },
-        { "slug": "agency", "name": "Shipping Agency", "color": "#3089a9" },
+        { "slug": "agency", "name": "Shipping Agency", "color": "#3189a9" },
         { "slug": "interlink", "name": "Interlink", "color": "#2aa8da" },
         { "slug": "logistics", "name": "Logistics", "color": "#42979c" },
         { "slug": "ink", "name": "Ink", "color": "#111418" },
@@ -77,9 +77,11 @@
   },
   "templateParts": [
     { "name": "header", "title": "Header", "area": "header" },
+    { "name": "header-company", "title": "Header (company pages: menu)", "area": "header" },
     { "name": "footer", "title": "Footer", "area": "footer" }
   ],
   "customTemplates": [
-    { "name": "page-blank", "title": "Blank (blocks only, no title)", "postTypes": [ "page" ] }
+    { "name": "page-blank", "title": "Blank (blocks only, no title)", "postTypes": [ "page" ] },
+    { "name": "page-company", "title": "Company page (menu, page hero, footer)", "postTypes": [ "page" ] }
   ]
 }

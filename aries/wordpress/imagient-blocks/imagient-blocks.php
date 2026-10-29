@@ -3,7 +3,7 @@
  * Plugin Name:       Imagient Blocks
  * Plugin URI:        https://imagient.ro
  * Description:       Native Gutenberg blocks by Imagient: responsive layout (Section, Flex, Grid, Box), scroll animations for every block, and the Aries scenes (hero, company scene, figures, service cards, ribbons).
- * Version:           1.10.0
+ * Version:           1.11.0
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Imagient
@@ -14,13 +14,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'IMAGIENT_BLOCKS_VERSION', '1.10.0' );
+define( 'IMAGIENT_BLOCKS_VERSION', '1.11.0' );
 define( 'IMAGIENT_BLOCKS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'IMAGIENT_BLOCKS_URL', plugin_dir_url( __FILE__ ) );
 
 require_once IMAGIENT_BLOCKS_DIR . 'inc/helpers.php';
 require_once IMAGIENT_BLOCKS_DIR . 'inc/layout.php';
 require_once IMAGIENT_BLOCKS_DIR . 'inc/aries.php';
+require_once IMAGIENT_BLOCKS_DIR . 'inc/pages.php';
 require_once IMAGIENT_BLOCKS_DIR . 'inc/animations.php';
 require_once IMAGIENT_BLOCKS_DIR . 'inc/style.php';
 
@@ -58,6 +59,7 @@ add_action( 'init', function () {
 		'assets'   => $url,
 		'palette'  => imagient_palette(),
 		'spaces'   => imagient_space_scale(),
+		'frames'   => imagient_frames(),
 	) ) . ';', 'before' );
 	wp_register_style( 'imagient-blocks-editor', $url . 'editor.css', array( 'imagient-aries' ), $v );
 
@@ -66,6 +68,7 @@ add_action( 'init', function () {
 
 	imagient_register_layout_blocks();
 	imagient_register_aries_blocks();
+	imagient_register_page_blocks();
 
 	// link styles for core blocks: the underline that draws in on hover, as on the site
 	register_block_style( 'core/button', array( 'name' => 'aries-link', 'label' => 'Aries link' ) );

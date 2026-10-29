@@ -407,6 +407,128 @@
     save: () => null
   });
 
+  /* ================================ COMPANY PAGES ================================ */
+  const FRAMES = CFG.frames || {};
+  const PH_ANIMS = [
+    { value: '1', label: '1 · The frame draws in, the photo settles' }, { value: '2', label: '2 · Curtain: the colour slides off the photo' },
+    { value: '3', label: '3 · Parallax: soft rise, layers drift on scroll' }, { value: '4', label: '4 · The frame opens from a line' },
+    { value: '5', label: '5 · Title first, the frame glides in' }];
+  const logoOpts = [{ value: '', label: 'No logo' }].concat(LOGOS);
+  const colorPick = (label, value, onChange) => el(SelectControl, { label, value, options: COLOR_OPTS, onChange });
+
+  /* ---------------- page hero ---------------- */
+  registerBlockType('imagient/page-hero', {
+    icon: ICONS.hero,
+    edit({ attributes: a, setAttributes }) {
+      const props = useBlockProps({ className: 'ig-phero-edit', style: { '--accent': colorOf(a.color) } });
+      const f = FRAMES[a.frame] || FRAMES[Object.keys(FRAMES)[0]] || null;
+      const frameOpts = Object.keys(FRAMES).map(k => ({ value: k, label: k.charAt(0).toUpperCase() + k.slice(1) }));
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Opening animation', initialOpen: true },
+            el(SelectControl, { label: 'Animation', value: a.anim, options: PH_ANIMS, onChange: v => setAttributes({ anim: v }) }),
+            el('p', { className: 'ig-help' }, 'Compare them on the site without saving: add ?anim=1 … ?anim=5 to the page address.')),
+          el(PanelBody, { title: 'Photo', initialOpen: true },
+            el(ImagePicker, { id: a.imageId, url: a.imageUrl, onSelect: m => setAttributes({ imageId: m.id, imageUrl: m.url }), label: 'photo' }),
+            el(RangeControl, { label: 'Focus, left to right (%)', value: a.focusX, min: 0, max: 100, onChange: v => setAttributes({ focusX: v }) }),
+            el(RangeControl, { label: 'Focus, top to bottom (%)', value: a.focusY, min: 0, max: 100, onChange: v => setAttributes({ focusY: v }) }),
+            el(RangeControl, { label: 'Zoom (%)', value: a.zoom, min: 100, max: 250, onChange: v => setAttributes({ zoom: v }) }),
+            el('p', { className: 'ig-help' }, 'Upload the photo large (3000 px wide or more); the browser picks the size each screen needs.')),
+          el(PanelBody, { title: 'Frame, logo and colour', initialOpen: false },
+            frameOpts.length > 1 ? el(SelectControl, { label: 'Frame', value: a.frame, options: frameOpts, onChange: v => setAttributes({ frame: v }) }) : null,
+            colorPick('Frame colour', a.color, v => setAttributes({ color: v })),
+            el(SelectControl, { label: 'Logo (top left)', value: a.logo, options: logoOpts, onChange: v => setAttributes({ logo: v }) }),
+            el(RangeControl, { label: 'Phones: part of the frame shown (centre, in frame units)', value: a.portraitX, min: 400, max: 1600, step: 10, onChange: v => setAttributes({ portraitX: v }) }))),
+        el('div', props,
+          a.logo && CFG.logos[a.logo] ? el('div', { className: 'ig-phero-edit__logo' }, el('img', { src: CFG.assets + 'logos/' + a.logo + '.svg', alt: '' })) : null,
+          f ? el('svg', { className: 'ig-phero-edit__svg', viewBox: `${f.x0} 0 ${f.x1 - f.x0} ${f.h}`, preserveAspectRatio: 'xMidYMid slice' },
+            el('defs', {}, el('clipPath', { id: 'phe-w' }, el('path', { d: f.window }))),
+            el('g', { clipPath: 'url(#phe-w)' }, a.imageUrl ? el('image', { href: a.imageUrl, x: f.x0, y: 0, width: f.x1 - f.x0, height: f.h, preserveAspectRatio: 'xMidYMid slice' }) : null),
+            el('path', { d: f.path, fill: colorOf(a.color) })) : el('p', {}, 'No frame'),
+          RT({ tagName: 'h1', className: 'ig-phero-edit__title', value: a.title, onChange: v => setAttributes({ title: v }), placeholder: 'Page title' })));
+    },
+    save: () => null
+  });
+
+  /* ---------------- cover ---------------- */
+  registerBlockType('imagient/cover', {
+    icon: ICONS.section,
+    edit({ attributes: a, setAttributes }) {
+      const grad = a.overlay ? `linear-gradient(${a.angle}deg, ${colorOf(a.from)} 0%, ${colorOf(a.from)}b8 30%, ${colorOf(a.to)}29 64%, ${colorOf(a.to)}61 100%)` : 'none';
+      const props = useBlockProps({ className: 'ig-cover-edit tone-' + a.tone, style: { '--cv-img': a.imageUrl ? `url("${a.imageUrl}")` : 'none', '--cv-grad': grad, '--cv-o': a.strength / 100, '--cv-pos': `${a.focusX}% ${a.focusY}%` } });
+      const inner = useInnerBlocksProps({ className: 'ig-cover-edit__inner' }, { template: [['core/heading', { className: 'ig-page-statement' }], ['core/buttons', {}, [['core/button', { className: 'is-style-aries-link', text: 'Contact us' }]]]] });
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Photo', initialOpen: true },
+            el(ImagePicker, { id: a.imageId, url: a.imageUrl, onSelect: m => setAttributes({ imageId: m.id, imageUrl: m.url, alt: m.alt || a.alt }), label: 'photo' }),
+            el(TextControl, { label: 'Image description (alt)', value: a.alt, onChange: v => setAttributes({ alt: v }) }),
+            el(SelectControl, { label: 'Height', value: a.height, options: [{ value: 'image', label: 'The photo’s own proportions' }, { value: 'screen', label: 'One screen' }, { value: 'auto', label: 'As tall as its content' }], onChange: v => setAttributes({ height: v }) }),
+            el(RangeControl, { label: 'Focus, left to right (%)', value: a.focusX, min: 0, max: 100, onChange: v => setAttributes({ focusX: v }) }),
+            el(RangeControl, { label: 'Focus, top to bottom (%)', value: a.focusY, min: 0, max: 100, onChange: v => setAttributes({ focusY: v }) }),
+            el(ToggleControl, { label: 'Photo drifts with the scroll', checked: a.parallax, onChange: v => setAttributes({ parallax: v }) })),
+          el(PanelBody, { title: 'Colour gradient', initialOpen: true },
+            el(ToggleControl, { label: 'Gradient over the photo', checked: a.overlay, onChange: v => setAttributes({ overlay: v }) }),
+            a.overlay ? el(Fragment, {},
+              colorPick('From (where the text is)', a.from, v => setAttributes({ from: v })),
+              colorPick('To', a.to, v => setAttributes({ to: v })),
+              el(RangeControl, { label: 'Direction (degrees)', value: a.angle, min: 0, max: 360, onChange: v => setAttributes({ angle: v }) }),
+              el(RangeControl, { label: 'Strength (%)', value: a.strength, min: 0, max: 100, onChange: v => setAttributes({ strength: v }) })) : null,
+            el(SelectControl, { label: 'Text colour', value: a.tone, options: [{ value: 'dark', label: 'White (on a dark photo)' }, { value: 'light', label: 'Dark (on a light photo)' }], onChange: v => setAttributes({ tone: v }) }))),
+        el('section', props, el('div', inner)));
+    },
+    save: saveInner
+  });
+
+  /* ---------------- services list ---------------- */
+  const SVC_VARIANTS = [{ value: 'design', label: '1 · As designed: title, wave, text' }, { value: 'editorial', label: '2 · Editorial: numbered rows' }, { value: 'accordion', label: '3 · Accordion' }, { value: 'cards', label: '4 · Cards' }];
+  registerBlockType('imagient/services', {
+    icon: ICONS.cards,
+    edit({ attributes: a, setAttributes }) {
+      const props = useBlockProps({ className: 'ig-svc-edit', style: { '--accent': colorOf(a.color) } });
+      const list = a.items || [], ops = listOps(list, v => setAttributes({ items: v }));
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Layout', initialOpen: true },
+            el(SelectControl, { label: 'Layout', value: a.variant, options: SVC_VARIANTS, onChange: v => setAttributes({ variant: v }) }),
+            colorPick('Accent colour', a.color, v => setAttributes({ color: v })),
+            el('p', { className: 'ig-help' }, 'Compare the layouts on the site without saving: add ?list=1 … ?list=4 to the page address.'))),
+        el('div', props,
+          el('span', { className: 'ig-badge' }, 'Services · ' + (SVC_VARIANTS.find(o => o.value === a.variant) || SVC_VARIANTS[0]).label),
+          list.map((it, i) => el('div', { key: i, className: 'ig-svc-edit__row' },
+            RT({ tagName: 'h3', className: 'ig-svc__title', value: it.title, onChange: v => ops.update(i, { title: v }), placeholder: 'Service' }),
+            el('svg', { className: 'ig-svc__wave', viewBox: '0 0 212 26' }, el('path', { d: 'M0.2 14.47C93.3 54.73 126.45-31.67 211.2 14.47' })),
+            RT({ tagName: 'p', className: 'ig-svc__text', value: it.text, onChange: v => ops.update(i, { text: v }), placeholder: 'What it covers' }),
+            el(ItemTools, { i, n: list.length, ops, label: 'service' }))),
+          el(Button, { variant: 'secondary', className: 'ig-add', onClick: () => ops.add({ title: 'New service', text: '' }) }, '+ Add service')));
+    },
+    save: () => null
+  });
+
+  /* ---------------- menu ---------------- */
+  registerBlockType('imagient/menu', {
+    icon: icon('M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z'),
+    edit({ attributes: a, setAttributes }) {
+      const props = useBlockProps({ className: 'ig-menu-edit' });
+      const list = a.items || [], ops = listOps(list, v => setAttributes({ items: v }));
+      return el(Fragment, {},
+        el(InspectorControls, {},
+          el(PanelBody, { title: 'Links', initialOpen: true },
+            list.map((it, i) => el('div', { key: i, className: 'ig-menu-edit__item' },
+              el(TextControl, { label: 'Label ' + (i + 1), value: it.label, onChange: v => ops.update(i, { label: v }) }),
+              el(TextControl, { label: 'Link', value: it.url, onChange: v => ops.update(i, { url: v }) }),
+              el('div', { className: 'ig-menu-edit__tools' },
+                el(Button, { size: 'small', icon: 'arrow-up-alt2', label: 'Move up', disabled: i === 0, onClick: () => ops.move(i, -1) }),
+                el(Button, { size: 'small', icon: 'arrow-down-alt2', label: 'Move down', disabled: i === list.length - 1, onClick: () => ops.move(i, 1) }),
+                el(Button, { size: 'small', icon: 'trash', label: 'Remove', isDestructive: true, onClick: () => ops.remove(i) })))),
+            el(Button, { variant: 'secondary', onClick: () => ops.add({ label: 'New link', url: '#' }) }, '+ Add link')),
+          el(PanelBody, { title: 'Look', initialOpen: false },
+            colorPick('Menu colour', a.color, v => setAttributes({ color: v })),
+            el(TextControl, { label: 'LinkedIn page (empty: none)', value: a.linkedin, onChange: v => setAttributes({ linkedin: v }) }))),
+        el('div', props, el('span', { className: 'ig-menu-edit__btn', 'aria-hidden': true }, el('i'), el('i'), el('i')), el('span', { className: 'ig-menu-edit__label' }, 'Menu · ' + list.length + ' links (opens full screen on the site)')));
+    },
+    save: () => null
+  });
+
   /* ================================ ANIMATION SETTING ON EVERY BLOCK ================================ */
   addFilter('blocks.registerBlockType', 'imagient/anim-attribute', (settings) => {
     settings.attributes = Object.assign({}, settings.attributes, { igAnim: { type: 'string', default: '' } });

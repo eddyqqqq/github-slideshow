@@ -129,3 +129,22 @@
 .igl-chip.is-active { background: var(--wp-admin-theme-color, #3858e9); border-color: var(--wp-admin-theme-color, #3858e9); color: #fff; }
 .igl-chip.is-inherited { border-color: #949494; border-style: dashed; }
 .igl-input { width: 92px; height: 28px; border: 1px solid #949494; border-radius: 3px; padding: 0 6px; font-size: 12px; }
+
+/* ================= company pages ================= */
+.ig-phero-edit { position: relative; padding: 24px 0 40px; background: #fff; overflow: hidden; }
+.ig-phero-edit__logo { padding: 0 24px 24px; } .ig-phero-edit__logo img { width: 60px; height: auto; filter: invert(30%) sepia(90%) saturate(900%) hue-rotate(190deg); }
+.ig-phero-edit__svg { display: block; width: 100%; height: auto; }
+.ig-phero-edit__title { margin: 40px 24px 0 !important; color: #145fad; font-weight: 400 !important; }
+.ig-cover-edit { position: relative; min-height: 420px; background: var(--cv-img) var(--cv-pos, 50% 50%) / cover no-repeat, #3189a9; color: #fff; }
+.ig-cover-edit::before { content: ""; position: absolute; inset: 0; background: var(--cv-grad); opacity: var(--cv-o, 1); pointer-events: none; }
+.ig-cover-edit.tone-light { color: #111418; }
+.ig-cover-edit__inner { position: relative; padding: 64px 48px; }
+.ig-cover-edit :is(h1, h2, h3, p, a) { color: inherit !important; }
+.ig-svc-edit { display: grid; gap: 28px; padding: 16px 0; }
+.ig-svc-edit__row { position: relative; display: grid; grid-template-columns: 1.1fr .6fr 1.2fr; gap: 20px; align-items: center; }
+.ig-svc-edit .ig-svc__wave { width: 140px; } .ig-svc-edit .ig-svc__wave path { fill: none; stroke: #111; stroke-width: 1; }
+.ig-svc-edit .ig-svc__title { font-size: 30px; margin: 0; font-weight: 400; } .ig-svc-edit .ig-svc__text { margin: 0; font-size: 14px; }
+.ig-menu-edit { display: inline-flex; align-items: center; gap: 12px; padding: 8px 12px; border: 1px dashed #c3c4c7; border-radius: 4px; }
+.ig-menu-edit__btn { display: grid; gap: 4px; width: 22px; } .ig-menu-edit__btn i { display: block; height: 2px; background: #111418; }
+.ig-menu-edit__label { font-size: 12px; color: #50575e; }
+.ig-menu-edit__item { padding: 10px 0; border-bottom: 1px solid #e0e0e0; } .ig-menu-edit__tools { display: flex; gap: 2px; }
