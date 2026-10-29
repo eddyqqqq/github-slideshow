@@ -1,11 +1,11 @@
 {
- "version": "1.16.0",
+ "version": "1.16.1",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
-    "assets/aries.css": "46d39a1d94488cd1874eff599a7bd35726a886cef3c96126b8313a2cf4b68f4e",
+    "assets/aries.css": "56c92ad1985561ac0ff39f82e2b7dad5291b3e4056838f27819500f0579288ba",
     "assets/aries.js": "90c30d36d317855424037d3557849c92e45fd769d7f114abae64afca9ff1301a",
     "assets/editor.css": "c36e256a90bcbffbbb4a4124aaa2b21ac97b1294139af4b81544fc7d55533395",
     "assets/editor.js": "a6614a60a28bdc6b872530ed1e1eb4f4b8b597dcd93a4c34d0307140553bd7f5",
@@ -19,7 +19,7 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "08a475ee7bd8858eac7dcbadc397e73b234c69b7e29ec39a60f55d869b676944",
+    "imagient-blocks.php": "c6d0183166b540249017cb158d193447bb589e8ee25bc1a64d95a8df06a30354",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "10ae20784115d8fe60436415be3dc03739a5bbb25bbca02841314279c084a54a",
     "inc/frames.php": "5e0027310898a4d7efa860221037773dabe667a9999b711648d0879f6b2fe122",
@@ -56,7 +56,7 @@
     "parts/header.html": "6ed219a8d4c0f9486ae5974a944f36e14a8bb4c70769b5798d1b1ef8888005b7",
     "patterns/cards.php": "0af378009689cda9e066d807efdb73245867e791cdd7efdfe795971fbcc4ec96",
     "patterns/companies.php": "13ea591495e1c96ea92917875037036a87e819226761954fbd5c8ffdd8786565",
-    "patterns/company-shipping-agency.php": "2736a1aee818b4d56b025883fc8f6cead2b129ab225151cee7d13ac084aeed31",
+    "patterns/company-shipping-agency.php": "ba2c170578444f37f97f7a031d4fdb0cd6750d1e68bf73feae5a3f6b7b9b80f0",
     "patterns/figures.php": "794e02a254852bf47cd1ac29703fe8619694f89763aa6c1c61d63fd1f2207cd1",
     "patterns/hero.php": "78d6cb2341453dbbfbfb3ba634086e426110595a8c782954e75c050f919788e0",
     "patterns/home.php": "d4db3b3817fc0ac6f5c79a01eaa9fb5a5c21e5764fc821613871177bd808133f",
@@ -64,7 +64,7 @@
     "patterns/text-columns.php": "9c7e27c65c7203b84cd618a47cc2588682d16f043cfee702400a28d9a81d3e66",
     "patterns/three-boxes.php": "976a98c6833da644bb8e41f6b30fc3b5ea98136154d9cdbcb2ac941ec3467f6b",
     "screenshot.png": "34bf19db6ee58a6c74053b44d740f2298125dec650e14fadd98bb451126d5fa8",
-    "style.css": "6b690e05ed3ac46443655d8e7c77f3685714c01ee589ed0b88b66fd47927cadd",
+    "style.css": "36676b79f6f1eee9926b0ccf643a79218c9ba6c35a2c2c92bcd559b08320bd2f",
     "templates/404.html": "21a392a07b93fb6f9ab5e59e25a4cab409d4f10962738cb7d5fee03665a0b695",
     "templates/front-page.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
     "templates/index.html": "788d6baa71bcef484a405d1285366bf08e86ea54912f07761d65f5b65d1ee299",

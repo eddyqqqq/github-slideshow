@@ -381,7 +381,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .ig-phero__logo { width: var(--m-logo, 56px); margin-left: var(--gut); }
   .ig-phero__stage { margin-top: 36px; --svgw: calc(100vw * var(--fw) / 1300); }
   .ig-phero__svg { margin-left: calc(50% - var(--fpx) * 100vw / 1300); }
-  .ig-phero__title { margin-top: 40px; font-size: var(--h-xl); }
+  .ig-phero__title { margin-top: 40px; font-size: var(--h-xl); max-width: 8.4em; text-wrap: balance; }   /* phones: a long name on two lines, clear of the edge */
 }
 
 /* the header of company pages: only the menu button, over the page hero at the top right */
