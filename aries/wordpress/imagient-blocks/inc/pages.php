@@ -36,7 +36,7 @@ function imagient_pages_defaults() {
 
 /** The services list's layouts, in the order of their preview numbers (?list=1 … 4). */
 function imagient_services_variants() {
-	return array( 'design', 'editorial', 'accordion', 'cards' );
+	return array( 'design', 'editorial', 'accordion' );
 }
 
 /**
@@ -116,13 +116,15 @@ function imagient_register_page_blocks() {
 			'strength'   => array( 'type' => 'number', 'default' => 100 ),
 			'tone'       => array( 'type' => 'string', 'default' => 'dark' ),
 			'parallax'   => array( 'type' => 'boolean', 'default' => true ),
+			'shade'      => array( 'type' => 'string', 'default' => 'text' ),   // text: deep on the text side; tint: light colour at both edges
+			'transition' => array( 'type' => 'string', 'default' => 'a' ),      // the page's section animations: a as on the home page, b curtain
 		),
 		'render_callback' => 'imagient_render_cover',
 	) ) );
 
 	register_block_type( 'imagient/services', array_merge( $common, array(
 		'title'           => 'Services list',
-		'description'     => 'A list of services, each a title and a short text, in one of four layouts: as designed (title, wave, text), editorial (numbered rows), accordion or cards.',
+		'description'     => 'A list of services, each a title and a short text, in one of three layouts: as designed (title, wave, text), editorial (numbered rows) or accordion.',
 		'supports'        => array( 'anchor' => true, 'className' => true, 'html' => false ),
 		'attributes'      => array(
 			'items'   => array( 'type' => 'array', 'default' => $d['services'] ),
@@ -198,9 +200,13 @@ function imagient_render_cover( $a, $content ) {
 		$style .= sprintf( '--cv-from:%s;--cv-to:%s;--cv-angle:%sdeg;--cv-o:%s;', imagient_color( $a['from'] ), imagient_color( $a['to'] ), intval( $a['angle'] ), max( 0, min( 100, intval( $a['strength'] ) ) ) / 100 );
 	}
 	$class  = 'ig-cover is-' . $height . ( 'light' === $a['tone'] ? ' tone-light' : ' tone-dark' ) . ( $a['overlay'] ? ' has-overlay' : '' ) . ( $a['parallax'] ? ' is-parallax' : '' ) . ( trim( wp_strip_all_tags( $content, true ) ) || false !== strpos( $content, '<img' ) ? ' has-content' : '' );
+	if ( 'tint' === $a['shade'] ) {
+		$class .= ' is-tint';
+	}
 	return sprintf(
-		'<section %s><div class="ig-cover__media">%s</div>%s<div class="ig-cover__inner ig-container is-gutter">%s</div></section>',
+		'<section %s data-sec="%s"><div class="ig-cover__media">%s</div>%s<div class="ig-cover__inner ig-container is-gutter">%s</div></section>',
 		imagient_wrapper( null, $class, $style ),
+		esc_attr( imagient_preview_choice( 'sec', strtolower( $a['transition'] ), array( 'a', 'b' ) ) ),
 		$photo,
 		$a['overlay'] ? '<div class="ig-cover__shade" aria-hidden="true"></div>' : '',
 		$content
@@ -231,9 +237,6 @@ function imagient_render_services( $a ) {
 				$pid   = $uid . '-' . $i;
 				$out  .= '<div class="ig-svc__row' . ( $open ? ' is-open' : '' ) . '"><h3 class="ig-svc__title"><button type="button" aria-expanded="' . ( $open ? 'true' : 'false' ) . '" aria-controls="' . esc_attr( $pid ) . '"><span class="ig-svc__num">' . $num . '</span><span class="ig-svc__label">' . $title . '</span><span class="ig-svc__plus" aria-hidden="true"></span></button></h3>'
 					. '<div class="ig-svc__panel" id="' . esc_attr( $pid ) . '" role="region"' . ( $open ? '' : ' hidden' ) . '><div class="ig-svc__body">' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . $text . '</p></div></div></div>';
-				break;
-			case 'cards':
-				$out .= '<article class="ig-svc__card"><span class="ig-svc__num">' . $num . '</span>' . imagient_wave_svg( 'ig-svc__wave' ) . '<h3 class="ig-svc__title">' . $title . '</h3><p class="ig-svc__text">' . $text . '</p></article>';
 				break;
 			default:
 				$out .= '<div class="ig-svc__row"><h3 class="ig-svc__title">' . $title . '</h3>' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . $text . '</p></div>';

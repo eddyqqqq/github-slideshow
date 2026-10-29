@@ -53,4 +53,4 @@
 <!-- wp:imagient/services /-->
 <!-- /wp:imagient/section -->
 
-<!-- wp:imagient/cover {"imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/shipping-agency-port.webp' ) ); ?>","alt":"The bulk carrier Lausanne moored at the grain terminal","overlay":false} /-->
+<!-- wp:imagient/cover {"imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/shipping-agency-port.webp' ) ); ?>","alt":"The bulk carrier Lausanne moored at the grain terminal","from":"agency","to":"group","shade":"tint"} /-->

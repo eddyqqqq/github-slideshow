@@ -482,10 +482,12 @@
           el(PanelBody, { title: 'Colour gradient', initialOpen: true },
             el(ToggleControl, { label: 'Gradient over the photo', checked: a.overlay, onChange: v => setAttributes({ overlay: v }) }),
             a.overlay ? el(Fragment, {},
+              el(SelectControl, { label: 'Gradient style', value: a.shade || 'text', options: [{ value: 'text', label: 'Deep on the text side (text over the photo)' }, { value: 'tint', label: 'Light colour at both edges (a photo on its own)' }], onChange: v => setAttributes({ shade: v }) }),
               colorPick('From (where the text is)', a.from, v => setAttributes({ from: v })),
               colorPick('To', a.to, v => setAttributes({ to: v })),
               el(RangeControl, { label: 'Direction (degrees)', value: a.angle, min: 0, max: 360, onChange: v => setAttributes({ angle: v }) }),
               el(RangeControl, { label: 'Strength (%)', value: a.strength, min: 0, max: 100, onChange: v => setAttributes({ strength: v }) })) : null,
+            el(SelectControl, { label: 'Section animations (whole page, set on the first cover)', value: a.transition || 'a', options: [{ value: 'a', label: 'A · As on the home page: everything follows the scroll' }, { value: 'b', label: 'B · Curtain: the next section rises over this one' }], onChange: v => setAttributes({ transition: v }) }),
             el(SelectControl, { label: 'Text colour', value: a.tone, options: [{ value: 'dark', label: 'White (on a dark photo)' }, { value: 'light', label: 'Dark (on a light photo)' }], onChange: v => setAttributes({ tone: v }) }))),
         el('section', props, el('div', inner)));
     },
@@ -493,7 +495,7 @@
   });
 
   /* ---------------- services list ---------------- */
-  const SVC_VARIANTS = [{ value: 'design', label: '1 · As designed: title, wave, text' }, { value: 'editorial', label: '2 · Editorial: numbered rows' }, { value: 'accordion', label: '3 · Accordion' }, { value: 'cards', label: '4 · Cards' }];
+  const SVC_VARIANTS = [{ value: 'design', label: '1 · As designed: title, wave, text' }, { value: 'editorial', label: '2 · Editorial: numbered rows' }, { value: 'accordion', label: '3 · Accordion' }];
   registerBlockType('imagient/services', {
     icon: ICONS.cards,
     edit({ attributes: a, setAttributes }) {
