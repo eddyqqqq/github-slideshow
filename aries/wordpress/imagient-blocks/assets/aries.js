@@ -429,6 +429,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches || !window.gsap;
   // the services' wave (design/wave-line.svg) with its swell k: 1 as drawn, more a deeper wave (the hover ripple)
   const waveD = k => { const r = v => Math.round(v * 100) / 100; return `M0.2 14.47C93.3 ${r(14.47 + 40.26 * k)} 126.45 ${r(14.47 - 46.14 * k)} 211.2 14.47`; };
+  // its entrance: a head runs from left to right (g 0 → 1) trailing a ripple that dies away behind it, so the line seems
+  // to form as a wave and settle into its curve (g up to 1.25: the last ripple calms down)
+  const WS = Array.from({ length: 97 }, (_, i) => { const t = i / 96, u = 1 - t;
+    return [0.2 * u * u * u + 3 * 93.3 * u * u * t + 3 * 126.45 * u * t * t + 211.2 * t * t * t, 14.47 * u * u * u + 3 * 54.73 * u * u * t - 3 * 31.67 * u * t * t + 14.47 * t * t * t]; });
+  const waveGrow = g => {
+    const head = Math.min(g, 1) * 211, calm = Math.max(0, Math.min(1, (g - 0.8) / 0.45)), A = 7 * (1 - calm * calm * (3 - 2 * calm));
+    let d = '';
+    for (const [x, y] of WS) {
+      if (x > head + 0.01) break;
+      const b = head - x, yy = y + A * Math.exp(-b / 55) * Math.sin(b / 13);
+      d += (d ? 'L' : 'M') + x.toFixed(1) + ' ' + yy.toFixed(2);
+    }
+    return d || 'M0.2 14.47';
+  };
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!window.gsap || !window.ScrollTrigger || reduce) {
@@ -600,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTrigger: { trigger: h, start: last ? 'top bottom' : 'top 94%', end: last ? 'bottom bottom' : 'top 62%', scrub: 0.6 } });
     });
   }));
-  $$('[data-anim="fade-up"]').filter(el => !el.closest(SCENE)).forEach(el => later(() => gsap.from(el, { y: 32, opacity: 0, ease: 'none',
+  $$('[data-anim="fade-up"]').filter(el => !el.closest(SCENE) && !el.closest('.after-scene')).forEach(el => later(() => gsap.from(el, { y: 32, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 78%', scrub: 0.6 } })));
   $$('[data-anim="scale-in"]').forEach(el => later(() => gsap.from(el, { scale: 0.94, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 70%', scrub: 0.6 } })));
@@ -621,12 +635,10 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('[data-anim="count"]').forEach(el => later(() => counter(el, textNodes(el))));
 
   /* ---- ribbons in tiles and decorative ribbons: they draw in along their length with the scroll ---- */
-  [...tileRibs, ...decorRibs].forEach(r => later(() => {
+  [...tileRibs, ...decorRibs.filter(r => !r.svg.closest('.after-scene'))].forEach(r => later(() => {   // (after a scene: below)
     const box = r.svg.parentElement;
     r.st.q = 0; r.render();
-    // in a section that slides over a scene, its first 55 % of a screen is still over the scene: count from below that
-    const off = () => (box.closest('.after-scene') ? Math.round(innerHeight * 0.55) : 0);
-    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: box, start: () => `top+=${off()} 92%`, end: () => `top+=${off()} 30%`, scrub: 0.8, invalidateOnRefresh: true } });
+    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: box, start: 'top 92%', end: 'top 45%', scrub: 0.8 } });
     if (r.panning) gsap.fromTo(r.place, { x: r.place.x + 0.08 }, { x: r.place.x - 0.08, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: box, start: 'top bottom', end: 'bottom top', scrub: 1 } });
   }));
 
@@ -723,6 +735,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (img && cv.classList.contains('is-parallax')) gsap.fromTo(img, { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: cv, start: 'top bottom', end: 'bottom top', scrub: true } });
   }));
+  /* ---- the section after a cover's scene, as the home page's company scene after its hero: it slides in over the
+         scene's end (its headline rising meanwhile), then stays in place while its ribbon draws in from the left all
+         the way across; then the page goes on and its texts come up ---- */
+  $$('.after-scene').forEach(sec => later(() => {
+    const r = decorRibs.find(x => sec.contains(x.svg));
+    // while it stays in place the scene has gone on up under it: its see-through top turns its own colour then
+    const lap = sec.style.background;
+    const bg = (lap.match(/(rgba?\([^)]*\))\s+40svh\)$/) || [])[1];
+    const tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top top', end: '+=90%', pin: true, scrub: 0.8, invalidateOnRefresh: true,
+      onToggle: st => { if (bg) sec.style.background = st.isActive || st.progress === 1 ? bg : lap; } } });
+    if (r) {
+      r.st.q = 0; r.render();
+      const x0 = r.place ? r.place.x : 0;
+      tl.to(r.st, { q: 1, duration: 1, ease: 'none', onUpdate: () => touch(r) }, 0);
+      if (r.place) tl.fromTo(r.place, { x: x0 + 0.04 }, { x: x0, duration: 1.2, ease: 'none', onUpdate: () => touch(r) }, 0);
+    }
+    tl.to({}, { duration: 0.01 }, 1.2);
+    // the texts under the ribbon rise one after another, as the home page's (each with the scroll, after the pin)
+    $$('[data-anim="fade-up"]', sec).forEach(el => (el.children.length > 1 ? [...el.children] : [el]).forEach(p => gsap.from(p, { y: 40, opacity: 0, ease: 'none',
+      scrollTrigger: { trigger: p, pinnedContainer: sec, start: 'top 100%', end: 'top 72%', scrub: 0.6 } })));
+  }));
+
   /* ---- services: each row comes in as the home page's blocks do (with the scroll); its wave draws from left to right
          along its length like the home page's shapes, its tip fading in, and ripples under the pointer. The dash is in
          the path's own length (measured), so every browser draws it the same ---- */
@@ -731,11 +765,10 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.from(title, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 98%', end: 'top 74%', scrub: 0.6 } });
     if (text) gsap.from(text, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 94%', end: 'top 70%', scrub: 0.6 } });
     if (!path) return;
-    const L = path.getTotalLength() + 2;
-    gsap.set(path, { strokeDasharray: L });
-    gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 95%', end: 'top 50%', scrub: 1 } })
-      .fromTo(path, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 1, ease: 'sine.inOut' }, 0)
-      .fromTo(path, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'none' }, 0);
+    path.setAttribute('d', 'M0.2 14.47');
+    const o = { g: 0 };
+    gsap.to(o, { g: 1.25, duration: 1.9, ease: 'power2.inOut', onUpdate: () => path.setAttribute('d', waveGrow(o.g)),
+      onComplete: () => path.setAttribute('d', waveD(1)), scrollTrigger: { trigger: row, start: 'top 82%', once: true } });
     path._wv = { k: 1 };
     const ripple = (k, d) => gsap.to(path._wv, { k, duration: d, ease: 'elastic.out(1, 0.45)', overwrite: 'auto', onUpdate: () => path.setAttribute('d', waveD(path._wv.k)) });
     row.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') ripple(1.6, 0.9); });

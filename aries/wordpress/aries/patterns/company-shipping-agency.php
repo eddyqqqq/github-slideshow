@@ -24,7 +24,7 @@
 <!-- /wp:imagient/cover -->
 
 <!-- wp:imagient/section {"background":"agency","tone":"dark","className":"ig-page-figures","spacing":{"d":{"pt":"8","pb":"8"},"t":{},"m":{}}} -->
-<!-- wp:imagient/ribbon {"shape":"agency","size":112,"x":-6,"y":40,"pan":true} /-->
+<!-- wp:imagient/ribbon {"shape":"group","size":112,"x":-6,"y":40,"pan":true} /-->
 
 <!-- wp:heading {"className":"ig-page-statement","igAnim":"split"} -->
 <h2 class="wp-block-heading ig-page-statement">Handling over 600 maritime port calls and over 800 inland waterway port calls annually.</h2>

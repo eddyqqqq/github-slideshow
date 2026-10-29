@@ -435,9 +435,10 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 .ig-cover__shade { position: absolute; inset: 0; opacity: var(--cv-o, 1); pointer-events: none;
   background: linear-gradient(var(--cv-angle, 100deg), var(--cv-from) 0%, color-mix(in srgb, var(--cv-from) 72%, transparent) 30%,
     color-mix(in srgb, var(--cv-to) 16%, transparent) 64%, color-mix(in srgb, var(--cv-to) 38%, transparent) 100%); }
-/* tint: a light wash of the two colours at the edges, the photo clear in the middle (the closing photo) */
-.ig-cover.is-tint .ig-cover__shade { background: linear-gradient(var(--cv-angle, 100deg), color-mix(in srgb, var(--cv-from) 82%, transparent) 0%,
-  color-mix(in srgb, var(--cv-from) 42%, transparent) 26%, transparent 48%, color-mix(in srgb, var(--cv-to) 30%, transparent) 70%, color-mix(in srgb, var(--cv-to) 78%, transparent) 100%); }
+/* tint (the closing photo, as in the design): the second colour (#145FAD) comes down from the top over the sky and
+   fades out before the middle; the ship and the quay stay clear */
+.ig-cover.is-tint .ig-cover__shade { background: linear-gradient(180deg, color-mix(in srgb, var(--cv-to) 88%, transparent) 0%,
+  color-mix(in srgb, var(--cv-to) 55%, transparent) 22%, color-mix(in srgb, var(--cv-to) 18%, transparent) 42%, transparent 58%); }
 /* a one-screen cover with text: the home page's second scene (pinned; the gradient comes in, the words rise, then the
    colour fills the screen and the section below follows in it) — the home page's .shade, in the cover's colour */
 .ig-cover.is-screen.has-content .ig-cover__shade { --a: 0%; --b: 62%;
@@ -445,7 +446,6 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 .anim .after-scene { position: relative; z-index: 1; margin-top: -55vh; margin-top: -55svh; }
 .ig-cover.is-screen.has-content .ig-cover__inner { padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); }
 @media (max-width: 760px) and (orientation: portrait) {
-  .ig-cover.is-tint .ig-cover__shade { background: linear-gradient(180deg, color-mix(in srgb, var(--cv-from) 45%, transparent) 0%, transparent 45%, transparent 60%, color-mix(in srgb, var(--cv-to) 50%, transparent) 100%); }
 }
 .ig-cover__inner { position: relative; z-index: 1; padding-top: calc(120 * var(--pu)); padding-bottom: calc(120 * var(--pu)); }
 .ig-cover.is-image .ig-cover__inner { position: absolute; inset: 0; }
