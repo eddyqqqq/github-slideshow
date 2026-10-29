@@ -211,6 +211,21 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .card .pi img { width: 100%; height: 100%; margin-left: 0; object-fit: cover; object-position: 50% 75%; }
 }
 
+/* the statement above the cards pins with them: one screen, the statement on top, the cards under it as large as the
+   rest of the screen allows (--cards-h, set by the script) */
+.anim .cards-pin { height: 100vh; height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.anim .cards-pin > .ig-section { padding-top: clamp(16px, 5vh, 70px); padding-bottom: clamp(12px, 3vh, 36px); }
+.anim .cards-pin .cards { padding-block: 0; }
+.anim .cards-pin .card { width: min(max(752px, 39vw), 84vw, 85vh, calc(var(--cards-h, 85vh) * 752 / 515)); }
+.cards-track { touch-action: pan-y; cursor: grab; user-select: none; }
+.cards-track:active { cursor: grabbing; }
+.cards-track img { -webkit-user-drag: none; }
+
+/* line breaks in the hero's second scene text: .br-d on wide screens, .br-m on phones */
+.br-d, .br-m { display: inline; }
+@media (min-aspect-ratio: 1/1) and (min-width: 760px) { .br-d { display: block; } }
+@media (max-width: 760px) and (orientation: portrait) { .br-m { display: block; } }
+
 /* phones: one logo size everywhere (the header and the company scene, --m-logo), the company logos lower so they hold
    the space above the ribbon (the ribbon keeps clear of them), and the list of companies beside them, one under the
    other, the current one marked */
@@ -222,6 +237,12 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .co-tabs { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; top: clamp(24px, 9vh, 96px); max-width: 52%; }
   .co-tabs button { font-size: 13px; line-height: 1.25; text-align: left; padding: 4px 0; }
   .co-tabs button::before { flex: none; }
+  .anim .cards-pin .card { width: min(82vw, calc(var(--cards-h, 70vh) * 4 / 5)); }
+  /* the secondary texts at one size: the companies' paragraphs' (--body) */
+  .hero-title p, .scene-two p, .g-intro p, .g-foot p, .tile small, .more, .wp-block-buttons .wp-block-button.is-style-aries-link .wp-block-button__link { font-size: var(--body); }
+  /* the title and the line under it as far apart as in the next screen */
+  .hero-title { gap: 0; }
+  .hero-title p { margin-top: 42px; }   /* measured: 42 px from the title to the line, as from 'The partner of choice' to its line */
 }
 
 @media (max-height: 520px) and (orientation: landscape) {

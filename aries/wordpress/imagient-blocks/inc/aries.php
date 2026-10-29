@@ -80,7 +80,7 @@ function imagient_register_aries_blocks() {
 			'title'      => array( 'type' => 'string', 'default' => 'Where possibilities arise' ),
 			'subtitle'   => array( 'type' => 'string', 'default' => 'Aries Group is among Romania’s leading transport and logistics providers.' ),
 			'sceneTitle' => array( 'type' => 'string', 'default' => 'The partner of choice in Romania across the entire transport chain.' ),
-			'sceneText'  => array( 'type' => 'string', 'default' => 'Established in 2003, Aries Group operates across the Black Sea and Danube region.' ),
+			'sceneText'  => array( 'type' => 'string', 'default' => 'Established in 2003, Aries Group operates<span class="br-m"> </span>across the<span class="br-d"> </span>Black Sea and Danube region.' ),
 			'imageId'    => array( 'type' => 'number', 'default' => 0 ),
 			'imageUrl'   => array( 'type' => 'string', 'default' => $d['heroImage'] ),
 		),

@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.svg = svg; this.keys = keys.filter(k => RIB[k]);
       if (!this.keys.length) this.keys = ['group'];
       this.fill = o.fill || 0; this.over = o.over || 1; this.ay = o.ay || 0.5; this.place = o.place || null;
+      this.fromEnd = !!o.fromEnd;   // a ribbon mirrored in CSS: drawn from its end, so on screen it still comes in from the left
       this.SW = Math.min(...this.keys.map(k => RIB[k].w));
       this.f = {}; let span = 0;
       this.keys.forEach(k => { const s = RIB[k], f = this.SW / s.w; this.f[k] = f; span = Math.max(span, (Math.max(...s.lo.b) - Math.min(...s.up.t)) * f); });
@@ -112,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const i = Math.min(Math.floor(m), last), t = m - i;
       const ease = v => { v = clamp01(v); return v * v * (3 - 2 * v); };
       if (t < 0.001 || i >= last) {
-        this.pair(this.keys[i], 0, st.q, this.ga, this.pl, this.pu);
+        if (this.fromEnd) this.pair(this.keys[i], 1 - st.q, 1, this.ga, this.pl, this.pu); else this.pair(this.keys[i], 0, st.q, this.ga, this.pl, this.pu);
         this.pl2.setAttribute('d', 'M0 0Z'); this.pu2.setAttribute('d', 'M0 0Z');
       } else {
         // the current shape leaves to the right while the next one is drawn in behind it
@@ -306,8 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const idEl = $('section.identity[data-shapes]');
   // the company scene right after the hero slides over its end; marked now, before the hero's pin wraps it (after
   // that the two are no longer siblings and '.hero + .identity' stops matching)
-  // (phones only: on wider screens the scene follows the hero's sequence, as designed)
-  if (idEl && heroEl && heroEl.nextElementSibling === idEl && !isLand()) idEl.classList.add('after-hero');
+  if (idEl && heroEl && heroEl.nextElementSibling === idEl) idEl.classList.add('after-hero');
   const ribs = [];
   const add = r => { ribs.push(r); return r; };
   let identity = null;
@@ -319,8 +319,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // tiles: each ribbon placed exactly as in the design, measured on the design file (fit of the SVG shape to the
   // tile, IoU 0.99): w = ribbon width / tile width, x = left edge / tile width, y = ribbon centre / tile height
-  const TILE_PLACE = { agencyT: { w: 1.545, x: -0.272, y: 0.508 }, interlinkT: { w: 2.966, x: -1.092, y: 0.433 }, logisticsT: { w: 3.217, x: -1.106, y: 0.722 } };
-  const tileRibs = $$('[data-rib="tile"]').map(svg => { const k = svg.dataset.shape; return add(new Ribbons(svg, [k], { place: TILE_PLACE[k] || { w: 1.4, x: -0.2, y: 0.5 } })); });
+  // (Logistics a little further right than measured: centred, its peak looked placed rather than passing through)
+  const TILE_PLACE = { agencyT: { w: 1.545, x: -0.272, y: 0.508 }, interlinkT: { w: 2.966, x: -1.092, y: 0.433 }, logisticsT: { w: 3.217, x: -0.86, y: 0.722 } };
+  const TILE_FROM_END = { interlinkT: 1 };   // mirrored in aries.css (it rises, as growth should)
+  const tileRibs = $$('[data-rib="tile"]').map(svg => { const k = svg.dataset.shape; return add(new Ribbons(svg, [k], { place: TILE_PLACE[k] || { w: 1.4, x: -0.2, y: 0.5 }, fromEnd: TILE_FROM_END[k] })); });
   const decorRibs = $$('[data-rib="decor"]').map(svg => {
     let place = { w: 1.1, x: -0.05, y: 0.55 };
     try { place = JSON.parse(svg.dataset.place); } catch (e) {}
@@ -453,9 +455,8 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ---- hero · scroll: the bands fly apart → the photo with its text → the gradient fills the screen ---- */
     const shade = $('#shade'), twoWords = splitWords($('#sceneTwo h2')), twoP = $('#sceneTwo p');
     const hsc = { e: 0 };
-    const heroLand = isLand();
     // pinned from the top; on a landscape screen shorter than the hero, pinned at its bottom (the title in view)
-    gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: heroLand ? '+=320%' : '+=270%', pin: true, scrub: 1.2, invalidateOnRefresh: true } })
+    gsap.timeline({ scrollTrigger: { trigger: hero.el, start: () => isLand() && hero.el.offsetHeight > innerHeight + 4 ? 'bottom bottom' : 'top top', end: '+=270%', pin: true, scrub: 1.2, invalidateOnRefresh: true } })
       // smooth: the zoom and the parting move together on one gentle curve
       .to(hsc, { e: 1, duration: 0.8, ease: 'none', onUpdate: () => {
         const k = gsap.parseEase('sine.inOut')(hsc.e);
@@ -467,10 +468,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .fromTo(twoP, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' }, 0.85)
       .to(twoWords, { yPercent: -115, duration: 0.3, stagger: 0.015, ease: 'power2.in' }, 1.42)
       .to(twoP, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in' }, 1.42)
-      // the blue fills the screen as the text leaves; on phones the hero lets go as soon as it has (a long scroll on an
-      // empty blue screen there), on wider screens the gradient takes its time, as designed
-      .to(shade, { '--a': '100%', '--b': '160%', duration: heroLand ? 0.7 : 0.42, ease: 'power1.inOut' }, heroLand ? 1.5 : 1.46)
-      .to({}, { duration: 0.01 }, heroLand ? 2.25 : 1.88);
+      // the blue fills the screen as the text leaves, and the hero lets go as soon as it has (no empty blue screen)
+      .to(shade, { '--a': '100%', '--b': '160%', duration: 0.42, ease: 'power1.inOut' }, 1.46)
+      .to({}, { duration: 0.01 }, 1.88);
   }
   root.classList.remove('pre');
 
@@ -567,11 +567,44 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
 
   /* ---- service cards: the section pins and the row slides sideways with the scroll ---- */
+  // the statement just above the cards (its title and link) stays on screen with them: both go into one block that
+  // pins, fitted to the screen (the cards' height follows what the statement leaves)
+  $$('section.cards').forEach(sec => {
+    const prev = sec.previousElementSibling;
+    if (!prev || !prev.matches('.ig-section') || !$('.ig-statement', prev)) return;
+    const box = document.createElement('div');
+    box.className = 'cards-pin';
+    sec.before(box); box.append(prev, sec);
+  });
+  const fitCards = () => $$('.cards-pin').forEach(box => {
+    box.style.setProperty('--cards-h', Math.max(220, innerHeight - box.firstElementChild.offsetHeight - Math.max(60, innerHeight * 0.12)) + 'px');   // with some air above and below
+  });
+  fitCards();
   $$('section.cards').forEach(sec => later(() => {
-    const track = $('.cards-track', sec), cards = $$('.card', track);
+    const track = $('.cards-track', sec), cards = $$('.card', track), pinEl = sec.closest('.cards-pin') || sec;
     const dist = () => Math.max(0, track.offsetWidth - root.clientWidth);
     const hz = gsap.to(track, { x: () => -dist(), ease: 'none',
-      scrollTrigger: { trigger: sec, start: 'center center', end: () => '+=' + dist(), pin: true, scrub: 0.8, invalidateOnRefresh: true } });
+      scrollTrigger: { trigger: pinEl, start: () => pinEl === sec ? 'center center' : 'top top', end: () => '+=' + dist(), pin: true, scrub: 0.8, invalidateOnRefresh: true, onRefreshInit: fitCards } });
+    // swipe and drag: a sideways move on the cards scrolls the page by as much (the row follows the scroll), with a
+    // little momentum on release; a sideways trackpad scroll does the same
+    const st = hz.scrollTrigger, by = d => { const y = Math.min(st.end, Math.max(st.start, (lenis ? lenis.targetScroll : scrollY) + d)); lenis ? lenis.scrollTo(y, { immediate: true }) : scrollTo(0, y); };
+    let drag = null, moved = false;
+    track.addEventListener('pointerdown', e => { if (e.button) return; drag = { x: e.clientX, y: e.clientY, t: performance.now(), v: 0, side: null }; moved = false; });
+    addEventListener('pointermove', e => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (drag.side === null && Math.hypot(dx, dy) > 6) drag.side = Math.abs(dx) > Math.abs(dy);
+      if (!drag.side) return;
+      const now = performance.now(); drag.v = dx / Math.max(1, now - drag.t); drag.t = now;
+      drag.x = e.clientX; drag.y = e.clientY; moved = true; by(-dx);
+    });
+    addEventListener('pointerup', () => {
+      if (drag && drag.side && Math.abs(drag.v) > 0.3) { const o = { v: -drag.v * 16 }; gsap.to(o, { v: 0, duration: 0.7, ease: 'power2.out', onUpdate: () => by(o.v) }); }
+      drag = null;
+    });
+    track.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);   // a drag is not a click on a card's link
+    track.addEventListener('dragstart', e => e.preventDefault());
+    track.addEventListener('wheel', e => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); by(e.deltaX); } }, { passive: false });
     const vw = root.clientWidth;
     cards.forEach((c, i) => {
       const pi = $('.pi', c), h3 = $('h3', c);
