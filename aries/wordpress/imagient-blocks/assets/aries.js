@@ -427,39 +427,8 @@ document.addEventListener('DOMContentLoaded', () => {
     panel.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
   });
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches || !window.gsap;
-  // the services' wave (design/wave-line.svg) with its swell k: 0 a straight line, 1 as drawn, more a deeper wave
+  // the services' wave (design/wave-line.svg) with its swell k: 1 as drawn, more a deeper wave (the hover ripple)
   const waveD = k => { const r = v => Math.round(v * 100) / 100; return `M0.2 14.47C93.3 ${r(14.47 + 40.26 * k)} 126.45 ${r(14.47 - 46.14 * k)} 211.2 14.47`; };
-  // on a timeline: the line draws from the left while it swells from straight into its curve, settling with a soft give
-  const waveIn = (tl, path, at, dur = 1.5) => {
-    if (!path) return;
-    const o = path._wv || (path._wv = { k: 1 }), set = () => path.setAttribute('d', waveD(o.k));
-    tl.fromTo(path, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: 'power2.inOut' }, at)
-      .fromTo(o, { k: 0 }, { k: 1.18, duration: dur * 0.6, ease: 'power2.out', onUpdate: set }, at + dur * 0.12)
-      .to(o, { k: 1, duration: dur * 0.5, ease: 'power2.inOut', onUpdate: set }, at + dur * 0.72);
-  };
-  let rfAcc = 0;
-  $$('.ig-svc.is-accordion').forEach(list => {
-    const rows = $$('.ig-svc__row', list);
-    const toggle = (row, open) => {
-      const b = $('button', row), p = $('.ig-svc__panel', row), path = $('.ig-svc__wave path', row);
-      if (open === row.classList.contains('is-open')) return;
-      row.classList.toggle('is-open', open); b.setAttribute('aria-expanded', String(open));
-      if (still) { p.hidden = !open; return; }
-      gsap.killTweensOf(p);
-      const after = () => { clearTimeout(rfAcc); rfAcc = setTimeout(() => window.ScrollTrigger && ScrollTrigger.refresh(), 60); };
-      if (open) {
-        p.hidden = false;
-        gsap.fromTo(p, { height: 0 }, { height: 'auto', duration: 0.75, ease: 'power3.inOut', onComplete: after });
-        waveIn(gsap.timeline({ delay: 0.2 }), path, 0, 1.3);
-        gsap.fromTo($('.ig-svc__text', row), { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out', delay: 0.25 });
-      } else gsap.to(p, { height: 0, duration: 0.6, ease: 'power3.inOut', onComplete: () => { p.hidden = true; gsap.set(p, { clearProps: 'height' }); after(); } });
-    };
-    rows.forEach(row => $('button', row).addEventListener('click', () => {
-      const open = !row.classList.contains('is-open');
-      rows.forEach(r => { if (r !== row) toggle(r, false); });
-      toggle(row, open);
-    }));
-  });
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!window.gsap || !window.ScrollTrigger || reduce) {
@@ -543,40 +512,16 @@ document.addEventListener('DOMContentLoaded', () => {
       .to(shade, { '--a': '100%', '--b': '160%', duration: 0.42, ease: 'power1.inOut' }, 1.46)
       .to({}, { duration: 0.01 }, 1.88);
   }
-  /* ---- page hero: five openings (data-anim 1–5, set in the editor or ?anim=N) and the photo's drift with the scroll ---- */
+  /* ---- page hero: the frame draws in from the left, the photo settles in it, the title rises; the photo then drifts
+         a little inside the frame with the scroll ---- */
   phEls.forEach(ph => {
-    const v = ph.dataset.anim || '1', art = $('.ph-art', ph), photo = $('.ph-photo', ph), draw = $('.ph-draw', ph), cur = $('.ph-curtain', ph);
+    const photo = $('.ph-photo', ph), draw = $('.ph-draw', ph);
     const vb = $('.ig-phero__svg', ph).viewBox.baseVal, W = vb.width, Hh = vb.height, mid = `${f1(W / 2)} ${f1(Hh / 2)}`;
-    const words = splitWords($('.ig-phero__title', ph));
-    const tl = gsap.timeline({ delay: 0.1 });
-    const titleIn = at => tl.fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.95, stagger: 0.06, ease: 'power3.out' }, at);
-    if (v === '2') {          // curtain: the company colour slides off the photo along a slant
-      gsap.set(cur, { opacity: 1, skewX: -16, svgOrigin: `0 ${f1(Hh / 2)}` });
-      tl.fromTo(art, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power1.out' }, 0)
-        .fromTo(cur, { x: 0 }, { x: W + 420, duration: 1.7, ease: 'expo.inOut' }, 0.35)
-        .fromTo(photo, { scale: 1.14, svgOrigin: mid }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0.55);
-      titleIn(1.15);
-    } else if (v === '3') {   // parallax: a soft rise; the layers then move at different speeds with the scroll
-      tl.fromTo(art, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1.5, ease: 'power3.out' }, 0)
-        .fromTo(photo, { scale: 1.08, svgOrigin: mid }, { scale: 1, duration: 2, ease: 'power2.out' }, 0);
-      titleIn(0.45);
-      gsap.to(art, { y: -Hh * 0.1, ease: 'none', scrollTrigger: { trigger: ph, start: 'top top', end: 'bottom top', scrub: true } });
-      gsap.to($('.ig-phero__title', ph), { y: -40, ease: 'none', scrollTrigger: { trigger: ph, start: 'top top', end: 'bottom top', scrub: true } });
-    } else if (v === '4') {   // the frame opens from a thin line, the photo settles in it
-      tl.fromTo(art, { scaleY: 0.03, opacity: 0.6, svgOrigin: mid }, { scaleY: 1, opacity: 1, duration: 1.6, ease: 'expo.inOut' }, 0.1)
-        .fromTo(photo, { scale: 1.3, svgOrigin: mid }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0.55);
-      titleIn(1.1);
-    } else if (v === '5') {   // the title first, then the frame glides in from the right
-      titleIn(0.1);
-      tl.fromTo(art, { x: W * 0.3, opacity: 0 }, { x: 0, opacity: 1, duration: 1.9, ease: 'expo.out' }, 0.55)
-        .fromTo(photo, { x: -W * 0.06 }, { x: 0, duration: 2.4, ease: 'expo.out' }, 0.55);
-    } else {                  // 1 · the frame draws in from the left, the photo settles in it
-      tl.fromTo(draw, { attr: { width: 0 } }, { attr: { width: W + 40 }, duration: 1.7, ease: 'expo.inOut' }, 0)
-        .fromTo(photo, { opacity: 0, scale: 1.16, svgOrigin: mid }, { opacity: 1, scale: 1, duration: 2, ease: 'expo.out' }, 0.6);
-      titleIn(1.05);
-    }
-    // all: the photo drifts down a little inside the frame as the page scrolls on
-    gsap.fromTo(photo, { y: 0 }, { y: Hh * (v === '3' ? 0.09 : 0.05), ease: 'none', immediateRender: false, scrollTrigger: { trigger: ph, start: 'top top', end: 'bottom top', scrub: true } });
+    gsap.timeline({ delay: 0.1 })
+      .fromTo(draw, { attr: { width: 0 } }, { attr: { width: W + 40 }, duration: 1.7, ease: 'expo.inOut' }, 0)
+      .fromTo(photo, { opacity: 0, scale: 1.16, svgOrigin: mid }, { opacity: 1, scale: 1, duration: 2, ease: 'expo.out' }, 0.6)
+      .fromTo(splitWords($('.ig-phero__title', ph)), { yPercent: 135 }, { yPercent: 0, duration: 0.95, stagger: 0.06, ease: 'power3.out' }, 1.05);
+    gsap.fromTo(photo, { y: 0 }, { y: Hh * 0.05, ease: 'none', immediateRender: false, scrollTrigger: { trigger: ph, start: 'top top', end: 'bottom top', scrub: true } });
   });
   root.classList.remove('pre');
 
@@ -632,6 +577,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ---- block animations chosen in the editor (all scrubbed with the scroll, nothing pops in) ---- */
   const SCENE = '.ig-cover.is-screen.has-content.has-overlay';   // a cover that plays the home page's second scene (below)
+  // as on the home page, the section after it slides over the scene's end (no long scroll on an empty colour): its upper
+  // part see-through over the cover's colour, its own colour from well inside the overlap (no seam where they meet)
+  $$(SCENE).forEach(cv => {
+    const next = cv.nextElementSibling;
+    if (!next) return;
+    const bg = getComputedStyle(next).backgroundColor;
+    next.classList.add('after-scene');
+    next.style.background = `linear-gradient(transparent 0, transparent 40svh, ${bg} 40svh)`;
+  });
   const atEnd = el => el.getBoundingClientRect().bottom + scrollY > document.documentElement.scrollHeight - innerHeight * 0.4;
   $$('[data-anim="split"]').forEach(el => later(() => {
     const last = atEnd(el);   // near the very end of the page: finish by the time the page ends
@@ -670,7 +624,9 @@ document.addEventListener('DOMContentLoaded', () => {
   [...tileRibs, ...decorRibs].forEach(r => later(() => {
     const box = r.svg.parentElement;
     r.st.q = 0; r.render();
-    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: box, start: 'top 92%', end: 'top 45%', scrub: 0.8 } });
+    // in a section that slides over a scene, its first 55 % of a screen is still over the scene: count from below that
+    const off = () => (box.closest('.after-scene') ? Math.round(innerHeight * 0.55) : 0);
+    gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: box, start: () => `top+=${off()} 92%`, end: () => `top+=${off()} 30%`, scrub: 0.8, invalidateOnRefresh: true } });
     if (r.panning) gsap.fromTo(r.place, { x: r.place.x + 0.08 }, { x: r.place.x - 0.08, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: box, start: 'top bottom', end: 'bottom top', scrub: 1 } });
   }));
 
@@ -754,14 +710,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const words = $$('h1, h2, h3, h4', inner).flatMap(h => splitWords(h));
       const rest = $$(':scope > *', inner).filter(e => !/^H[1-4]$/.test(e.tagName));
       const o = parseFloat(getComputedStyle(shade).opacity) || 1;
-      // as on the home page, the section below slides over the end of the scene (no long scroll on an empty colour):
-      // its upper part see-through over the cover's colour, its own colour below
-      const next = cv.nextElementSibling;
-      if (next) {
-        const bg = getComputedStyle(next).backgroundColor;
-        next.classList.add('after-scene');
-        next.style.background = `linear-gradient(transparent 0, transparent 55svh, ${bg} 55svh)`;
-      }
       gsap.timeline({ scrollTrigger: { trigger: cv, start: 'top top', end: '+=230%', pin: true, scrub: 1.2, invalidateOnRefresh: true } })
         .fromTo(media, { scale: 1.08 }, { scale: 1, duration: 0.8, ease: 'sine.inOut' }, 0)
         .fromTo(shade, { opacity: 0 }, { opacity: o, duration: 0.45, ease: 'none' }, 0.2)
@@ -775,23 +723,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (img && cv.classList.contains('is-parallax')) gsap.fromTo(img, { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: cv, start: 'top bottom', end: 'bottom top', scrub: true } });
   }));
-  /* ---- services: each row as the home page's blocks come in (with the scroll); its wave draws from left to right
-         along its length, like the home page's shapes, and ripples under the pointer ---- */
-  $$('.ig-svc').forEach(list => later(() => {
-    const acc = list.classList.contains('is-accordion');
-    $$('.ig-svc__row', list).forEach(row => {
-      const path = $('.ig-svc__wave path', row), text = acc ? null : $('.ig-svc__text', row), rule = $('.ig-svc__rule', row);
-      const heads = $$('.ig-svc__num, .ig-svc__title, .ig-svc__label', row).filter(e => !e.closest('.ig-svc__panel'));
-      if (rule) gsap.from(rule, { scaleX: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 96%', end: 'top 60%', scrub: 0.8 } });
-      gsap.from(heads, { y: 32, opacity: 0, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: row, start: 'top 98%', end: 'top 74%', scrub: 0.6 } });
-      if (text) gsap.from(text, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 94%', end: 'top 70%', scrub: 0.6 } });
-      if (!path || acc) return;
-      path._wv = { k: 1 };
-      gsap.fromTo(path, { strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 92%', end: 'top 45%', scrub: 0.8 } });
-      const ripple = (k, d) => gsap.to(path._wv, { k, duration: d, ease: 'elastic.out(1, 0.45)', overwrite: 'auto', onUpdate: () => path.setAttribute('d', waveD(path._wv.k)) });
-      row.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') ripple(1.6, 0.9); });
-      row.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') ripple(1, 1.1); });
-    });
+  /* ---- services: each row comes in as the home page's blocks do (with the scroll); its wave draws from left to right
+         along its length like the home page's shapes, its tip fading in, and ripples under the pointer. The dash is in
+         the path's own length (measured), so every browser draws it the same ---- */
+  $$('.ig-svc__row').forEach(row => later(() => {
+    const path = $('.ig-svc__wave path', row), text = $('.ig-svc__text', row), title = $('.ig-svc__title', row);
+    gsap.from(title, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 98%', end: 'top 74%', scrub: 0.6 } });
+    if (text) gsap.from(text, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 94%', end: 'top 70%', scrub: 0.6 } });
+    if (!path) return;
+    const L = path.getTotalLength() + 2;
+    gsap.set(path, { strokeDasharray: L });
+    gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 95%', end: 'top 50%', scrub: 1 } })
+      .fromTo(path, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 1, ease: 'sine.inOut' }, 0)
+      .fromTo(path, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'none' }, 0);
+    path._wv = { k: 1 };
+    const ripple = (k, d) => gsap.to(path._wv, { k, duration: d, ease: 'elastic.out(1, 0.45)', overwrite: 'auto', onUpdate: () => path.setAttribute('d', waveD(path._wv.k)) });
+    row.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') ripple(1.6, 0.9); });
+    row.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') ripple(1, 1.1); });
   }));
 
   // one sorted refresh once everything exists, and again (debounced) when fonts or late resources settle

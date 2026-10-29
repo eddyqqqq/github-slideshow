@@ -422,10 +422,6 @@
     return el(wp.element.RawHTML, { className }, svg);
   }
   const FRAMES = CFG.frames || {};
-  const PH_ANIMS = [
-    { value: '1', label: '1 · The frame draws in, the photo settles' }, { value: '2', label: '2 · Curtain: the colour slides off the photo' },
-    { value: '3', label: '3 · Parallax: soft rise, layers drift on scroll' }, { value: '4', label: '4 · The frame opens from a line' },
-    { value: '5', label: '5 · Title first, the frame glides in' }];
   const logoOpts = [{ value: '', label: 'No logo' }].concat(LOGOS);
   const colorPick = (label, value, onChange) => el(SelectControl, { label, value, options: COLOR_OPTS, onChange });
 
@@ -438,9 +434,6 @@
       const frameOpts = Object.keys(FRAMES).map(k => ({ value: k, label: k.charAt(0).toUpperCase() + k.slice(1) }));
       return el(Fragment, {},
         el(InspectorControls, {},
-          el(PanelBody, { title: 'Opening animation', initialOpen: true },
-            el(SelectControl, { label: 'Animation', value: a.anim, options: PH_ANIMS, onChange: v => setAttributes({ anim: v }) }),
-            el('p', { className: 'ig-help' }, 'Compare them on the site without saving: add ?anim=1 … ?anim=5 to the page address.')),
           el(PanelBody, { title: 'Photo', initialOpen: true },
             el(ImagePicker, { id: a.imageId, url: a.imageUrl, onSelect: m => setAttributes({ imageId: m.id, imageUrl: m.url }), label: 'photo' }),
             el(RangeControl, { label: 'Focus, left to right (%)', value: a.focusX, min: 0, max: 100, onChange: v => setAttributes({ focusX: v }) }),
@@ -494,7 +487,6 @@
   });
 
   /* ---------------- services list ---------------- */
-  const SVC_VARIANTS = [{ value: 'design', label: '1 · As designed: title, wave, text' }, { value: 'editorial', label: '2 · Editorial: numbered rows' }, { value: 'accordion', label: '3 · Accordion' }];
   registerBlockType('imagient/services', {
     icon: ICONS.cards,
     edit({ attributes: a, setAttributes }) {
@@ -502,12 +494,10 @@
       const list = a.items || [], ops = listOps(list, v => setAttributes({ items: v }));
       return el(Fragment, {},
         el(InspectorControls, {},
-          el(PanelBody, { title: 'Layout', initialOpen: true },
-            el(SelectControl, { label: 'Layout', value: a.variant, options: SVC_VARIANTS, onChange: v => setAttributes({ variant: v }) }),
-            colorPick('Accent colour', a.color, v => setAttributes({ color: v })),
-            el('p', { className: 'ig-help' }, 'Compare the layouts on the site without saving: add ?list=1 … ?list=4 to the page address.'))),
+          el(PanelBody, { title: 'Look', initialOpen: true },
+            colorPick('Accent colour', a.color, v => setAttributes({ color: v })))),
         el('div', props,
-          el('span', { className: 'ig-badge' }, 'Services · ' + (SVC_VARIANTS.find(o => o.value === a.variant) || SVC_VARIANTS[0]).label),
+          el('span', { className: 'ig-badge' }, 'Services'),
           list.map((it, i) => el('div', { key: i, className: 'ig-svc-edit__row' },
             RT({ tagName: 'h3', className: 'ig-svc__title', value: it.title, onChange: v => ops.update(i, { title: v }), placeholder: 'Service' }),
             el('svg', { className: 'ig-svc__wave', viewBox: '0 0 212 26' }, el('path', { d: 'M0.2 14.47C93.3 54.73 126.45-31.67 211.2 14.47' })),

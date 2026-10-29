@@ -358,7 +358,6 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-phero__src { position: absolute; left: 0; top: 0; width: 15px; opacity: 0; pointer-events: none; }
 .ig-phero__src img { display: block; width: 100%; height: auto; }
 .ph-frame { fill: var(--accent, var(--agency)); stroke: var(--accent, var(--agency)); stroke-width: 2.5; stroke-linejoin: round; }   /* the stroke covers the hairline seam along the photo's edge */
-.ph-curtain { fill: var(--accent, var(--agency)); opacity: 0; }
 .ph-img { opacity: 0; }
 .ph-img.is-ready { opacity: 1; transition: opacity .5s; }
 .ig-phero__title { margin: calc(130 * var(--pu)) 0 0; padding: 0 var(--gut-r) 0 max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu));
@@ -475,8 +474,7 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 .ig-svc__title { margin: 0; font-size: var(--h-l); line-height: 1.12; font-weight: 400; letter-spacing: -0.02em; color: var(--ink); }
 .ig-svc__text { margin: 0; font-size: var(--link); line-height: 1.5; color: var(--text); }
 .ig-svc__wave { display: block; width: 212px; max-width: 100%; height: auto; overflow: visible; }
-.ig-svc__wave path { fill: none; stroke: currentColor; stroke-width: 1px; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 0; }
-.ig-svc__num { font-size: var(--small); letter-spacing: .06em; color: var(--accent); font-variant-numeric: tabular-nums; }
+.ig-svc__wave path { fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; }   /* the script measures it and draws it in */
 
 /* 1 · as designed: title, the wave, the text */
 .ig-svc.is-design { display: grid; gap: calc(110 * var(--pu)); }
@@ -489,38 +487,4 @@ html.menu-open, html.menu-open body { overflow: hidden; }
   .is-design .ig-svc__wave { justify-self: start; width: 150px; }
 }
 
-/* 2 · editorial: numbered rows between lines; the line draws in, the row answers the pointer */
-.ig-svc.is-editorial { counter-reset: svc; border-bottom: 1px solid var(--ink); }
-.is-editorial .ig-svc__row { position: relative; display: grid; grid-template-columns: minmax(0, 90px) minmax(0, 1fr) minmax(0, 1fr); gap: 24px 40px; align-items: baseline;
-  padding: calc(44 * var(--pu)) 0; transition: background-color .5s; }
-.is-editorial .ig-svc__rule { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--ink); transform-origin: 0 50%; }
-.is-editorial .ig-svc__title { font-size: calc(var(--h-l) * .82); transition: translate .6s cubic-bezier(.2, .7, .2, 1), color .4s; }   /* translate, not transform: the entrance animates transform */
-.is-editorial .ig-svc__row:hover .ig-svc__title { translate: 10px 0; color: var(--accent); }
-.is-editorial .ig-svc__text { max-width: 46ch; }
-@media (max-width: 760px) { .is-editorial .ig-svc__row { grid-template-columns: 1fr; gap: 12px; padding: 32px 0; } }
-
-/* 3 · accordion: one service open at a time; the wave draws as it opens */
-.ig-svc.is-accordion { border-top: 1px solid var(--line); }
-.is-accordion .ig-svc__row { border-bottom: 1px solid var(--line); }
-.is-accordion .ig-svc__title button { all: unset; box-sizing: border-box; width: 100%; display: grid; grid-template-columns: minmax(0, 90px) minmax(0, 1fr) 44px; align-items: center; gap: 24px;
-  padding: calc(36 * var(--pu)) 0; cursor: pointer; }
-.is-accordion .ig-svc__title button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.is-accordion .ig-svc__label { font-size: calc(var(--h-l) * .78); line-height: 1.15; transition: color .4s; }
-.is-accordion .ig-svc__row:hover .ig-svc__label, .is-accordion .is-open .ig-svc__label { color: var(--accent); }
-.ig-svc__plus { position: relative; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); transition: background-color .4s, border-color .4s; }
-.ig-svc__plus::before, .ig-svc__plus::after { content: ""; position: absolute; left: 14px; right: 14px; top: 21px; height: 2px; background: var(--ink); transition: transform .45s cubic-bezier(.65, 0, .25, 1), background-color .4s; }
-.ig-svc__plus::after { transform: rotate(90deg); }
-.is-open .ig-svc__plus { background: var(--accent); border-color: var(--accent); }
-.is-open .ig-svc__plus::before, .is-open .ig-svc__plus::after { background: var(--on); }
-.is-open .ig-svc__plus::after { transform: rotate(0); }
-.is-accordion .ig-svc__panel { overflow: hidden; }
-.is-accordion .ig-svc__body { display: grid; grid-template-columns: minmax(0, 90px) minmax(0, 212px) minmax(0, 1fr); gap: 24px; align-items: center; padding: 0 0 calc(40 * var(--pu)); }
-.is-accordion .ig-svc__body .ig-svc__wave { grid-column: 2; color: var(--accent); }
-.is-accordion .ig-svc__body .ig-svc__text { max-width: 52ch; }
-@media (max-width: 760px) {
-  .is-accordion .ig-svc__title button { grid-template-columns: 34px minmax(0, 1fr) 40px; gap: 12px; padding: 24px 0; }
-  .ig-svc__plus { width: 40px; height: 40px; } .ig-svc__plus::before, .ig-svc__plus::after { left: 12px; right: 12px; top: 19px; }
-  .is-accordion .ig-svc__body { grid-template-columns: 1fr; gap: 14px; padding-bottom: 28px; }
-  .is-accordion .ig-svc__body .ig-svc__wave { grid-column: 1; width: 120px; }
-}
 

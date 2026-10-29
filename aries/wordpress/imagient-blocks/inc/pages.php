@@ -34,29 +34,6 @@ function imagient_pages_defaults() {
 	);
 }
 
-/** The services list's layouts, in the order of their preview numbers (?list=1 … 4). */
-function imagient_services_variants() {
-	return array( 'design', 'editorial', 'accordion' );
-}
-
-/**
- * A setting the page can be previewed with without saving: ?anim=2, ?list=3 … in the address override the block's
- * own value (numbers or names), so the options can be compared on the live site.
- */
-function imagient_preview_choice( $param, $value, $allowed ) {
-	// phpcs:ignore WordPress.Security.NonceVerification -- a read-only display choice
-	if ( isset( $_GET[ $param ] ) ) {
-		$v = sanitize_key( wp_unslash( $_GET[ $param ] ) );
-		if ( ctype_digit( $v ) && isset( $allowed[ (int) $v - 1 ] ) ) {
-			return $allowed[ (int) $v - 1 ];
-		}
-		if ( in_array( $v, $allowed, true ) ) {
-			return $v;
-		}
-	}
-	return in_array( (string) $value, $allowed, true ) ? (string) $value : $allowed[0];
-}
-
 /** A photo from the media library (every size WordPress made) or a theme default (AVIF sizes and a WebP). */
 function imagient_photo( $id, $url, $alt, $attrs ) {
 	if ( $id ) {
@@ -92,7 +69,6 @@ function imagient_register_page_blocks() {
 			'focusY'    => array( 'type' => 'number', 'default' => 52 ),
 			'zoom'      => array( 'type' => 'number', 'default' => 100 ),
 			'portraitX' => array( 'type' => 'number', 'default' => 1060 ),
-			'anim'      => array( 'type' => 'string', 'default' => '1' ),
 		),
 		'render_callback' => 'imagient_render_page_hero',
 	) ) );
@@ -127,7 +103,6 @@ function imagient_register_page_blocks() {
 		'supports'        => array( 'anchor' => true, 'className' => true, 'html' => false ),
 		'attributes'      => array(
 			'items'   => array( 'type' => 'array', 'default' => $d['services'] ),
-			'variant' => array( 'type' => 'string', 'default' => 'design' ),
 			'color'   => array( 'type' => 'string', 'default' => 'agency' ),
 		),
 		'render_callback' => 'imagient_render_services',
@@ -150,13 +125,11 @@ function imagient_render_page_hero( $a ) {
 	$frames = imagient_frames();
 	$f      = $frames[ $a['frame'] ] ?? reset( $frames );
 	$uid    = wp_unique_id( 'ph' );
-	$anim   = imagient_preview_choice( 'anim', $a['anim'], array( '1', '2', '3', '4', '5' ) );
 	// the photo shows about 1.1 × the screen's width in the frame (on phones the frame runs 1.6 × past the screen)
 	$photo  = imagient_photo( $a['imageId'], $a['imageUrl'], '', array( 'sizes' => '(orientation: portrait) 170vw, 110vw', 'fetchpriority' => 'high', 'decoding' => 'async', 'loading' => 'eager' ) );
 	$logo   = $a['logo'] ? imagient_logo_svg( $a['logo'] ) : '';
 	$style  = sprintf( '--accent:%s;--fw:%s;--fh:%s;--fx0:%s;--fx1:%s;--fpx:%s;', imagient_color( $a['color'] ), $f['w'], $f['h'], $f['x0'], $f['x1'], max( 300, min( $f['w'] - 300, floatval( $a['portraitX'] ) ) ) );
 	$data   = array(
-		'data-anim'  => $anim,
 		'data-focus' => max( 0, min( 100, floatval( $a['focusX'] ) ) ) . ' ' . max( 0, min( 100, floatval( $a['focusY'] ) ) ),
 		'data-zoom'  => max( 100, min( 250, floatval( $a['zoom'] ) ) ) / 100,
 	);
@@ -176,7 +149,6 @@ function imagient_render_page_hero( $a ) {
       <g class="ph-art" clip-path="url(#<?php echo esc_attr( $uid ); ?>-d)">
         <g clip-path="url(#<?php echo esc_attr( $uid ); ?>-w)">
           <g class="ph-photo"><image class="ph-img" x="<?php echo esc_attr( $f['x0'] ); ?>" y="0" width="<?php echo esc_attr( $f['x1'] - $f['x0'] ); ?>" height="<?php echo esc_attr( $f['h'] ); ?>" preserveAspectRatio="xMidYMid slice"/></g>
-          <rect class="ph-curtain" x="-20" y="-20" width="<?php echo esc_attr( $f['w'] + 40 ); ?>" height="<?php echo esc_attr( $f['h'] + 40 ); ?>"/>
         </g>
         <path class="ph-frame" d="<?php echo esc_attr( $f['path'] ); ?>"/>
         <path class="ph-wbox" d="<?php echo esc_attr( $f['window'] ); ?>" fill="none"/>
@@ -217,31 +189,12 @@ function imagient_wave_svg( $class ) {
 }
 
 function imagient_render_services( $a ) {
-	$items   = array_values( array_filter( (array) $a['items'], 'is_array' ) );
-	$variant = imagient_preview_choice( 'list', $a['variant'], imagient_services_variants() );
-	$uid     = wp_unique_id( 'svc' );
-	$style   = '--accent:' . imagient_color( $a['color'] ) . ';';
-	$out     = '';
-	foreach ( $items as $i => $it ) {
-		$title = imagient_text( $it['title'] ?? '' );
-		$text  = imagient_text( $it['text'] ?? '' );
-		$num   = sprintf( '%02d', $i + 1 );
-		switch ( $variant ) {
-			case 'editorial':
-				$out .= '<li class="ig-svc__row"><span class="ig-svc__num">' . $num . '</span><h3 class="ig-svc__title">' . $title . '</h3><p class="ig-svc__text">' . $text . '</p><span class="ig-svc__rule" aria-hidden="true"></span></li>';
-				break;
-			case 'accordion':
-				$open  = 0 === $i;
-				$pid   = $uid . '-' . $i;
-				$out  .= '<div class="ig-svc__row' . ( $open ? ' is-open' : '' ) . '"><h3 class="ig-svc__title"><button type="button" aria-expanded="' . ( $open ? 'true' : 'false' ) . '" aria-controls="' . esc_attr( $pid ) . '"><span class="ig-svc__num">' . $num . '</span><span class="ig-svc__label">' . $title . '</span><span class="ig-svc__plus" aria-hidden="true"></span></button></h3>'
-					. '<div class="ig-svc__panel" id="' . esc_attr( $pid ) . '" role="region"' . ( $open ? '' : ' hidden' ) . '><div class="ig-svc__body">' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . $text . '</p></div></div></div>';
-				break;
-			default:
-				$out .= '<div class="ig-svc__row"><h3 class="ig-svc__title">' . $title . '</h3>' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . $text . '</p></div>';
-		}
+	$items = array_values( array_filter( (array) $a['items'], 'is_array' ) );
+	$out   = '';
+	foreach ( $items as $it ) {
+		$out .= '<div class="ig-svc__row"><h3 class="ig-svc__title">' . imagient_text( $it['title'] ?? '' ) . '</h3>' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . imagient_text( $it['text'] ?? '' ) . '</p></div>';
 	}
-	$tag = 'editorial' === $variant ? 'ol' : 'div';
-	return sprintf( '<%1$s %2$s>%3$s</%1$s>', $tag, imagient_wrapper( null, 'ig-svc is-' . $variant, $style, array( 'data-svc' => $variant ) ), $out );
+	return sprintf( '<div %s>%s</div>', imagient_wrapper( null, 'ig-svc is-design', '--accent:' . imagient_color( $a['color'] ) . ';' ), $out );
 }
 
 function imagient_render_menu( $a ) {
