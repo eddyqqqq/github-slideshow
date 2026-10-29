@@ -475,7 +475,7 @@
           el(PanelBody, { title: 'Photo', initialOpen: true },
             el(ImagePicker, { id: a.imageId, url: a.imageUrl, onSelect: m => setAttributes({ imageId: m.id, imageUrl: m.url, alt: m.alt || a.alt }), label: 'photo' }),
             el(TextControl, { label: 'Image description (alt)', value: a.alt, onChange: v => setAttributes({ alt: v }) }),
-            el(SelectControl, { label: 'Height', value: a.height, options: [{ value: 'image', label: 'The photo’s own proportions' }, { value: 'screen', label: 'One screen' }, { value: 'auto', label: 'As tall as its content' }], onChange: v => setAttributes({ height: v }) }),
+            el(SelectControl, { label: 'Height', value: a.height, options: [{ value: 'image', label: 'The photo’s own proportions' }, { value: 'screen', label: 'One screen (with text and gradient: plays like the home page’s second scene)' }, { value: 'auto', label: 'As tall as its content' }], onChange: v => setAttributes({ height: v }) }),
             el(RangeControl, { label: 'Focus, left to right (%)', value: a.focusX, min: 0, max: 100, onChange: v => setAttributes({ focusX: v }) }),
             el(RangeControl, { label: 'Focus, top to bottom (%)', value: a.focusY, min: 0, max: 100, onChange: v => setAttributes({ focusY: v }) }),
             el(ToggleControl, { label: 'Photo drifts with the scroll', checked: a.parallax, onChange: v => setAttributes({ parallax: v }) })),
@@ -487,7 +487,6 @@
               colorPick('To', a.to, v => setAttributes({ to: v })),
               el(RangeControl, { label: 'Direction (degrees)', value: a.angle, min: 0, max: 360, onChange: v => setAttributes({ angle: v }) }),
               el(RangeControl, { label: 'Strength (%)', value: a.strength, min: 0, max: 100, onChange: v => setAttributes({ strength: v }) })) : null,
-            el(SelectControl, { label: 'Section animations (whole page, set on the first cover)', value: a.transition || 'a', options: [{ value: 'a', label: 'A · As on the home page: everything follows the scroll' }, { value: 'b', label: 'B · Curtain: the next section rises over this one' }], onChange: v => setAttributes({ transition: v }) }),
             el(SelectControl, { label: 'Text colour', value: a.tone, options: [{ value: 'dark', label: 'White (on a dark photo)' }, { value: 'light', label: 'Dark (on a light photo)' }], onChange: v => setAttributes({ tone: v }) }))),
         el('section', props, el('div', inner)));
     },

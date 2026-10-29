@@ -117,7 +117,6 @@ function imagient_register_page_blocks() {
 			'tone'       => array( 'type' => 'string', 'default' => 'dark' ),
 			'parallax'   => array( 'type' => 'boolean', 'default' => true ),
 			'shade'      => array( 'type' => 'string', 'default' => 'text' ),   // text: deep on the text side; tint: light colour at both edges
-			'transition' => array( 'type' => 'string', 'default' => 'a' ),      // the page's section animations: a as on the home page, b curtain
 		),
 		'render_callback' => 'imagient_render_cover',
 	) ) );
@@ -204,9 +203,8 @@ function imagient_render_cover( $a, $content ) {
 		$class .= ' is-tint';
 	}
 	return sprintf(
-		'<section %s data-sec="%s"><div class="ig-cover__media">%s</div>%s<div class="ig-cover__inner ig-container is-gutter">%s</div></section>',
+		'<section %s><div class="ig-cover__media">%s</div>%s<div class="ig-cover__inner ig-container is-gutter">%s</div></section>',
 		imagient_wrapper( null, $class, $style ),
-		esc_attr( imagient_preview_choice( 'sec', strtolower( $a['transition'] ), array( 'a', 'b' ) ) ),
 		$photo,
 		$a['overlay'] ? '<div class="ig-cover__shade" aria-hidden="true"></div>' : '',
 		$content

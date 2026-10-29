@@ -631,11 +631,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
 
   /* ---- block animations chosen in the editor (all scrubbed with the scroll, nothing pops in) ---- */
+  const SCENE = '.ig-cover.is-screen.has-content.has-overlay';   // a cover that plays the home page's second scene (below)
   const atEnd = el => el.getBoundingClientRect().bottom + scrollY > document.documentElement.scrollHeight - innerHeight * 0.4;
   $$('[data-anim="split"]').forEach(el => later(() => {
     const last = atEnd(el);   // near the very end of the page: finish by the time the page ends
     splitTargets(el).forEach(h => {
-      if (h.closest('.ig-page-figures')) return;   // in the figures section's own sequence
+      if (h.closest(SCENE)) return;   // in the cover's own scene (company pages)
       // already on the first screen at load (a short page hero on phones): play once, so it never rests half revealed
       if (scrollY < 10 && h.getBoundingClientRect().top < innerHeight * 0.94) {
         gsap.from(splitWords(h), { yPercent: 115, duration: 1.1, ease: 'power3.out', stagger: 0.05, delay: 0.9 });
@@ -645,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTrigger: { trigger: h, start: last ? 'top bottom' : 'top 94%', end: last ? 'bottom bottom' : 'top 62%', scrub: 0.6 } });
     });
   }));
-  $$('[data-anim="fade-up"]').filter(el => !el.closest('.ig-page-figures')).forEach(el => later(() => gsap.from(el, { y: 32, opacity: 0, ease: 'none',
+  $$('[data-anim="fade-up"]').filter(el => !el.closest(SCENE)).forEach(el => later(() => gsap.from(el, { y: 32, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 78%', scrub: 0.6 } })));
   $$('[data-anim="scale-in"]').forEach(el => later(() => gsap.from(el, { scale: 0.94, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 70%', scrub: 0.6 } })));
@@ -666,8 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('[data-anim="count"]').forEach(el => later(() => counter(el, textNodes(el))));
 
   /* ---- ribbons in tiles and decorative ribbons: they draw in along their length with the scroll ---- */
-  // (the ribbon of a company page's figures section is part of that section's own sequence, further down)
-  [...tileRibs, ...decorRibs.filter(r => !r.svg.closest('.ig-page-figures'))].forEach(r => later(() => {
+  [...tileRibs, ...decorRibs].forEach(r => later(() => {
     const box = r.svg.parentElement;
     r.st.q = 0; r.render();
     gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: box, start: 'top 92%', end: 'top 45%', scrub: 0.8 } });
@@ -745,88 +745,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }));
 
-  /* ---- company pages: the cover hands over to the section below, the figures arrive in order (statement, ribbon,
-         texts), the services row by row, the closing photo opens. Two sets, chosen on the cover block (or ?sec=a|b):
-         a · as on the home page, everything follows the scroll; b · curtain: the next section rises over the cover,
-         the statement waits while the ribbon passes behind it, rows open from a line, the closing photo from its middle ---- */
-  const SEC = (($('.ig-cover[data-sec]') || {}).dataset || {}).sec === 'b' ? 'b' : 'a';
+  /* ---- company pages: a one-screen cover with text plays the home page's second scene: pinned, the gradient comes
+         in over the photo, the words rise, the line follows; then the words leave, the colour fills the screen and the
+         section below (the same colour) goes on from it. Other covers: the photo drifts, the gradient stays as set ---- */
   $$('.ig-cover').forEach(cv => later(() => {
     const media = $('.ig-cover__media', cv), img = $('img', media), shade = $('.ig-cover__shade', cv), inner = $('.ig-cover__inner', cv);
-    const next = cv.nextElementSibling;
+    if (cv.matches(SCENE) && shade) {
+      const words = $$('h1, h2, h3, h4', inner).flatMap(h => splitWords(h));
+      const rest = $$(':scope > *', inner).filter(e => !/^H[1-4]$/.test(e.tagName));
+      const o = parseFloat(getComputedStyle(shade).opacity) || 1;
+      // as on the home page, the section below slides over the end of the scene (no long scroll on an empty colour):
+      // its upper part see-through over the cover's colour, its own colour below
+      const next = cv.nextElementSibling;
+      if (next) {
+        const bg = getComputedStyle(next).backgroundColor;
+        next.classList.add('after-scene');
+        next.style.background = `linear-gradient(transparent 0, transparent 55svh, ${bg} 55svh)`;
+      }
+      gsap.timeline({ scrollTrigger: { trigger: cv, start: 'top top', end: '+=230%', pin: true, scrub: 1.2, invalidateOnRefresh: true } })
+        .fromTo(media, { scale: 1.08 }, { scale: 1, duration: 0.8, ease: 'sine.inOut' }, 0)
+        .fromTo(shade, { opacity: 0 }, { opacity: o, duration: 0.45, ease: 'none' }, 0.2)
+        .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out' }, 0.32)
+        .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' }, 0.55)
+        .to(words, { yPercent: -115, duration: 0.26, stagger: 0.012, ease: 'power2.in' }, 0.96)
+        .to(rest, { y: -20, opacity: 0, duration: 0.22, ease: 'power2.in' }, 0.96)
+        .to(shade, { opacity: 1, '--a': '100%', '--b': '160%', duration: 0.42, ease: 'power1.inOut' }, 1.0)
+        .to({}, { duration: 0.01 }, 1.5);
+      return;
+    }
     if (img && cv.classList.contains('is-parallax')) gsap.fromTo(img, { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: cv, start: 'top bottom', end: 'bottom top', scrub: true } });
-    if (cv.classList.contains('has-content') && next) {
-      // the colour sweeps over the photo from the left until the cover is all colour, as the section below begins
-      const sw = document.createElement('div'); sw.className = 'ig-cover__sweep'; sw.setAttribute('aria-hidden', 'true');
-      cv.insertBefore(sw, inner);
-      if (SEC === 'b') {
-        next.style.position = 'relative'; next.style.zIndex = '2';
-        const tl = gsap.timeline({ scrollTrigger: { trigger: cv, start: () => cv.offsetHeight > innerHeight ? 'bottom bottom' : 'top top', end: () => '+=' + innerHeight,
-          pin: true, pinSpacing: false, scrub: 0.8, invalidateOnRefresh: true } });
-        tl.fromTo(sw, { '--g': -60 }, { '--g': 100, ease: 'none', duration: 1 }, 0)
-          .to(media, { scale: 1.08, ease: 'none', duration: 1 }, 0)
-          .to(inner, { y: -60, opacity: 0.35, ease: 'none', duration: 1 }, 0);
-      } else {
-        gsap.fromTo(sw, { '--g': -60 }, { '--g': 100, ease: 'none', scrollTrigger: { trigger: cv, start: 'bottom bottom', end: 'bottom 45%', scrub: 0.8 } });
-      }
-    } else if (!cv.classList.contains('has-content')) {
-      // the closing photo: its gradient comes in from the left (a), or the photo opens from its middle with it (b)
-      const st = { trigger: cv, start: 'top 96%', end: 'top 30%', scrub: 0.8 };
-      if (SEC === 'b') {
-        const tl = gsap.timeline({ scrollTrigger: st });
-        tl.fromTo(cv, { clipPath: 'inset(0% 50% 0% 50%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.out', duration: 1 }, 0);
-        if (img) tl.fromTo(media, { scale: 1.2 }, { scale: 1, ease: 'power2.out', duration: 1 }, 0);
-        if (shade) tl.fromTo(shade, { opacity: 0 }, { opacity: () => getComputedStyle(shade).getPropertyValue('--cv-o') || 1, ease: 'none', duration: 0.8 }, 0.2);
-      } else if (shade) {
-        gsap.fromTo(shade, { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: st });
-      }
-    }
   }));
-  $$('.ig-page-figures').forEach(sec => later(() => {
-    const h = $('.ig-page-statement', sec), notes = $('.ig-page-notes', sec), r = decorRibs.find(x => sec.contains(x.svg));
-    const words = h ? splitWords(h) : [];
-    if (SEC === 'b' && h && notes) {
-      // the statement sticks a little below the top while the ribbon scrolls up behind it, then goes on before the texts
-      const hold = document.createElement('div'); hold.className = 'ig-fig-hold';   // holds the notes' gap (CSS), the statement sticks in it
-      h.before(hold); hold.appendChild(h);
-    }
-    const tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top 85%', end: 'bottom 96%', scrub: 0.8 } });
-    if (words.length) tl.fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.26, stagger: 0.012, ease: 'none' }, 0);
-    if (r) {
-      r.st.q = 0; r.render();
-      tl.to(r.st, { q: 1, duration: 0.42, ease: 'none', onUpdate: () => touch(r) }, 0.2);
-      const amp = SEC === 'b' ? 0.18 : 0.08;
-      gsap.fromTo(r.place, { x: r.place.x + amp }, { x: r.place.x - amp, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: 1 } });
-    }
-    if (notes) tl.from([...notes.children], { y: 44, opacity: 0, duration: 0.2, stagger: 0.07, ease: 'power1.out' }, 0.62);
-  }));
+  /* ---- services: each row as the home page's blocks come in (with the scroll); its wave draws from left to right
+         along its length, like the home page's shapes, and ripples under the pointer ---- */
   $$('.ig-svc').forEach(list => later(() => {
-    const acc = list.classList.contains('is-accordion'), design = list.classList.contains('is-design');
+    const acc = list.classList.contains('is-accordion');
     $$('.ig-svc__row', list).forEach(row => {
-      const path = $('.ig-svc__wave path', row), text = acc ? null : $('.ig-svc__text', row);
+      const path = $('.ig-svc__wave path', row), text = acc ? null : $('.ig-svc__text', row), rule = $('.ig-svc__rule', row);
       const heads = $$('.ig-svc__num, .ig-svc__title, .ig-svc__label', row).filter(e => !e.closest('.ig-svc__panel'));
-      const tl = gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 94%', end: 'top 56%', scrub: 0.8 } });
-      let rule = $('.ig-svc__rule', row);
-      if (SEC === 'b' && !acc) {
-        // a line grows from the left, the row unveils down from it (on the designed list the line then fades)
-        if (!rule && design) { rule = document.createElement('span'); rule.className = 'ig-svc__line'; rule.setAttribute('aria-hidden', 'true'); row.prepend(rule); }
-        if (rule) tl.fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: 'power2.inOut' }, 0);
-        const parts = [...heads, $('.ig-svc__wave', row), text].filter(Boolean);
-        // wide side and top margins in the mask: the wave swells past its box
-        tl.fromTo(parts, { clipPath: 'inset(-60% -10% 100% -10%)', y: -18 }, { clipPath: 'inset(-60% -10% -60% -10%)', y: 0, duration: 0.5, stagger: 0.06, ease: 'power2.out' }, 0.3);
-        waveIn(tl, path, 0.45, 0.55);
-        if (rule && design) tl.to(rule, { opacity: 0, duration: 0.25, ease: 'none' }, 0.8);
-      } else {
-        if (rule) tl.from(rule, { scaleX: 0, duration: 0.6, ease: 'power2.inOut' }, 0);
-        tl.from(heads, { y: 40, opacity: 0, duration: 0.5, stagger: 0.06, ease: 'power2.out' }, 0.05);
-        if (!acc) { waveIn(tl, path, 0.2, 0.6); if (text) tl.from(text, { y: 26, opacity: 0, duration: 0.5, ease: 'power2.out' }, 0.32); }
-      }
-      // under the pointer the wave deepens and settles back, like a ripple
-      if (path && !acc) {
-        row.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse' || !path._wv || tl.progress() < 1) return;
-          gsap.to(path._wv, { k: 1.6, duration: 0.9, ease: 'elastic.out(1, 0.45)', overwrite: 'auto', onUpdate: () => path.setAttribute('d', waveD(path._wv.k)) }); });
-        row.addEventListener('pointerleave', e => { if (e.pointerType !== 'mouse' || !path._wv || tl.progress() < 1) return;
-          gsap.to(path._wv, { k: 1, duration: 1.1, ease: 'elastic.out(1, 0.4)', overwrite: 'auto', onUpdate: () => path.setAttribute('d', waveD(path._wv.k)) }); });
-      }
+      if (rule) gsap.from(rule, { scaleX: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 96%', end: 'top 60%', scrub: 0.8 } });
+      gsap.from(heads, { y: 32, opacity: 0, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: row, start: 'top 98%', end: 'top 74%', scrub: 0.6 } });
+      if (text) gsap.from(text, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 94%', end: 'top 70%', scrub: 0.6 } });
+      if (!path || acc) return;
+      path._wv = { k: 1 };
+      gsap.fromTo(path, { strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 92%', end: 'top 45%', scrub: 0.8 } });
+      const ripple = (k, d) => gsap.to(path._wv, { k, duration: d, ease: 'elastic.out(1, 0.45)', overwrite: 'auto', onUpdate: () => path.setAttribute('d', waveD(path._wv.k)) });
+      row.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') ripple(1.6, 0.9); });
+      row.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') ripple(1, 1.1); });
     });
   }));
 

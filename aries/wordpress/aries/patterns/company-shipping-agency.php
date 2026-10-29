@@ -11,7 +11,7 @@
 ?>
 <!-- wp:imagient/page-hero /-->
 
-<!-- wp:imagient/cover {"anchor":"about"} -->
+<!-- wp:imagient/cover {"anchor":"about","height":"screen"} -->
 <!-- wp:heading {"className":"ig-page-statement","igAnim":"split"} -->
 <h2 class="wp-block-heading ig-page-statement">Maritime and river agency providing comprehensive agency services in all Romanian Black Sea and Danube ports.</h2>
 <!-- /wp:heading -->

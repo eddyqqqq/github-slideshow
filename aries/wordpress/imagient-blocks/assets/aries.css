@@ -439,16 +439,12 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 /* tint: a light wash of the two colours at the edges, the photo clear in the middle (the closing photo) */
 .ig-cover.is-tint .ig-cover__shade { background: linear-gradient(var(--cv-angle, 100deg), color-mix(in srgb, var(--cv-from) 82%, transparent) 0%,
   color-mix(in srgb, var(--cv-from) 42%, transparent) 26%, transparent 48%, color-mix(in srgb, var(--cv-to) 30%, transparent) 70%, color-mix(in srgb, var(--cv-to) 78%, transparent) 100%); }
-/* the colour that sweeps over a cover as it hands over to the section below (set up by the script) */
-.ig-cover__sweep { position: absolute; inset: 0; pointer-events: none; --g: -60;
-  background: linear-gradient(100deg, var(--cv-from, var(--agency)) calc(var(--g) * 1%), color-mix(in srgb, var(--cv-from, var(--agency)) 55%, transparent) calc(var(--g) * 1% + 30%), transparent calc(var(--g) * 1% + 60%)); }
-/* B: the statement waits on screen while the ribbon passes behind it */
-.ig-page-figures .ig-fig-hold { position: relative; z-index: 1; }
-.ig-page-figures .ig-fig-hold::after { content: ""; display: block; height: calc(470 * var(--pu)); }   /* the notes' gap, inside: a sticky child keeps to its parent's content */
-.ig-page-figures .ig-fig-hold + .ig-page-notes { margin-top: 0; }
-.ig-page-figures .ig-fig-hold > .ig-page-statement { position: sticky; top: 24vh; }
-.ig-svc__line { position: absolute; left: 0; right: 0; top: calc(-30 * var(--pu)); height: 1px; background: var(--ink); transform-origin: 0 50%; pointer-events: none; }
-.is-design .ig-svc__row { position: relative; }
+/* a one-screen cover with text: the home page's second scene (pinned; the gradient comes in, the words rise, then the
+   colour fills the screen and the section below follows in it) — the home page's .shade, in the cover's colour */
+.ig-cover.is-screen.has-content .ig-cover__shade { --a: 0%; --b: 62%;
+  background: linear-gradient(158deg, var(--cv-from) 0%, var(--cv-from) var(--a), color-mix(in srgb, var(--cv-from) 78%, transparent) calc(var(--a) + (var(--b) - var(--a)) * .45), transparent var(--b)); }
+.anim .after-scene { position: relative; z-index: 1; margin-top: -55vh; margin-top: -55svh; }
+.ig-cover.is-screen.has-content .ig-cover__inner { padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); }
 @media (max-width: 760px) and (orientation: portrait) {
   .ig-cover.is-tint .ig-cover__shade { background: linear-gradient(180deg, color-mix(in srgb, var(--cv-from) 45%, transparent) 0%, transparent 45%, transparent 60%, color-mix(in srgb, var(--cv-to) 50%, transparent) 100%); }
 }
@@ -472,7 +468,7 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 .ig-cover .wp-block-buttons, .ig-page-figures .wp-block-buttons { margin-top: 0; }
 .ig-page-notes { max-width: 640px; margin-top: calc(470 * var(--pu)); display: grid; gap: 18px; }
 .ig-page-notes p { margin: 0; font-size: var(--link); line-height: 1.5; }
-@media (max-width: 760px) and (orientation: portrait) { .ig-page-notes { margin-top: 300px; } .ig-page-notes p { font-size: var(--body); } .ig-page-figures .ig-fig-hold::after { height: 300px; } }
+@media (max-width: 760px) and (orientation: portrait) { .ig-page-notes { margin-top: 300px; } .ig-page-notes p { font-size: var(--body); }  }
 
 /* services list: four layouts */
 .ig-svc { --accent: var(--agency); margin: 0; padding: 0; list-style: none; }
