@@ -1,12 +1,12 @@
 {
- "version": "1.15.0",
+ "version": "1.16.0",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
-    "assets/aries.css": "0f3e900b5babcc25f0e8361cfc6d8de15047dea8ae6eeab4af755f58686f91e2",
-    "assets/aries.js": "c1246623e2de1f0d7ee205e7f4c94aae015b0fd040786c54788bffe46031af60",
+    "assets/aries.css": "46d39a1d94488cd1874eff599a7bd35726a886cef3c96126b8313a2cf4b68f4e",
+    "assets/aries.js": "90c30d36d317855424037d3557849c92e45fd769d7f114abae64afca9ff1301a",
     "assets/editor.css": "c36e256a90bcbffbbb4a4124aaa2b21ac97b1294139af4b81544fc7d55533395",
     "assets/editor.js": "a6614a60a28bdc6b872530ed1e1eb4f4b8b597dcd93a4c34d0307140553bd7f5",
     "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
@@ -19,13 +19,13 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "2711ddf3568475ebbed36c1d983e9aa4c0c87bfb2c158482f3f3ca73f52ad9ea",
+    "imagient-blocks.php": "08a475ee7bd8858eac7dcbadc397e73b234c69b7e29ec39a60f55d869b676944",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "10ae20784115d8fe60436415be3dc03739a5bbb25bbca02841314279c084a54a",
     "inc/frames.php": "5e0027310898a4d7efa860221037773dabe667a9999b711648d0879f6b2fe122",
     "inc/helpers.php": "e11278d809face6bf07137ed784b81022bdcb4dbd97a89ab95a94af0851ca914",
     "inc/layout.php": "7c5d90d5dc17ba32165bfe9e650275c73b1854ec440e2639674ba84b233bfd96",
-    "inc/pages.php": "14a7ee2dba6357018153c0725551815e3810c5ed91e7d9d587bf04503b688015",
+    "inc/pages.php": "84b6e3167570966a47a6305e8a6c581d8038e1d4baa3a2b871cd35556084a3be",
     "inc/style.php": "da29543a92aee0ca299636e1dd285fbb397208a72858f7ba5188c48af9cde5c5"
    }
   },

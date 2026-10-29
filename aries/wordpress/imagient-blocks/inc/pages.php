@@ -189,12 +189,32 @@ function imagient_wave_svg( $class ) {
 }
 
 function imagient_render_services( $a ) {
-	$items = array_values( array_filter( (array) $a['items'], 'is_array' ) );
-	$out   = '';
-	foreach ( $items as $it ) {
-		$out .= '<div class="ig-svc__row"><h3 class="ig-svc__title">' . imagient_text( $it['title'] ?? '' ) . '</h3>' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . imagient_text( $it['text'] ?? '' ) . '</p></div>';
+	$items   = array_values( array_filter( (array) $a['items'], 'is_array' ) );
+	// the page shows the designed layout; ?list=2 (editorial) or ?list=3 (accordion) in the address previews the others
+	$variant = array( '2' => 'editorial', '3' => 'accordion' )[ isset( $_GET['list'] ) ? sanitize_key( wp_unslash( $_GET['list'] ) ) : '' ] ?? 'design'; // phpcs:ignore WordPress.Security.NonceVerification -- a read-only display choice
+	$uid     = wp_unique_id( 'svc' );
+	$style   = '--accent:' . imagient_color( $a['color'] ) . ';';
+	$out     = '';
+	foreach ( $items as $i => $it ) {
+		$title = imagient_text( $it['title'] ?? '' );
+		$text  = imagient_text( $it['text'] ?? '' );
+		$num   = sprintf( '%02d', $i + 1 );
+		switch ( $variant ) {
+			case 'editorial':
+				$out .= '<li class="ig-svc__row"><span class="ig-svc__num">' . $num . '</span><h3 class="ig-svc__title">' . $title . '</h3><p class="ig-svc__text">' . $text . '</p><span class="ig-svc__rule" aria-hidden="true"></span></li>';
+				break;
+			case 'accordion':
+				$open  = 0 === $i;
+				$pid   = $uid . '-' . $i;
+				$out  .= '<div class="ig-svc__row' . ( $open ? ' is-open' : '' ) . '"><h3 class="ig-svc__title"><button type="button" aria-expanded="' . ( $open ? 'true' : 'false' ) . '" aria-controls="' . esc_attr( $pid ) . '"><span class="ig-svc__num">' . $num . '</span><span class="ig-svc__label">' . $title . '</span><span class="ig-svc__plus" aria-hidden="true"></span></button></h3>'
+					. '<div class="ig-svc__panel" id="' . esc_attr( $pid ) . '" role="region"' . ( $open ? '' : ' hidden' ) . '><div class="ig-svc__body">' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . $text . '</p></div></div></div>';
+				break;
+			default:
+				$out .= '<div class="ig-svc__row"><h3 class="ig-svc__title">' . $title . '</h3>' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . $text . '</p></div>';
+		}
 	}
-	return sprintf( '<div %s>%s</div>', imagient_wrapper( null, 'ig-svc is-design', '--accent:' . imagient_color( $a['color'] ) . ';' ), $out );
+	$tag = 'editorial' === $variant ? 'ol' : 'div';
+	return sprintf( '<%1$s %2$s>%3$s</%1$s>', $tag, imagient_wrapper( null, 'ig-svc is-' . $variant, $style, array( 'data-svc' => $variant ) ), $out );
 }
 
 function imagient_render_menu( $a ) {

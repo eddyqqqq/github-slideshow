@@ -429,20 +429,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches || !window.gsap;
   // the services' wave (design/wave-line.svg) with its swell k: 1 as drawn, more a deeper wave (the hover ripple)
   const waveD = k => { const r = v => Math.round(v * 100) / 100; return `M0.2 14.47C93.3 ${r(14.47 + 40.26 * k)} 126.45 ${r(14.47 - 46.14 * k)} 211.2 14.47`; };
-  // its entrance: a head runs from left to right (g 0 → 1) trailing a ripple that dies away behind it, so the line seems
-  // to form as a wave and settle into its curve (g up to 1.25: the last ripple calms down)
-  const WS = Array.from({ length: 97 }, (_, i) => { const t = i / 96, u = 1 - t;
-    return [0.2 * u * u * u + 3 * 93.3 * u * u * t + 3 * 126.45 * u * t * t + 211.2 * t * t * t, 14.47 * u * u * u + 3 * 54.73 * u * u * t - 3 * 31.67 * u * t * t + 14.47 * t * t * t]; });
-  const waveGrow = g => {
-    const head = Math.min(g, 1) * 211, calm = Math.max(0, Math.min(1, (g - 0.8) / 0.45)), A = 7 * (1 - calm * calm * (3 - 2 * calm));
-    let d = '';
-    for (const [x, y] of WS) {
-      if (x > head + 0.01) break;
-      const b = head - x, yy = y + A * Math.exp(-b / 55) * Math.sin(b / 13);
-      d += (d ? 'L' : 'M') + x.toFixed(1) + ' ' + yy.toFixed(2);
-    }
-    return d || 'M0.2 14.47';
-  };
+
+  $$('.ig-svc.is-accordion').forEach(list => {
+    const rows = $$('.ig-svc__row', list);
+    const toggle = (row, open) => {
+      const b = $('button', row), p = $('.ig-svc__panel', row), wave = $('.ig-svc__wave', row);
+      if (open === row.classList.contains('is-open')) return;
+      row.classList.toggle('is-open', open); b.setAttribute('aria-expanded', String(open));
+      if (still) { p.hidden = !open; return; }
+      gsap.killTweensOf(p);
+      const after = () => window.ScrollTrigger && ScrollTrigger.refresh();
+      if (open) {
+        p.hidden = false;
+        gsap.fromTo(p, { height: 0 }, { height: 'auto', duration: 0.75, ease: 'power3.inOut', onComplete: after });
+        if (wave) gsap.fromTo(wave, { '--p': 0 }, { '--p': 118, duration: 1.4, ease: 'power2.inOut', delay: 0.2 });
+        gsap.fromTo($('.ig-svc__text', row), { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out', delay: 0.25 });
+      } else gsap.to(p, { height: 0, duration: 0.6, ease: 'power3.inOut', onComplete: () => { p.hidden = true; gsap.set(p, { clearProps: 'height' }); after(); } });
+    };
+    rows.forEach(row => $('button', row).addEventListener('click', () => {
+      const open = !row.classList.contains('is-open');
+      rows.forEach(r => { if (r !== row) toggle(r, false); });
+      toggle(row, open);
+    }));
+  });
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!window.gsap || !window.ScrollTrigger || reduce) {
@@ -738,8 +747,19 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---- the section after a cover's scene, as the home page's company scene after its hero: it slides in over the
          scene's end (its headline rising meanwhile), then stays in place while its ribbon draws in from the left all
          the way across; then the page goes on and its texts come up ---- */
+  // a ribbon between a statement and its texts sits half way between them, on every screen: measured drawn in full
+  const centreRibbon = (sec, r) => {
+    const h = $('.ig-page-statement', sec), n = $('.ig-page-notes', sec);
+    if (!r || !r.place || !h || !n || !r.s) return;
+    const q = r.st.q, vis = r.vis; r.st.q = 1; r.vis = true; r.render();
+    const g = r.ga.getBoundingClientRect(), hb = h.getBoundingClientRect().bottom, nt = n.getBoundingClientRect().top;
+    if (g.height) r.place.y += ((hb + nt) / 2 - (g.top + g.height / 2)) / r.H;
+    r.st.q = q; r.vis = vis; r.render();
+  };
   $$('.after-scene').forEach(sec => later(() => {
     const r = decorRibs.find(x => sec.contains(x.svg));
+    centreRibbon(sec, r);
+    ScrollTrigger.addEventListener('refreshInit', () => { r && r.layout(); centreRibbon(sec, r); });
     // while it stays in place the scene has gone on up under it: its see-through top turns its own colour then
     const lap = sec.style.background;
     const bg = (lap.match(/(rgba?\([^)]*\))\s+40svh\)$/) || [])[1];
@@ -757,18 +777,18 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollTrigger: { trigger: p, pinnedContainer: sec, start: 'top 100%', end: 'top 72%', scrub: 0.6 } })));
   }));
 
-  /* ---- services: each row comes in as the home page's blocks do (with the scroll); its wave draws from left to right
-         along its length like the home page's shapes, its tip fading in, and ripples under the pointer. The dash is in
-         the path's own length (measured), so every browser draws it the same ---- */
+  /* ---- services: each row comes in as the home page's blocks do, with the scroll; its wave appears from left to
+         right behind a soft edge, as the home page's shapes draw in, over a long stretch of the scroll; under the
+         pointer it ripples ---- */
   $$('.ig-svc__row').forEach(row => later(() => {
-    const path = $('.ig-svc__wave path', row), text = $('.ig-svc__text', row), title = $('.ig-svc__title', row);
-    gsap.from(title, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 98%', end: 'top 74%', scrub: 0.6 } });
+    const wave = $('.ig-svc__wave', row), path = wave && $('path', wave), acc = !!row.closest('.is-accordion'), rule = $('.ig-svc__rule', row);
+    const heads = $$('.ig-svc__num, .ig-svc__title, .ig-svc__label', row).filter(e => !e.closest('.ig-svc__panel') && !(acc && e.matches('.ig-svc__title')));
+    if (rule) gsap.from(rule, { scaleX: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 96%', end: 'top 60%', scrub: 0.8 } });
+    gsap.from(heads, { y: 32, opacity: 0, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: row, start: 'top 98%', end: 'top 74%', scrub: 0.6 } });
+    if (acc || !wave) return;
+    const text = $('.ig-svc__text', row);
     if (text) gsap.from(text, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 94%', end: 'top 70%', scrub: 0.6 } });
-    if (!path) return;
-    path.setAttribute('d', 'M0.2 14.47');
-    const o = { g: 0 };
-    gsap.to(o, { g: 1.25, duration: 1.9, ease: 'power2.inOut', onUpdate: () => path.setAttribute('d', waveGrow(o.g)),
-      onComplete: () => path.setAttribute('d', waveD(1)), scrollTrigger: { trigger: row, start: 'top 82%', once: true } });
+    gsap.fromTo(wave, { '--p': 0 }, { '--p': 118, ease: 'none', scrollTrigger: { trigger: row, start: 'top 95%', end: 'top 45%', scrub: 1 } });
     path._wv = { k: 1 };
     const ripple = (k, d) => gsap.to(path._wv, { k, duration: d, ease: 'elastic.out(1, 0.45)', overwrite: 'auto', onUpdate: () => path.setAttribute('d', waveD(path._wv.k)) });
     row.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') ripple(1.6, 0.9); });
