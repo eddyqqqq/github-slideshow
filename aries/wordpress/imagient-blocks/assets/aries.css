@@ -473,8 +473,7 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 .ig-svc { --accent: var(--agency); margin: 0; padding: 0; list-style: none; }
 .ig-svc__title { margin: 0; font-size: var(--h-l); line-height: 1.12; font-weight: 400; letter-spacing: -0.02em; color: var(--ink); }
 .ig-svc__text { margin: 0; font-size: var(--link); line-height: 1.5; color: var(--text); }
-.ig-svc__wave { --p: 118; -webkit-mask-image: linear-gradient(90deg, #000 calc((var(--p) - 18) * 1%), transparent calc(var(--p) * 1%)); mask-image: linear-gradient(90deg, #000 calc((var(--p) - 18) * 1%), transparent calc(var(--p) * 1%));
-  display: block; width: 212px; max-width: 100%; height: auto; overflow: visible; }
+.ig-svc__wave { display: block; width: 212px; max-width: 100%; height: auto; overflow: visible; }
 .ig-svc__wave path { fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; }   /* the script measures it and draws it in */
 .ig-svc__num { font-size: var(--small); letter-spacing: .06em; color: var(--accent); font-variant-numeric: tabular-nums; }
 

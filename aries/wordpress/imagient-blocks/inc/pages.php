@@ -185,7 +185,13 @@ function imagient_render_cover( $a, $content ) {
 
 /** The thin wave between a service's title and its text (from the design). */
 function imagient_wave_svg( $class ) {
-	return '<svg class="' . esc_attr( $class ) . '" viewBox="0 0 212 26" aria-hidden="true" focusable="false"><path d="M0.2 14.47C93.3 54.73 126.45-31.67 211.2 14.47" pathLength="1"/></svg>';
+	// its entrance (script): a mask whose soft edge runs from left to right; the mask is far larger than the line, so
+	// nothing of the wave is cut where it swells past its box
+	$id = wp_unique_id( 'wv' );
+	return '<svg class="' . esc_attr( $class ) . '" viewBox="0 0 212 26" aria-hidden="true" focusable="false"><defs>'
+		. '<linearGradient id="' . $id . 'g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="212" y2="0"><stop offset="1" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+		. '<mask id="' . $id . '" maskUnits="userSpaceOnUse" x="-20" y="-80" width="252" height="186"><rect x="-20" y="-80" width="252" height="186" fill="url(#' . $id . 'g)"/></mask>'
+		. '</defs><path d="M0.2 14.47C93.3 54.73 126.45-31.67 211.2 14.47" mask="url(#' . $id . ')"/></svg>';
 }
 
 function imagient_render_services( $a ) {

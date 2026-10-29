@@ -428,6 +428,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches || !window.gsap;
   // the services' wave (design/wave-line.svg) with its swell k: 1 as drawn, more a deeper wave (the hover ripple)
+  // the wave's reveal: its mask's soft edge (18 % of its length) at p (0 hidden, 1.18 all shown)
+  const waveShow = (wave, p) => { const st = wave._st || (wave._st = $$('stop', wave)); if (st.length < 2) return;
+    st[0].setAttribute('offset', Math.max(0, Math.min(1, p - 0.18)).toFixed(4)); st[1].setAttribute('offset', Math.max(0, Math.min(1, p)).toFixed(4)); };
   const waveD = k => { const r = v => Math.round(v * 100) / 100; return `M0.2 14.47C93.3 ${r(14.47 + 40.26 * k)} 126.45 ${r(14.47 - 46.14 * k)} 211.2 14.47`; };
 
   $$('.ig-svc.is-accordion').forEach(list => {
@@ -442,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (open) {
         p.hidden = false;
         gsap.fromTo(p, { height: 0 }, { height: 'auto', duration: 0.75, ease: 'power3.inOut', onComplete: after });
-        if (wave) gsap.fromTo(wave, { '--p': 0 }, { '--p': 118, duration: 1.4, ease: 'power2.inOut', delay: 0.2 });
+        if (wave) { const o = { p: 0 }; waveShow(wave, 0); gsap.to(o, { p: 1.18, duration: 1.4, ease: 'power2.inOut', delay: 0.2, onUpdate: () => waveShow(wave, o.p) }); }
         gsap.fromTo($('.ig-svc__text', row), { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out', delay: 0.25 });
       } else gsap.to(p, { height: 0, duration: 0.6, ease: 'power3.inOut', onComplete: () => { p.hidden = true; gsap.set(p, { clearProps: 'height' }); after(); } });
     };
@@ -752,8 +755,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const h = $('.ig-page-statement', sec), n = $('.ig-page-notes', sec);
     if (!r || !r.place || !h || !n || !r.s) return;
     const q = r.st.q, vis = r.vis; r.st.q = 1; r.vis = true; r.render();
-    const g = r.ga.getBoundingClientRect(), hb = h.getBoundingClientRect().bottom, nt = n.getBoundingClientRect().top;
-    if (g.height) r.place.y += ((hb + nt) / 2 - (g.top + g.height / 2)) / r.H;
+    n.style.marginTop = '';
+    let g = r.ga.getBoundingClientRect(), hb = h.getBoundingClientRect().bottom, nt = n.getBoundingClientRect().top;
+    // the gap between the statement and the texts holds the ribbon with air above and below (grows if it must)
+    const air = Math.max(32, innerHeight * 0.05), need = g.height + 2 * air;
+    if (nt - hb < need) { n.style.marginTop = (parseFloat(getComputedStyle(n).marginTop) + need - (nt - hb)) + 'px'; nt = n.getBoundingClientRect().top; }
+    if (g.height) { r.place.y += ((hb + nt) / 2 - (g.top + g.height / 2)) / r.H; r.render(); g = r.ga.getBoundingClientRect(); }
     r.st.q = q; r.vis = vis; r.render();
   };
   $$('.after-scene').forEach(sec => later(() => {
@@ -788,7 +795,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (acc || !wave) return;
     const text = $('.ig-svc__text', row);
     if (text) gsap.from(text, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 94%', end: 'top 70%', scrub: 0.6 } });
-    gsap.fromTo(wave, { '--p': 0 }, { '--p': 118, ease: 'none', scrollTrigger: { trigger: row, start: 'top 95%', end: 'top 45%', scrub: 1 } });
+    const o = { p: 0 }; waveShow(wave, 0);
+    gsap.to(o, { p: 1.18, ease: 'none', onUpdate: () => waveShow(wave, o.p), scrollTrigger: { trigger: row, start: 'top 95%', end: 'top 45%', scrub: 1 } });
     path._wv = { k: 1 };
     const ripple = (k, d) => gsap.to(path._wv, { k, duration: d, ease: 'elastic.out(1, 0.45)', overwrite: 'auto', onUpdate: () => path.setAttribute('d', waveD(path._wv.k)) });
     row.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') ripple(1.6, 0.9); });
