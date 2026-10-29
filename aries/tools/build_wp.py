@@ -151,6 +151,36 @@ def main():
                     z.write(full, os.path.join(name, os.path.relpath(full, src)))
         print(out, os.path.getsize(out) // 1024, 'KB')
 
+    # deploy/manifest.json: every file of each package with its SHA-256, read by the Imagient Deploy plugin on the server
+    # (it downloads from GitHub only what differs). Files kept out of the repository (licensed fonts) are left out.
+    import hashlib, subprocess
+    tracked = set(subprocess.run(['git', 'ls-files'], cwd=ROOT, capture_output=True, text=True).stdout.split())
+    deployer = os.path.join(ROOT, 'wordpress', 'imagient-deploy')
+    version = re.search(r'Version:\s*(\S+)', open(os.path.join(plugin, 'imagient-blocks.php')).read()).group(1)
+    packages = {}
+    for slug, kind, src in (('imagient-blocks', 'plugin', plugin), ('aries', 'theme', theme), ('imagient-deploy', 'plugin', deployer)):
+        rel_src = os.path.relpath(src, ROOT)
+        files = {}
+        for base, _, names in os.walk(src):
+            for f in sorted(names):
+                full = os.path.join(base, f)
+                rel = os.path.relpath(full, src).replace(os.sep, '/')
+                if f.startswith('.') or rel.startswith('assets/fonts/'):
+                    continue
+                files[rel] = hashlib.sha256(open(full, 'rb').read()).hexdigest()
+                if os.path.relpath(full, ROOT) not in tracked:
+                    print('  (to commit)', os.path.relpath(full, ROOT))
+        packages[slug] = {'type': kind, 'src': 'aries/' + rel_src.replace(os.sep, '/'), 'files': dict(sorted(files.items()))}
+    os.makedirs(os.path.join(ROOT, 'deploy'), exist_ok=True)
+    with open(os.path.join(ROOT, 'deploy', 'manifest.json'), 'w') as fh:
+        json.dump({'version': version, 'packages': packages}, fh, indent=1)
+        fh.write('\n')
+    print('deploy/manifest.json', version, {k: len(v['files']) for k, v in packages.items()})
+    # the deploy plugin itself, zipped once for its first install
+    out = os.path.join(dist, 'imagient-deploy.zip')
+    with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as z:
+        z.write(os.path.join(deployer, 'imagient-deploy.php'), 'imagient-deploy/imagient-deploy.php')
+
 
 if __name__ == '__main__':
     main()

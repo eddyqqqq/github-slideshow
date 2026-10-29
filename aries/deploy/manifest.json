@@ -1,0 +1,86 @@
+{
+ "version": "1.15.0",
+ "packages": {
+  "imagient-blocks": {
+   "type": "plugin",
+   "src": "aries/wordpress/imagient-blocks",
+   "files": {
+    "assets/aries.css": "0f3e900b5babcc25f0e8361cfc6d8de15047dea8ae6eeab4af755f58686f91e2",
+    "assets/aries.js": "c1246623e2de1f0d7ee205e7f4c94aae015b0fd040786c54788bffe46031af60",
+    "assets/editor.css": "c36e256a90bcbffbbb4a4124aaa2b21ac97b1294139af4b81544fc7d55533395",
+    "assets/editor.js": "a6614a60a28bdc6b872530ed1e1eb4f4b8b597dcd93a4c34d0307140553bd7f5",
+    "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
+    "assets/logos/agency.svg": "4836b398737105c7f0d43f4e261516973ad268a9bff539aec5b11e939dc7208c",
+    "assets/logos/group.svg": "226ffad8e7145c7ca8122b503cb2b81167cd528c8414d39751e41c1bf6398533",
+    "assets/logos/interlink.svg": "97a65b39c37aa422e576db706d6cadd90993a01cf62f4b075a4db50d1e509c0d",
+    "assets/logos/logistics.svg": "da7486c6f4c96919959fab13e5850c81d274905da77c93fe0d2d2d3e6e97f883",
+    "assets/shapes.js": "cbe59144226c725528dd05e693f8b4baf8ff5fbb32408575e9524faabe8a8745",
+    "assets/style-panel.js": "c27e5317891b6653ebe7353866c922725c6ddf0548d1ba9ba72c92703faf8ade",
+    "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
+    "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
+    "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
+    "imagient-blocks.php": "2711ddf3568475ebbed36c1d983e9aa4c0c87bfb2c158482f3f3ca73f52ad9ea",
+    "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
+    "inc/aries.php": "10ae20784115d8fe60436415be3dc03739a5bbb25bbca02841314279c084a54a",
+    "inc/frames.php": "5e0027310898a4d7efa860221037773dabe667a9999b711648d0879f6b2fe122",
+    "inc/helpers.php": "e11278d809face6bf07137ed784b81022bdcb4dbd97a89ab95a94af0851ca914",
+    "inc/layout.php": "7c5d90d5dc17ba32165bfe9e650275c73b1854ec440e2639674ba84b233bfd96",
+    "inc/pages.php": "14a7ee2dba6357018153c0725551815e3810c5ed91e7d9d587bf04503b688015",
+    "inc/style.php": "da29543a92aee0ca299636e1dd285fbb397208a72858f7ba5188c48af9cde5c5"
+   }
+  },
+  "aries": {
+   "type": "theme",
+   "src": "aries/wordpress/aries",
+   "files": {
+    "assets/images/card-stacker.avif": "e9af5908411e9095a33677a3a0d912bbabe5e12fd0ca541a9eb1e4891daaf2a7",
+    "assets/images/card-stacker.webp": "d1b76c847d8bc3556fbb373542e991caafe43a0dd234e27897a28e9abfa55bf8",
+    "assets/images/card-vessel.avif": "c1b9b3972b4246ac5d90f874ab346661215d2cd4ca28f59c53862056460d66f5",
+    "assets/images/card-vessel.webp": "0a0bc7a7637f795b715679d0d0bdc9bef7a21ace961ab9e2c8dc33517bb0b63d",
+    "assets/images/hero-1600.avif": "e77aa8bc39a17bb1e357e1a45ed5e8a62dbf69175421a5badd7720be22d041ae",
+    "assets/images/hero-2400.avif": "d94a89a243f126b6dc2f969ca364251fabce4f25e8554c19c861b1f0c5736ad6",
+    "assets/images/hero-3600.avif": "1f26643be34edb29652a358c3c4d57df90ce41b5ce7c9d06fd0baf8be744fa6d",
+    "assets/images/hero.webp": "392961be27c6ba526a9b57dffd18528e21ba9ba889a16fe85003d40199d72262",
+    "assets/images/shipping-agency-port-1600.avif": "020519ef6c90a7aed8e277f464a70b50e1d4975c5fae8ae65efbb93d739eebd8",
+    "assets/images/shipping-agency-port-2400.avif": "c3e58efbae6758923e9bcb374af169498aaadaccea5bd7f890e463d043b4b684",
+    "assets/images/shipping-agency-port-2880.avif": "c17db0c89b923622d679e675f0b219d180e5fc5ba5a289b74e0cc1418f86bda0",
+    "assets/images/shipping-agency-port.webp": "44ec7bfa10d0d2f72d906d2cf7d475e14f5ce9c76efd13d73151ff24986d8061",
+    "assets/images/shipping-agency-sea-1600.avif": "911b2cd79aa85875aaedaabdd77095b30527559b92f7504761b70ea2616da536",
+    "assets/images/shipping-agency-sea-2400.avif": "cb553acedabf65f3b0f3de34738a7a0bd0604ba3c3966f957baef4b3da7f3fb6",
+    "assets/images/shipping-agency-sea-3600.avif": "32d019d94e6748049aa1eb4ffadfbe2b9ac870f7b67a08a9017e4da66c8dbb92",
+    "assets/images/shipping-agency-sea.webp": "31ef344f001a18731e93d952630a67ce246dee31ced186de6fe2d15aa83d8bcb",
+    "functions.php": "1f039831ffcd985bc52714a7b64c00d157edee42b40a635cc2922db334d0f45e",
+    "inc/imagient.php": "7926d5fd7dcd8ba11f6bd731536aa0360dcdbdaa73c16cd7f34bf3349638c2df",
+    "parts/footer.html": "71ea7963dc54f59922b344028dc092fe28a0a0375612479fe2bf808e31dfd072",
+    "parts/header-company.html": "66334db848345ab896dee078105022d019739a56d8d4d8c3169431bf56944924",
+    "parts/header.html": "6ed219a8d4c0f9486ae5974a944f36e14a8bb4c70769b5798d1b1ef8888005b7",
+    "patterns/cards.php": "0af378009689cda9e066d807efdb73245867e791cdd7efdfe795971fbcc4ec96",
+    "patterns/companies.php": "13ea591495e1c96ea92917875037036a87e819226761954fbd5c8ffdd8786565",
+    "patterns/company-shipping-agency.php": "2736a1aee818b4d56b025883fc8f6cead2b129ab225151cee7d13ac084aeed31",
+    "patterns/figures.php": "794e02a254852bf47cd1ac29703fe8619694f89763aa6c1c61d63fd1f2207cd1",
+    "patterns/hero.php": "78d6cb2341453dbbfbfb3ba634086e426110595a8c782954e75c050f919788e0",
+    "patterns/home.php": "d4db3b3817fc0ac6f5c79a01eaa9fb5a5c21e5764fc821613871177bd808133f",
+    "patterns/statement.php": "276a7e28d38823ea07b21c52560a71d4e9f5ffbf676447b6bebb0fc95e1ce33f",
+    "patterns/text-columns.php": "9c7e27c65c7203b84cd618a47cc2588682d16f043cfee702400a28d9a81d3e66",
+    "patterns/three-boxes.php": "976a98c6833da644bb8e41f6b30fc3b5ea98136154d9cdbcb2ac941ec3467f6b",
+    "screenshot.png": "34bf19db6ee58a6c74053b44d740f2298125dec650e14fadd98bb451126d5fa8",
+    "style.css": "6b690e05ed3ac46443655d8e7c77f3685714c01ee589ed0b88b66fd47927cadd",
+    "templates/404.html": "21a392a07b93fb6f9ab5e59e25a4cab409d4f10962738cb7d5fee03665a0b695",
+    "templates/front-page.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
+    "templates/index.html": "788d6baa71bcef484a405d1285366bf08e86ea54912f07761d65f5b65d1ee299",
+    "templates/page-blank.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
+    "templates/page-company.html": "18ddd7c6765496603604f05a1103f42c1112b6b8d1c64abbdc592d3a19979d17",
+    "templates/page.html": "0e1f67ef85c853ac5f2e85cd583bc28812ed4bb150061e1235a8df47dbb1334e",
+    "templates/single.html": "552e3f04692bb3a64371bede103108e2cb3d0d5349f20fe893b9c255ea15fb1c",
+    "theme.json": "ef840a83540806bfa0822dfe4d1336bb58fb5b39dd304ba4fe7816afb61a7f1c"
+   }
+  },
+  "imagient-deploy": {
+   "type": "plugin",
+   "src": "aries/wordpress/imagient-deploy",
+   "files": {
+    "imagient-deploy.php": "1cefe9c513179ab810f2b8a53a82ae1f250f57920f3c4f0756eec521b25561e6"
+   }
+  }
+ }
+}
