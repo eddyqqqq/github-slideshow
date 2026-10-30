@@ -544,21 +544,16 @@ document.addEventListener('DOMContentLoaded', () => {
          under the closed frame in dark type, then the colour floods out of the frame and the type turns white) or the
          colour spreads (2: out of both bands, soft-edged over the photo, until the screen is the frame's colour; the
          title and logo fade, the statement appears in white); then the page goes on ---- */
-  phEls.forEach(ph => {
+  phEls.forEach(ph => { try { heroScene(ph); } catch (err) { if (window.console) console.error('page hero', err); } });
+  function heroScene(ph) {
     const svg = $('.ig-phero__svg', ph), vb = svg.viewBox.baseVal, W = vb.width, Hh = vb.height;
     const photo = $('.ph-photo', ph), bot = $('.ph-bot', ph), region = $('.ph-region', ph), cutT = $('.ph-cut-t', ph), cutB = $('.ph-cut-b', ph);
     const flood = $('.ph-flood', ph), scene = $('.ig-phero__scene', ph), kind = ph.dataset.scene, title = $('.ig-phero__title', ph), logo = $('.ig-phero__logo', ph);
-    // the frame's geometry, sampled once from its outline: per column, the window's top and bottom edges (T, B), the
-    // frame's outer edges (OT, OB) and the middle of the window (M) along which it is cut in two
-    const K = 180, X = [], T = [], B = [], OT = [], OB = [];
-    const pts = (el, n) => { const L = el.getTotalLength(), a = []; for (let k = 0; k <= n; k++) { const q = el.getPointAtLength(L * k / n); a.push([q.x, q.y]); } return a; };
-    const win = pts($('.ph-wbox', ph), 900), frm = pts($$('.ph-frame', ph)[0], 1400);
-    const wx0 = Math.min(...win.map(q => q[0])), wx1 = Math.max(...win.map(q => q[0]));
-    for (let k = 0; k <= K; k++) { X.push(wx0 + (wx1 - wx0) * k / K); T.push(Infinity); B.push(-Infinity); OT.push(Infinity); OB.push(-Infinity); }
-    const bin = x => Math.max(0, Math.min(K, Math.round((x - wx0) / (wx1 - wx0) * K)));
-    win.forEach(([x, y]) => { const k = bin(x); T[k] = Math.min(T[k], y); B[k] = Math.max(B[k], y); });
-    frm.forEach(([x, y]) => { const k = bin(x); OT[k] = Math.min(OT[k], y); OB[k] = Math.max(OB[k], y); });
-    [T, B, OT, OB].forEach(a => a.forEach((v, k) => { if (!isFinite(v)) { let l = k - 1, r = k + 1; while (l >= 0 && !isFinite(a[l])) l--; while (r <= K && !isFinite(a[r])) r++; a[k] = l < 0 ? a[r] : r > K ? a[l] : a[l] + (a[r] - a[l]) * (k - l) / (r - l); } }));
+    // the frame's geometry, measured by the build (no browser measures the path: Safari is slow at it): per column, the
+    // window's top and bottom edges (T, B), the frame's outer edges (OT, OB) and the middle of the window (M)
+    let GEO = null; try { GEO = JSON.parse(ph.dataset.geo || 'null'); } catch (e) {}
+    if (!GEO || !GEO.x || GEO.x.length < 3) return;
+    const X = GEO.x, T = GEO.t, B = GEO.b, OT = GEO.ot, OB = GEO.ob, K = X.length - 1;
     const M = T.map((t, k) => (t + B[k]) / 2), EMAX = Math.max(...B.map((b, k) => b - T[k])) + 8;
     // the cut of each half, drawn in up to q (0 → 1) from the left; the halves overlap by a unit (no seam)
     const MX = [-200, ...X, W + 200], MY = [M[0], ...M, M[K]];
@@ -638,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out', onUpdate: null }, 1.15)
         .to({}, { duration: 0.01, onUpdate: null }, 1.75);
     }
-  });
+  }
   root.classList.remove('pre');
 
   /* ---- everything below is set up in idle slices ---- */

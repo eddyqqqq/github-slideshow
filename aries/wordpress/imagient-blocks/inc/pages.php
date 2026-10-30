@@ -135,6 +135,8 @@ function imagient_render_page_hero( $a, $content = '' ) {
 	$kind   = isset( $_GET['hdr'] ) && in_array( sanitize_key( wp_unslash( $_GET['hdr'] ) ), array( '1', '2' ), true ) ? sanitize_key( wp_unslash( $_GET['hdr'] ) ) : ( '2' === (string) $a['scene'] ? '2' : '1' );
 	$data   = array(
 		'data-scene' => $scene ? $kind : '',
+		// the frame's geometry measured by the build, for the scene's script (no browser measures the path itself)
+		'data-geo'   => $scene && ! empty( $f['geo'] ) ? wp_json_encode( $f['geo'] ) : '',
 		'data-focus' => max( 0, min( 100, floatval( $a['focusX'] ) ) ) . ' ' . max( 0, min( 100, floatval( $a['focusY'] ) ) ),
 		'data-zoom'  => max( 100, min( 250, floatval( $a['zoom'] ) ) ) / 100,
 	);
