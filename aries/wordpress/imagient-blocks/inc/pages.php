@@ -60,7 +60,7 @@ function imagient_register_page_blocks() {
 		'attributes'      => array(
 			'align'     => array( 'type' => 'string', 'default' => 'full' ),
 			'title'     => array( 'type' => 'string', 'default' => 'Aries Shipping Agency' ),
-			'logo'      => array( 'type' => 'string', 'default' => 'agency' ),
+			'logo'      => array( 'type' => 'string', 'default' => '' ),   // the header carries the site's logo
 			'frame'     => array( 'type' => 'string', 'default' => 'agency' ),
 			'color'     => array( 'type' => 'string', 'default' => 'agency' ),
 			'imageId'   => array( 'type' => 'number', 'default' => 0 ),

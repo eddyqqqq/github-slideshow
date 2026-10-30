@@ -57,13 +57,13 @@ def path_points(d):
     return pts
 
 
-def frame_geometry(d, win, K=600):
+def frame_geometry(d, win_d, K=600):
     """PHP array for the page's scripts, per column across the whole frame (bars included): x, ot/ob (the frame's
     outer top and bottom) and t/b (the window's top and bottom; null where a column has no window, at the bars)."""
     from ribbons_svg import flatten_path
     subs = re.findall(r'M[^M]+', d)
     outer = flatten_path(subs[0], 96)
-    inner = flatten_path(win, 96)
+    inner = flatten_path(win_d, 96)
 
     def cross(pts, x):
         ys = []
@@ -91,6 +91,10 @@ def frame_geometry(d, win, K=600):
             win[a_] = win[b_]
     for w in win:
         cols['t'].append(round(w[0], 1) if w else 'null'); cols['b'].append(round(w[1], 1) if w else 'null')
+    # the outline itself, as points (x, y, x, y …): the page moves these, so the frame keeps its exact shape (its slanted
+    # bar ends included) while it closes
+    for key, pts in (('o', flatten_path(subs[0], 24)), ('w', flatten_path(win_d, 24))):
+        cols[key] = [round(v, 1) for p in pts for v in p]
     return 'array( ' + ', '.join("'%s' => array( %s )" % (k, ', '.join(str(v) for v in vals)) for k, vals in cols.items()) + ' )'
 
 

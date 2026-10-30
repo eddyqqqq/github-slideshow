@@ -573,21 +573,36 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const P = (xs, ys) => xs.map((x, n) => `${f1(x)} ${f1(ys[n])}`).join('L');
     const range = (a, b) => Array.from({ length: b - a + 1 }, (_, n) => a + n);
-    const WK = range(w0, w1);
-    // closing (c: 0 → 1): the frame as one shape, its lower edge and the window's lower edge raised by c × the column's height
+    const WK = range(w0, w1);   // the columns with a window
+    // closing (c: 0 → 1): the designer's outline itself, its points below the middle of the window raised by c × the
+    // window's height there (the bars' too, by the height at the window's end): the shape stays exactly as drawn, the
+    // bars keep their width, and every part closes in step
     const NS2 = 'http://www.w3.org/2000/svg';
     const dyn = document.createElementNS(NS2, 'path'); dyn.setAttribute('class', 'ph-frame'); dyn.setAttribute('fill-rule', 'evenodd'); dyn.setAttribute('d', 'M0 0Z');
     art.insertBefore(dyn, $('.ph-wbox', ph));
-    // (a column never closes past its own top: at the slanted ends of the bars a column is shorter than the window)
-    const frameD = c => 'M' + P(X, OT) + 'L' + P([...X].reverse(), OB.map((v, k) => Math.max(OT[k], v - HGT[k] * c)).reverse()) + 'Z'
-      + 'M' + P(WK.map(k => X[k]), WK.map(k => T[k])) + 'L' + P(WK.map(k => X[k]).reverse(), WK.map(k => B[k] - HGT[k] * c).reverse()) + 'Z';
+    const pairs = a => { const o = []; for (let n = 0; n + 1 < (a || []).length; n += 2) o.push([a[n], a[n + 1]]); return o; };
+    const OUTL = pairs(GEO.o), WOUT = pairs(GEO.w);
+    if (OUTL.length < 3 || WOUT.length < 3) return;
+    const cx = x => Math.max(X[0], Math.min(X[K], x)), hAt = x => yAt(X, HGT, cx(x)), mAt = x => yAt(X, M, cx(x));
+    // each point: x, y, whether it moves, how far, and the highest it may go (the window's top there for the window,
+    // the frame's top for the outline), so no corner ever passes the edge above it
+    // each column is pressed together from below, in proportion: the outline between the frame's top and bottom there
+    // (so its bottom rises by the window's height), the window between its top and bottom (so it shuts); the top edges
+    // stay, every point in between moves in step, nothing folds (the bars' upright ends included)
+    const tAt = x => yAt(X, T, cx(x)), oAt = x => yAt(X, OT, cx(x)), obAt = x => yAt(X, OB, cx(x));
+    const OL = OUTL.map(q => { const t = oAt(q[0]); return [q[0], q[1], t, hAt(q[0]) / Math.max(1, obAt(q[0]) - t)]; });
+    const WL = WOUT.map(q => { const t = tAt(q[0]); return [q[0], q[1], t, 1]; });
+    const poly = (pts, fn) => 'M' + pts.map(q => { const [x, y] = fn(q); return `${f1(x)} ${f1(y)}`; }).join('L') + 'Z';
+    const shut = (q, c) => [q[0], q[1] <= q[2] ? q[1] : q[2] + (q[1] - q[2]) * Math.max(0, 1 - q[3] * c)];
+    const frameD = c => poly(OL, q => shut(q, c)) + poly(WL, q => shut(q, c));
+    const xL = X[w0], xR = X[w1];
     // the photo's window as it closes; a few units under the bands, so no hairline shows
     const windowD = c => 'M' + P(WK.map(k => X[k]), WK.map(k => T[k] - 3)) + 'L' + P(WK.map(k => X[k]).reverse(), WK.map(k => Math.max(T[k] - 3, B[k] + 3 - HGT[k] * c)).reverse()) + 'Z';
-    // the flood: the closed frame, its edges moving apart until it covers the hero (a plain fill, cheap to draw anywhere)
+    // the flood: the closed frame itself growing (its upper points up, its lower points down, the bars outwards, all by
+    // g) until it covers the hero: it starts as exactly the closed frame, nothing appears at once (a plain fill)
     const fl = document.createElementNS(NS2, 'path'); fl.setAttribute('class', 'ph-flood-fill'); fl.setAttribute('d', 'M0 0Z'); flood.appendChild(fl);
-    const LO = OB.map((v, k) => Math.max(OT[k], v - HGT[k]));
-    const floodD = g => `M-600 ${f1(OT[0] - g)}L` + P(X, OT.map(v => v - g)) + `L${f1(W + 600)} ${f1(OT[K] - g)}L${f1(W + 600)} ${f1(LO[K] + g)}L`
-      + P([...X].reverse(), LO.map(v => v + g).reverse()) + `L-600 ${f1(LO[0] + g)}Z`;
+    const floodD = g => poly(OL, q => { const [x, y] = shut(q, 1), up = y <= q[2] + 0.5; return [x < xL ? x - g * (xL - x + 40) / 60 : x > xR ? x + g * (x - xR + 40) / 60 : x, up ? y - g : y + g]; });
+    const LO = OL.map(q => shut(q, 1)[1]);
     const st = { dT: 0, dB: 0, io: 0, zi: 1.14, c: 0, w: 0 };
     let gEnd = 1;
     const render = () => {

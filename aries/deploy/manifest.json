@@ -1,12 +1,12 @@
 {
- "version": "1.19.0",
+ "version": "1.20.0",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
-    "assets/aries.css": "a372ae0e95a99d3f26875708687282d6a62e4be7b29e03bae8fdf2269989bed0",
-    "assets/aries.js": "d3c653352b3e1eef9dd00bb42cd56983acdabcc0953ba91fd58a33dc7e2f682c",
+    "assets/aries.css": "5588924e91514039db6023515025e56fcb6dfa15fc36300f7fcfdc9a6d53f156",
+    "assets/aries.js": "b2e437832b356d1688be8f482f3eb1ace85e98bc44003ff02bec3f237b2720f3",
     "assets/editor.css": "17469cc2b3c970f65db642a874fac8b8012b3fd9ec040d409960587f798fd773",
     "assets/editor.js": "ce174214998f982b35f0b13de2d23292a05219911e8b25c23d56f8fd3d2e4fcb",
     "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
@@ -19,13 +19,13 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "50d799caf8553cd9e05c42272a8f2c00431c146e52fe8acdccde18859fe4fba3",
+    "imagient-blocks.php": "b8768e20bf282d6fbc750a76559b76a1e16029554f1462a75ad41410f82d0ea2",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "10ae20784115d8fe60436415be3dc03739a5bbb25bbca02841314279c084a54a",
-    "inc/frames.php": "13588a61565657764dd65596efd6c5e8fefc1a2d9823fe91cec216c4c4aaee93",
+    "inc/frames.php": "f2183cf749ea06216763eaa6c4e9cb21d94bbbe651ee5192717a2a1f409ec8be",
     "inc/helpers.php": "e11278d809face6bf07137ed784b81022bdcb4dbd97a89ab95a94af0851ca914",
     "inc/layout.php": "7c5d90d5dc17ba32165bfe9e650275c73b1854ec440e2639674ba84b233bfd96",
-    "inc/pages.php": "54502fa9a0e1dd43f9ec3cc2e594577c91284bed0ec5660061b58b8238f0e5c9",
+    "inc/pages.php": "62bc7b14cb68c6dccc63eea5017e45b9fd7b97ea398034eb3ff6b47899b6cfc5",
     "inc/style.php": "da29543a92aee0ca299636e1dd285fbb397208a72858f7ba5188c48af9cde5c5"
    }
   },
@@ -52,8 +52,8 @@
     "functions.php": "1f039831ffcd985bc52714a7b64c00d157edee42b40a635cc2922db334d0f45e",
     "inc/imagient.php": "7926d5fd7dcd8ba11f6bd731536aa0360dcdbdaa73c16cd7f34bf3349638c2df",
     "parts/footer.html": "71ea7963dc54f59922b344028dc092fe28a0a0375612479fe2bf808e31dfd072",
-    "parts/header-company.html": "66334db848345ab896dee078105022d019739a56d8d4d8c3169431bf56944924",
-    "parts/header.html": "6ed219a8d4c0f9486ae5974a944f36e14a8bb4c70769b5798d1b1ef8888005b7",
+    "parts/header-company.html": "2f3070828d00f95c72bf859d4e68fbcec63a78c7c134113d2c7390d4fa6ec073",
+    "parts/header.html": "2f3070828d00f95c72bf859d4e68fbcec63a78c7c134113d2c7390d4fa6ec073",
     "patterns/cards.php": "0af378009689cda9e066d807efdb73245867e791cdd7efdfe795971fbcc4ec96",
     "patterns/companies.php": "13ea591495e1c96ea92917875037036a87e819226761954fbd5c8ffdd8786565",
     "patterns/company-shipping-agency.php": "943d5ef5db2519871ad7ca5b0964a4a7dd187bfdd7c6cda6d3c60b81ca87d98a",
@@ -64,12 +64,12 @@
     "patterns/text-columns.php": "9c7e27c65c7203b84cd618a47cc2588682d16f043cfee702400a28d9a81d3e66",
     "patterns/three-boxes.php": "976a98c6833da644bb8e41f6b30fc3b5ea98136154d9cdbcb2ac941ec3467f6b",
     "screenshot.png": "34bf19db6ee58a6c74053b44d740f2298125dec650e14fadd98bb451126d5fa8",
-    "style.css": "4bb72686d14e9730ad16598b78f57f5c7bc3495fb81556761ca82637f737b138",
+    "style.css": "ce09adba8b5b0f7d278cabe8c3e2b7e22aca87f0e42ae903e680708ed993a34b",
     "templates/404.html": "21a392a07b93fb6f9ab5e59e25a4cab409d4f10962738cb7d5fee03665a0b695",
     "templates/front-page.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
     "templates/index.html": "788d6baa71bcef484a405d1285366bf08e86ea54912f07761d65f5b65d1ee299",
     "templates/page-blank.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
-    "templates/page-company.html": "18ddd7c6765496603604f05a1103f42c1112b6b8d1c64abbdc592d3a19979d17",
+    "templates/page-company.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
     "templates/page.html": "0e1f67ef85c853ac5f2e85cd583bc28812ed4bb150061e1235a8df47dbb1334e",
     "templates/single.html": "552e3f04692bb3a64371bede103108e2cb3d0d5349f20fe893b9c255ea15fb1c",
     "theme.json": "ef840a83540806bfa0822dfe4d1336bb58fb5b39dd304ba4fe7816afb61a7f1c"

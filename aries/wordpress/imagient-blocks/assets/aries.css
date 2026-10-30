@@ -109,8 +109,9 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .hero-title p { font-size: max(14px, 22 * var(--hu)); }
   .shade { top: auto; height: 100vh; }
   .anim .scene-two { top: auto; height: 100vh; }
-  .home .ig-top { padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); --logo-top: max(14px, 22 * var(--hu)); --logo-w: max(44px, 80 * var(--hu)); }
-  .home .ig-top .logo { width: calc(var(--logo-w) * .88); }   /* a touch smaller than elsewhere: it sits over the frame */
+  :is(.home, .page-template-page-company) .ig-top { padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); padding-right: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu));
+    --logo-top: max(14px, 22 * var(--hu)); --logo-w: max(44px, 80 * var(--hu)); }
+  :is(.home, .page-template-page-company) .ig-top .logo { width: calc(var(--logo-w) * .88); }   /* a touch smaller than elsewhere: it sits over the frame */
 }
 
 /* ---------- scene 2: Group and the three companies, one ribbon through four shapes ---------- */
@@ -382,13 +383,12 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .ig-phero__logo { position: absolute; top: max(14px, 22 * var(--hu)); left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); margin: 0;
     width: calc(var(--logo-w) * .88 * 74 / 75); }   /* the home page's logo size (Shipping Agency is 74 px wide to its 75) */
   .ig-phero__stage { margin-top: calc(98 * var(--hu) + var(--hdy)); }
-  html .ig-top.ig-top-company { padding: max(14px, 22 * var(--hu)) calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)) 0 0; }   /* the menu on the logo's line, as far from the right */
   /* the home title starts 14 units above the end of its 878.48-unit frame; this frame is 819.33 units tall */
   .ig-phero__title { margin-top: calc(45.15 * var(--hu)); padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); font-size: max(24px, 70 * var(--hu)); }
 }
 /* phones: the frame shown 1300 units across the screen, centred on --fpx (the ship), the logo and title smaller */
 @media (max-width: 760px) and (orientation: portrait) {
-  .ig-phero { padding-top: calc(env(safe-area-inset-top, 0px) + 20px); padding-bottom: 64px; }
+  .ig-phero { padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 20px) + var(--m-logo, 56px) * 1.76); padding-bottom: 64px; }
   .ig-phero__logo { width: var(--m-logo, 56px); margin-left: var(--gut); }
   .ig-phero__stage { margin-top: 36px; --svgw: calc(100vw * var(--fw) / 1300); }
   .ig-phero__svg { margin-left: calc(50% - var(--fpx) * 100vw / 1300); }
@@ -396,12 +396,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 }
 
 /* the header of company pages: only the menu button, over the page hero at the top right */
-.ig-top.ig-top-company { position: absolute; top: 0; left: auto; right: 0; z-index: 60; pointer-events: none;
-  padding: calc(env(safe-area-inset-top, 0px) + max(20px, 68 * var(--pu))) max(var(--gut-r), (100% - 1920px) / 2 + 68 * var(--pu)) 0 0; }
-.admin-bar .ig-top.ig-top-company { top: var(--wp-admin--admin-bar--height, 32px); }
-.ig-top-company > * { pointer-events: auto; }
-.menu-open .ig-top.ig-top-company { position: fixed; }   /* open: the close button stays where the menu opens from, whatever the scroll */
-@media (max-width: 760px) and (orientation: portrait) { .ig-top.ig-top-company { padding-top: calc(env(safe-area-inset-top, 0px) + 20px); } }
+.menu-open .ig-top { position: fixed; }   /* open: the close button stays where the menu opens from, whatever the scroll */
 
 /* menu: three lines that turn into a cross; the full-screen panel opens from the button's corner */
 .ig-menu__btn { --bw: max(28px, 40 * var(--pu)); --bg: max(8px, 11 * var(--pu)); position: relative; z-index: 2; width: calc(var(--bw) + 20px); height: calc(var(--bg) * 2 + 26px); margin: -12px -10px 0 0; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ink); }

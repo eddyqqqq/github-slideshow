@@ -7,7 +7,7 @@ Description:       Block theme for Aries Group, designed and built by Imagient. 
 Requires at least: 6.5
 Tested up to:      6.8
 Requires PHP:      7.4
-Version:           1.9.0
+Version:           1.10.0
 License:           GNU General Public License v2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:       aries
@@ -25,11 +25,13 @@ img, svg { max-width: 100%; }
 .wp-site-blocks > * + * { margin-block-start: 0; }
 .wp-block-post-content > * + * { margin-block-start: 0; }
 
-/* header: the logo over the hero on the home page, a normal bar elsewhere */
-.ig-top { position: relative; z-index: 40; padding: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 40px)) var(--gut, 68px) 0; }
-.home .ig-top { position: absolute; top: 0; left: 0; right: 0; pointer-events: none; }
-.home .ig-top a { pointer-events: auto; }
-.admin-bar.home .ig-top { top: var(--wp-admin--admin-bar--height, 32px); }
+/* header: one bar everywhere, the Aries Group logo on the left and the menu on the right; over the hero on the home and
+   company pages, a normal bar elsewhere */
+.ig-top { position: relative; z-index: 60; display: flex; justify-content: space-between; align-items: flex-start;
+  padding: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 40px)) var(--gut, 68px) 0; }
+:is(.home, .page-template-page-company) .ig-top { position: absolute; top: 0; left: 0; right: 0; pointer-events: none; }
+:is(.home, .page-template-page-company) .ig-top :is(a, button) { pointer-events: auto; }
+.admin-bar:is(.home, .page-template-page-company) .ig-top { top: var(--wp-admin--admin-bar--height, 32px); }
 
 /* footer: the design's rhythm at 1440 (logo, three link columns, the slogan, the legal line), in design pixels
    (--ig-fu) that grow at half the screen's rate above 1440 and shrink with it below, so large screens get room
