@@ -549,7 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function heroScene(ph) {
     const svg = $('.ig-phero__svg', ph), vb = svg.viewBox.baseVal, W = vb.width, Hh = vb.height;
     const art = $('.ph-art', ph), photo = $('.ph-photo', ph), halves = [$('.ph-top', ph), $('.ph-bot', ph)], region = $('.ph-region', ph), cutT = $('.ph-cut-t', ph), cutB = $('.ph-cut-b', ph);
-    const flood = $('.ph-flood', ph), scene = $('.ig-phero__scene', ph), title = $('.ig-phero__title', ph), logo = $('.ig-phero__logo', ph);
+    const flood = $('.ph-flood', ph), scene = $('.ig-phero__scene', ph), title = $('.ig-phero__title', ph);
     // the frame's geometry, measured by the build (no browser measures the path: Safari is slow at it): per column across
     // the whole frame, its outer top and bottom (OT, OB) and the window's top and bottom (T, B; none at the bars)
     let GEO = null; try { GEO = JSON.parse(ph.dataset.geo || 'null'); } catch (e) {}
@@ -654,7 +654,10 @@ document.addEventListener('DOMContentLoaded', () => {
     place(); ScrollTrigger.addEventListener('refreshInit', place);
     // pinned while it plays: the frame closes as the title fades (as the home page's), the statement rises under it in
     // dark type, then the colour floods out of the closed frame over the screen and the type turns white
+    // the site's header (logo, menu) stays at the top while the scene holds, until the colour has filled the screen
+    const bar = $('.ig-top');
     const tl = gsap.timeline({ defaults: { onUpdate: render }, scrollTrigger: { trigger: ph, start: 'top top', end: () => '+=' + Math.round(tl.duration() * 100) + '%', pin: true, scrub: 1.2, invalidateOnRefresh: true,
+      onUpdate: t => bar && bar.classList.toggle('is-held', t.progress > 0 && t.progress < 1),
       onRefresh: () => { gEnd = size(); spread = Math.max(0, innerWidth / unitPx() / W - 1) + 0.2; render(); } } });
     gEnd = size(); spread = Math.max(0, innerWidth / unitPx() / W - 1) + 0.2;
     // the home page's pacing (its hero holds for 2.7 screens): the frame closes as the title fades, the statement rises
@@ -667,7 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out', onUpdate: null }, 0.62)
       .to(st, { w: 1, duration: 0.45, ease: 'power2.in' }, 0.85)
       .to(scene, { color: '#fff', duration: 0.2, ease: 'none', onUpdate: null }, 0.98)
-      .to(logo, { opacity: 0, duration: 0.2, ease: 'none', onUpdate: null }, 0.95)
+      .to(bar || {}, { autoAlpha: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 1.12)   // gone as the colour fills the screen
       .to(words, { yPercent: -115, duration: 0.3, stagger: 0.012, ease: 'power2.in', onUpdate: null }, out)
       .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, out)
       .to({}, { duration: 0.01, onUpdate: null }, gone + 0.45);
