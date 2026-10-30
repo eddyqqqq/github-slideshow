@@ -1,14 +1,14 @@
 {
- "version": "1.17.2",
+ "version": "1.18.0",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
-    "assets/aries.css": "59131ad5c5fcf95b0aa29f16c74f3362ab76905484dff392ac0565b2335f678a",
-    "assets/aries.js": "1862df084800f4fb01447d0aa3766673ff3481120a41756ffabb993de0f6acca",
-    "assets/editor.css": "c36e256a90bcbffbbb4a4124aaa2b21ac97b1294139af4b81544fc7d55533395",
-    "assets/editor.js": "a6614a60a28bdc6b872530ed1e1eb4f4b8b597dcd93a4c34d0307140553bd7f5",
+    "assets/aries.css": "000ec3d858fcc550d7cb1a8617cc92d6a1c3f4dd4c73e966c508ed7a4215c4f0",
+    "assets/aries.js": "d43961a80ae0e5d12c3cd98b6f6d99b37eb887f3da7c91dee1d69b83054e0986",
+    "assets/editor.css": "17469cc2b3c970f65db642a874fac8b8012b3fd9ec040d409960587f798fd773",
+    "assets/editor.js": "d122a06ceaeb1192738f492d5398bbd3f987bf231645822d94f94fa1d23c8ca8",
     "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
     "assets/logos/agency.svg": "4836b398737105c7f0d43f4e261516973ad268a9bff539aec5b11e939dc7208c",
     "assets/logos/group.svg": "226ffad8e7145c7ca8122b503cb2b81167cd528c8414d39751e41c1bf6398533",
@@ -19,13 +19,13 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "18d8200b3c019d5d886ffdee173c481dad6d5dfb2283f89703c12080f89d50aa",
+    "imagient-blocks.php": "e4d25e5233e7546b9440faa770fe66aac10319699e5d956d91637c36ab02bad7",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "10ae20784115d8fe60436415be3dc03739a5bbb25bbca02841314279c084a54a",
-    "inc/frames.php": "5e0027310898a4d7efa860221037773dabe667a9999b711648d0879f6b2fe122",
+    "inc/frames.php": "01bd75de580789d7fc3625d8302e747830f849271e4b49d3535dd894b4f95138",
     "inc/helpers.php": "e11278d809face6bf07137ed784b81022bdcb4dbd97a89ab95a94af0851ca914",
     "inc/layout.php": "7c5d90d5dc17ba32165bfe9e650275c73b1854ec440e2639674ba84b233bfd96",
-    "inc/pages.php": "6af5749c27224d8c6160fce31fb51dae2de25b1bb113e9a52c60000135f6b133",
+    "inc/pages.php": "c86aad24319353d613b0a23e857f9656a3d859aeb08b78f8609aef73c71b9379",
     "inc/style.php": "da29543a92aee0ca299636e1dd285fbb397208a72858f7ba5188c48af9cde5c5"
    }
   },
@@ -64,7 +64,7 @@
     "patterns/text-columns.php": "9c7e27c65c7203b84cd618a47cc2588682d16f043cfee702400a28d9a81d3e66",
     "patterns/three-boxes.php": "976a98c6833da644bb8e41f6b30fc3b5ea98136154d9cdbcb2ac941ec3467f6b",
     "screenshot.png": "34bf19db6ee58a6c74053b44d740f2298125dec650e14fadd98bb451126d5fa8",
-    "style.css": "30c14c6e6d1069ac6a9cdca4b19733988b0afd86a6a2437f94230b2ec480ed62",
+    "style.css": "09feee768c816a161e44c5d01d3a878c8c3a25194b117d6a85e14a32fe04852d",
     "templates/404.html": "21a392a07b93fb6f9ab5e59e25a4cab409d4f10962738cb7d5fee03665a0b695",
     "templates/front-page.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
     "templates/index.html": "788d6baa71bcef484a405d1285366bf08e86ea54912f07761d65f5b65d1ee299",

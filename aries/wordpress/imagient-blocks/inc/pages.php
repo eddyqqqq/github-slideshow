@@ -55,7 +55,7 @@ function imagient_register_page_blocks() {
 
 	register_block_type( 'imagient/page-hero', array_merge( $common, array(
 		'title'           => 'Page hero',
-		'description'     => 'The top of a company page: the logo, the company frame with a photo inside and the page title. Five opening animations to choose from.',
+		'description'     => 'The top of a company page: the logo, the company frame with a photo inside and the page title; opens as the home page\'s hero. Blocks put inside it (a statement, a link) are its second scene: the page holds while the frame closes (or the colour spreads) and they appear.',
 		'supports'        => array( 'anchor' => true, 'className' => true, 'html' => false, 'align' => array( 'full' ), 'multiple' => false ),
 		'attributes'      => array(
 			'align'     => array( 'type' => 'string', 'default' => 'full' ),
@@ -69,6 +69,7 @@ function imagient_register_page_blocks() {
 			'focusY'    => array( 'type' => 'number', 'default' => 52 ),
 			'zoom'      => array( 'type' => 'number', 'default' => 100 ),
 			'portraitX' => array( 'type' => 'number', 'default' => 1060 ),
+			'scene'     => array( 'type' => 'string', 'default' => '0' ),   // the scroll scene: 0 none, 1 the frame closes, 2 the colour spreads
 		),
 		'render_callback' => 'imagient_render_page_hero',
 	) ) );
@@ -121,7 +122,7 @@ function imagient_register_page_blocks() {
 	) ) );
 }
 
-function imagient_render_page_hero( $a ) {
+function imagient_render_page_hero( $a, $content = '' ) {
 	$frames = imagient_frames();
 	$f      = $frames[ $a['frame'] ] ?? reset( $frames );
 	$uid    = wp_unique_id( 'ph' );
@@ -129,13 +130,22 @@ function imagient_render_page_hero( $a ) {
 	$photo  = imagient_photo( $a['imageId'], $a['imageUrl'], '', array( 'sizes' => '(orientation: portrait) 170vw, 110vw', 'fetchpriority' => 'high', 'decoding' => 'async', 'loading' => 'eager' ) );
 	$logo   = $a['logo'] ? imagient_logo_svg( $a['logo'] ) : '';
 	$style  = sprintf( '--accent:%s;--fw:%s;--fh:%s;--fx0:%s;--fx1:%s;--fpx:%s;', imagient_color( $a['color'] ), $f['w'], $f['h'], $f['x0'], $f['x1'], max( 300, min( $f['w'] - 300, floatval( $a['portraitX'] ) ) ) );
+	// the scroll scene: set on the block (scene 1 or 2), or previewed with ?hdr=1 / ?hdr=2 in the address; its text is the
+	// blocks inside the hero or, if there are none, the cover that follows it (the script brings that cover's text in)
+	// phpcs:ignore WordPress.Security.NonceVerification -- a read-only display choice
+	$want   = isset( $_GET['hdr'] ) ? sanitize_key( wp_unslash( $_GET['hdr'] ) ) : (string) $a['scene'];
+	$kind   = in_array( $want, array( '1', '2' ), true ) ? $want : '';
+	$scene  = '' !== $kind;
 	$data   = array(
+		'data-scene' => $scene ? $kind : '',
+		// the frame's geometry measured by the build, for the scene's script (no browser measures the path itself)
+		'data-geo'   => $scene && ! empty( $f['geo'] ) ? wp_json_encode( $f['geo'] ) : '',
 		'data-focus' => max( 0, min( 100, floatval( $a['focusX'] ) ) ) . ' ' . max( 0, min( 100, floatval( $a['focusY'] ) ) ),
 		'data-zoom'  => max( 100, min( 250, floatval( $a['zoom'] ) ) ) / 100,
 	);
 	ob_start();
 	?>
-<section <?php echo imagient_wrapper( null, 'ig-phero', $style, $data ); ?>>
+<section <?php echo imagient_wrapper( null, 'ig-phero' . ( $scene ? ' has-scene is-scene-' . $kind : '' ), $style, $data ); ?>>
 	<?php if ( $logo ) : ?>
   <a class="ig-phero__logo logo-link is-colour" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( imagient_logo_list()[ $a['logo'] ] ?? 'Home' ); ?>"><?php echo $logo; // phpcs:ignore -- sanitised SVG from the plugin ?></a>
 	<?php endif; ?>
@@ -143,19 +153,23 @@ function imagient_render_page_hero( $a ) {
     <div class="ig-phero__src" aria-hidden="true"><?php echo $photo; // phpcs:ignore -- core-escaped ?></div>
     <svg class="ig-phero__svg" viewBox="0 0 <?php echo esc_attr( $f['w'] . ' ' . $f['h'] ); ?>" aria-hidden="true" focusable="false">
       <defs>
-        <clipPath id="<?php echo esc_attr( $uid ); ?>-w"><path class="ph-window" d="<?php echo esc_attr( $f['window'] ); ?>"/></clipPath>
-        <clipPath id="<?php echo esc_attr( $uid ); ?>-d"><rect class="ph-draw" x="-20" y="-20" width="<?php echo esc_attr( $f['w'] + 40 ); ?>" height="<?php echo esc_attr( $f['h'] + 40 ); ?>"/></clipPath>
+        <clipPath id="<?php echo esc_attr( $uid ); ?>-w"><path class="ph-region" d="<?php echo esc_attr( $f['window'] ); ?>"/></clipPath>
+        <clipPath id="<?php echo esc_attr( $uid ); ?>-t"><path class="ph-cut-t" d="M-100 -3000H<?php echo esc_attr( $f['w'] + 100 ); ?>V3000H-100Z"/></clipPath>
+        <clipPath id="<?php echo esc_attr( $uid ); ?>-b"><path class="ph-cut-b" d="M-100 -3000H<?php echo esc_attr( $f['w'] + 100 ); ?>V3000H-100Z"/></clipPath>
       </defs>
-      <g class="ph-art" clip-path="url(#<?php echo esc_attr( $uid ); ?>-d)">
-        <g clip-path="url(#<?php echo esc_attr( $uid ); ?>-w)">
-          <g class="ph-photo"><image class="ph-img" x="<?php echo esc_attr( $f['x0'] ); ?>" y="0" width="<?php echo esc_attr( $f['x1'] - $f['x0'] ); ?>" height="<?php echo esc_attr( $f['h'] ); ?>" preserveAspectRatio="xMidYMid slice"/></g>
-        </g>
-        <path class="ph-frame" d="<?php echo esc_attr( $f['path'] ); ?>"/>
+      <g class="ph-art">
+        <g clip-path="url(#<?php echo esc_attr( $uid ); ?>-w)"><g class="ph-photo"><image class="ph-img" x="<?php echo esc_attr( $f['x0'] ); ?>" y="0" width="<?php echo esc_attr( $f['x1'] - $f['x0'] ); ?>" height="<?php echo esc_attr( $f['h'] ); ?>" preserveAspectRatio="xMidYMid slice"/></g></g>
+        <g class="ph-flood" aria-hidden="true"></g>
+        <g class="ph-top" clip-path="url(#<?php echo esc_attr( $uid ); ?>-t)"><path class="ph-frame" d="<?php echo esc_attr( $f['path'] ); ?>"/></g>
+        <g class="ph-bot"><g clip-path="url(#<?php echo esc_attr( $uid ); ?>-b)"><path class="ph-frame" d="<?php echo esc_attr( $f['path'] ); ?>"/></g></g>
         <path class="ph-wbox" d="<?php echo esc_attr( $f['window'] ); ?>" fill="none"/>
       </g>
     </svg>
   </div>
   <h1 class="ig-phero__title"><?php echo imagient_text( $a['title'] ); ?></h1>
+	<?php if ( $scene ) : ?>
+  <div class="ig-phero__scene"><?php echo trim( wp_strip_all_tags( $content, true ) ) ? $content : ''; // phpcs:ignore -- rendered inner blocks ?></div>
+	<?php endif; ?>
 </section>
 	<?php
 	return ob_get_clean();
