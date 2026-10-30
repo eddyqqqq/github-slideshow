@@ -538,16 +538,106 @@ document.addEventListener('DOMContentLoaded', () => {
       .to(shade, { '--a': '100%', '--b': '160%', duration: 0.42, ease: 'power1.inOut' }, 1.46)
       .to({}, { duration: 0.01 }, 1.88);
   }
-  /* ---- page hero: the frame draws in from the left, the photo settles in it, the title rises; the photo then drifts
-         a little inside the frame with the scroll ---- */
+  /* ---- page hero: opens as the home page's hero (the frame, split along the middle of its window, draws in from the
+         left, upper half first; the photo fades in and settles from 1.14 ×). With blocks inside it, it is a scene: it
+         holds while the frame closes (1: the lower band rises to the upper one, the title fades, the statement appears
+         under the closed frame in dark type, then the colour floods out of the frame and the type turns white) or the
+         colour spreads (2: out of both bands, soft-edged over the photo, until the screen is the frame's colour; the
+         title and logo fade, the statement appears in white); then the page goes on ---- */
   phEls.forEach(ph => {
-    const photo = $('.ph-photo', ph), draw = $('.ph-draw', ph);
-    const vb = $('.ig-phero__svg', ph).viewBox.baseVal, W = vb.width, Hh = vb.height, mid = `${f1(W / 2)} ${f1(Hh / 2)}`;
-    gsap.timeline({ delay: 0.1 })
-      .fromTo(draw, { attr: { width: 0 } }, { attr: { width: W + 40 }, duration: 1.7, ease: 'expo.inOut' }, 0)
-      .fromTo(photo, { opacity: 0, scale: 1.16, svgOrigin: mid }, { opacity: 1, scale: 1, duration: 2, ease: 'expo.out' }, 0.6)
-      .fromTo(splitWords($('.ig-phero__title', ph)), { yPercent: 135 }, { yPercent: 0, duration: 0.95, stagger: 0.06, ease: 'power3.out' }, 1.05);
-    gsap.fromTo(photo, { y: 0 }, { y: Hh * 0.05, ease: 'none', immediateRender: false, scrollTrigger: { trigger: ph, start: 'top top', end: 'bottom top', scrub: true } });
+    const svg = $('.ig-phero__svg', ph), vb = svg.viewBox.baseVal, W = vb.width, Hh = vb.height;
+    const photo = $('.ph-photo', ph), bot = $('.ph-bot', ph), region = $('.ph-region', ph), cutT = $('.ph-cut-t', ph), cutB = $('.ph-cut-b', ph);
+    const flood = $('.ph-flood', ph), scene = $('.ig-phero__scene', ph), kind = ph.dataset.scene, title = $('.ig-phero__title', ph), logo = $('.ig-phero__logo', ph);
+    // the frame's geometry, sampled once from its outline: per column, the window's top and bottom edges (T, B), the
+    // frame's outer edges (OT, OB) and the middle of the window (M) along which it is cut in two
+    const K = 180, X = [], T = [], B = [], OT = [], OB = [];
+    const pts = (el, n) => { const L = el.getTotalLength(), a = []; for (let k = 0; k <= n; k++) { const q = el.getPointAtLength(L * k / n); a.push([q.x, q.y]); } return a; };
+    const win = pts($('.ph-wbox', ph), 900), frm = pts($$('.ph-frame', ph)[0], 1400);
+    const wx0 = Math.min(...win.map(q => q[0])), wx1 = Math.max(...win.map(q => q[0]));
+    for (let k = 0; k <= K; k++) { X.push(wx0 + (wx1 - wx0) * k / K); T.push(Infinity); B.push(-Infinity); OT.push(Infinity); OB.push(-Infinity); }
+    const bin = x => Math.max(0, Math.min(K, Math.round((x - wx0) / (wx1 - wx0) * K)));
+    win.forEach(([x, y]) => { const k = bin(x); T[k] = Math.min(T[k], y); B[k] = Math.max(B[k], y); });
+    frm.forEach(([x, y]) => { const k = bin(x); OT[k] = Math.min(OT[k], y); OB[k] = Math.max(OB[k], y); });
+    [T, B, OT, OB].forEach(a => a.forEach((v, k) => { if (!isFinite(v)) { let l = k - 1, r = k + 1; while (l >= 0 && !isFinite(a[l])) l--; while (r <= K && !isFinite(a[r])) r++; a[k] = l < 0 ? a[r] : r > K ? a[l] : a[l] + (a[r] - a[l]) * (k - l) / (r - l); } }));
+    const M = T.map((t, k) => (t + B[k]) / 2), EMAX = Math.max(...B.map((b, k) => b - T[k])) + 8;
+    // the cut of each half, drawn in up to q (0 → 1) from the left; the halves overlap by a unit (no seam)
+    const MX = [-200, ...X, W + 200], MY = [M[0], ...M, M[K]];
+    const half = (q, up) => {
+      if (q <= 0.0005) return 'M0 0Z';
+      const xr = MX[0] + (MX[MX.length - 1] - MX[0]) * clamp01(q), off = up ? 0.6 : -0.6, far = up ? -4000 : 5000, a = [`${f1(xr)} ${f1(yAt(MX, MY, xr) + off)}`];
+      for (let k = MX.length - 1; k >= 0; k--) if (MX[k] < xr) a.push(`${f1(MX[k])} ${f1(MY[k] + off)}`);
+      return `M${f1(MX[0])} ${far}L${f1(xr)} ${far}L` + a.join('L') + 'Z';
+    };
+    // the photo's window, its lower edge raised by e (closing); a few units under the bands, so no hairline shows
+    const windowD = e => 'M' + X.map((x, k) => `${f1(x)} ${f1(T[k] - 3)}`).join('L') + 'L' + X.map((x, k) => `${f1(x)} ${f1(Math.max(T[k] - 3, B[k] + 3 - e))}`).reverse().join('L') + 'Z';
+    // the flood: thick strokes along a line through the frame, growing until they cover the whole hero
+    const NS2 = 'http://www.w3.org/2000/svg', layers = [];
+    const lineD = ys => `M-600 ${f1(ys[0])}L` + X.map((x, k) => `${f1(x)} ${f1(ys[k])}`).join('L') + `L${f1(W + 600)} ${f1(ys[K])}`;
+    const addLayer = (d, o) => { const pth = document.createElementNS(NS2, 'path'); pth.setAttribute('d', d); pth.setAttribute('class', 'ph-flood-line'); pth.style.opacity = o; flood.appendChild(pth); layers.push(pth); return pth; };
+    const st = { dT: 0, dB: 0, io: 0, zi: 1.14, e: 0, w: 0 };
+    let floodLines = [], w0 = 0, wEnd = 1, wMid = 0;
+    // the flood's width along st.w (0 → 1): with a middle stop (wMid), the first 60 % spreads over the window only
+    const render = () => {
+      cutT.setAttribute('d', half(st.dT, true)); cutB.setAttribute('d', half(st.dB, false));
+      bot.setAttribute('transform', `translate(0 ${f1(-st.e)})`);
+      region.setAttribute('d', windowD(st.e));
+      photo.setAttribute('transform', `translate(${f1(W / 2)} ${f1(Hh / 2)}) scale(${st.zi.toFixed(4)}) translate(${f1(-W / 2)} ${f1(-Hh / 2)})`);
+      photo.style.opacity = st.io;
+      const ww = !wMid ? w0 + (wEnd - w0) * st.w : st.w < 0.6 ? w0 + (wMid - w0) * st.w / 0.6 : wMid + (wEnd - wMid) * (st.w - 0.6) / 0.4;
+      floodLines.forEach(([pth, extra]) => pth.setAttribute('stroke-width', st.w > 0 ? f1(Math.max(0, ww + extra * Math.min(1, st.w * 2))) : 0));
+    };
+    render();
+    gsap.timeline({ defaults: { onUpdate: render } })
+      .to(st, { dT: 1, duration: 1.5, ease: 'expo.inOut' }, 0.1)
+      .to(st, { dB: 1, duration: 1.5, ease: 'expo.inOut' }, 0.25)
+      .to(st, { io: 1, duration: 1.1, ease: 'power2.out' }, 0.55)
+      .to(st, { zi: 1, duration: 2.2, ease: 'expo.out' }, 0.55);
+    if (!kind || !scene) {
+      gsap.fromTo(photo, { y: 0 }, { y: Hh * 0.05, ease: 'none', immediateRender: false, scrollTrigger: { trigger: ph, start: 'top top', end: 'bottom top', scrub: true } });
+      return;
+    }
+    // the scene
+    const words = $$('h1, h2, h3, h4', scene).flatMap(h => splitWords(h)), rest = $$(':scope > *', scene).filter(e => !/^H[1-4]$/.test(e.tagName));
+    const unitPx = () => svg.getBoundingClientRect().width / W;   // pixels per unit of the frame
+    // how wide the flood must grow: past every corner of the hero, measured in the frame's units
+    const size = () => { const r = ph.getBoundingClientRect(), u = unitPx(); return 2.4 * Math.max(r.height, r.width * 0.6) / u + 200; };
+    if (kind === '1') {
+      // the closed frame: its middle line and how thick it is there; the flood starts inside it
+      const C = X.map((x, k) => (OT[k] + OB[k] - EMAX) / 2), thick = Math.min(...X.map((x, k) => OB[k] - EMAX - OT[k]));
+      floodLines = [[addLayer(lineD(C), 1), 0]];
+      w0 = Math.max(4, thick * 0.9);
+      // the statement under the closed frame, its top a little below the frame's lowest point
+      const place = () => { const u = unitPx(), lowest = Math.max(...X.map((x, k) => OB[k] - EMAX)), sv = svg.getBoundingClientRect(), pr = ph.getBoundingClientRect();
+        scene.style.top = Math.round(sv.top - pr.top + lowest * u + Math.max(36, innerHeight * 0.06)) + 'px'; };
+      place(); ScrollTrigger.addEventListener('refreshInit', place);
+    } else {
+      // out of both bands: a solid core and two softer rims (the gradient through which the photo still shows)
+      const CT = X.map((x, k) => (OT[k] + T[k]) / 2), CB = X.map((x, k) => (B[k] + OB[k]) / 2);
+      const thick = Math.min(...X.map((x, k) => T[k] - OT[k]), ...X.map((x, k) => OB[k] - B[k]));
+      w0 = Math.max(4, thick * 0.9);
+      wMid = thick + EMAX * 1.04;   // each band's flood reaches the middle of the window
+      // rims from wide and faint to narrow and solid: together a soft gradient at the flood's edge
+      [CT, CB].forEach(c => [[340, 0.07], [260, 0.1], [190, 0.14], [130, 0.2], [80, 0.28], [36, 0.4], [0, 1]].forEach(([x, o]) => floodLines.push([addLayer(lineD(c), o), x])));
+    }
+    const tl = gsap.timeline({ defaults: { onUpdate: render }, scrollTrigger: { trigger: ph, start: 'top top', end: '+=230%', pin: true, scrub: 1.2, invalidateOnRefresh: true,
+      onRefresh: () => { wEnd = size(); render(); } } });
+    wEnd = size();
+    tl.to(title, { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 0);   // as the home page's title
+    if (kind === '1') {
+      tl.to(st, { e: EMAX, duration: 0.6, ease: 'power2.inOut' }, 0)
+        .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out', onUpdate: null }, 0.5)
+        .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out', onUpdate: null }, 0.75)
+        .to(st, { w: 1, duration: 0.5, ease: 'power2.in' }, 1.15)
+        .to(scene, { color: '#fff', duration: 0.2, ease: 'none', onUpdate: null }, 1.3)
+        .to(logo, { opacity: 0, duration: 0.2, ease: 'none', onUpdate: null }, 1.25)
+        .to({}, { duration: 0.01, onUpdate: null }, 1.75);
+    } else {
+      tl.to(logo, { opacity: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 0)
+        .to(st, { w: 1, duration: 0.95, ease: 'none' }, 0.05)
+        .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out', onUpdate: null }, 0.9)
+        .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out', onUpdate: null }, 1.15)
+        .to({}, { duration: 0.01, onUpdate: null }, 1.75);
+    }
   });
   root.classList.remove('pre');
 
@@ -605,7 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const SCENE = '.ig-cover.is-screen.has-content.has-overlay';   // a cover that plays the home page's second scene (below)
   // as on the home page, the section after it slides over the scene's end (no long scroll on an empty colour): its upper
   // part see-through over the cover's colour, its own colour from well inside the overlap (no seam where they meet)
-  $$(SCENE).forEach(cv => {
+  $$(SCENE + ', .ig-phero.has-scene').forEach(cv => {
     const next = cv.nextElementSibling;
     if (!next) return;
     const bg = getComputedStyle(next).backgroundColor;
@@ -616,7 +706,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('[data-anim="split"]').forEach(el => later(() => {
     const last = atEnd(el);   // near the very end of the page: finish by the time the page ends
     splitTargets(el).forEach(h => {
-      if (h.closest(SCENE)) return;   // in the cover's own scene (company pages)
+      if (h.closest(SCENE) || h.closest('.after-scene') || h.closest('.ig-phero')) return;   // in a scene of its own (company pages, below)
       // already on the first screen at load (a short page hero on phones): play once, so it never rests half revealed
       if (scrollY < 10 && h.getBoundingClientRect().top < innerHeight * 0.94) {
         gsap.from(splitWords(h), { yPercent: 115, duration: 1.1, ease: 'power3.out', stagger: 0.05, delay: 0.9 });
@@ -626,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTrigger: { trigger: h, start: last ? 'top bottom' : 'top 94%', end: last ? 'bottom bottom' : 'top 62%', scrub: 0.6 } });
     });
   }));
-  $$('[data-anim="fade-up"]').filter(el => !el.closest(SCENE) && !el.closest('.after-scene')).forEach(el => later(() => gsap.from(el, { y: 32, opacity: 0, ease: 'none',
+  $$('[data-anim="fade-up"]').filter(el => !el.closest(SCENE) && !el.closest('.after-scene') && !el.closest('.ig-phero')).forEach(el => later(() => gsap.from(el, { y: 32, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 78%', scrub: 0.6 } })));
   $$('[data-anim="scale-in"]').forEach(el => later(() => gsap.from(el, { scale: 0.94, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 70%', scrub: 0.6 } })));
@@ -767,21 +857,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const r = decorRibs.find(x => sec.contains(x.svg));
     centreRibbon(sec, r);
     ScrollTrigger.addEventListener('refreshInit', () => { r && r.layout(); centreRibbon(sec, r); });
-    // while it stays in place the scene has gone on up under it: its see-through top turns its own colour then
-    const lap = sec.style.background;
-    const bg = (lap.match(/(rgba?\([^)]*\))\s+40svh\)$/) || [])[1];
-    const tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top top', end: '+=90%', pin: true, scrub: 0.8, invalidateOnRefresh: true,
-      onToggle: st => { if (bg) sec.style.background = st.isActive || st.progress === 1 ? bg : lap; } } });
-    if (r) {
-      r.st.q = 0; r.render();
-      const x0 = r.place ? r.place.x : 0;
-      tl.to(r.st, { q: 1, duration: 1, ease: 'none', onUpdate: () => touch(r) }, 0);
-      if (r.place) tl.fromTo(r.place, { x: x0 + 0.04 }, { x: x0, duration: 1.2, ease: 'none', onUpdate: () => touch(r) }, 0);
-    }
-    tl.to({}, { duration: 0.01 }, 1.2);
-    // the texts under the ribbon rise one after another, as the home page's (each with the scroll, after the pin)
-    $$('[data-anim="fade-up"]', sec).forEach(el => (el.children.length > 1 ? [...el.children] : [el]).forEach(p => gsap.from(p, { y: 40, opacity: 0, ease: 'none',
-      scrollTrigger: { trigger: p, pinnedContainer: sec, start: 'top 100%', end: 'top 72%', scrub: 0.6 } })));
+    // the home page's company scene, timing for timing: the ribbon draws in as the section rises (from the moment its
+    // top enters until it reaches the top), the headline rises word by word, then the texts one after another
+    if (r) { r.st.q = 0; r.render(); gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: sec, start: 'top bottom', end: 'top top', scrub: 0.8 } }); }
+    const hd = $('.ig-page-statement', sec);
+    if (hd) gsap.from(splitWords(hd), { yPercent: 115, ease: 'none', stagger: 0.05, scrollTrigger: { trigger: sec, start: 'top 98%', end: 'top 40%', scrub: 0.6 } });
+    const ps = $$('.ig-page-notes > *', sec);
+    if (ps.length) gsap.from(ps, { y: 36, opacity: 0, ease: 'none', stagger: 0.3, scrollTrigger: { trigger: sec, start: 'top 75%', end: 'top 10%', scrub: 0.6 } });
   }));
 
   /* ---- services: each row comes in as the home page's blocks do, with the scroll; its wave appears from left to

@@ -432,9 +432,16 @@
       const props = useBlockProps({ className: 'ig-phero-edit', style: { '--accent': colorOf(a.color) } });
       const f = FRAMES[a.frame] || FRAMES[Object.keys(FRAMES)[0]] || null;
       const frameOpts = Object.keys(FRAMES).map(k => ({ value: k, label: k.charAt(0).toUpperCase() + k.slice(1) }));
+      // the second scene: what appears as the page holds (a statement and a link); empty, the hero just scrolls away
+      const inner = useInnerBlocksProps({ className: 'ig-phero-edit__scene' }, { template: [['core/heading', { className: 'ig-page-statement' }], ['core/buttons', {}, [['core/button', { className: 'is-style-aries-link', text: 'Contact us' }]]]], templateLock: false });
       return el(Fragment, {},
         el(InspectorControls, {},
-          el(PanelBody, { title: 'Photo', initialOpen: true },
+          el(PanelBody, { title: 'Scroll scene', initialOpen: true },
+            el(SelectControl, { label: 'As the page holds', value: a.scene || '1', options: [
+              { value: '1', label: '1 · The frame closes, the statement appears under it, the colour floods out' },
+              { value: '2', label: '2 · The colour spreads out of the frame over the photo, the statement appears' }], onChange: v => setAttributes({ scene: v }) }),
+            el('p', { className: 'ig-help' }, 'The blocks under the title (statement, link) are the second scene. Compare on the site without saving: add ?hdr=1 or ?hdr=2 to the address.')),
+          el(PanelBody, { title: 'Photo', initialOpen: false },
             el(ImagePicker, { id: a.imageId, url: a.imageUrl, onSelect: m => setAttributes({ imageId: m.id, imageUrl: m.url }), label: 'photo' }),
             el(RangeControl, { label: 'Focus, left to right (%)', value: a.focusX, min: 0, max: 100, onChange: v => setAttributes({ focusX: v }) }),
             el(RangeControl, { label: 'Focus, top to bottom (%)', value: a.focusY, min: 0, max: 100, onChange: v => setAttributes({ focusY: v }) }),
@@ -451,9 +458,11 @@
             el('defs', {}, el('clipPath', { id: 'phe-w' }, el('path', { d: f.window }))),
             el('g', { clipPath: 'url(#phe-w)' }, a.imageUrl ? el('image', { href: a.imageUrl, x: f.x0, y: 0, width: f.x1 - f.x0, height: f.h, preserveAspectRatio: 'xMidYMid slice' }) : null),
             el('path', { d: f.path, fill: colorOf(a.color) })) : el('p', {}, 'No frame'),
-          RT({ tagName: 'h1', className: 'ig-phero-edit__title', value: a.title, onChange: v => setAttributes({ title: v }), placeholder: 'Page title' })));
+          RT({ tagName: 'h1', className: 'ig-phero-edit__title', value: a.title, onChange: v => setAttributes({ title: v }), placeholder: 'Page title' }),
+          el('span', { className: 'ig-badge' }, 'Second scene (appears as the page holds)'),
+          el('div', inner)));
     },
-    save: () => null
+    save: saveInner
   });
 
   /* ---------------- cover ---------------- */

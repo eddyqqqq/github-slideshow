@@ -9,19 +9,17 @@
  * Block Types: core/post-content
  */
 ?>
-<!-- wp:imagient/page-hero /-->
-
-<!-- wp:imagient/cover {"anchor":"about","height":"screen"} -->
-<!-- wp:heading {"className":"ig-page-statement","igAnim":"split"} -->
+<!-- wp:imagient/page-hero {"anchor":"about"} -->
+<!-- wp:heading {"className":"ig-page-statement"} -->
 <h2 class="wp-block-heading ig-page-statement">Maritime and river agency providing comprehensive agency services in all Romanian Black Sea and Danube ports.</h2>
 <!-- /wp:heading -->
 
-<!-- wp:buttons {"igAnim":"fade-up"} -->
+<!-- wp:buttons -->
 <div class="wp-block-buttons"><!-- wp:button {"className":"is-style-aries-link"} -->
 <div class="wp-block-button is-style-aries-link"><a class="wp-block-button__link wp-element-button" href="#contact">Contact us</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons -->
-<!-- /wp:imagient/cover -->
+<!-- /wp:imagient/page-hero -->
 
 <!-- wp:imagient/section {"background":"agency","tone":"dark","className":"ig-page-figures","spacing":{"d":{"pt":"8","pb":"8"},"t":{},"m":{}}} -->
 <!-- wp:imagient/ribbon {"shape":"agency","size":108,"x":-4,"y":40,"pan":true} /-->
