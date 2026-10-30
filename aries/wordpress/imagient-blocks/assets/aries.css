@@ -367,6 +367,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 /* the page hero's scene (blocks inside the hero): one screen tall while it holds; the flood is drawn along the frame */
 .ig-phero.has-scene { min-height: 100vh; min-height: 100lvh; }
 .ph-flood-fill { fill: var(--accent, var(--agency)); }
+.ig-phero.is-flooded { background: var(--accent, var(--agency)); }
 .ig-phero__scene { position: absolute; z-index: 3; left: 0; right: 0; top: 60%;
   padding: 0 var(--gut-r) 0 max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu)); color: var(--ink); }
 .ig-phero__scene :is(h1, h2, h3, h4, p, a) { color: inherit; }

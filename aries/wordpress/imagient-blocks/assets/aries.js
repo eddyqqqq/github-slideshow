@@ -601,7 +601,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // the flood: the closed frame itself growing (its upper points up, its lower points down, the bars outwards, all by
     // g) until it covers the hero: it starts as exactly the closed frame, nothing appears at once (a plain fill)
     const fl = document.createElementNS(NS2, 'path'); fl.setAttribute('class', 'ph-flood-fill'); fl.setAttribute('d', 'M0 0Z'); flood.appendChild(fl);
-    const floodD = g => poly(OL, q => { const [x, y] = shut(q, 1), up = y <= q[2] + 0.5; return [x < xL ? x - g * (xL - x + 40) / 60 : x > xR ? x + g * (x - xR + 40) / 60 : x, up ? y - g : y + g]; });
+    // (opening evenly: its upper edge up and everything below it down by g, and the whole of it stretched sideways about
+    // its middle in step, so the ends widen smoothly with the rest; spread: how much wider it must get to pass the screen)
+    let spread = 0.2;
+    const floodD = g => { const k = 1 + spread * Math.min(1, g / Math.max(1, gEnd));
+      return poly(OL, q => { const [x, y] = shut(q, 1), up = y <= q[2] + 0.5; return [W / 2 + (x - W / 2) * k, up ? y - g : y + g]; }); };
     const LO = OL.map(q => shut(q, 1)[1]);
     const st = { dT: 0, dB: 0, io: 0, zi: 1.14, c: 0, w: 0 };
     let gEnd = 1;
@@ -616,6 +620,7 @@ document.addEventListener('DOMContentLoaded', () => {
       photo.setAttribute('transform', `translate(0 ${f1(-up)}) translate(${f1(W / 2)} ${f1(Hh / 2)}) scale(${st.zi.toFixed(4)}) translate(${f1(-W / 2)} ${f1(-Hh / 2)})`);
       photo.style.opacity = st.io;
       fl.setAttribute('d', st.w > 0 ? floodD(gEnd * st.w) : 'M0 0Z');
+      ph.classList.toggle('is-flooded', st.w > 0.97);   // the colour has filled it: the hero itself takes it, edge to edge
     };
     // a scene plays only with its text: blocks inside the hero, or the cover right after it
     const next = ph.nextElementSibling, active = !!(ph.dataset.scene && scene && (scene.children.length || (next && next.matches('.ig-cover.has-content'))));
@@ -650,8 +655,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // pinned while it plays: the frame closes as the title fades (as the home page's), the statement rises under it in
     // dark type, then the colour floods out of the closed frame over the screen and the type turns white
     const tl = gsap.timeline({ defaults: { onUpdate: render }, scrollTrigger: { trigger: ph, start: 'top top', end: () => '+=' + Math.round(tl.duration() * 100) + '%', pin: true, scrub: 1.2, invalidateOnRefresh: true,
-      onRefresh: () => { gEnd = size(); render(); } } });
-    gEnd = size();
+      onRefresh: () => { gEnd = size(); spread = Math.max(0, innerWidth / unitPx() / W - 1) + 0.2; render(); } } });
+    gEnd = size(); spread = Math.max(0, innerWidth / unitPx() / W - 1) + 0.2;
     tl.to(title, { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 0)
       .to(st, { c: 1, duration: 0.6, ease: 'power2.inOut' }, 0)
       .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out', onUpdate: null }, 0.5)
@@ -727,7 +732,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!next) return;
     const bg = getComputedStyle(next).backgroundColor;
     next.classList.add('after-scene');
-    next.style.background = `linear-gradient(transparent 0, transparent 40svh, ${bg} 40svh)`;
+    // after the page hero (all its colour by then): the section is its colour throughout, so no strip of page can show
+    // where they meet on any phone; after a cover, see-through at its top over the cover's colour
+    next.style.background = cv.matches('.ig-phero') ? bg : `linear-gradient(transparent 0, transparent 40svh, ${bg} 40svh)`;
   });
   const atEnd = el => el.getBoundingClientRect().bottom + scrollY > document.documentElement.scrollHeight - innerHeight * 0.4;
   $$('[data-anim="split"]').forEach(el => later(() => {
@@ -875,8 +882,11 @@ document.addEventListener('DOMContentLoaded', () => {
     n.style.marginTop = '';
     let g = r.ga.getBoundingClientRect(), hb = h.getBoundingClientRect().bottom, nt = n.getBoundingClientRect().top;
     // the gap between the statement and the texts holds the ribbon with air above and below (grows if it must)
-    const air = Math.max(32, innerHeight * 0.05), need = g.height + 2 * air;
-    if (nt - hb < need) { n.style.marginTop = (parseFloat(getComputedStyle(n).marginTop) + need - (nt - hb)) + 'px'; nt = n.getBoundingClientRect().top; }
+    const air = innerWidth >= 760 ? Math.max(72, innerHeight * 0.1) : Math.max(32, innerHeight * 0.05), need = g.height + 2 * air;
+    if (nt - hb < need) {
+      n.style.marginTop = (parseFloat(getComputedStyle(n).marginTop) + need - (nt - hb)) + 'px'; nt = n.getBoundingClientRect().top;
+      r.layout(); r.vis = true; r.render(); g = r.ga.getBoundingClientRect();   // the section grew: the ribbon's box with it
+    }
     if (g.height) { r.place.y += ((hb + nt) / 2 - (g.top + g.height / 2)) / r.H; r.render(); g = r.ga.getBoundingClientRect(); }
     r.st.q = q; r.vis = vis; r.render();
   };
