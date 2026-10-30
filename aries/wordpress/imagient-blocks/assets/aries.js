@@ -649,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
     place(); ScrollTrigger.addEventListener('refreshInit', place);
     // pinned while it plays: the frame closes as the title fades (as the home page's), the statement rises under it in
     // dark type, then the colour floods out of the closed frame over the screen and the type turns white
-    const tl = gsap.timeline({ defaults: { onUpdate: render }, scrollTrigger: { trigger: ph, start: 'top top', end: '+=230%', pin: true, scrub: 1.2, invalidateOnRefresh: true,
+    const tl = gsap.timeline({ defaults: { onUpdate: render }, scrollTrigger: { trigger: ph, start: 'top top', end: () => '+=' + Math.round(tl.duration() * 100) + '%', pin: true, scrub: 1.2, invalidateOnRefresh: true,
       onRefresh: () => { gEnd = size(); render(); } } });
     gEnd = size();
     tl.to(title, { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 0)
@@ -660,9 +660,11 @@ document.addEventListener('DOMContentLoaded', () => {
       .to(scene, { color: '#fff', duration: 0.2, ease: 'none', onUpdate: null }, 1.3)
       .to(logo, { opacity: 0, duration: 0.2, ease: 'none', onUpdate: null }, 1.25)
       // and, as on the home page, the words leave before the section below comes over the scene's end
-      .to(words, { yPercent: -115, duration: 0.3, stagger: 0.015, ease: 'power2.in', onUpdate: null }, 1.85)
+      .to(words, { yPercent: -115, duration: 0.3, stagger: 0.012, ease: 'power2.in', onUpdate: null }, 1.85)
       .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, 1.85)
-      .to({}, { duration: 0.01, onUpdate: null }, 2.3);
+      // the words are gone well before the end: the section below rises over the last 55 % of a screen, and its
+      // headline only after a short pause of plain colour (1 unit of the timeline = 1 screen of scroll)
+      .to({}, { duration: 0.01, onUpdate: null }, Math.max(2.3, 1.85 + 0.3 + 0.012 * words.length + 0.62));
   }
   root.classList.remove('pre');
 
