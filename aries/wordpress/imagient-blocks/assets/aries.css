@@ -362,19 +362,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ph-img.is-ready { opacity: 1; transition: opacity .5s; }
 .ig-phero__title { margin: calc(130 * var(--pu)) 0 0; padding: 0 var(--gut-r) 0 max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu));
   color: var(--blue); font-size: max(34px, 60 * var(--pu)); line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }   /* as the home page's title */
-.ig-phero__title .w { padding-bottom: .26em; margin-bottom: -.26em; }
-/* the page hero's scene (blocks inside the hero): one screen tall while it holds; the flood is drawn along the frame */
-.ig-phero.has-scene { min-height: 100vh; min-height: 100lvh; }
-.ph-flood-line { fill: none; stroke: var(--accent, var(--agency)); stroke-linejoin: round; }
-.ig-phero__scene { position: absolute; z-index: 3; left: 0; right: 0; top: 60%;
-  padding: 0 var(--gut-r) 0 max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu)); color: var(--ink); }
-.ig-phero__scene :is(h1, h2, h3, h4, p, a) { color: inherit; }
-.ig-phero__scene .wp-block-button__link { border-color: currentColor; }
-.ig-phero__scene .ig-page-statement { margin-bottom: calc(30 * var(--pu)); }
-.ig-phero.is-scene-2 .ig-phero__scene { top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); color: var(--on); }
-@media (min-aspect-ratio: 1/1) and (min-width: 760px) {
-  .ig-phero__scene { padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); }
-}   /* room for p, g, y in the word masks */
+.ig-phero__title .w { padding-bottom: .26em; margin-bottom: -.26em; }   /* room for p, g, y in the word masks */
 .pre .ig-phero .ph-art, .pre .ig-phero__title { opacity: 0; }
 /* landscape screens: the same places as on the home page (its --hu, one unit of a 1920 frame, and --hdy): the logo at
    the top left, the frame from 98 units down, the title as far down as the home page's and as big, all on one left line */

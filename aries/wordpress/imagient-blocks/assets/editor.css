@@ -149,6 +149,3 @@
 .ig-menu-edit__btn { display: grid; gap: 4px; width: 22px; } .ig-menu-edit__btn i { display: block; height: 2px; background: #111418; }
 .ig-menu-edit__label { font-size: 12px; color: #50575e; }
 .ig-menu-edit__item { padding: 10px 0; border-bottom: 1px solid #e0e0e0; } .ig-menu-edit__tools { display: flex; gap: 2px; }
-
-.ig-phero-edit__scene { margin: 24px 24px 0; padding: 24px; background: var(--accent, #3189a9); color: #fff; border-radius: 4px; }
-.ig-phero-edit__scene :is(h2, p, a) { color: inherit; }
