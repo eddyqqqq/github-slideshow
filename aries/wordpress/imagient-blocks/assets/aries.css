@@ -322,8 +322,8 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
    LINK STYLES for core blocks: Button › "Aries link", List › "Aries links"
    ====================================================================== */
 .wp-block-button.is-style-aries-link .wp-block-button__link { position: relative; display: inline-block; background: none; color: inherit; border-radius: 0;
-  font-size: var(--link); padding: 4px 2px 8px; text-decoration: none; transition: color .35s;
-  background-image: linear-gradient(currentColor, currentColor); background-position: 0 100%; background-size: 100% 1px; background-repeat: no-repeat; }
+  font-size: var(--link); padding: 4px 2px 7px; text-decoration: none; transition: color .35s;
+  border-bottom: 1px solid currentColor; }   /* a plain line (a gradient underline drew as a filled box in iOS Safari) */
 .is-style-aries-links { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
 .is-style-aries-links a { position: relative; display: inline-block; padding-bottom: 3px; text-decoration: none; transition: color .35s; }
 .wp-block-button.is-style-aries-link .wp-block-button__link::after, .is-style-aries-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--blue);

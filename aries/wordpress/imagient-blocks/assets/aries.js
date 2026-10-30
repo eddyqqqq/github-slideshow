@@ -657,19 +657,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const tl = gsap.timeline({ defaults: { onUpdate: render }, scrollTrigger: { trigger: ph, start: 'top top', end: () => '+=' + Math.round(tl.duration() * 100) + '%', pin: true, scrub: 1.2, invalidateOnRefresh: true,
       onRefresh: () => { gEnd = size(); spread = Math.max(0, innerWidth / unitPx() / W - 1) + 0.2; render(); } } });
     gEnd = size(); spread = Math.max(0, innerWidth / unitPx() / W - 1) + 0.2;
+    // the home page's pacing (its hero holds for 2.7 screens): the frame closes as the title fades, the statement rises
+    // under it, the colour floods out and the type turns white, a short hold, the words leave, then the section below
+    // comes over the last 55 % of a screen (1 unit of the timeline = 1 screen of scroll)
+    const out = 1.4, gone = out + 0.3 + 0.012 * words.length;
     tl.to(title, { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 0)
-      .to(st, { c: 1, duration: 0.6, ease: 'power2.inOut' }, 0)
-      .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out', onUpdate: null }, 0.5)
-      .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out', onUpdate: null }, 0.75)
-      .to(st, { w: 1, duration: 0.5, ease: 'power2.in' }, 1.15)
-      .to(scene, { color: '#fff', duration: 0.2, ease: 'none', onUpdate: null }, 1.3)
-      .to(logo, { opacity: 0, duration: 0.2, ease: 'none', onUpdate: null }, 1.25)
-      // and, as on the home page, the words leave before the section below comes over the scene's end
-      .to(words, { yPercent: -115, duration: 0.3, stagger: 0.012, ease: 'power2.in', onUpdate: null }, 1.85)
-      .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, 1.85)
-      // the words are gone well before the end: the section below rises over the last 55 % of a screen, and its
-      // headline only after a short pause of plain colour (1 unit of the timeline = 1 screen of scroll)
-      .to({}, { duration: 0.01, onUpdate: null }, Math.max(2.3, 1.85 + 0.3 + 0.012 * words.length + 0.62));
+      .to(st, { c: 1, duration: 0.55, ease: 'power2.inOut' }, 0)
+      .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out', onUpdate: null }, 0.4)
+      .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out', onUpdate: null }, 0.62)
+      .to(st, { w: 1, duration: 0.45, ease: 'power2.in' }, 0.85)
+      .to(scene, { color: '#fff', duration: 0.2, ease: 'none', onUpdate: null }, 0.98)
+      .to(logo, { opacity: 0, duration: 0.2, ease: 'none', onUpdate: null }, 0.95)
+      .to(words, { yPercent: -115, duration: 0.3, stagger: 0.012, ease: 'power2.in', onUpdate: null }, out)
+      .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, out)
+      .to({}, { duration: 0.01, onUpdate: null }, gone + 0.45);
   }
   root.classList.remove('pre');
 
