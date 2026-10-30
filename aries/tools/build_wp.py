@@ -57,12 +57,13 @@ def path_points(d):
     return pts
 
 
-def frame_geometry(d, win, K=180):
-    """PHP array: x (columns across the window), t/b (window top and bottom), ot/ob (the frame's outer top and bottom)."""
+def frame_geometry(d, win, K=600):
+    """PHP array for the page's scripts, per column across the whole frame (bars included): x, ot/ob (the frame's
+    outer top and bottom) and t/b (the window's top and bottom; null where a column has no window, at the bars)."""
     from ribbons_svg import flatten_path
     subs = re.findall(r'M[^M]+', d)
-    outer = flatten_path(subs[0])
-    inner = flatten_path(win)
+    outer = flatten_path(subs[0], 96)
+    inner = flatten_path(win, 96)
 
     def cross(pts, x):
         ys = []
@@ -70,15 +71,26 @@ def frame_geometry(d, win, K=180):
             if (x1 <= x < x2) or (x2 <= x < x1):
                 ys.append(y1 + (y2 - y1) * (x - x1) / (x2 - x1))
         return ys
-    wx0, wx1 = min(p[0] for p in inner), max(p[0] for p in inner)
-    cols = {'x': [], 't': [], 'b': [], 'ot': [], 'ob': []}
+    # the frame's ends and the window's ends are slightly slanted: there a column is only partly cut; the columns start
+    # 5 units in from the frame's ends, and at the window's ends a partial column takes the next full one's edges
+    fx0, fx1 = min(p[0] for p in outer) + 5, max(p[0] for p in outer) - 5
+    cols = {'x': [], 'ot': [], 'ob': [], 't': [], 'b': []}
+    win = []
     for k in range(K + 1):
-        x = wx0 + 0.01 + (wx1 - wx0 - 0.02) * k / K
-        wy, oy = cross(inner, x), cross(outer, x)
-        if not wy or not oy:
+        x = fx0 + (fx1 - fx0) * k / K
+        oy, wy = cross(outer, x), cross(inner, x)
+        if not oy:
             continue
-        cols['x'].append(round(x, 1)); cols['t'].append(round(min(wy), 1)); cols['b'].append(round(max(wy), 1))
-        cols['ot'].append(round(min(oy), 1)); cols['ob'].append(round(max(oy), 1))
+        cols['x'].append(round(x, 1)); cols['ot'].append(round(min(oy), 1)); cols['ob'].append(round(max(oy), 1))
+        win.append((min(wy), max(wy)) if len(wy) >= 2 else None)
+    idx = [k for k, w in enumerate(win) if w]
+    for ends in (idx, idx[::-1]):
+        for a_, b_ in zip(ends, ends[1:]):
+            if win[a_][1] - win[a_][0] >= 0.97 * (win[b_][1] - win[b_][0]):
+                break
+            win[a_] = win[b_]
+    for w in win:
+        cols['t'].append(round(w[0], 1) if w else 'null'); cols['b'].append(round(w[1], 1) if w else 'null')
     return 'array( ' + ', '.join("'%s' => array( %s )" % (k, ', '.join(str(v) for v in vals)) for k, vals in cols.items()) + ' )'
 
 

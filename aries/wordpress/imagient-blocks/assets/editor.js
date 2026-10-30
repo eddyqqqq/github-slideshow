@@ -437,11 +437,8 @@
       return el(Fragment, {},
         el(InspectorControls, {},
           el(PanelBody, { title: 'Scroll scene', initialOpen: true },
-            el(SelectControl, { label: 'As the page holds', value: a.scene || '0', options: [
-              { value: '0', label: 'None: the hero scrolls away as a page part' },
-              { value: '1', label: '1 · The frame closes, the statement appears under it, the colour floods out' },
-              { value: '2', label: '2 · The colour spreads out of the frame over the photo, the statement appears' }], onChange: v => setAttributes({ scene: v }) }),
-            el('p', { className: 'ig-help' }, 'The blocks under the title (statement, link) are the second scene; with none there, the cover that follows the hero gives its text. Compare on the site without saving: add ?hdr=1 or ?hdr=2 to the address.')),
+            el(ToggleControl, { label: 'Scroll scene: the frame closes, the statement appears under it, the colour floods out', checked: a.scene === '1', onChange: v => setAttributes({ scene: v ? '1' : '0' }) }),
+            el('p', { className: 'ig-help' }, 'The blocks under the title (statement, link) are the second scene; with none there, the cover that follows the hero gives its text.')),
           el(PanelBody, { title: 'Photo', initialOpen: false },
             el(ImagePicker, { id: a.imageId, url: a.imageUrl, onSelect: m => setAttributes({ imageId: m.id, imageUrl: m.url }), label: 'photo' }),
             el(RangeControl, { label: 'Focus, left to right (%)', value: a.focusX, min: 0, max: 100, onChange: v => setAttributes({ focusX: v }) }),

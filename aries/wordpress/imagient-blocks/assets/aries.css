@@ -371,7 +371,6 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-phero__scene :is(h1, h2, h3, h4, p, a) { color: inherit; }
 .ig-phero__scene .wp-block-button__link { border-color: currentColor; }
 .ig-phero__scene .ig-page-statement { margin-bottom: calc(30 * var(--pu)); }
-.ig-phero.is-scene-2 .ig-phero__scene { top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); color: var(--on); }
 @media (min-aspect-ratio: 1/1) and (min-width: 760px) {
   .ig-phero__scene { padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); }
 }   /* room for p, g, y in the word masks */

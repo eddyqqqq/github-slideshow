@@ -69,7 +69,7 @@ function imagient_register_page_blocks() {
 			'focusY'    => array( 'type' => 'number', 'default' => 52 ),
 			'zoom'      => array( 'type' => 'number', 'default' => 100 ),
 			'portraitX' => array( 'type' => 'number', 'default' => 1060 ),
-			'scene'     => array( 'type' => 'string', 'default' => '0' ),   // the scroll scene: 0 none, 1 the frame closes, 2 the colour spreads
+			'scene'     => array( 'type' => 'string', 'default' => '0' ),   // the scroll scene: 0 none, 1 the frame closes
 		),
 		'render_callback' => 'imagient_render_page_hero',
 	) ) );
@@ -130,11 +130,9 @@ function imagient_render_page_hero( $a, $content = '' ) {
 	$photo  = imagient_photo( $a['imageId'], $a['imageUrl'], '', array( 'sizes' => '(orientation: portrait) 170vw, 110vw', 'fetchpriority' => 'high', 'decoding' => 'async', 'loading' => 'eager' ) );
 	$logo   = $a['logo'] ? imagient_logo_svg( $a['logo'] ) : '';
 	$style  = sprintf( '--accent:%s;--fw:%s;--fh:%s;--fx0:%s;--fx1:%s;--fpx:%s;', imagient_color( $a['color'] ), $f['w'], $f['h'], $f['x0'], $f['x1'], max( 300, min( $f['w'] - 300, floatval( $a['portraitX'] ) ) ) );
-	// the scroll scene: set on the block (scene 1 or 2), or previewed with ?hdr=1 / ?hdr=2 in the address; its text is the
-	// blocks inside the hero or, if there are none, the cover that follows it (the script brings that cover's text in)
-	// phpcs:ignore WordPress.Security.NonceVerification -- a read-only display choice
-	$want   = isset( $_GET['hdr'] ) ? sanitize_key( wp_unslash( $_GET['hdr'] ) ) : (string) $a['scene'];
-	$kind   = in_array( $want, array( '1', '2' ), true ) ? $want : '';
+	// the scroll scene (set on the block): its text is the blocks inside the hero or, if there are none, the cover that
+	// follows it (the script brings that cover's text in)
+	$kind   = '1' === (string) $a['scene'] ? '1' : '';
 	$scene  = '' !== $kind;
 	$data   = array(
 		'data-scene' => $scene ? $kind : '',

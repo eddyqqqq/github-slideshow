@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
       hero.img.setAttribute('href', hero.src.currentSrc || hero.src.src);
       hero.IMG = { w: hero.src.naturalWidth, h: hero.src.naturalHeight };
       heroLayout();
-      gsap.to(hero.st, { ld: 1, duration: 0.6, ease: 'power1.out', onUpdate: () => touch(hero) });
+      if (window.gsap && typeof request === 'function') gsap.to(hero.st, { ld: 1, duration: 0.6, ease: 'power1.out', onUpdate: () => request(hero) }); else { hero.st.ld = 1; heroRender(); }
     };
     if (hero.src.complete) useSrc(); else hero.src.addEventListener('load', useSrc, { once: true });
   }
@@ -426,7 +426,8 @@ document.addEventListener('DOMContentLoaded', () => {
     addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('menu-open')) set(false); });
     panel.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
   });
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches || !window.gsap;
+  // the animations play for everyone (a system asking for less motion only loses the smooth scrolling, below)
+  const still = !window.gsap;
   // the services' wave (design/wave-line.svg) with its swell k: 1 as drawn, more a deeper wave (the hover ripple)
   // the wave's reveal: its mask's soft edge (18 % of its length) at p (0 hidden, 1.18 all shown)
   const waveShow = (wave, p) => { const st = wave._st || (wave._st = $$('stop', wave)); if (st.length < 2) return;
@@ -456,8 +457,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
   });
 
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!window.gsap || !window.ScrollTrigger || reduce) {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;   // only drops Lenis' smooth scrolling
+  if (!window.gsap || !window.ScrollTrigger) {
     root.classList.remove('pre');
     if (idEl) $$('a[href^="#"], [data-co]').forEach(a => { const k = stateOf(a); if (k === null) return; a.addEventListener('click', ev => { ev.preventDefault(); showState(k); idEl.scrollIntoView(); }); });
     return;
@@ -471,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
   root.classList.add('anim');
 
   let lenis = null;
-  if (window.Lenis) {
+  if (window.Lenis && !reduce) {
     lenis = new Lenis({ lerp: 0.09 });
     lenis.on('scroll', ScrollTrigger.update);
     window.__igLenis = lenis;   // the menu stops the page's scroll while it is open
@@ -547,15 +548,22 @@ document.addEventListener('DOMContentLoaded', () => {
   phEls.forEach(ph => { try { heroScene(ph); } catch (err) { if (window.console) console.error('page hero', err); } });
   function heroScene(ph) {
     const svg = $('.ig-phero__svg', ph), vb = svg.viewBox.baseVal, W = vb.width, Hh = vb.height;
-    const photo = $('.ph-photo', ph), bot = $('.ph-bot', ph), region = $('.ph-region', ph), cutT = $('.ph-cut-t', ph), cutB = $('.ph-cut-b', ph);
-    const flood = $('.ph-flood', ph), scene = $('.ig-phero__scene', ph), kind = ph.dataset.scene, title = $('.ig-phero__title', ph), logo = $('.ig-phero__logo', ph);
-    // the frame's geometry, measured by the build (no browser measures the path: Safari is slow at it): per column, the
-    // window's top and bottom edges (T, B), the frame's outer edges (OT, OB) and the middle of the window (M)
+    const art = $('.ph-art', ph), photo = $('.ph-photo', ph), halves = [$('.ph-top', ph), $('.ph-bot', ph)], region = $('.ph-region', ph), cutT = $('.ph-cut-t', ph), cutB = $('.ph-cut-b', ph);
+    const flood = $('.ph-flood', ph), scene = $('.ig-phero__scene', ph), title = $('.ig-phero__title', ph), logo = $('.ig-phero__logo', ph);
+    // the frame's geometry, measured by the build (no browser measures the path: Safari is slow at it): per column across
+    // the whole frame, its outer top and bottom (OT, OB) and the window's top and bottom (T, B; none at the bars)
     let GEO = null; try { GEO = JSON.parse(ph.dataset.geo || 'null'); } catch (e) {}
     if (!GEO || !GEO.x || GEO.x.length < 3) return;
-    const X = GEO.x, T = GEO.t, B = GEO.b, OT = GEO.ot, OB = GEO.ob, K = X.length - 1;
-    const M = T.map((t, k) => (t + B[k]) / 2), EMAX = Math.max(...B.map((b, k) => b - T[k])) + 8;
-    // the cut of each half, drawn in up to q (0 → 1) from the left; the halves overlap by a unit (no seam)
+    const X = GEO.x, OT = GEO.ot, OB = GEO.ob, K = X.length - 1;
+    const WIN = X.map((x, k) => GEO.t[k] !== null && GEO.b[k] !== null), w0 = WIN.indexOf(true), w1 = WIN.lastIndexOf(true);
+    if (w0 < 0) return;
+    const T = X.map((x, k) => GEO.t[WIN[k] ? k : k < w0 ? w0 : w1]), B = X.map((x, k) => GEO.b[WIN[k] ? k : k < w0 ? w0 : w1]);
+    // per column, how far it closes: the window's height there (at the bars, the height at the window's end), so every
+    // column, the bars too, closes in step and all of them meet at the same moment
+    const HGT = X.map((x, k) => B[k] - T[k]), M = X.map((x, k) => (T[k] + B[k]) / 2);
+    const avgH = HGT.slice(w0, w1 + 1).reduce((a, v) => a + v, 0) / (w1 - w0 + 1);
+    // the opening: the frame cut along the middle of its window, each half drawn in up to q (0 → 1) from the left; the
+    // halves overlap by a unit (no seam)
     const MX = [-200, ...X, W + 200], MY = [M[0], ...M, M[K]];
     const half = (q, up) => {
       if (q <= 0.0005) return 'M0 0Z';
@@ -563,28 +571,39 @@ document.addEventListener('DOMContentLoaded', () => {
       for (let k = MX.length - 1; k >= 0; k--) if (MX[k] < xr) a.push(`${f1(MX[k])} ${f1(MY[k] + off)}`);
       return `M${f1(MX[0])} ${far}L${f1(xr)} ${far}L` + a.join('L') + 'Z';
     };
-    // the photo's window, its lower edge raised by e (closing); a few units under the bands, so no hairline shows
-    const windowD = e => 'M' + X.map((x, k) => `${f1(x)} ${f1(T[k] - 3)}`).join('L') + 'L' + X.map((x, k) => `${f1(x)} ${f1(Math.max(T[k] - 3, B[k] + 3 - e))}`).reverse().join('L') + 'Z';
-    // the flood: filled shapes that follow the frame's own wave, their edges moving apart until they cover the hero
-    // (plain fills, cheap to draw on any machine); U and L: a band's upper and lower edge per column
-    const NS2 = 'http://www.w3.org/2000/svg', layers = [];
-    const bandD = (U, L, g) => `M-600 ${f1(U[0] - g)}L` + X.map((x, k) => `${f1(x)} ${f1(U[k] - g)}`).join('L') + `L${f1(W + 600)} ${f1(U[K] - g)}L${f1(W + 600)} ${f1(L[K] + g)}L`
-      + X.map((x, k) => `${f1(x)} ${f1(L[k] + g)}`).reverse().join('L') + `L-600 ${f1(L[0] + g)}Z`;
-    const addLayer = (U, L, extra, o) => { const pth = document.createElementNS(NS2, 'path'); pth.setAttribute('class', 'ph-flood-fill'); pth.setAttribute('d', 'M0 0Z'); pth.style.opacity = o; flood.appendChild(pth); layers.push({ pth, U, L, extra }); };
-    const st = { dT: 0, dB: 0, io: 0, zi: 1.14, e: 0, w: 0 };
-    // how far the flood's edges have moved along st.w (0 → 1): with a middle stop (gMid), the first 60 % only fills the window
-    let gEnd = 1, gMid = 0;
+    const P = (xs, ys) => xs.map((x, n) => `${f1(x)} ${f1(ys[n])}`).join('L');
+    const range = (a, b) => Array.from({ length: b - a + 1 }, (_, n) => a + n);
+    const WK = range(w0, w1);
+    // closing (c: 0 → 1): the frame as one shape, its lower edge and the window's lower edge raised by c × the column's height
+    const NS2 = 'http://www.w3.org/2000/svg';
+    const dyn = document.createElementNS(NS2, 'path'); dyn.setAttribute('class', 'ph-frame'); dyn.setAttribute('fill-rule', 'evenodd'); dyn.setAttribute('d', 'M0 0Z');
+    art.insertBefore(dyn, $('.ph-wbox', ph));
+    // (a column never closes past its own top: at the slanted ends of the bars a column is shorter than the window)
+    const frameD = c => 'M' + P(X, OT) + 'L' + P([...X].reverse(), OB.map((v, k) => Math.max(OT[k], v - HGT[k] * c)).reverse()) + 'Z'
+      + 'M' + P(WK.map(k => X[k]), WK.map(k => T[k])) + 'L' + P(WK.map(k => X[k]).reverse(), WK.map(k => B[k] - HGT[k] * c).reverse()) + 'Z';
+    // the photo's window as it closes; a few units under the bands, so no hairline shows
+    const windowD = c => 'M' + P(WK.map(k => X[k]), WK.map(k => T[k] - 3)) + 'L' + P(WK.map(k => X[k]).reverse(), WK.map(k => Math.max(T[k] - 3, B[k] + 3 - HGT[k] * c)).reverse()) + 'Z';
+    // the flood: the closed frame, its edges moving apart until it covers the hero (a plain fill, cheap to draw anywhere)
+    const fl = document.createElementNS(NS2, 'path'); fl.setAttribute('class', 'ph-flood-fill'); fl.setAttribute('d', 'M0 0Z'); flood.appendChild(fl);
+    const LO = OB.map((v, k) => Math.max(OT[k], v - HGT[k]));
+    const floodD = g => `M-600 ${f1(OT[0] - g)}L` + P(X, OT.map(v => v - g)) + `L${f1(W + 600)} ${f1(OT[K] - g)}L${f1(W + 600)} ${f1(LO[K] + g)}L`
+      + P([...X].reverse(), LO.map(v => v + g).reverse()) + `L-600 ${f1(LO[0] + g)}Z`;
+    const st = { dT: 0, dB: 0, io: 0, zi: 1.14, c: 0, w: 0 };
+    let gEnd = 1;
     const render = () => {
+      const closing = st.c > 0.0005;
       cutT.setAttribute('d', half(st.dT, true)); cutB.setAttribute('d', half(st.dB, false));
-      bot.setAttribute('transform', `translate(0 ${f1(-st.e)})`);
-      region.setAttribute('d', windowD(st.e));
-      photo.setAttribute('transform', `translate(${f1(W / 2)} ${f1(Hh / 2)}) scale(${st.zi.toFixed(4)}) translate(${f1(-W / 2)} ${f1(-Hh / 2)})`);
+      halves.forEach(h => { h.style.display = closing ? 'none' : ''; });
+      dyn.setAttribute('d', closing ? frameD(st.c) : 'M0 0Z');
+      region.setAttribute('d', windowD(st.c));
+      // the photo keeps its middle in the middle of the closing window (it is not cut off from below)
+      const up = avgH * st.c / 2;
+      photo.setAttribute('transform', `translate(0 ${f1(-up)}) translate(${f1(W / 2)} ${f1(Hh / 2)}) scale(${st.zi.toFixed(4)}) translate(${f1(-W / 2)} ${f1(-Hh / 2)})`);
       photo.style.opacity = st.io;
-      const g = !gMid ? gEnd * st.w : st.w < 0.6 ? gMid * st.w / 0.6 : gMid + (gEnd - gMid) * (st.w - 0.6) / 0.4;
-      layers.forEach(l => l.pth.setAttribute('d', st.w > 0 ? bandD(l.U, l.L, g + l.extra * Math.min(1, st.w * 2)) : 'M0 0Z'));
+      fl.setAttribute('d', st.w > 0 ? floodD(gEnd * st.w) : 'M0 0Z');
     };
     // a scene plays only with its text: blocks inside the hero, or the cover right after it
-    const next = ph.nextElementSibling, active = !!(kind && scene && (scene.children.length || (next && next.matches('.ig-cover.has-content'))));
+    const next = ph.nextElementSibling, active = !!(ph.dataset.scene && scene && (scene.children.length || (next && next.matches('.ig-cover.has-content'))));
     if (!active) {
       // no scene: the opening as it was (the whole frame draws in from the left, the photo settles, the title rises)
       st.zi = 1.16; render();
@@ -595,52 +614,40 @@ document.addEventListener('DOMContentLoaded', () => {
       gsap.fromTo(photo, { y: 0 }, { y: Hh * 0.05, ease: 'none', immediateRender: false, scrollTrigger: { trigger: ph, start: 'top top', end: 'bottom top', scrub: true } });
       return;
     }
-    // with a scene: the home page's opening
+    // with a scene: the home page's opening (the halves draw in one after the other, the photo fades in and settles)
     render();
     gsap.timeline({ defaults: { onUpdate: render } })
       .to(st, { dT: 1, duration: 1.5, ease: 'expo.inOut' }, 0.1)
       .to(st, { dB: 1, duration: 1.5, ease: 'expo.inOut' }, 0.25)
       .to(st, { io: 1, duration: 1.1, ease: 'power2.out' }, 0.55)
       .to(st, { zi: 1, duration: 2.2, ease: 'expo.out' }, 0.55);
-    // the scene's text: the blocks inside the hero, or else the cover right after it (its statement and link come
-    // into the scene and the cover leaves the page: the hero now plays what the cover showed)
+    // the scene's text: the blocks inside the hero, or else the cover right after it (its statement and link come in
+    // and the cover leaves the page)
     if (!scene.children.length) { [...$('.ig-cover__inner', next).children].forEach(c => scene.appendChild(c)); next.remove(); }
     const words = $$('h1, h2, h3, h4', scene).flatMap(h => splitWords(h)), rest = $$(':scope > *', scene).filter(e => !/^H[1-4]$/.test(e.tagName));
     const unitPx = () => svg.getBoundingClientRect().width / W;   // pixels per unit of the frame
     // how far the flood's edges must move: past the hero's top and bottom, in the frame's units
-    const size = () => { const r = ph.getBoundingClientRect(), u = unitPx(); return r.height / u + 300; };
-    if (kind === '1') {
-      // the closed frame: its middle line and how thick it is there; the flood starts inside it
-      addLayer(OT, OB.map(v => v - EMAX), 0, 1);
-      // the statement under the closed frame, its top a little below the frame's lowest point
-      const place = () => { const u = unitPx(), lowest = Math.max(...X.map((x, k) => OB[k] - EMAX)), sv = svg.getBoundingClientRect(), pr = ph.getBoundingClientRect();
-        scene.style.top = Math.round(sv.top - pr.top + lowest * u + Math.max(36, innerHeight * 0.06)) + 'px'; };
-      place(); ScrollTrigger.addEventListener('refreshInit', place);
-    } else {
-      // out of both bands: a solid core and two softer rims (the gradient through which the photo still shows)
-      gMid = EMAX / 2 + 6;   // each band's flood reaches the middle of the window
-      // rims from wide and faint to narrow and solid: together a soft gradient at the flood's edge
-      [[OT, T], [B, OB]].forEach(([U, L]) => [[170, 0.07], [130, 0.1], [95, 0.14], [65, 0.2], [40, 0.28], [18, 0.4], [0, 1]].forEach(([x, o]) => addLayer(U, L, x, o)));
-    }
+    const size = () => { const r = ph.getBoundingClientRect(); return r.height / unitPx() + 300; };
+    // the statement under the closed frame, its top a little below the frame's lowest point
+    const place = () => { const u = unitPx(), lowest = Math.max(...LO), sv = svg.getBoundingClientRect(), pr = ph.getBoundingClientRect();
+      scene.style.top = Math.round(sv.top - pr.top + lowest * u + Math.max(36, innerHeight * 0.06)) + 'px'; };
+    place(); ScrollTrigger.addEventListener('refreshInit', place);
+    // pinned while it plays: the frame closes as the title fades (as the home page's), the statement rises under it in
+    // dark type, then the colour floods out of the closed frame over the screen and the type turns white
     const tl = gsap.timeline({ defaults: { onUpdate: render }, scrollTrigger: { trigger: ph, start: 'top top', end: '+=230%', pin: true, scrub: 1.2, invalidateOnRefresh: true,
       onRefresh: () => { gEnd = size(); render(); } } });
     gEnd = size();
-    tl.to(title, { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 0);   // as the home page's title
-    if (kind === '1') {
-      tl.to(st, { e: EMAX, duration: 0.6, ease: 'power2.inOut' }, 0)
-        .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out', onUpdate: null }, 0.5)
-        .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out', onUpdate: null }, 0.75)
-        .to(st, { w: 1, duration: 0.5, ease: 'power2.in' }, 1.15)
-        .to(scene, { color: '#fff', duration: 0.2, ease: 'none', onUpdate: null }, 1.3)
-        .to(logo, { opacity: 0, duration: 0.2, ease: 'none', onUpdate: null }, 1.25)
-        .to({}, { duration: 0.01, onUpdate: null }, 1.75);
-    } else {
-      tl.to(logo, { opacity: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 0)
-        .to(st, { w: 1, duration: 0.95, ease: 'none' }, 0.05)
-        .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out', onUpdate: null }, 0.9)
-        .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out', onUpdate: null }, 1.15)
-        .to({}, { duration: 0.01, onUpdate: null }, 1.75);
-    }
+    tl.to(title, { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 0)
+      .to(st, { c: 1, duration: 0.6, ease: 'power2.inOut' }, 0)
+      .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out', onUpdate: null }, 0.5)
+      .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out', onUpdate: null }, 0.75)
+      .to(st, { w: 1, duration: 0.5, ease: 'power2.in' }, 1.15)
+      .to(scene, { color: '#fff', duration: 0.2, ease: 'none', onUpdate: null }, 1.3)
+      .to(logo, { opacity: 0, duration: 0.2, ease: 'none', onUpdate: null }, 1.25)
+      // and, as on the home page, the words leave before the section below comes over the scene's end
+      .to(words, { yPercent: -115, duration: 0.3, stagger: 0.015, ease: 'power2.in', onUpdate: null }, 1.85)
+      .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, 1.85)
+      .to({}, { duration: 0.01, onUpdate: null }, 2.3);
   }
   root.classList.remove('pre');
 
@@ -699,7 +706,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // as on the home page, the section after it slides over the scene's end (no long scroll on an empty colour): its upper
   // part see-through over the cover's colour, its own colour from well inside the overlap (no seam where they meet)
   $$(SCENE + ', .ig-phero.has-scene').forEach(cv => {
-    const next = cv.nextElementSibling;
+    const next = (cv.parentElement.classList.contains('pin-spacer') ? cv.parentElement : cv).nextElementSibling;   // (a pinned hero sits in a spacer)
     if (!next) return;
     const bg = getComputedStyle(next).backgroundColor;
     next.classList.add('after-scene');
@@ -860,7 +867,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const r = decorRibs.find(x => sec.contains(x.svg));
     centreRibbon(sec, r);
     ScrollTrigger.addEventListener('refreshInit', () => { r && r.layout(); centreRibbon(sec, r); });
-    if (sec.previousElementSibling && sec.previousElementSibling.matches('.ig-phero.has-scene')) {
+    const prev = sec.previousElementSibling;
+    if (prev && (prev.matches('.ig-phero.has-scene') || (prev.classList.contains('pin-spacer') && prev.querySelector(':scope > .ig-phero.has-scene')))) {
     // the home page's company scene, timing for timing: the ribbon draws in as the section rises (from the moment its
     // top enters until it reaches the top), the headline rises word by word, then the texts one after another
     if (r) { r.st.q = 0; r.render(); gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: sec, start: 'top bottom', end: 'top top', scrub: 0.8 } }); }
