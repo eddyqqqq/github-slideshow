@@ -3,7 +3,7 @@
  * Plugin Name:       Imagient Blocks
  * Plugin URI:        https://imagient.ro
  * Description:       Native Gutenberg blocks by Imagient: responsive layout (Section, Flex, Grid, Box), scroll animations for every block, and the Aries scenes (hero, company scene, figures, service cards, ribbons).
- * Version:           1.23.1
+ * Version:           1.23.2
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Imagient
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'IMAGIENT_BLOCKS_VERSION', '1.23.1' );
+define( 'IMAGIENT_BLOCKS_VERSION', '1.23.2' );
 define( 'IMAGIENT_BLOCKS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'IMAGIENT_BLOCKS_URL', plugin_dir_url( __FILE__ ) );
 
@@ -98,11 +98,12 @@ add_action( 'enqueue_block_assets', function () {
 /** Classes on <html> before anything paints: .js (script available) and .pre (hero not drawn yet). */
 add_action( 'wp_head', function () {
 	// the guard: when the page is parsed, every motion script should have run. A host's bot check can answer a script
-	// request with an HTML page instead (status 200): that script is then missing. Each missing one is fetched again
-	// (once, with a fresh URL), then the runtime starts; whatever happens, the page shows within 4 s.
+	// request with an HTML page instead (status 200): that script is then missing. Each missing one is fetched again with
+	// a fresh URL (up to three tries, a moment apart), in order, then the runtime starts; the page shows within 4 s anyway.
 	echo "<script>(function(d,w){var r=d.documentElement;r.classList.add('pre','js');setTimeout(function(){r.classList.remove('pre')},4000);"
 		. "d.addEventListener('DOMContentLoaded',function(){var need=[['gsap','imagient-gsap-js'],['ScrollTrigger','imagient-scrolltrigger-js'],['Lenis','imagient-lenis-js'],['ARIES_SHAPES','imagient-shapes-js'],['__igRun','imagient-aries-js']],todo=[];"
-		. "need.forEach(function(n){var el=d.getElementById(n[1]);if(el&&!w[n[0]])todo.push(el.src)});"
-		. "var go=function(){if(w.__igRun)w.__igRun();else r.classList.remove('pre')};if(!todo.length)return go();"
-		. "(function next(){if(!todo.length)return go();var s=d.createElement('script');s.src=todo.shift()+(todo.length>=0?'&retry='+Date.now():'');s.onload=s.onerror=next;d.head.appendChild(s)})()})})(document,window);</script>\n";
+		. "need.forEach(function(n){var el=d.getElementById(n[1]);if(el&&!w[n[0]])todo.push([n[0],el.src,0])});"
+		. "var go=function(){if(w.__igRun)w.__igRun();else r.classList.remove('pre')};"
+		. "(function next(){var t=todo[0];if(!t)return go();if(w[t[0]]||t[2]>=3){todo.shift();return next()}t[2]++;"
+		. "var s=d.createElement('script');s.src=t[1]+(t[1].indexOf('?')<0?'?':'&')+'retry='+Date.now();s.onload=s.onerror=function(){setTimeout(next,w[t[0]]?0:700)};d.head.appendChild(s)})()})})(document,window);</script>\n";
 }, 1 );

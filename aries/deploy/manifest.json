@@ -1,5 +1,5 @@
 {
- "version": "1.23.1",
+ "version": "1.23.2",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
@@ -19,7 +19,7 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "97a04e8b62d31203a73b2c4927438544a33ab685cc9ded4e430fe0b0c1d78f15",
+    "imagient-blocks.php": "bc34dadba56c80618014b2b5da95eb889de6c45e4da44a6475571e8a597c7b1d",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "bd7bb4f39367c2057e71bc52318a35494e8f23fbe8092f472e510aa1e5d2e049",
     "inc/frames.php": "208387d9e521793bd09b36c3a967ea6a5d10109048ed65a6eedca6f8bbf314b0",
