@@ -6,7 +6,10 @@
  * smooths the scroll. Setup below the first screen runs in idle slices so the page stays responsive while it
  * loads; ribbons redraw only while visible, and all drawing is batched on the GSAP ticker.
  */
-document.addEventListener('DOMContentLoaded', () => {
+// started by the guard printed in the page's head (imagient-blocks.php) once every script it needs has arrived
+window.__igRun = () => {
+  if (window.__igRan) return;
+  window.__igRan = true;
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
   const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
@@ -890,4 +893,4 @@ document.addEventListener('DOMContentLoaded', () => {
   runLater(() => again(true));
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => tasksDone && again());
   addEventListener('load', () => tasksDone && again());
-});
+};
