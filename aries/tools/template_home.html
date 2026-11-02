@@ -17,7 +17,7 @@
   --blue: #145fad;        /* Aries Group */
   --agency: #3089a9;      /* Shipping Agency */
   --interlink: #2aa8da;   /* Interlink */
-  --logistics: #42979c;   /* Logistics */
+  --logistics: #41979c;   /* Logistics */
   --ink: #111418;
   --text: #2a2f36;
   --muted: #6a7280;
@@ -622,7 +622,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutAll, 120); });
 
   /* ---------------- identity states (Group, Agency, Interlink, Logistics) ---------------- */
-  const ID_COLS = ['#145fad', '#3089a9', '#2aa8da', '#42979c'];
+  const ID_COLS = ['#145fad', '#3089a9', '#2aa8da', '#41979c'];
   const topSt = $$('.id-top .id-states > *'), footSt = $$('.id-foot .id-states > *'), tabs = $$('.co-tabs button');
   const markTab = k => tabs.forEach((t, i) => t.setAttribute('aria-current', String(i + 1 === k)));
   // without motion the tabs and links switch the state directly

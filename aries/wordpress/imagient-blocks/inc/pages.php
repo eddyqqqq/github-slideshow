@@ -27,7 +27,7 @@ function imagient_pages_defaults() {
 			array( 'label' => 'Home', 'url' => '/' ),
 			array( 'label' => 'Aries Shipping Agency', 'url' => '/aries-shipping-agency/' ),
 			array( 'label' => 'Aries Interlink', 'url' => '/aries-interlink/' ),
-			array( 'label' => 'Aries Logistics', 'url' => '#' ),
+			array( 'label' => 'Aries Logistics', 'url' => '/aries-logistics/' ),
 			array( 'label' => 'News', 'url' => '#' ),
 			array( 'label' => 'Contact', 'url' => '#contact' ),
 		),
@@ -99,12 +99,12 @@ function imagient_register_page_blocks() {
 
 	register_block_type( 'imagient/services', array_merge( $common, array(
 		'title'           => 'Services list',
-		'description'     => 'A list of services, each a title and a short text with the company\'s mark between them (the wave, the zigzag); each row rises with the scroll, its mark draws in from the left.',
+		'description'     => 'A list of services, each a title and a short text with the company\'s mark between them (the wave, the zigzag, the peak); each row rises with the scroll, its mark draws in from the left.',
 		'supports'        => array( 'anchor' => true, 'className' => true, 'html' => false ),
 		'attributes'      => array(
 			'items'   => array( 'type' => 'array', 'default' => $d['services'] ),
 			'color'   => array( 'type' => 'string', 'default' => 'agency' ),
-			'mark'    => array( 'type' => 'string', 'default' => 'wave' ),   // the line between title and text: wave, zigzag
+			'mark'    => array( 'type' => 'string', 'default' => 'wave' ),   // the line between title and text: wave, zigzag, peak
 		),
 		'render_callback' => 'imagient_render_services',
 	) ) );
@@ -197,6 +197,7 @@ function imagient_marks() {
 	return array(
 		'wave'   => array( 'w' => 212, 'h' => 26, 'd' => 'M0.2 14.47C93.3 54.73 126.45-31.67 211.2 14.47' ),            // Shipping Agency
 		'zigzag' => array( 'w' => 252, 'h' => 36, 'd' => 'M0.18 35.04L88.68 0.54L170.18 35.04L251.68 0.54' ),           // Interlink
+		'peak'   => array( 'w' => 257, 'h' => 36, 'd' => 'M0.12 35.02L134.13 0.52L256.13 35.02' ),                       // Logistics
 	);
 }
 

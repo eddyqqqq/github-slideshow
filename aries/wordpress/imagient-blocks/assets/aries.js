@@ -375,7 +375,7 @@ window.__igRun = () => {
   let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layoutAll, 120); });
 
   /* ---------------- company scene states ---------------- */
-  let COLS = ['#145fad', '#3189a9', '#2aa8da', '#42979c'];
+  let COLS = ['#145fad', '#3189a9', '#2aa8da', '#41979c'];
   if (idEl) { try { COLS = JSON.parse(idEl.dataset.colors); } catch (e) {} }
   const tabs = idEl ? $$('.co-tabs button', idEl) : [];
   const markTab = k => tabs.forEach((t, i) => t.setAttribute('aria-current', String(i + 1 === k)));
@@ -436,7 +436,9 @@ window.__igRun = () => {
   const waveD = k => { const r = v => Math.round(v * 100) / 100; return `M0.2 14.47C93.3 ${r(14.47 + 40.26 * k)} 126.45 ${r(14.47 - 46.14 * k)} 211.2 14.47`; };
   // the Interlink zigzag (design/mark-zigzag.svg) with its depth k about its middle line
   const zigD = k => { const m = 17.79, y = v => Math.round((m + (v - m) * k) * 100) / 100; return `M0.18 ${y(35.04)}L88.68 ${y(0.54)}L170.18 ${y(35.04)}L251.68 ${y(0.54)}`; };
-  const markD = (svg, k) => (svg.dataset.mark === 'zigzag' ? zigD : waveD)(k);
+  // the Logistics peak (design/mark-peak.svg), the same way
+  const peakD = k => { const m = 17.77, y = v => Math.round((m + (v - m) * k) * 100) / 100; return `M0.12 ${y(35.02)}L134.13 ${y(0.52)}L256.13 ${y(35.02)}`; };
+  const markD = (svg, k) => ({ zigzag: zigD, peak: peakD }[svg.dataset.mark] || waveD)(k);
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;   // only drops Lenis' smooth scrolling
   if (!window.gsap || !window.ScrollTrigger) {

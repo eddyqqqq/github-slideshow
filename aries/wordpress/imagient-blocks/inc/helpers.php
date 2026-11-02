@@ -11,7 +11,7 @@ function imagient_palette() {
 		array( 'slug' => 'group', 'name' => 'Aries Group', 'color' => '#145fad' ),
 		array( 'slug' => 'agency', 'name' => 'Shipping Agency', 'color' => '#3189a9' ),
 		array( 'slug' => 'interlink', 'name' => 'Interlink', 'color' => '#2aa8d9' ),
-		array( 'slug' => 'logistics', 'name' => 'Logistics', 'color' => '#42979c' ),
+		array( 'slug' => 'logistics', 'name' => 'Logistics', 'color' => '#41979c' ),
 		array( 'slug' => 'ink', 'name' => 'Ink', 'color' => '#111418' ),
 		array( 'slug' => 'text', 'name' => 'Text', 'color' => '#2a2f36' ),
 		array( 'slug' => 'muted', 'name' => 'Muted', 'color' => '#6a7280' ),

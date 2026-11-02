@@ -10,7 +10,7 @@
         { "slug": "group", "name": "Aries Group", "color": "#145fad" },
         { "slug": "agency", "name": "Shipping Agency", "color": "#3189a9" },
         { "slug": "interlink", "name": "Interlink", "color": "#2aa8d9" },
-        { "slug": "logistics", "name": "Logistics", "color": "#42979c" },
+        { "slug": "logistics", "name": "Logistics", "color": "#41979c" },
         { "slug": "ink", "name": "Ink", "color": "#111418" },
         { "slug": "text", "name": "Text", "color": "#2a2f36" },
         { "slug": "muted", "name": "Muted", "color": "#6a7280" },

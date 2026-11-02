@@ -486,13 +486,14 @@
       return el(Fragment, {},
         el(InspectorControls, {},
           el(PanelBody, { title: 'Look', initialOpen: true },
-            el(SelectControl, { label: 'Mark between title and text', value: a.mark || 'wave', options: [{ value: 'wave', label: 'Wave (Shipping Agency)' }, { value: 'zigzag', label: 'Zigzag (Interlink)' }], onChange: v => setAttributes({ mark: v }) }),
+            el(SelectControl, { label: 'Mark between title and text', value: a.mark || 'wave', options: [{ value: 'wave', label: 'Wave (Shipping Agency)' }, { value: 'zigzag', label: 'Zigzag (Interlink)' }, { value: 'peak', label: 'Peak (Logistics)' }], onChange: v => setAttributes({ mark: v }) }),
             colorPick('Accent colour', a.color, v => setAttributes({ color: v })))),
         el('div', props,
           el('span', { className: 'ig-badge' }, 'Services'),
           list.map((it, i) => el('div', { key: i, className: 'ig-svc-edit__row' },
             RT({ tagName: 'h3', className: 'ig-svc__title', value: it.title, onChange: v => ops.update(i, { title: v }), placeholder: 'Service' }),
             a.mark === 'zigzag' ? el('svg', { className: 'ig-svc__wave', viewBox: '0 0 252 36' }, el('path', { d: 'M0.18 35.04L88.68 0.54L170.18 35.04L251.68 0.54' }))
+              : a.mark === 'peak' ? el('svg', { className: 'ig-svc__wave', viewBox: '0 0 257 36' }, el('path', { d: 'M0.12 35.02L134.13 0.52L256.13 35.02' }))
               : el('svg', { className: 'ig-svc__wave', viewBox: '0 0 212 26' }, el('path', { d: 'M0.2 14.47C93.3 54.73 126.45-31.67 211.2 14.47' })),
             RT({ tagName: 'p', className: 'ig-svc__text', value: it.text, onChange: v => ops.update(i, { text: v }), placeholder: 'What it covers' }),
             el(ItemTools, { i, n: list.length, ops, label: 'service' }))),

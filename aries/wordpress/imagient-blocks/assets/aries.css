@@ -10,7 +10,7 @@
   --blue: var(--wp--preset--color--group, #145fad);        /* Aries Group */
   --agency: var(--wp--preset--color--agency, #3189a9);      /* Shipping Agency */
   --interlink: var(--wp--preset--color--interlink, #2aa8d9);   /* Interlink */
-  --logistics: var(--wp--preset--color--logistics, #42979c);   /* Logistics */
+  --logistics: var(--wp--preset--color--logistics, #41979c);   /* Logistics */
   --ink: #111418;
   --text: #2a2f36;
   --muted: #6a7280;
@@ -491,12 +491,16 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 /* the mark sits in the middle of its column with room on both sides, so it never touches the title or the text */
 .is-design .ig-svc__wave { justify-self: center; color: var(--ink); max-width: calc(100% - 2 * clamp(14px, 2.6vw, 40px)); }
 .is-design .ig-svc__wave[data-mark="zigzag"] { width: 252px; }
+.is-design .ig-svc__wave[data-mark="peak"] { width: 257px; }
+/* Logistics: its texts are set a little wider in the design (every line breaks as drawn at 1440) */
+@media (min-width: 1025px) { .is-design .ig-svc__row:has(> [data-mark="peak"]) { grid-template-columns: minmax(0, 335fr) minmax(0, 324fr) minmax(0, 489fr) minmax(0, 156fr); } }
 @media (max-width: 1024px) { .is-design .ig-svc__row { grid-template-columns: minmax(0, 1.1fr) minmax(0, .6fr) minmax(0, 1.2fr); } }
 @media (max-width: 760px) {
   .ig-svc.is-design { gap: 56px; }
   .is-design .ig-svc__row { grid-template-columns: 1fr; gap: 18px; }
   .is-design .ig-svc__wave { justify-self: start; width: 150px; }
   .is-design .ig-svc__wave[data-mark="zigzag"] { width: 178px; }
+  .is-design .ig-svc__wave[data-mark="peak"] { width: 180px; }
 }
 
 
