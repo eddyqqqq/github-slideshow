@@ -170,7 +170,7 @@ final class Pavva_W_I18n {
 		return array(
 			'id' => $p->ID, 'type' => $p->post_type, 'status' => $p->post_status, 'slug' => $p->post_name,
 			'title' => $p->post_title, 'content' => $p->post_content, 'excerpt' => $p->post_excerpt,
-			'menu_order' => $p->menu_order, 'parent' => $p->post_parent,
+			'menu_order' => $p->menu_order, 'parent' => $p->post_parent, 'author' => (int) $p->post_author,
 			'lang' => self::on() ? pll_get_post_language( $p->ID ) : '',
 			'translations' => self::on() ? pll_get_post_translations( $p->ID ) : array(),
 			'link' => get_permalink( $p ), 'meta' => self::meta_of( $p->ID ),
@@ -195,6 +195,8 @@ final class Pavva_W_I18n {
 		foreach ( array( 'title' => 'post_title', 'content' => 'post_content', 'excerpt' => 'post_excerpt', 'slug' => 'post_name', 'status' => 'post_status' ) as $k => $f ) {
 			if ( isset( $p[ $k ] ) ) $arr[ $f ] = (string) $p[ $k ];
 		}
+		/* autorul (ex. produsele, care nu au câmpul „autor” în REST) */
+		if ( isset( $p['author'] ) && get_userdata( (int) $p['author'] ) ) $arr['post_author'] = (int) $p['author'];
 		if ( $new ) {
 			$parent = $src->post_parent ? (int) pll_get_post( $src->post_parent, $lang ) : 0;
 			$arr    = array_merge( array(
