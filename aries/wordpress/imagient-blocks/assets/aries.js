@@ -431,6 +431,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const waveShow = (wave, p) => { const st = wave._st || (wave._st = $$('stop', wave)); if (st.length < 2) return;
     st[0].setAttribute('offset', Math.max(0, Math.min(1, p - 0.18)).toFixed(4)); st[1].setAttribute('offset', Math.max(0, Math.min(1, p)).toFixed(4)); };
   const waveD = k => { const r = v => Math.round(v * 100) / 100; return `M0.2 14.47C93.3 ${r(14.47 + 40.26 * k)} 126.45 ${r(14.47 - 46.14 * k)} 211.2 14.47`; };
+  // the Interlink zigzag (design/mark-zigzag.svg) with its depth k about its middle line
+  const zigD = k => { const m = 17.79, y = v => Math.round((m + (v - m) * k) * 100) / 100; return `M0.18 ${y(35.04)}L88.68 ${y(0.54)}L170.18 ${y(35.04)}L251.68 ${y(0.54)}`; };
+  const markD = (svg, k) => (svg.dataset.mark === 'zigzag' ? zigD : waveD)(k);
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;   // only drops Lenis' smooth scrolling
   if (!window.gsap || !window.ScrollTrigger) {
@@ -853,6 +856,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ps.length) gsap.from(ps, { y: 36, opacity: 0, ease: 'none', stagger: 0.3, scrollTrigger: { trigger: sec, start: 'top 75%', end: 'top 10%', scrub: 0.6 } });
   }));
 
+  /* ---- the facility (Interlink): its list of services and its texts come in as the services' titles and texts do ---- */
+  $$('.ig-page-list > li').forEach(li => later(() => gsap.from(li, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: li, start: 'top 98%', end: 'top 74%', scrub: 0.6 } })));
+  $$('.ig-page-facility .ig-page-notes > *').forEach(p => later(() => gsap.from(p, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: p, start: 'top 94%', end: 'top 70%', scrub: 0.6 } })));
+
   /* ---- services: each row comes in as the home page's blocks do, with the scroll; its wave appears from left to
          right behind a soft edge, as the home page's shapes draw in, over a long stretch of the scroll; under the
          pointer it ripples ---- */
@@ -864,7 +871,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const o = { p: 0 }; waveShow(wave, 0);
     gsap.to(o, { p: 1.18, ease: 'none', onUpdate: () => waveShow(wave, o.p), scrollTrigger: { trigger: row, start: 'top 95%', end: 'top 45%', scrub: 1 } });
     path._wv = { k: 1 };
-    const ripple = (k, d) => gsap.to(path._wv, { k, duration: d, ease: 'elastic.out(1, 0.45)', overwrite: 'auto', onUpdate: () => path.setAttribute('d', waveD(path._wv.k)) });
+    const ripple = (k, d) => gsap.to(path._wv, { k, duration: d, ease: 'elastic.out(1, 0.45)', overwrite: 'auto', onUpdate: () => path.setAttribute('d', markD(wave, path._wv.k)) });
     row.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') ripple(1.6, 0.9); });
     row.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') ripple(1, 1.1); });
   }));

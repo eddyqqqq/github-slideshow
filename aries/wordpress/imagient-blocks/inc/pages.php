@@ -26,7 +26,7 @@ function imagient_pages_defaults() {
 		'menu'     => array(
 			array( 'label' => 'Home', 'url' => '/' ),
 			array( 'label' => 'Aries Shipping Agency', 'url' => '/aries-shipping-agency/' ),
-			array( 'label' => 'Aries Interlink', 'url' => '#' ),
+			array( 'label' => 'Aries Interlink', 'url' => '/aries-interlink/' ),
 			array( 'label' => 'Aries Logistics', 'url' => '#' ),
 			array( 'label' => 'News', 'url' => '#' ),
 			array( 'label' => 'Contact', 'url' => '#contact' ),
@@ -99,11 +99,12 @@ function imagient_register_page_blocks() {
 
 	register_block_type( 'imagient/services', array_merge( $common, array(
 		'title'           => 'Services list',
-		'description'     => 'A list of services, each a title and a short text, in one of three layouts: as designed (title, wave, text), editorial (numbered rows) or accordion.',
+		'description'     => 'A list of services, each a title and a short text with the company\'s mark between them (the wave, the zigzag); each row rises with the scroll, its mark draws in from the left.',
 		'supports'        => array( 'anchor' => true, 'className' => true, 'html' => false ),
 		'attributes'      => array(
 			'items'   => array( 'type' => 'array', 'default' => $d['services'] ),
 			'color'   => array( 'type' => 'string', 'default' => 'agency' ),
+			'mark'    => array( 'type' => 'string', 'default' => 'wave' ),   // the line between title and text: wave, zigzag
 		),
 		'render_callback' => 'imagient_render_services',
 	) ) );
@@ -191,21 +192,34 @@ function imagient_render_cover( $a, $content ) {
 }
 
 /** The thin wave between a service's title and its text (from the design). */
-function imagient_wave_svg( $class ) {
+/** The marks between a service's title and its text (from the design): their box and line. */
+function imagient_marks() {
+	return array(
+		'wave'   => array( 'w' => 212, 'h' => 26, 'd' => 'M0.2 14.47C93.3 54.73 126.45-31.67 211.2 14.47' ),            // Shipping Agency
+		'zigzag' => array( 'w' => 252, 'h' => 36, 'd' => 'M0.18 35.04L88.68 0.54L170.18 35.04L251.68 0.54' ),           // Interlink
+	);
+}
+
+/** A service's mark (the wave, or another company's line). */
+function imagient_wave_svg( $class, $mark = 'wave' ) {
+	$marks = imagient_marks();
+	$m     = $marks[ $mark ] ?? $marks['wave'];
 	// its entrance (script): a mask whose soft edge runs from left to right; the mask is far larger than the line, so
-	// nothing of the wave is cut where it swells past its box
+	// nothing of it is cut where it swells past its box
 	$id = wp_unique_id( 'wv' );
-	return '<svg class="' . esc_attr( $class ) . '" viewBox="0 0 212 26" aria-hidden="true" focusable="false"><defs>'
-		. '<linearGradient id="' . $id . 'g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="212" y2="0"><stop offset="1" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
-		. '<mask id="' . $id . '" maskUnits="userSpaceOnUse" x="-20" y="-80" width="252" height="186"><rect x="-20" y="-80" width="252" height="186" fill="url(#' . $id . 'g)"/></mask>'
-		. '</defs><path d="M0.2 14.47C93.3 54.73 126.45-31.67 211.2 14.47" mask="url(#' . $id . ')"/></svg>';
+	$w  = $m['w'];
+	$h  = $m['h'];
+	return '<svg class="' . esc_attr( $class ) . '" viewBox="0 0 ' . $w . ' ' . $h . '" data-mark="' . esc_attr( isset( $marks[ $mark ] ) ? $mark : 'wave' ) . '" aria-hidden="true" focusable="false"><defs>'
+		. '<linearGradient id="' . $id . 'g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="' . $w . '" y2="0"><stop offset="1" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+		. '<mask id="' . $id . '" maskUnits="userSpaceOnUse" x="-20" y="-80" width="' . ( $w + 40 ) . '" height="' . ( $h + 160 ) . '"><rect x="-20" y="-80" width="' . ( $w + 40 ) . '" height="' . ( $h + 160 ) . '" fill="url(#' . $id . 'g)"/></mask>'
+		. '</defs><path d="' . $m['d'] . '" mask="url(#' . $id . ')"/></svg>';
 }
 
 function imagient_render_services( $a ) {
 	$items = array_values( array_filter( (array) $a['items'], 'is_array' ) );
 	$out   = '';
 	foreach ( $items as $it ) {
-		$out .= '<div class="ig-svc__row"><h3 class="ig-svc__title">' . imagient_text( $it['title'] ?? '' ) . '</h3>' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . imagient_text( $it['text'] ?? '' ) . '</p></div>';
+		$out .= '<div class="ig-svc__row"><h3 class="ig-svc__title">' . imagient_text( $it['title'] ?? '' ) . '</h3>' . imagient_wave_svg( 'ig-svc__wave', (string) $a['mark'] ) . '<p class="ig-svc__text">' . imagient_text( $it['text'] ?? '' ) . '</p></div>';
 	}
 	return sprintf( '<div %s>%s</div>', imagient_wrapper( null, 'ig-svc is-design', '--accent:' . imagient_color( $a['color'] ) . ';' ), $out );
 }

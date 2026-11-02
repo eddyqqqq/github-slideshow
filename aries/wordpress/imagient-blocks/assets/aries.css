@@ -9,7 +9,7 @@
 :root {
   --blue: var(--wp--preset--color--group, #145fad);        /* Aries Group */
   --agency: var(--wp--preset--color--agency, #3189a9);      /* Shipping Agency */
-  --interlink: var(--wp--preset--color--interlink, #2aa8da);   /* Interlink */
+  --interlink: var(--wp--preset--color--interlink, #2aa8d9);   /* Interlink */
   --logistics: var(--wp--preset--color--logistics, #42979c);   /* Logistics */
   --ink: #111418;
   --text: #2a2f36;
@@ -465,6 +465,15 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 .ig-page-notes { max-width: 640px; margin-top: calc(470 * var(--pu)); display: grid; gap: 18px; }
 .ig-page-notes p { margin: 0; font-size: var(--link); line-height: 1.5; }
 @media (max-width: 760px) and (orientation: portrait) { .ig-page-notes { margin-top: 300px; } .ig-page-notes p { font-size: var(--body); }  }
+/* the facility (Interlink): its statement, the texts close under it and a list of services in large type, as designed
+   at 1440 (72 and 147 px apart, the list's lines 112 px apart) */
+.ig-page-facility .ig-page-notes { margin-top: calc(72 * var(--pu)); gap: 24px; }
+.ig-page-list { list-style: none; margin: calc(147 * var(--pu)) 0 0; padding: 0; display: grid; gap: calc(57 * var(--pu)); }
+.ig-page-list li { margin: 0; font-size: var(--h-l); line-height: 1.15; font-weight: 400; letter-spacing: -0.02em; color: var(--ink); max-width: 22em; }
+@media (max-width: 760px) and (orientation: portrait) {
+  .ig-page-facility .ig-page-notes { margin-top: 40px; gap: 18px; }
+  .ig-page-list { margin-top: 64px; gap: 26px; }
+}
 
 /* services list: four layouts */
 .ig-svc { --accent: var(--agency); margin: 0; padding: 0; list-style: none; }
@@ -477,11 +486,13 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 .ig-svc.is-design { display: grid; gap: calc(110 * var(--pu)); }
 .is-design .ig-svc__row { display: grid; grid-template-columns: minmax(0, 335fr) minmax(0, 324fr) minmax(0, 475fr) minmax(0, 170fr); align-items: center; }
 .is-design .ig-svc__wave { justify-self: center; color: var(--ink); }
+.is-design .ig-svc__wave[data-mark="zigzag"] { width: 252px; justify-self: start; }   /* drawn at the start of its column (Interlink design) */
 @media (max-width: 1024px) { .is-design .ig-svc__row { grid-template-columns: minmax(0, 1.1fr) minmax(0, .6fr) minmax(0, 1.2fr); } }
 @media (max-width: 760px) {
   .ig-svc.is-design { gap: 56px; }
   .is-design .ig-svc__row { grid-template-columns: 1fr; gap: 18px; }
   .is-design .ig-svc__wave { justify-self: start; width: 150px; }
+  .is-design .ig-svc__wave[data-mark="zigzag"] { width: 178px; }
 }
 
 
