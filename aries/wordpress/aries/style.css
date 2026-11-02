@@ -7,7 +7,7 @@ Description:       Block theme for Aries Group, designed and built by Imagient. 
 Requires at least: 6.5
 Tested up to:      6.8
 Requires PHP:      7.4
-Version:           1.10.0
+Version:           1.11.0
 License:           GNU General Public License v2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:       aries
@@ -66,6 +66,5 @@ img, svg { max-width: 100%; }
 }
 
 /* inner pages and posts */
-.ig-page-title { padding-top: var(--ig-s8); }
 .ig-statement { max-width: 22ch; color: var(--wp--preset--color--ink); margin: 0 0 22px; }
 .ig-section .wp-block-buttons { margin: 0; }

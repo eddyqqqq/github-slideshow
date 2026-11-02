@@ -60,7 +60,6 @@ function imagient_register_page_blocks() {
 		'attributes'      => array(
 			'align'     => array( 'type' => 'string', 'default' => 'full' ),
 			'title'     => array( 'type' => 'string', 'default' => 'Aries Shipping Agency' ),
-			'logo'      => array( 'type' => 'string', 'default' => '' ),   // the header carries the site's logo
 			'frame'     => array( 'type' => 'string', 'default' => 'agency' ),
 			'color'     => array( 'type' => 'string', 'default' => 'agency' ),
 			'imageId'   => array( 'type' => 'number', 'default' => 0 ),
@@ -128,7 +127,6 @@ function imagient_render_page_hero( $a, $content = '' ) {
 	$uid    = wp_unique_id( 'ph' );
 	// the photo shows about 1.1 × the screen's width in the frame (on phones the frame runs 1.6 × past the screen)
 	$photo  = imagient_photo( $a['imageId'], $a['imageUrl'], '', array( 'sizes' => '(orientation: portrait) 170vw, 110vw', 'fetchpriority' => 'high', 'decoding' => 'async', 'loading' => 'eager' ) );
-	$logo   = $a['logo'] ? imagient_logo_svg( $a['logo'] ) : '';
 	$style  = sprintf( '--accent:%s;--fw:%s;--fh:%s;--fx0:%s;--fx1:%s;--fpx:%s;', imagient_color( $a['color'] ), $f['w'], $f['h'], $f['x0'], $f['x1'], max( 300, min( $f['w'] - 300, floatval( $a['portraitX'] ) ) ) );
 	// the scroll scene (set on the block): its text is the blocks inside the hero or, if there are none, the cover that
 	// follows it (the script brings that cover's text in)
@@ -144,9 +142,6 @@ function imagient_render_page_hero( $a, $content = '' ) {
 	ob_start();
 	?>
 <section <?php echo imagient_wrapper( null, 'ig-phero' . ( $scene ? ' has-scene is-scene-' . $kind : '' ), $style, $data ); ?>>
-	<?php if ( $logo ) : ?>
-  <a class="ig-phero__logo logo-link is-colour" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( imagient_logo_list()[ $a['logo'] ] ?? 'Home' ); ?>"><?php echo $logo; // phpcs:ignore -- sanitised SVG from the plugin ?></a>
-	<?php endif; ?>
   <div class="ig-phero__stage">
     <div class="ig-phero__src" aria-hidden="true"><?php echo $photo; // phpcs:ignore -- core-escaped ?></div>
     <svg class="ig-phero__svg" viewBox="0 0 <?php echo esc_attr( $f['w'] . ' ' . $f['h'] ); ?>" aria-hidden="true" focusable="false">
@@ -207,32 +202,12 @@ function imagient_wave_svg( $class ) {
 }
 
 function imagient_render_services( $a ) {
-	$items   = array_values( array_filter( (array) $a['items'], 'is_array' ) );
-	// the page shows the designed layout; ?list=2 (editorial) or ?list=3 (accordion) in the address previews the others
-	$variant = array( '2' => 'editorial', '3' => 'accordion' )[ isset( $_GET['list'] ) ? sanitize_key( wp_unslash( $_GET['list'] ) ) : '' ] ?? 'design'; // phpcs:ignore WordPress.Security.NonceVerification -- a read-only display choice
-	$uid     = wp_unique_id( 'svc' );
-	$style   = '--accent:' . imagient_color( $a['color'] ) . ';';
-	$out     = '';
-	foreach ( $items as $i => $it ) {
-		$title = imagient_text( $it['title'] ?? '' );
-		$text  = imagient_text( $it['text'] ?? '' );
-		$num   = sprintf( '%02d', $i + 1 );
-		switch ( $variant ) {
-			case 'editorial':
-				$out .= '<li class="ig-svc__row"><span class="ig-svc__num">' . $num . '</span><h3 class="ig-svc__title">' . $title . '</h3><p class="ig-svc__text">' . $text . '</p><span class="ig-svc__rule" aria-hidden="true"></span></li>';
-				break;
-			case 'accordion':
-				$open  = 0 === $i;
-				$pid   = $uid . '-' . $i;
-				$out  .= '<div class="ig-svc__row' . ( $open ? ' is-open' : '' ) . '"><h3 class="ig-svc__title"><button type="button" aria-expanded="' . ( $open ? 'true' : 'false' ) . '" aria-controls="' . esc_attr( $pid ) . '"><span class="ig-svc__num">' . $num . '</span><span class="ig-svc__label">' . $title . '</span><span class="ig-svc__plus" aria-hidden="true"></span></button></h3>'
-					. '<div class="ig-svc__panel" id="' . esc_attr( $pid ) . '" role="region"' . ( $open ? '' : ' hidden' ) . '><div class="ig-svc__body">' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . $text . '</p></div></div></div>';
-				break;
-			default:
-				$out .= '<div class="ig-svc__row"><h3 class="ig-svc__title">' . $title . '</h3>' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . $text . '</p></div>';
-		}
+	$items = array_values( array_filter( (array) $a['items'], 'is_array' ) );
+	$out   = '';
+	foreach ( $items as $it ) {
+		$out .= '<div class="ig-svc__row"><h3 class="ig-svc__title">' . imagient_text( $it['title'] ?? '' ) . '</h3>' . imagient_wave_svg( 'ig-svc__wave' ) . '<p class="ig-svc__text">' . imagient_text( $it['text'] ?? '' ) . '</p></div>';
 	}
-	$tag = 'editorial' === $variant ? 'ol' : 'div';
-	return sprintf( '<%1$s %2$s>%3$s</%1$s>', $tag, imagient_wrapper( null, 'ig-svc is-' . $variant, $style, array( 'data-svc' => $variant ) ), $out );
+	return sprintf( '<div %s>%s</div>', imagient_wrapper( null, 'ig-svc is-design', '--accent:' . imagient_color( $a['color'] ) . ';' ), $out );
 }
 
 function imagient_render_menu( $a ) {

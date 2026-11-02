@@ -408,21 +408,7 @@
   });
 
   /* ================================ COMPANY PAGES ================================ */
-  // a logo inline, so the editor can colour its mark (.s) and name (.t) the way the page does
-  const logoCache = {};
-  function InlineLogo({ name, className }) {
-    const [svg, setSvg] = useState(logoCache[name] || '');
-    wp.element.useEffect(() => {
-      if (logoCache[name]) { setSvg(logoCache[name]); return; }
-      if (!window.fetch) return;
-      let live = true;
-      window.fetch(CFG.assets + 'logos/' + name + '.svg').then(r => r.text()).then(t => { logoCache[name] = t; if (live) setSvg(t); }).catch(() => {});
-      return () => { live = false; };
-    }, [name]);
-    return el(wp.element.RawHTML, { className }, svg);
-  }
   const FRAMES = CFG.frames || {};
-  const logoOpts = [{ value: '', label: 'No logo' }].concat(LOGOS);
   const colorPick = (label, value, onChange) => el(SelectControl, { label, value, options: COLOR_OPTS, onChange });
 
   /* ---------------- page hero ---------------- */
@@ -445,13 +431,11 @@
             el(RangeControl, { label: 'Focus, top to bottom (%)', value: a.focusY, min: 0, max: 100, onChange: v => setAttributes({ focusY: v }) }),
             el(RangeControl, { label: 'Zoom (%)', value: a.zoom, min: 100, max: 250, onChange: v => setAttributes({ zoom: v }) }),
             el('p', { className: 'ig-help' }, 'Upload the photo large (3000 px wide or more); the browser picks the size each screen needs.')),
-          el(PanelBody, { title: 'Frame, logo and colour', initialOpen: false },
+          el(PanelBody, { title: 'Frame and colour', initialOpen: false },
             frameOpts.length > 1 ? el(SelectControl, { label: 'Frame', value: a.frame, options: frameOpts, onChange: v => setAttributes({ frame: v }) }) : null,
             colorPick('Frame colour', a.color, v => setAttributes({ color: v })),
-            el(SelectControl, { label: 'Logo (top left)', value: a.logo, options: logoOpts, onChange: v => setAttributes({ logo: v }) }),
             el(RangeControl, { label: 'Phones: part of the frame shown (centre, in frame units)', value: a.portraitX, min: 400, max: 1600, step: 10, onChange: v => setAttributes({ portraitX: v }) }))),
         el('div', props,
-          a.logo && CFG.logos[a.logo] ? el(InlineLogo, { name: a.logo, className: 'ig-phero-edit__logo' }) : null,
           f ? el('svg', { className: 'ig-phero-edit__svg', viewBox: `${f.x0} 0 ${f.x1 - f.x0} ${f.h}`, preserveAspectRatio: 'xMidYMid slice' },
             el('defs', {}, el('clipPath', { id: 'phe-w' }, el('path', { d: f.window }))),
             el('g', { clipPath: 'url(#phe-w)' }, a.imageUrl ? el('image', { href: a.imageUrl, x: f.x0, y: 0, width: f.x1 - f.x0, height: f.h, preserveAspectRatio: 'xMidYMid slice' }) : null),
@@ -475,7 +459,7 @@
           el(PanelBody, { title: 'Photo', initialOpen: true },
             el(ImagePicker, { id: a.imageId, url: a.imageUrl, onSelect: m => setAttributes({ imageId: m.id, imageUrl: m.url, alt: m.alt || a.alt }), label: 'photo' }),
             el(TextControl, { label: 'Image description (alt)', value: a.alt, onChange: v => setAttributes({ alt: v }) }),
-            el(SelectControl, { label: 'Height', value: a.height, options: [{ value: 'image', label: 'The photo’s own proportions' }, { value: 'screen', label: 'One screen (with text and gradient: plays like the home page’s second scene)' }, { value: 'auto', label: 'As tall as its content' }], onChange: v => setAttributes({ height: v }) }),
+            el(SelectControl, { label: 'Height', value: a.height, options: [{ value: 'image', label: 'The photo’s own proportions' }, { value: 'screen', label: 'One screen' }, { value: 'auto', label: 'As tall as its content' }], onChange: v => setAttributes({ height: v }) }),
             el(RangeControl, { label: 'Focus, left to right (%)', value: a.focusX, min: 0, max: 100, onChange: v => setAttributes({ focusX: v }) }),
             el(RangeControl, { label: 'Focus, top to bottom (%)', value: a.focusY, min: 0, max: 100, onChange: v => setAttributes({ focusY: v }) }),
             el(ToggleControl, { label: 'Photo drifts with the scroll', checked: a.parallax, onChange: v => setAttributes({ parallax: v }) })),

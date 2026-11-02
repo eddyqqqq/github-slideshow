@@ -426,36 +426,11 @@ document.addEventListener('DOMContentLoaded', () => {
     addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('menu-open')) set(false); });
     panel.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
   });
-  // the animations play for everyone (a system asking for less motion only loses the smooth scrolling, below)
-  const still = !window.gsap;
   // the services' wave (design/wave-line.svg) with its swell k: 1 as drawn, more a deeper wave (the hover ripple)
   // the wave's reveal: its mask's soft edge (18 % of its length) at p (0 hidden, 1.18 all shown)
   const waveShow = (wave, p) => { const st = wave._st || (wave._st = $$('stop', wave)); if (st.length < 2) return;
     st[0].setAttribute('offset', Math.max(0, Math.min(1, p - 0.18)).toFixed(4)); st[1].setAttribute('offset', Math.max(0, Math.min(1, p)).toFixed(4)); };
   const waveD = k => { const r = v => Math.round(v * 100) / 100; return `M0.2 14.47C93.3 ${r(14.47 + 40.26 * k)} 126.45 ${r(14.47 - 46.14 * k)} 211.2 14.47`; };
-
-  $$('.ig-svc.is-accordion').forEach(list => {
-    const rows = $$('.ig-svc__row', list);
-    const toggle = (row, open) => {
-      const b = $('button', row), p = $('.ig-svc__panel', row), wave = $('.ig-svc__wave', row);
-      if (open === row.classList.contains('is-open')) return;
-      row.classList.toggle('is-open', open); b.setAttribute('aria-expanded', String(open));
-      if (still) { p.hidden = !open; return; }
-      gsap.killTweensOf(p);
-      const after = () => window.ScrollTrigger && ScrollTrigger.refresh();
-      if (open) {
-        p.hidden = false;
-        gsap.fromTo(p, { height: 0 }, { height: 'auto', duration: 0.75, ease: 'power3.inOut', onComplete: after });
-        if (wave) { const o = { p: 0 }; waveShow(wave, 0); gsap.to(o, { p: 1.18, duration: 1.4, ease: 'power2.inOut', delay: 0.2, onUpdate: () => waveShow(wave, o.p) }); }
-        gsap.fromTo($('.ig-svc__text', row), { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out', delay: 0.25 });
-      } else gsap.to(p, { height: 0, duration: 0.6, ease: 'power3.inOut', onComplete: () => { p.hidden = true; gsap.set(p, { clearProps: 'height' }); after(); } });
-    };
-    rows.forEach(row => $('button', row).addEventListener('click', () => {
-      const open = !row.classList.contains('is-open');
-      rows.forEach(r => { if (r !== row) toggle(r, false); });
-      toggle(row, open);
-    }));
-  });
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;   // only drops Lenis' smooth scrolling
   if (!window.gsap || !window.ScrollTrigger) {
@@ -622,8 +597,8 @@ document.addEventListener('DOMContentLoaded', () => {
       fl.setAttribute('d', st.w > 0 ? floodD(gEnd * st.w) : 'M0 0Z');
       ph.classList.toggle('is-flooded', st.w > 0.97);   // the colour has filled it: the hero itself takes it, edge to edge
     };
-    // a scene plays only with its text: blocks inside the hero, or the cover right after it
-    const next = ph.nextElementSibling, active = !!(ph.dataset.scene && scene && (scene.children.length || (next && next.matches('.ig-cover.has-content'))));
+    // a scene plays only with its text (the blocks inside the hero)
+    const active = !!(ph.dataset.scene && scene && scene.children.length);
     if (!active) {
       // no scene: the opening as it was (the whole frame draws in from the left, the photo settles, the title rises)
       st.zi = 1.16; render();
@@ -641,9 +616,6 @@ document.addEventListener('DOMContentLoaded', () => {
       .to(st, { dB: 1, duration: 1.5, ease: 'expo.inOut' }, 0.25)
       .to(st, { io: 1, duration: 1.1, ease: 'power2.out' }, 0.55)
       .to(st, { zi: 1, duration: 2.2, ease: 'expo.out' }, 0.55);
-    // the scene's text: the blocks inside the hero, or else the cover right after it (its statement and link come in
-    // and the cover leaves the page)
-    if (!scene.children.length) { [...$('.ig-cover__inner', next).children].forEach(c => scene.appendChild(c)); next.remove(); }
     const words = $$('h1, h2, h3, h4', scene).flatMap(h => splitWords(h)), rest = $$(':scope > *', scene).filter(e => !/^H[1-4]$/.test(e.tagName));
     const unitPx = () => svg.getBoundingClientRect().width / W;   // pixels per unit of the frame
     // how far the flood's edges must move: past the hero's top and bottom, in the frame's units
@@ -673,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .to(bar || {}, { autoAlpha: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 1.12)   // gone as the colour fills the screen
       .to(words, { yPercent: -115, duration: 0.3, stagger: 0.012, ease: 'power2.in', onUpdate: null }, out)
       .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, out)
-      .to({}, { duration: 0.01, onUpdate: null }, gone + 0.45);
+      .to({}, { duration: 0.01, onUpdate: null }, gone + 0.3);
   }
   root.classList.remove('pre');
 
@@ -728,23 +700,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
 
   /* ---- block animations chosen in the editor (all scrubbed with the scroll, nothing pops in) ---- */
-  const SCENE = '.ig-cover.is-screen.has-content.has-overlay';   // a cover that plays the home page's second scene (below)
-  // as on the home page, the section after it slides over the scene's end (no long scroll on an empty colour): its upper
-  // part see-through over the cover's colour, its own colour from well inside the overlap (no seam where they meet)
-  $$(SCENE + ', .ig-phero.has-scene').forEach(cv => {
-    const next = (cv.parentElement.classList.contains('pin-spacer') ? cv.parentElement : cv).nextElementSibling;   // (a pinned hero sits in a spacer)
-    if (!next) return;
-    const bg = getComputedStyle(next).backgroundColor;
-    next.classList.add('after-scene');
-    // after the page hero (all its colour by then): the section is its colour throughout, so no strip of page can show
-    // where they meet on any phone; after a cover, see-through at its top over the cover's colour
-    next.style.background = cv.matches('.ig-phero') ? bg : `linear-gradient(transparent 0, transparent 40svh, ${bg} 40svh)`;
+  // as on the home page, the section after the page hero's scene slides over the scene's end (no long scroll on an
+  // empty colour); it is its colour throughout, so no strip of page can show where they meet on any phone
+  $$('.ig-phero.has-scene').forEach(ph => {
+    const next = (ph.parentElement.classList.contains('pin-spacer') ? ph.parentElement : ph).nextElementSibling;   // (a pinned hero sits in a spacer)
+    if (next) next.classList.add('after-scene');
   });
   const atEnd = el => el.getBoundingClientRect().bottom + scrollY > document.documentElement.scrollHeight - innerHeight * 0.4;
   $$('[data-anim="split"]').forEach(el => later(() => {
     const last = atEnd(el);   // near the very end of the page: finish by the time the page ends
     splitTargets(el).forEach(h => {
-      if (h.closest(SCENE) || h.closest('.after-scene') || h.closest('.ig-phero')) return;   // in a scene of its own (company pages, below)
+      if (h.closest('.after-scene') || h.closest('.ig-phero')) return;   // in a scene of its own (company pages, below)
       // already on the first screen at load (a short page hero on phones): play once, so it never rests half revealed
       if (scrollY < 10 && h.getBoundingClientRect().top < innerHeight * 0.94) {
         gsap.from(splitWords(h), { yPercent: 115, duration: 1.1, ease: 'power3.out', stagger: 0.05, delay: 0.9 });
@@ -754,7 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTrigger: { trigger: h, start: last ? 'top bottom' : 'top 94%', end: last ? 'bottom bottom' : 'top 62%', scrub: 0.6 } });
     });
   }));
-  $$('[data-anim="fade-up"]').filter(el => !el.closest(SCENE) && !el.closest('.after-scene') && !el.closest('.ig-phero')).forEach(el => later(() => gsap.from(el, { y: 32, opacity: 0, ease: 'none',
+  $$('[data-anim="fade-up"]').filter(el => !el.closest('.after-scene') && !el.closest('.ig-phero')).forEach(el => later(() => gsap.from(el, { y: 32, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 78%', scrub: 0.6 } })));
   $$('[data-anim="scale-in"]').forEach(el => later(() => gsap.from(el, { scale: 0.94, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 70%', scrub: 0.6 } })));
@@ -853,31 +819,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }));
 
-  /* ---- company pages: a one-screen cover with text plays the home page's second scene: pinned, the gradient comes
-         in over the photo, the words rise, the line follows; then the words leave, the colour fills the screen and the
-         section below (the same colour) goes on from it. Other covers: the photo drifts, the gradient stays as set ---- */
-  $$('.ig-cover').forEach(cv => later(() => {
-    const media = $('.ig-cover__media', cv), img = $('img', media), shade = $('.ig-cover__shade', cv), inner = $('.ig-cover__inner', cv);
-    if (cv.matches(SCENE) && shade) {
-      const words = $$('h1, h2, h3, h4', inner).flatMap(h => splitWords(h));
-      const rest = $$(':scope > *', inner).filter(e => !/^H[1-4]$/.test(e.tagName));
-      const o = parseFloat(getComputedStyle(shade).opacity) || 1;
-      gsap.timeline({ scrollTrigger: { trigger: cv, start: 'top top', end: '+=230%', pin: true, scrub: 1.2, invalidateOnRefresh: true } })
-        .fromTo(media, { scale: 1.08 }, { scale: 1, duration: 0.8, ease: 'sine.inOut' }, 0)
-        .fromTo(shade, { opacity: 0 }, { opacity: o, duration: 0.45, ease: 'none' }, 0.2)
-        .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out' }, 0.32)
-        .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' }, 0.55)
-        .to(words, { yPercent: -115, duration: 0.26, stagger: 0.012, ease: 'power2.in' }, 0.96)
-        .to(rest, { y: -20, opacity: 0, duration: 0.22, ease: 'power2.in' }, 0.96)
-        .to(shade, { opacity: 1, '--a': '100%', '--b': '160%', duration: 0.42, ease: 'power1.inOut' }, 1.0)
-        .to({}, { duration: 0.01 }, 1.5);
-      return;
-    }
-    if (img && cv.classList.contains('is-parallax')) gsap.fromTo(img, { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: cv, start: 'top bottom', end: 'bottom top', scrub: true } });
+  /* ---- company pages: covers drift with the scroll; the gradient stays as set ---- */
+  $$('.ig-cover.is-parallax .ig-cover__media img').forEach(img => later(() => {
+    gsap.fromTo(img, { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: img.closest('.ig-cover'), start: 'top bottom', end: 'bottom top', scrub: true } });
   }));
-  /* ---- the section after a cover's scene, as the home page's company scene after its hero: it slides in over the
-         scene's end (its headline rising meanwhile), then stays in place while its ribbon draws in from the left all
-         the way across; then the page goes on and its texts come up ---- */
+  /* ---- the section after the page hero's scene, timed as the home page's company scene after its hero ---- */
   // a ribbon between a statement and its texts sits half way between them, on every screen: measured drawn in full
   const centreRibbon = (sec, r) => {
     const h = $('.ig-page-statement', sec), n = $('.ig-page-notes', sec);
@@ -898,8 +844,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const r = decorRibs.find(x => sec.contains(x.svg));
     centreRibbon(sec, r);
     ScrollTrigger.addEventListener('refreshInit', () => { r && r.layout(); centreRibbon(sec, r); });
-    const prev = sec.previousElementSibling;
-    if (prev && (prev.matches('.ig-phero.has-scene') || (prev.classList.contains('pin-spacer') && prev.querySelector(':scope > .ig-phero.has-scene')))) {
     // the home page's company scene, timing for timing: the ribbon draws in as the section rises (from the moment its
     // top enters until it reaches the top), the headline rises word by word, then the texts one after another
     if (r) { r.st.q = 0; r.render(); gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: sec, start: 'top bottom', end: 'top top', scrub: 0.8 } }); }
@@ -907,36 +851,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hd) gsap.from(splitWords(hd), { yPercent: 115, ease: 'none', stagger: 0.05, scrollTrigger: { trigger: sec, start: 'top 98%', end: 'top 40%', scrub: 0.6 } });
     const ps = $$('.ig-page-notes > *', sec);
     if (ps.length) gsap.from(ps, { y: 36, opacity: 0, ease: 'none', stagger: 0.3, scrollTrigger: { trigger: sec, start: 'top 75%', end: 'top 10%', scrub: 0.6 } });
-      return;
-    }
-    // while it stays in place the scene has gone on up under it: its see-through top turns its own colour then
-    const lap = sec.style.background;
-    const bg = (lap.match(/(rgba?\([^)]*\))\s+40svh\)$/) || [])[1];
-    const tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top top', end: '+=90%', pin: true, scrub: 0.8, invalidateOnRefresh: true,
-      onToggle: st => { if (bg) sec.style.background = st.isActive || st.progress === 1 ? bg : lap; } } });
-    if (r) {
-      r.st.q = 0; r.render();
-      const x0 = r.place ? r.place.x : 0;
-      tl.to(r.st, { q: 1, duration: 1, ease: 'none', onUpdate: () => touch(r) }, 0);
-      if (r.place) tl.fromTo(r.place, { x: x0 + 0.04 }, { x: x0, duration: 1.2, ease: 'none', onUpdate: () => touch(r) }, 0);
-    }
-    tl.to({}, { duration: 0.01 }, 1.2);
-    // the texts under the ribbon rise one after another, as the home page's (each with the scroll, after the pin)
-    $$('[data-anim="fade-up"]', sec).forEach(el => (el.children.length > 1 ? [...el.children] : [el]).forEach(p => gsap.from(p, { y: 40, opacity: 0, ease: 'none',
-      scrollTrigger: { trigger: p, pinnedContainer: sec, start: 'top 100%', end: 'top 72%', scrub: 0.6 } })));
   }));
 
   /* ---- services: each row comes in as the home page's blocks do, with the scroll; its wave appears from left to
          right behind a soft edge, as the home page's shapes draw in, over a long stretch of the scroll; under the
          pointer it ripples ---- */
   $$('.ig-svc__row').forEach(row => later(() => {
-    const wave = $('.ig-svc__wave', row), path = wave && $('path', wave), acc = !!row.closest('.is-accordion'), rule = $('.ig-svc__rule', row);
-    const heads = $$('.ig-svc__num, .ig-svc__title, .ig-svc__label', row).filter(e => !e.closest('.ig-svc__panel') && !(acc && e.matches('.ig-svc__title')));
-    if (rule) gsap.from(rule, { scaleX: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 96%', end: 'top 60%', scrub: 0.8 } });
-    gsap.from(heads, { y: 32, opacity: 0, ease: 'none', stagger: 0.1, scrollTrigger: { trigger: row, start: 'top 98%', end: 'top 74%', scrub: 0.6 } });
-    if (acc || !wave) return;
-    const text = $('.ig-svc__text', row);
+    const wave = $('.ig-svc__wave', row), path = wave && $('path', wave), text = $('.ig-svc__text', row);
+    gsap.from($('.ig-svc__title', row), { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 98%', end: 'top 74%', scrub: 0.6 } });
     if (text) gsap.from(text, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 94%', end: 'top 70%', scrub: 0.6 } });
+    if (!path) return;
     const o = { p: 0 }; waveShow(wave, 0);
     gsap.to(o, { p: 1.18, ease: 'none', onUpdate: () => waveShow(wave, o.p), scrollTrigger: { trigger: row, start: 'top 95%', end: 'top 45%', scrub: 1 } });
     path._wv = { k: 1 };

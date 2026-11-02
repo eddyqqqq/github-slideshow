@@ -349,10 +349,6 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
    size, centred, the frame's ends in view) and the title */
 .ig-phero { position: relative; overflow: hidden; background: var(--paper);
   padding: calc(env(safe-area-inset-top, 0px) + max(20px, 68 * var(--pu))) 0 calc(150 * var(--pu)); }
-.ig-phero__logo { display: block; width: var(--logo-w); margin-left: max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu)); position: relative; z-index: 2; }
-.ig-phero__logo .logo { width: 100%; }
-.logo-link.is-colour .logo .s { fill: #005dac; }
-.logo-link.is-colour .logo .t { fill: #000; }
 .ig-phero__stage { position: relative; margin-top: calc(80 * var(--pu));
   --svgw: calc(min(100vw, 1920px) * var(--fw) / (var(--fx1) - var(--fx0))); }
 .ig-phero__svg { display: block; width: var(--svgw); max-width: none; height: auto; margin-left: calc(50% - var(--svgw) / 2); overflow: visible; }
@@ -368,6 +364,8 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-phero.has-scene { min-height: 100vh; min-height: 100lvh; }
 .ph-flood-fill { fill: var(--accent, var(--agency)); }
 .ig-phero.is-flooded { background: var(--accent, var(--agency)); }
+/* the section after the page hero's scene slides over the scene's last 55 % of a screen, as on the home page */
+.anim .after-scene { position: relative; z-index: 1; margin-top: -55vh; margin-top: -55svh; }
 html body .ig-top.is-held { position: fixed; }   /* the header stays while the page hero's scene holds */
 .ig-phero__scene { position: absolute; z-index: 3; left: 0; right: 0; top: 60%;
   padding: 0 var(--gut-r) 0 max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu)); color: var(--ink); }
@@ -382,8 +380,6 @@ html body .ig-top.is-held { position: fixed; }   /* the header stays while the p
    the top left, the frame from 98 units down, the title as far down as the home page's and as big, all on one left line */
 @media (min-aspect-ratio: 1/1) and (min-width: 760px) {
   .ig-phero { padding-top: 0; }
-  .ig-phero__logo { position: absolute; top: max(14px, 22 * var(--hu)); left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); margin: 0;
-    width: calc(var(--logo-w) * .88 * 74 / 75); }   /* the home page's logo size (Shipping Agency is 74 px wide to its 75) */
   .ig-phero__stage { margin-top: calc(98 * var(--hu) + var(--hdy)); }
   /* the home title starts 14 units above the end of its 878.48-unit frame; this frame is 819.33 units tall */
   .ig-phero__title { margin-top: calc(45.15 * var(--hu)); padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); font-size: max(24px, 70 * var(--hu)); }
@@ -391,7 +387,6 @@ html body .ig-top.is-held { position: fixed; }   /* the header stays while the p
 /* phones: the frame shown 1300 units across the screen, centred on --fpx (the ship), the logo and title smaller */
 @media (max-width: 760px) and (orientation: portrait) {
   .ig-phero { padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 20px) + var(--m-logo, 56px) * 1.76); padding-bottom: 64px; }
-  .ig-phero__logo { width: var(--m-logo, 56px); margin-left: var(--gut); }
   .ig-phero__stage { margin-top: 36px; --svgw: calc(100vw * var(--fw) / 1300); }
   .ig-phero__svg { margin-left: calc(50% - var(--fpx) * 100vw / 1300); }
   .ig-phero__title { margin-top: 40px; font-size: var(--h-xl); max-width: 8.4em; text-wrap: balance; }   /* phones: a long name on two lines, clear of the edge */
@@ -447,12 +442,6 @@ html.menu-open, html.menu-open body { overflow: hidden; }
    fades out before the middle; the ship and the quay stay clear */
 .ig-cover.is-tint .ig-cover__shade { background: linear-gradient(180deg, color-mix(in srgb, var(--cv-to) 88%, transparent) 0%,
   color-mix(in srgb, var(--cv-to) 55%, transparent) 22%, color-mix(in srgb, var(--cv-to) 18%, transparent) 42%, transparent 58%); }
-/* a one-screen cover with text: the home page's second scene (pinned; the gradient comes in, the words rise, then the
-   colour fills the screen and the section below follows in it) — the home page's .shade, in the cover's colour */
-.ig-cover.is-screen.has-content .ig-cover__shade { --a: 0%; --b: 62%;
-  background: linear-gradient(158deg, var(--cv-from) 0%, var(--cv-from) var(--a), color-mix(in srgb, var(--cv-from) 78%, transparent) calc(var(--a) + (var(--b) - var(--a)) * .45), transparent var(--b)); }
-.anim .after-scene { position: relative; z-index: 1; margin-top: -55vh; margin-top: -55svh; }
-.ig-cover.is-screen.has-content .ig-cover__inner { padding-top: calc(env(safe-area-inset-top, 0px) + clamp(120px, 16vh, 180px)); }
 @media (max-width: 760px) and (orientation: portrait) {
 }
 .ig-cover__inner { position: relative; z-index: 1; padding-top: calc(120 * var(--pu)); padding-bottom: calc(120 * var(--pu)); }
@@ -483,7 +472,6 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 .ig-svc__text { margin: 0; font-size: var(--link); line-height: 1.5; color: var(--text); }
 .ig-svc__wave { display: block; width: 212px; max-width: 100%; height: auto; overflow: visible; }
 .ig-svc__wave path { fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; }   /* the script measures it and draws it in */
-.ig-svc__num { font-size: var(--small); letter-spacing: .06em; color: var(--accent); font-variant-numeric: tabular-nums; }
 
 /* 1 · as designed: title, the wave, the text */
 .ig-svc.is-design { display: grid; gap: calc(110 * var(--pu)); }
@@ -496,40 +484,5 @@ html.menu-open, html.menu-open body { overflow: hidden; }
   .is-design .ig-svc__wave { justify-self: start; width: 150px; }
 }
 
-/* previews only (?list=2, ?list=3) */
-/* 2 · editorial: numbered rows between lines; the line draws in, the row answers the pointer */
-.ig-svc.is-editorial { counter-reset: svc; border-bottom: 1px solid var(--ink); }
-.is-editorial .ig-svc__row { position: relative; display: grid; grid-template-columns: minmax(0, 90px) minmax(0, 1fr) minmax(0, 1fr); gap: 24px 40px; align-items: baseline;
-  padding: calc(44 * var(--pu)) 0; transition: background-color .5s; }
-.is-editorial .ig-svc__rule { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--ink); transform-origin: 0 50%; }
-.is-editorial .ig-svc__title { font-size: calc(var(--h-l) * .82); transition: translate .6s cubic-bezier(.2, .7, .2, 1), color .4s; }   /* translate, not transform: the entrance animates transform */
-.is-editorial .ig-svc__row:hover .ig-svc__title { translate: 10px 0; color: var(--accent); }
-.is-editorial .ig-svc__text { max-width: 46ch; }
-@media (max-width: 760px) { .is-editorial .ig-svc__row { grid-template-columns: 1fr; gap: 12px; padding: 32px 0; } }
-
-/* 3 · accordion: one service open at a time; the wave draws as it opens */
-.ig-svc.is-accordion { border-top: 1px solid var(--line); }
-.is-accordion .ig-svc__row { border-bottom: 1px solid var(--line); }
-.is-accordion .ig-svc__title button { all: unset; box-sizing: border-box; width: 100%; display: grid; grid-template-columns: minmax(0, 90px) minmax(0, 1fr) 44px; align-items: center; gap: 24px;
-  padding: calc(36 * var(--pu)) 0; cursor: pointer; }
-.is-accordion .ig-svc__title button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.is-accordion .ig-svc__label { font-size: calc(var(--h-l) * .78); line-height: 1.15; transition: color .4s; }
-.is-accordion .ig-svc__row:hover .ig-svc__label, .is-accordion .is-open .ig-svc__label { color: var(--accent); }
-.ig-svc__plus { position: relative; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); transition: background-color .4s, border-color .4s; }
-.ig-svc__plus::before, .ig-svc__plus::after { content: ""; position: absolute; left: 14px; right: 14px; top: 21px; height: 2px; background: var(--ink); transition: transform .45s cubic-bezier(.65, 0, .25, 1), background-color .4s; }
-.ig-svc__plus::after { transform: rotate(90deg); }
-.is-open .ig-svc__plus { background: var(--accent); border-color: var(--accent); }
-.is-open .ig-svc__plus::before, .is-open .ig-svc__plus::after { background: var(--on); }
-.is-open .ig-svc__plus::after { transform: rotate(0); }
-.is-accordion .ig-svc__panel { overflow: hidden; }
-.is-accordion .ig-svc__body { display: grid; grid-template-columns: minmax(0, 90px) minmax(0, 212px) minmax(0, 1fr); gap: 24px; align-items: center; padding: 0 0 calc(40 * var(--pu)); }
-.is-accordion .ig-svc__body .ig-svc__wave { grid-column: 2; color: var(--accent); }
-.is-accordion .ig-svc__body .ig-svc__text { max-width: 52ch; }
-@media (max-width: 760px) {
-  .is-accordion .ig-svc__title button { grid-template-columns: 34px minmax(0, 1fr) 40px; gap: 12px; padding: 24px 0; }
-  .ig-svc__plus { width: 40px; height: 40px; } .ig-svc__plus::before, .ig-svc__plus::after { left: 12px; right: 12px; top: 19px; }
-  .is-accordion .ig-svc__body { grid-template-columns: 1fr; gap: 14px; padding-bottom: 28px; }
-  .is-accordion .ig-svc__body .ig-svc__wave { grid-column: 1; width: 120px; }
-}
 
 
