@@ -358,7 +358,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ph-img { opacity: 0; }
 .ph-img.is-ready { opacity: 1; transition: opacity .5s; }
 .ig-phero__title { margin: calc(130 * var(--pu)) 0 0; padding: 0 var(--gut-r) 0 max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu));
-  color: var(--blue); font-size: max(34px, 60 * var(--pu)); line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }   /* as the home page's title */
+  color: var(--blue); font-size: max(34px, 60 * var(--pu)); line-height: 1.05; font-weight: 500; letter-spacing: -0.02em; }   /* as the home page's title */
 .ig-phero__title .w { padding-bottom: .26em; margin-bottom: -.26em; }
 /* the page hero's scene (blocks inside the hero): one screen tall while it holds; the flood is drawn along the frame */
 .ig-phero.has-scene { min-height: 100vh; min-height: 100lvh; }
@@ -459,17 +459,20 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 }
 
 /* the statements on company pages: large and light, as in the design */
-.ig-page-statement { font-size: var(--h-l); line-height: 1.15; font-weight: 400; letter-spacing: -0.02em; max-width: 13.2em; margin: 0 0 calc(30 * var(--pu)); }
+.ig-page-statement { font-size: var(--h-l); line-height: 1.15; font-weight: 500; letter-spacing: -0.02em; max-width: 13.2em; margin: 0 0 calc(30 * var(--pu)); }
 .ig-section .ig-page-statement { color: inherit; }
 .ig-cover .wp-block-buttons, .ig-page-figures .wp-block-buttons { margin-top: 0; }
-.ig-page-notes { max-width: 640px; margin-top: calc(470 * var(--pu)); display: grid; gap: 18px; }
-.ig-page-notes p { margin: 0; font-size: var(--link); line-height: 1.5; }
-@media (max-width: 760px) and (orientation: portrait) { .ig-page-notes { margin-top: 300px; } .ig-page-notes p { font-size: var(--body); }  }
+.ig-page-notes { max-width: calc(640 * var(--pu)); margin-top: calc(470 * var(--pu)); display: grid; gap: calc(24 * var(--pu)); }
+.ig-page-notes p { margin: 0; font-size: var(--body); line-height: 1.2; }   /* the design: 20 px on 24 px lines at 1440 */
+@media (max-width: 1024px) { .ig-page-notes { max-width: 640px; } }
+/* line breaks set in the text follow the design on wide screens; phones wrap on their own */
+@media (max-width: 760px) { :is(.ig-page-statement, .ig-page-list li, .ig-svc__title) br { display: none; } }
+@media (max-width: 760px) and (orientation: portrait) { .ig-page-notes { margin-top: 300px; gap: 18px; } .ig-page-notes p { font-size: var(--body); line-height: 1.3; }  }
 /* the facility (Interlink): its statement, the texts close under it and a list of services in large type, as designed
    at 1440 (72 and 147 px apart, the list's lines 112 px apart) */
 .ig-page-facility .ig-page-notes { margin-top: calc(72 * var(--pu)); gap: 24px; }
 .ig-page-list { list-style: none; margin: calc(147 * var(--pu)) 0 0; padding: 0; display: grid; gap: calc(57 * var(--pu)); }
-.ig-page-list li { margin: 0; font-size: var(--h-l); line-height: 1.15; font-weight: 400; letter-spacing: -0.02em; color: var(--ink); max-width: 22em; }
+.ig-page-list li { margin: 0; font-size: var(--h-l); line-height: 1.15; font-weight: 500; letter-spacing: -0.02em; color: var(--ink); max-width: 22em; }
 @media (max-width: 760px) and (orientation: portrait) {
   .ig-page-facility .ig-page-notes { margin-top: 40px; gap: 18px; }
   .ig-page-list { margin-top: 64px; gap: 26px; }
@@ -477,16 +480,17 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 
 /* services list: four layouts */
 .ig-svc { --accent: var(--agency); margin: 0; padding: 0; list-style: none; }
-.ig-svc__title { margin: 0; font-size: var(--h-l); line-height: 1.12; font-weight: 400; letter-spacing: -0.02em; color: var(--ink); }
-.ig-svc__text { margin: 0; font-size: var(--link); line-height: 1.5; color: var(--text); }
+.ig-svc__title { margin: 0; font-size: var(--h-l); line-height: 1.12; font-weight: 500; letter-spacing: -0.02em; color: var(--ink); }
+.ig-svc__text { margin: 0; font-size: var(--body); line-height: 1.2; color: var(--text); }
 .ig-svc__wave { display: block; width: 212px; max-width: 100%; height: auto; overflow: visible; }
 .ig-svc__wave path { fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; }   /* the script measures it and draws it in */
 
 /* 1 · as designed: title, the wave, the text */
 .ig-svc.is-design { display: grid; gap: calc(110 * var(--pu)); }
 .is-design .ig-svc__row { display: grid; grid-template-columns: minmax(0, 335fr) minmax(0, 324fr) minmax(0, 475fr) minmax(0, 170fr); align-items: center; }
-.is-design .ig-svc__wave { justify-self: center; color: var(--ink); }
-.is-design .ig-svc__wave[data-mark="zigzag"] { width: 252px; justify-self: start; }   /* drawn at the start of its column (Interlink design) */
+/* the mark sits in the middle of its column with room on both sides, so it never touches the title or the text */
+.is-design .ig-svc__wave { justify-self: center; color: var(--ink); max-width: calc(100% - 2 * clamp(14px, 2.6vw, 40px)); }
+.is-design .ig-svc__wave[data-mark="zigzag"] { width: 252px; }
 @media (max-width: 1024px) { .is-design .ig-svc__row { grid-template-columns: minmax(0, 1.1fr) minmax(0, .6fr) minmax(0, 1.2fr); } }
 @media (max-width: 760px) {
   .ig-svc.is-design { gap: 56px; }

@@ -550,8 +550,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return `M${f1(MX[0])} ${far}L${f1(xr)} ${far}L` + a.join('L') + 'Z';
     };
     const P = (xs, ys) => xs.map((x, n) => `${f1(x)} ${f1(ys[n])}`).join('L');
-    const range = (a, b) => Array.from({ length: b - a + 1 }, (_, n) => a + n);
-    const WK = range(w0, w1);   // the columns with a window
     // closing (c: 0 → 1): the designer's outline itself, its points below the middle of the window raised by c × the
     // window's height there (the bars' too, by the height at the window's end): the shape stays exactly as drawn, the
     // bars keep their width, and every part closes in step
@@ -572,10 +570,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const WL = WOUT.map(q => { const t = tAt(q[0]); return [q[0], q[1], t, 1]; });
     const poly = (pts, fn) => 'M' + pts.map(q => { const [x, y] = fn(q); return `${f1(x)} ${f1(y)}`; }).join('L') + 'Z';
     const shut = (q, c) => [q[0], q[1] <= q[2] ? q[1] : q[2] + (q[1] - q[2]) * Math.max(0, 1 - q[3] * c)];
-    const frameD = c => poly(OL, q => shut(q, c)) + poly(WL, q => shut(q, c));
+    // (shut, the window's outline is left out: pressed onto a line it can leave a hairline crack along the frame)
+    const frameD = c => poly(OL, q => shut(q, c)) + (c < 0.995 ? poly(WL, q => shut(q, c)) : '');
     const xL = X[w0], xR = X[w1];
     // the photo's window as it closes; a few units under the bands, so no hairline shows
-    const windowD = c => 'M' + P(WK.map(k => X[k]), WK.map(k => T[k] - 3)) + 'L' + P(WK.map(k => X[k]).reverse(), WK.map(k => Math.max(T[k] - 3, B[k] + 3 - HGT[k] * c)).reverse()) + 'Z';
+    // the photo's window: the designer's own window outline (to its slanted ends, no gap at the bars), closing with the
+    // frame; under the photo, the frame's colour in the same shape, so no hairline of white page can show while it shuts
+    const windowD = c => c < 0.995 ? poly(WL, q => shut(q, c)) : 'M0 0Z';
+    const under = document.createElementNS(NS2, 'path'); under.setAttribute('class', 'ph-frame ph-under'); under.setAttribute('d', 'M0 0Z');
+    art.insertBefore(under, art.firstChild);
     // the flood: the closed frame itself growing (its upper points up, its lower points down, the bars outwards, all by
     // g) until it covers the hero: it starts as exactly the closed frame, nothing appears at once (a plain fill)
     const fl = document.createElementNS(NS2, 'path'); fl.setAttribute('class', 'ph-flood-fill'); fl.setAttribute('d', 'M0 0Z'); flood.appendChild(fl);
@@ -593,6 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
       halves.forEach(h => { h.style.display = closing ? 'none' : ''; });
       dyn.setAttribute('d', closing ? frameD(st.c) : 'M0 0Z');
       region.setAttribute('d', windowD(st.c));
+      under.setAttribute('d', closing && st.c < 0.995 ? windowD(st.c) : 'M0 0Z');
       // the photo keeps its middle in the middle of the closing window (it is not cut off from below)
       const up = avgH * st.c / 2;
       photo.setAttribute('transform', `translate(0 ${f1(-up)}) translate(${f1(W / 2)} ${f1(Hh / 2)}) scale(${st.zi.toFixed(4)}) translate(${f1(-W / 2)} ${f1(-Hh / 2)})`);

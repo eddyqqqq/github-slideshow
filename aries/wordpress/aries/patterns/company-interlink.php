@@ -44,14 +44,14 @@
 <!-- /wp:imagient/section -->
 
 <!-- wp:imagient/section {"className":"ig-page-services","spacing":{"d":{"pt":"8","pb":"8"},"t":{},"m":{}}} -->
-<!-- wp:imagient/services {"items": [{"title": "Rail Freight", "text": "We provide specialized rail transport services mainly for grains, steel products and fertilizers across Romania, connecting inland loading points with ports and other destinations."}, {"title": "Rail Operations Coordination", "text": "Our team coordinates rail operations throughout the transport process, covering loading, dispatch, arrival and unloading, with continuous operational follow-up at every stage."}, {"title": "Wagon Capacity Management", "text": "We secure wagon availability so cargo reaches terminal operations and vessel loading on schedule, with capacity planned around the specific timing of each shipment."}, {"title": "Train Schedule Optimization", "text": "Train movements are optimized according to terminal availability and vessel loading schedules, keeping rail operations in sync with each shipment’s requirements."}], "color": "interlink", "mark": "zigzag"} /-->
+<!-- wp:imagient/services {"items": [{"title": "Rail <br>Freight", "text": "We provide specialized rail transport services mainly for grains, steel products and fertilizers across Romania, connecting inland loading points with ports and other destinations."}, {"title": "Rail <br>Operations <br>Coordination", "text": "Our team coordinates rail operations throughout the transport process, covering loading, dispatch, arrival and unloading, with continuous operational follow-up at every stage."}, {"title": "Wagon <br>Capacity <br>Management", "text": "We secure wagon availability so cargo reaches terminal operations and vessel loading on schedule, with capacity planned around the specific timing of each shipment."}, {"title": "Train <br>Schedule <br>Optimization", "text": "Train movements are optimized according to terminal availability and vessel loading schedules, keeping rail operations in sync with each shipment’s requirements."}], "color": "interlink", "mark": "zigzag"} /-->
 <!-- /wp:imagient/section -->
 
 <!-- wp:imagient/cover {"imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/shipping-agency-port.webp' ) ); ?>","alt":"The grain terminal in the port","from":"interlink","to":"group","shade":"tint"} /-->
 
 <!-- wp:imagient/section {"className":"ig-page-facility","spacing":{"d":{"pt":"8","pb":"9"},"t":{},"m":{}}} -->
 <!-- wp:heading {"className":"ig-page-statement","igAnim":"split"} -->
-<h2 class="wp-block-heading ig-page-statement">Handling annual bulk grain volumes that reach 100,000 tons.</h2>
+<h2 class="wp-block-heading ig-page-statement">Handling annual bulk grain volumes that reach <br>100,000 tons.</h2>
 <!-- /wp:heading -->
 
 <!-- wp:group {"className":"ig-page-notes","layout":{"type":"default"}} -->
@@ -78,7 +78,7 @@
 <!-- /wp:list-item --><!-- wp:list-item -->
 <li>Cargo Fumigation</li>
 <!-- /wp:list-item --><!-- wp:list-item -->
-<li>Phytosanitary, Veterinary &amp; Origin Certificates</li>
+<li>Phytosanitary, Veterinary &amp; Origin <br>Certificates</li>
 <!-- /wp:list-item --><!-- wp:list-item -->
 <li>Container Sea Freight</li>
 <!-- /wp:list-item --><!-- wp:list-item -->

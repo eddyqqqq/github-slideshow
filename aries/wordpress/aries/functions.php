@@ -26,13 +26,21 @@ add_action( 'wp_enqueue_scripts', function () {
 
 // the two Area weights are needed on every page: start them with the HTML instead of after the CSS
 add_action( 'wp_head', function () {
-	foreach ( array( 'area-regular', 'area-bold' ) as $f ) {
+	foreach ( array( 'area-regular', 'area-medium', 'area-bold' ) as $f ) {
 		$file = get_theme_file_path( 'assets/fonts/' . $f . '.woff2' );
 		if ( file_exists( $file ) ) {
 			printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( get_theme_file_uri( 'assets/fonts/' . $f . '.woff2' ) ) );
 		}
 	}
 }, 2 );
+
+// Area Normal Medium (the design's weight for headings and texts on the company pages): declared only when its file is
+// in assets/fonts (a licensed file, put there with the others); until then the browser uses the Regular
+add_action( 'wp_head', function () {
+	if ( file_exists( get_theme_file_path( 'assets/fonts/area-medium.woff2' ) ) ) {
+		printf( '<style id="aries-medium">@font-face{font-family:"Area Normal";font-weight:500;font-style:normal;font-display:swap;src:url("%s") format("woff2");}</style>' . "\n", esc_url( get_theme_file_uri( 'assets/fonts/area-medium.woff2' ) ) );
+	}
+}, 3 );
 
 // no emoji script or its styles: the site has no emoji, and every page saved a script and an inline style for them
 add_action( 'init', function () {
