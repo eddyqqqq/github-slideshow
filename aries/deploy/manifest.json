@@ -1,13 +1,13 @@
 {
- "version": "1.34.0",
+ "version": "1.34.1",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
-    "assets/aries.css": "23d21e6544790ae4bcf112bb70fa453ea903567a2f7dcbea1a860251c4370bc6",
+    "assets/aries.css": "7a98fc2419513504e644df5b7efd6ff928ef6f9f4a9a4791ab4ddc467722bd2a",
     "assets/aries.js": "12cfddfea09e64f6b98ef2b3ab0cf8e496b8c46b133fa9725d0e330554a11601",
-    "assets/aries.min.css": "212f798ac95973c2fdfa1c95ec5bc899b4e2bff225b84aafbebcd249f28b3863",
+    "assets/aries.min.css": "8c05be31fc96aa9ec4db119edc8fd4400b902da7fd3e868256884dd64b6a63ec",
     "assets/aries.min.js": "20cfedf4e023bba0f307fb2db03c61e711c5c3a7feac54107db0c0e09bd9fd4c",
     "assets/editor.css": "89374f3f07010a67230b737bac6e67ffac1c5c71d4fba0f0e3f62986762ae5a8",
     "assets/editor.js": "f0be32d3f7bb1d13698fa956c1de388e09d759deb5f0d8d4dae3fc4e4cf43486",
@@ -21,7 +21,7 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "036571710d9ff97e7546f9a2be435c2e47663f928819fd40f909a85ec835b42e",
+    "imagient-blocks.php": "fe71c340f91f8b58df389df8728284a76c5436c28de8d71f6122a1a89eb0e235",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "866b727c3619dcb2ca206c9904a04a523066ba0b8e9208048d916b53969b429b",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
