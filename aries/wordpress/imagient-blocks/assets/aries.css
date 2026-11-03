@@ -486,8 +486,9 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 @media (min-aspect-ratio: 1/1) and (min-width: 760px) {
   .ig-phero { padding-top: 0; }
   .ig-phero__stage { margin-top: calc(98 * var(--hu) + var(--hdy)); }
-  /* the home title starts 14 units above the end of its 878.48-unit frame; this frame is 819.33 units tall */
-  .ig-phero__title { margin-top: calc(45.15 * var(--hu)); padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); font-size: max(24px, 70 * var(--hu)); }
+  /* the title at the same height on every page: 45.15 units under an 819.33-unit frame (the companies'), so under a
+     taller frame (the group's, 878.48) it moves up by the difference, 14 units into it, as on the home page */
+  .ig-phero__title { margin-top: calc((45.15 + 819.33 - var(--fh, 819.33)) * var(--hu)); padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); font-size: max(24px, 70 * var(--hu)); }
 }
 /* phones: the frame shown 1300 units across the screen, centred on --fpx (the ship), the logo and title smaller */
 @media (max-width: 760px) and (orientation: portrait) {
