@@ -472,7 +472,14 @@ window.__igRun = () => {
       hdr.classList.toggle('is-stuck', scrollY > innerHeight * 0.4);
       // the logo holds the top of the page and a company page's scene and coloured section; further down it steps
       // aside (over the page's texts it would sit on them), the menu button stays everywhere
-      hdr.classList.toggle('logo-off', scrollY > 8 && !ul.some(e => e.matches('.ig-phero, .after-scene')));
+      // and wherever a text passes under it (a heading scrolling up through the coloured section) it steps aside too
+      let overText = false;
+      if (logoBox && scrollY > 8) {
+        const r = logoBox.getBoundingClientRect(), x = r.left + r.width / 2;
+        overText = [r.top + r.height * 0.15, r.top + r.height / 2, r.bottom - r.height * 0.15].some(y => document.elementsFromPoint(x, y)
+          .some(e => !hdr.contains(e) && e.matches('h1, h2, h3, h4, h5, h6, p, li, label, input, textarea, .wp-block-button__link') && !faded(e)));
+      }
+      hdr.classList.toggle('logo-off', scrollY > 8 && (overText || !ul.some(e => e.matches('.ig-phero, .after-scene'))));
     };
     let toneQ = 0, toneT = [];
     const queueTone = () => {
@@ -931,6 +938,11 @@ window.__igRun = () => {
     if (r) { r.st.q = 0; r.render(); gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: sec, start: () => `top+=${Math.round(mid())} 112%`, end: () => `top+=${Math.round(mid())} 34%`, scrub: 0.8, invalidateOnRefresh: true } }); }
     const hd = $('.ig-page-statement', sec);
     if (hd) gsap.from(splitWords(hd), { yPercent: 115, ease: 'none', stagger: 0.05, scrollTrigger: { trigger: sec, start: 'top 98%', end: 'top 40%', scrub: 0.6 } });
+    // its other headings set to rise word by word (the contact form's title …), each as it comes into view
+    $$('[data-anim="split"]', sec).forEach(x => splitTargets(x).forEach(h => { if (h === hd) return;
+      gsap.from(splitWords(h), { yPercent: 115, ease: 'none', stagger: 0.04, scrollTrigger: { trigger: h, start: 'top 92%', end: 'top 58%', scrub: 0.6 } }); }));
+    // and its fade-ups (fields, texts)
+    $$('[data-anim="fade-up"]', sec).filter(x => !x.closest('.ig-page-notes')).forEach(x => gsap.from(x, { y: 40, opacity: 0, ease: 'none', scrollTrigger: { trigger: x, start: 'top 94%', end: 'top 66%', scrub: 0.6 } }));
     const ps = $$('.ig-page-notes > *', sec);
     // the texts under the ribbon sit low in the section: each comes in as it rises into the screen (tied to the
     // section's top they finished while still below it, on phones most of all)

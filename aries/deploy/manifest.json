@@ -1,12 +1,14 @@
 {
- "version": "1.30.2",
+ "version": "1.31.0",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
-    "assets/aries.css": "98dac8e814e92e59f7c3cf1e6eff7f00d9ddcb31315b0abc0749bfc8590d3174",
-    "assets/aries.js": "9677a7ba45f4070bd5f99adea40bac80a264069f24688b139b36867234d5419b",
+    "assets/aries.css": "3cc57b8568d4d45596d6cc1fc316b498f4f0148b4d9efe444c6f2a50d6cb6689",
+    "assets/aries.js": "ed9a6db4f5da18e1f5a9b7ca6e28205c750fbb73768d7278760b9b2e174d4cf6",
+    "assets/aries.min.css": "6cecdf75831f752a47747291ad9378db2d6d097ad1972719483921c41cc41ee3",
+    "assets/aries.min.js": "8570d1bc64f0783fd61347c8142d42484ae4d37bf4af6e3f31cd632d0c16dccc",
     "assets/editor.css": "89374f3f07010a67230b737bac6e67ffac1c5c71d4fba0f0e3f62986762ae5a8",
     "assets/editor.js": "f0be32d3f7bb1d13698fa956c1de388e09d759deb5f0d8d4dae3fc4e4cf43486",
     "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
@@ -19,7 +21,7 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "5c662cc075721f4cedfec42b28b601b982ade1b680e6fc6539388694de295ff0",
+    "imagient-blocks.php": "465f95a21dde805d29d748671db94f77624395305ec71e869df0083dc90bac3e",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "866b727c3619dcb2ca206c9904a04a523066ba0b8e9208048d916b53969b429b",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
@@ -38,6 +40,7 @@
     "assets/images/card-vessel.avif": "c1b9b3972b4246ac5d90f874ab346661215d2cd4ca28f59c53862056460d66f5",
     "assets/images/card-vessel.webp": "0a0bc7a7637f795b715679d0d0bdc9bef7a21ace961ab9e2c8dc33517bb0b63d",
     "assets/images/hero-1600.avif": "e77aa8bc39a17bb1e357e1a45ed5e8a62dbf69175421a5badd7720be22d041ae",
+    "assets/images/hero-2000.avif": "2805fd1fdea9b62fa50c0202bea179b54951fa3a5e4296c655b6961c7330d9ae",
     "assets/images/hero-2400.avif": "d94a89a243f126b6dc2f969ca364251fabce4f25e8554c19c861b1f0c5736ad6",
     "assets/images/hero-3600.avif": "1f26643be34edb29652a358c3c4d57df90ce41b5ce7c9d06fd0baf8be744fa6d",
     "assets/images/hero.webp": "392961be27c6ba526a9b57dffd18528e21ba9ba889a16fe85003d40199d72262",
@@ -85,7 +88,7 @@
     "patterns/thank-you.php": "6f477f37cf0ca64d5685617e053588849c1026d4a97a34195dda3a6442fe8ca0",
     "patterns/three-boxes.php": "976a98c6833da644bb8e41f6b30fc3b5ea98136154d9cdbcb2ac941ec3467f6b",
     "screenshot.png": "34bf19db6ee58a6c74053b44d740f2298125dec650e14fadd98bb451126d5fa8",
-    "style.css": "1439e9139860d21df85d7a6c358037ff18e19d64cadb603959dffb850b5fc0f3",
+    "style.css": "dbbb7d1483b5dab89cb4095b470ab0a691dcb3fdf2e54353bcdf2ecc0d567835",
     "templates/404.html": "21a392a07b93fb6f9ab5e59e25a4cab409d4f10962738cb7d5fee03665a0b695",
     "templates/front-page.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
     "templates/index.html": "788d6baa71bcef484a405d1285366bf08e86ea54912f07761d65f5b65d1ee299",

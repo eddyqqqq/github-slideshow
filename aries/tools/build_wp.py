@@ -127,6 +127,29 @@ def frames_php(plugin):
         fh.write(php)
 
 
+def minify(plugin):
+    """assets/aries.min.js and aries.min.css, served on the site (the readable files with SCRIPT_DEBUG): terser and
+    lightningcss from IMAGIENT_TOOLS (a node_modules/.bin folder) or the PATH; without them the readable files serve."""
+    import shutil, subprocess
+    tools = os.environ.get('IMAGIENT_TOOLS', '')
+    find = lambda n: (os.path.join(tools, n) if tools and os.path.exists(os.path.join(tools, n)) else shutil.which(n))
+    a = os.path.join(plugin, 'assets')
+    terser, lcss = find('terser'), find('lightningcss')
+    if terser:
+        subprocess.run([terser, os.path.join(a, 'aries.js'), '-c', 'passes=2', '-m', '--ecma', '2020', '-o', os.path.join(a, 'aries.min.js')], check=True)
+    else:
+        print('warning: terser not found, aries.min.js not rebuilt')
+    if lcss:
+        subprocess.run([lcss, '--minify', '--targets', '>= 0.5%', os.path.join(a, 'aries.css'), '-o', os.path.join(a, 'aries.min.css')], check=True)
+    else:
+        print('warning: lightningcss not found, aries.min.css not rebuilt')
+    # a stale minified file would hide every later change: refuse to build with one older than its source
+    for src, out in (('aries.js', 'aries.min.js'), ('aries.css', 'aries.min.css')):
+        o = os.path.join(a, out)
+        if os.path.exists(o) and os.path.getmtime(o) < os.path.getmtime(os.path.join(a, src)):
+            sys.exit('%s is older than %s: install terser and lightningcss (IMAGIENT_TOOLS) or delete it' % (out, src))
+
+
 def check_css(path):
     """Stop the build on unbalanced braces: one stray } makes browsers drop the rule after it (Safari did)."""
     import re
@@ -147,6 +170,7 @@ def main():
     for css in (os.path.join(plugin, 'assets', 'aries.css'), os.path.join(plugin, 'assets', 'editor.css'), os.path.join(theme, 'style.css')):
         check_css(css)
     frames_php(plugin)
+    minify(plugin)
     shapes = design_svg.data()
     shapes.pop('hero', None)   # the first design's band: the static pages only
     data = json.dumps(shapes, separators=(',', ':'))
