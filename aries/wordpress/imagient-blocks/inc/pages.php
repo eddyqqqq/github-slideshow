@@ -29,7 +29,7 @@ function imagient_pages_defaults() {
 			array( 'label' => 'Aries Shipping Agency', 'url' => '/aries-shipping-agency/' ),
 			array( 'label' => 'Aries Interlink', 'url' => '/aries-interlink/' ),
 			array( 'label' => 'Aries Logistics', 'url' => '/aries-logistics/' ),
-			array( 'label' => 'Contact', 'url' => '#contact' ),
+			array( 'label' => 'Contact', 'url' => '/contact/' ),
 		),
 	);
 }

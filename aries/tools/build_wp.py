@@ -184,7 +184,8 @@ def main():
 
     dist = os.path.join(ROOT, 'dist')
     os.makedirs(dist, exist_ok=True)
-    for name, src in (('imagient-blocks', plugin), ('aries', theme)):
+    forms = os.path.join(WP, 'imagient-forms')
+    for name, src in (('imagient-blocks', plugin), ('aries', theme), ('imagient-forms', forms)):
         out = os.path.join(dist, name + '.zip')
         with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as z:
             for base, _, files in os.walk(src):
@@ -202,7 +203,7 @@ def main():
     deployer = os.path.join(ROOT, 'wordpress', 'imagient-deploy')
     version = re.search(r'Version:\s*(\S+)', open(os.path.join(plugin, 'imagient-blocks.php')).read()).group(1)
     packages = {}
-    for slug, kind, src in (('imagient-blocks', 'plugin', plugin), ('aries', 'theme', theme), ('imagient-deploy', 'plugin', deployer)):
+    for slug, kind, src in (('imagient-blocks', 'plugin', plugin), ('aries', 'theme', theme), ('imagient-forms', 'plugin', forms), ('imagient-deploy', 'plugin', deployer)):
         rel_src = os.path.relpath(src, ROOT)
         files = {}
         for base, _, names in os.walk(src):
