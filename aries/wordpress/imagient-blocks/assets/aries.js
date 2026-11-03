@@ -7,6 +7,11 @@
  * loads; ribbons redraw only while visible, and all drawing is batched on the GSAP ticker.
  */
 // started by the guard printed in the page's head (imagient-blocks.php) once every script it needs has arrived
+// Contact Form 7: once a form is sent, the page in its hidden field "redirect" (the thank-you page), if it has one
+document.addEventListener('wpcf7mailsent', e => {
+  const r = e.target && e.target.querySelector('input[name="redirect"]');
+  if (r && r.value) location.href = r.value;
+});
 window.__igRun = () => {
   if (window.__igRan) return;
   window.__igRan = true;
@@ -479,7 +484,7 @@ window.__igRun = () => {
       let past = false;
       const sec = $('.after-scene');
       if (logoBox && sec) {
-        const first = $('h1, h2, h3, h4, h5, h6, p, .ig-form', sec);
+        const first = $('h1, h2, h3, h4, h5, h6, p, .wpcf7', sec);
         past = !!first && first.getBoundingClientRect().top < logoBox.getBoundingClientRect().bottom + 16;
       }
       hdr.classList.toggle('logo-off', scrollY > 8 && (past || !ul.some(e => e.matches('.ig-phero, .after-scene'))));

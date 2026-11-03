@@ -33,6 +33,9 @@ add_action( 'wp_head', function () {
 	}
 }, 2 );
 
+// Contact Form 7: the form's template as written (its own layout, no paragraphs or line breaks added)
+add_filter( 'wpcf7_autop_or_not', '__return_false' );
+
 // no emoji script or its styles: the site has no emoji, and every page saved a script and an inline style for them
 add_action( 'init', function () {
 	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
