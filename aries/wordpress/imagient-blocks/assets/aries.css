@@ -354,11 +354,10 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 /* ======================= contact page; forms (Imagient Forms) in the site's look ======================= */
 /* the phone numbers, email and address in the page hero's scene: large, one under the other, a little higher than a
    statement (they take more lines) */
-.ig-phero__scene:has(.ig-contact-lines) { top: 44%; }
-.ig-contact-lines p { margin: 0 0 calc(22 * var(--pu)); font-size: var(--h-l); line-height: 1.2; font-weight: 500; letter-spacing: -0.02em; }
+.ig-contact-lines p { margin: 0 0 calc(14 * var(--pu)); font-size: clamp(24px, 2.6vw, 52px); line-height: 1.2; font-weight: 500; letter-spacing: -0.02em; }
 .ig-contact-lines a { color: inherit; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .35s ease; }
 .ig-contact-lines a:hover { background-size: 100% 1px; }
-@media (max-width: 760px) { .ig-phero__scene:has(.ig-contact-lines) { top: auto; } .ig-contact-lines p { font-size: 26px; margin-bottom: 14px; } }
+@media (max-width: 760px) { .ig-contact-lines p { font-size: 24px; margin-bottom: 12px; } }
 .ig-contact-form__title { font-size: var(--h-l); line-height: 1.15; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 calc(100 * var(--pu)); }
 /* the design's fields: a line under each (and over the first row), the field's name inside it, small; the button a
    plain underlined word */
