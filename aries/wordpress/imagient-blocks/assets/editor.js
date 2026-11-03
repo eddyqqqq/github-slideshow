@@ -364,11 +364,11 @@
           t ? el(PanelBody, { title: 'Tile ' + (sel + 1), initialOpen: true },
             el(SelectControl, { label: 'Colour', value: t.color, options: COLOR_OPTS, onChange: v => ops.update(sel, { color: v }) }),
             el(SelectControl, { label: 'Ribbon', value: t.shape, options: SHAPES.slice(4), onChange: v => ops.update(sel, { shape: v }) }),
-            el(ToggleControl, { label: 'Full width (two columns)', checked: !!t.wide, onChange: v => ops.update(sel, { wide: v }) }),
+            el(SelectControl, { label: 'Width', value: t.wide ? 'wide' : (t.small ? 'small' : 'half'), options: [{ value: 'small', label: 'A quarter of the row' }, { value: 'half', label: 'Half the row' }, { value: 'wide', label: 'The whole row' }], onChange: v => ops.update(sel, { wide: v === 'wide', small: v === 'small' }) }),
             el('p', { className: 'ig-help' }, 'Figures count from 0 when the tile comes into view. Write them as they should end, e.g. 800,000.')) : null),
         el('div', props, el('div', { className: 'wrap' },
-          list.map((tile, i) => el('article', { key: i, className: 'tile' + (tile.wide ? ' wide' : '') + (i === sel ? ' is-selected' : ''), style: { background: colorOf(tile.color) }, onClick: () => setSel(i) },
-            el(RibbonPreview, { shape: tile.shape, place: TILE_PLACE[tile.shape] || { w: 1.5, x: -0.25, y: 0.5 } }),
+          list.map((tile, i) => el('article', { key: i, className: 'tile' + (tile.wide ? ' wide' : (tile.small ? ' small' : '')) + (i === sel ? ' is-selected' : ''), style: { background: colorOf(tile.color) }, onClick: () => setSel(i) },
+            el(RibbonPreview, { shape: tile.shape, place: (P => tile.small ? { w: P.w * 4.27, x: (P.x - 0.38) * 4.27, y: P.y } : P)(TILE_PLACE[tile.shape] || { w: 1.5, x: -0.25, y: 0.5 }) }),
             el(ItemTools, { i, n: list.length, ops, label: 'tile' }),
             RT({ tagName: 'span', className: 'lbl', value: tile.label, onChange: v => ops.update(i, { label: v }), placeholder: 'Label' }),
             el('div', { className: 'nums' },
@@ -486,7 +486,7 @@
       return el(Fragment, {},
         el(InspectorControls, {},
           el(PanelBody, { title: 'Look', initialOpen: true },
-            el(SelectControl, { label: 'Mark between title and text', value: a.mark || 'wave', options: [{ value: 'wave', label: 'Wave (Shipping Agency)' }, { value: 'zigzag', label: 'Zigzag (Interlink)' }, { value: 'peak', label: 'Peak (Logistics)' }], onChange: v => setAttributes({ mark: v }) }),
+            el(SelectControl, { label: 'Mark between title and text', value: a.mark || 'wave', options: [{ value: 'wave', label: 'Wave (Shipping Agency)' }, { value: 'zigzag', label: 'Zigzag (Interlink)' }, { value: 'peak', label: 'Peak (Logistics)' }, { value: 'arc', label: 'Arc (Aries Group)' }], onChange: v => setAttributes({ mark: v }) }),
             colorPick('Accent colour', a.color, v => setAttributes({ color: v })))),
         el('div', props,
           el('span', { className: 'ig-badge' }, 'Services'),
@@ -494,6 +494,7 @@
             RT({ tagName: 'h3', className: 'ig-svc__title', value: it.title, onChange: v => ops.update(i, { title: v }), placeholder: 'Service' }),
             a.mark === 'zigzag' ? el('svg', { className: 'ig-svc__wave', viewBox: '0 0 252 36' }, el('path', { d: 'M0.18 35.04L88.68 0.54L170.18 35.04L251.68 0.54' }))
               : a.mark === 'peak' ? el('svg', { className: 'ig-svc__wave', viewBox: '0 0 257 36' }, el('path', { d: 'M0.12 35.02L134.13 0.52L256.13 35.02' }))
+              : a.mark === 'arc' ? el('svg', { className: 'ig-svc__wave', viewBox: '0 0 238 38' }, el('path', { d: 'M0.02 36.53C71.03 39.76 102.37 31.19 145.52 0.53L237.52 18.03' }))
               : el('svg', { className: 'ig-svc__wave', viewBox: '0 0 212 26' }, el('path', { d: 'M0.2 14.47C93.3 54.73 126.45-31.67 211.2 14.47' })),
             RT({ tagName: 'p', className: 'ig-svc__text', value: it.text, onChange: v => ops.update(i, { text: v }), placeholder: 'What it covers' }),
             el(ItemTools, { i, n: list.length, ops, label: 'service' }))),

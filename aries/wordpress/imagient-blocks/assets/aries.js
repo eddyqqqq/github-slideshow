@@ -45,7 +45,7 @@ window.__igRun = () => {
     constructor(svg, keys, o = {}) {
       this.svg = svg; this.keys = keys.filter(k => RIB[k]);
       if (!this.keys.length) this.keys = ['group'];
-      this.fill = o.fill || 0; this.over = o.over || 1; this.ay = o.ay || 0.5; this.place = o.place || null;
+      this.fill = o.fill || 0; this.over = o.over || 1; this.ay = o.ay || 0.5; this.place = o.place || null; this.rel = o.rel || null;
       this.fromEnd = !!o.fromEnd;   // a ribbon mirrored in CSS: drawn from its end, so on screen it still comes in from the left
       this.SW = Math.min(...this.keys.map(k => RIB[k].w));
       this.f = {}; let span = 0;
@@ -89,6 +89,7 @@ window.__igRun = () => {
       const r = this.svg.getBoundingClientRect();
       if (!r.width || !r.height) return;
       this.W = r.width; this.H = r.height;
+      if (this.rel) this.place = this.rel(this.W, this.H);
       this.s = this.place ? this.place.w * this.W / this.SW : Math.max(this.W * this.over / this.SW, (this.H * this.fill) / this.span);
       this.vbW = this.W / this.s; this.vbH = this.H / this.s;
       request(this);
@@ -325,7 +326,13 @@ window.__igRun = () => {
   // (Logistics a little further right than measured: centred, its peak looked placed rather than passing through)
   const TILE_PLACE = { agencyT: { w: 1.545, x: -0.272, y: 0.508 }, interlinkT: { w: 2.966, x: -1.092, y: 0.433 }, logisticsT: { w: 3.217, x: -0.86, y: 0.722 } };
   const TILE_FROM_END = { interlinkT: 1 };   // mirrored in aries.css (it rises, as growth should)
-  const tileRibs = $$('[data-rib="tile"]').map(svg => { const k = svg.dataset.shape; return add(new Ribbons(svg, [k], { place: TILE_PLACE[k] || { w: 1.4, x: -0.2, y: 0.5 }, fromEnd: TILE_FROM_END[k] })); });
+  // a small tile (a quarter of the row) shows a slice of the ribbon a full-width tile would show, at the same size:
+  // the slice that starts SMALL_AT of the way across (where the ribbon climbs), the same in every small tile
+  const SMALL_AT = 0.38;
+  const smallPlace = (k, svg) => (W, H) => { const P = TILE_PLACE[k] || { w: 1.4, x: -0.2, y: 0.5 }, row = svg.closest('[data-tiles]'), RW = row ? row.clientWidth : W * 4.27, R = RW / W, wide = row && row.querySelector('.tile.wide'), RH = wide ? wide.offsetHeight : RW * 160 / 488;
+    return { w: P.w * R, x: (P.x - SMALL_AT) * R, y: P.y * RH / H + 0.13 }; };
+  const tileRibs = $$('[data-rib="tile"]').map(svg => { const k = svg.dataset.shape, small = svg.closest('.tile.small');
+    return add(new Ribbons(svg, [k], { place: TILE_PLACE[k] || { w: 1.4, x: -0.2, y: 0.5 }, rel: small ? smallPlace(k, svg) : null, fromEnd: TILE_FROM_END[k] })); });
   const decorRibs = $$('[data-rib="decor"]').map(svg => {
     let place = { w: 1.1, x: -0.05, y: 0.55 };
     try { place = JSON.parse(svg.dataset.place); } catch (e) {}
@@ -438,7 +445,9 @@ window.__igRun = () => {
   const zigD = k => { const m = 17.79, y = v => Math.round((m + (v - m) * k) * 100) / 100; return `M0.18 ${y(35.04)}L88.68 ${y(0.54)}L170.18 ${y(35.04)}L251.68 ${y(0.54)}`; };
   // the Logistics peak (design/mark-peak.svg), the same way
   const peakD = k => { const m = 17.77, y = v => Math.round((m + (v - m) * k) * 100) / 100; return `M0.12 ${y(35.02)}L134.13 ${y(0.52)}L256.13 ${y(35.02)}`; };
-  const markD = (svg, k) => ({ zigzag: zigD, peak: peakD }[svg.dataset.mark] || waveD)(k);
+  // the Aries Group arc (design/mark-arc.svg), the same way
+  const arcD = k => { const m = 18.5, y = v => Math.round((m + (v - m) * k) * 100) / 100; return `M0.02 ${y(36.53)}C71.03 ${y(39.76)} 102.37 ${y(31.19)} 145.52 ${y(0.53)}L237.52 ${y(18.03)}`; };
+  const markD = (svg, k) => ({ zigzag: zigD, peak: peakD, arc: arcD }[svg.dataset.mark] || waveD)(k);
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;   // only drops Lenis' smooth scrolling
   if (!window.gsap || !window.ScrollTrigger) {
@@ -472,10 +481,13 @@ window.__igRun = () => {
 
   function splitWords(el) {
     if (el._w) return el._w;
-    const words = el.textContent.trim().split(/\s+/);
+    // the words, and the line breaks written into the heading (kept: the design's lines)
+    const words = [], walk = n => n.childNodes.forEach(c => c.nodeType === 3 ? words.push(...c.textContent.split(/\s+/).filter(Boolean)) : c.nodeName === 'BR' ? words.push('\n') : walk(c));
+    walk(el);
     const sr = document.createElement('span'); sr.className = 'sr'; sr.textContent = el.textContent.trim();
     el.textContent = ''; el.appendChild(sr);
     words.forEach((w, i) => {
+      if (w === '\n') { el.appendChild(document.createElement('br')); return; }
       const o = document.createElement('span'); o.className = 'w'; o.setAttribute('aria-hidden', 'true');
       const inner = document.createElement('span'); inner.className = 'wi'; inner.textContent = w;
       o.appendChild(inner); el.appendChild(o); if (i < words.length - 1) el.appendChild(document.createTextNode(' '));

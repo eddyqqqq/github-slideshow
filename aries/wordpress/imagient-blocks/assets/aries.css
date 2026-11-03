@@ -164,13 +164,19 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .statement .more { color: var(--ink); margin-top: 22px; }
 
 /* ---------- figures ---------- */
-.figs .wrap { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.figs .wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 /* as in the design (1440): tiles about 415 px tall, 60 px inner margin, label top left, the figure low with
    its caption right under it; in the wide tile the second figure starts just past the middle */
 .figs .wrap { gap: clamp(10px, 1.4vw, 28px); }
 .tile { position: relative; overflow: hidden; color: var(--on); padding: clamp(22px, 4.2vw, 96px) clamp(22px, 4.2vw, 96px) clamp(22px, 4.6vw, 104px);
   aspect-ratio: 241 / 159; display: grid; grid-template-rows: auto 1fr; border-radius: 3px; }
-.tile.wide { grid-column: span 2; aspect-ratio: 488 / 160; }
+.tile { grid-column: span 2; }
+.tile.wide { grid-column: span 4; aspect-ratio: 488 / 160; }
+/* a small tile: a quarter of the row, as tall as the others; no label, the figure and its caption low */
+.tile.small { grid-column: span 1; aspect-ratio: 378 / 515; grid-template-rows: 1fr; padding-top: 50%; }
+/* the figures all on one line, a little below the middle (as designed), their captions hanging under them */
+.tile.small .nums { align-self: start; }
+.tile.small .lbl:empty { display: none; }
 .tile.agency { background: var(--agency); } .tile.interlink { background: var(--interlink); } .tile.logistics { background: var(--logistics); }
 .tile .lbl { position: relative; font-size: var(--body); }
 .tile .nums { position: relative; align-self: end; display: grid; grid-template-columns: minmax(0, 1fr); }
@@ -178,9 +184,13 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .tile strong { display: block; font: 400 clamp(52px, 7.5vw, 180px)/0.9 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; white-space: nowrap; }
 .tile strong sup { font-size: .72em; line-height: 0; vertical-align: baseline; position: relative; top: -.74em; margin-left: .05em; }
 .tile small { display: block; font-size: var(--body); margin-top: clamp(8px, .8vw, 18px); }
+@media (max-width: 1024px) { .tile.small { grid-column: span 2; aspect-ratio: 241 / 180; padding-top: clamp(22px, 4.2vw, 96px); } .tile.small .nums { align-self: end; } }
 @media (max-width: 760px) {
-  .figs .wrap { grid-template-columns: minmax(0, 1fr); }
-  .tile.wide { grid-column: auto; aspect-ratio: 241 / 200; }
+  .figs .wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tile, .tile.wide { grid-column: span 2; }
+  .tile.small { grid-column: span 1; aspect-ratio: 170 / 250; padding: 30% 16px 16px; }
+  .tile.small .nums { align-self: start; }
+  .tile.wide { aspect-ratio: auto; min-height: 83vw; row-gap: 24px; }   /* grows when its two figures need more room (small phones) */
   .tile.wide .nums { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
 }
 
@@ -464,9 +474,12 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 .ig-cover .wp-block-buttons, .ig-page-figures .wp-block-buttons { margin-top: 0; }
 .ig-page-notes { max-width: calc(640 * var(--pu)); margin-top: calc(470 * var(--pu)); display: grid; gap: calc(24 * var(--pu)); }
 .ig-page-notes p { margin: 0; font-size: var(--body); line-height: 1.2; }   /* the design: 20 px on 24 px lines at 1440 */
+.ig-page-notes.is-wider { max-width: calc(660 * var(--pu)); }   /* the Aries Group page: its notes are set a little wider */
 @media (max-width: 1024px) { .ig-page-notes { max-width: 640px; } }
 /* line breaks set in the text follow the design on wide screens; phones wrap on their own */
-@media (max-width: 760px) { :is(.ig-page-statement, .ig-page-list li, .ig-svc__title) br { display: none; } }
+@media (max-width: 760px) { :is(.ig-page-statement, .ig-statement, .ig-page-list li, .ig-svc__title) br { display: none; } }
+/* line breaks written into a service's text hold on wide screens only: narrower columns wrap on their own */
+@media (max-width: 1024px) { .ig-svc__text br { display: none; } }
 @media (max-width: 760px) and (orientation: portrait) { .ig-page-notes { margin-top: 300px; gap: 18px; } .ig-page-notes p { font-size: var(--body); line-height: 1.3; }  }
 /* the facility (Interlink): its statement, the texts close under it and a list of services in large type, as designed
    at 1440 (72 and 147 px apart, the list's lines 112 px apart) */
@@ -492,6 +505,7 @@ html.menu-open, html.menu-open body { overflow: hidden; }
 .is-design .ig-svc__wave { justify-self: center; color: var(--ink); max-width: calc(100% - 2 * clamp(14px, 2.6vw, 40px)); }
 .is-design .ig-svc__wave[data-mark="zigzag"] { width: 252px; }
 .is-design .ig-svc__wave[data-mark="peak"] { width: 257px; }
+.is-design .ig-svc__wave[data-mark="arc"] { width: 238px; }
 /* Logistics: its texts are set a little wider in the design (every line breaks as drawn at 1440) */
 @media (min-width: 1025px) { .is-design .ig-svc__row:has(> [data-mark="peak"]) { grid-template-columns: minmax(0, 335fr) minmax(0, 324fr) minmax(0, 489fr) minmax(0, 156fr); } }
 @media (max-width: 1024px) { .is-design .ig-svc__row { grid-template-columns: minmax(0, 1.1fr) minmax(0, .6fr) minmax(0, 1.2fr); } }
@@ -501,6 +515,7 @@ html.menu-open, html.menu-open body { overflow: hidden; }
   .is-design .ig-svc__wave { justify-self: start; width: 150px; }
   .is-design .ig-svc__wave[data-mark="zigzag"] { width: 178px; }
   .is-design .ig-svc__wave[data-mark="peak"] { width: 180px; }
+  .is-design .ig-svc__wave[data-mark="arc"] { width: 166px; }
 }
 
 

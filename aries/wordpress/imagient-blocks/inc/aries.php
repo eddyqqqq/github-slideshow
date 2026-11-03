@@ -276,7 +276,7 @@ function imagient_render_figures( $a ) {
 		$shape = isset( imagient_ribbon_shapes()[ $t['shape'] ?? '' ] ) ? $t['shape'] : 'agencyT';
 		$bg    = imagient_color( $t['color'] ?? 'agency' ) ?: imagient_color( 'agency' );
 		?>
-    <article class="tile<?php echo ! empty( $t['wide'] ) ? ' wide' : ''; ?>" data-tone="dark" style="background:<?php echo esc_attr( $bg ); ?>"><svg class="rib-svg" data-rib="tile" data-shape="<?php echo esc_attr( $shape ); ?>" aria-hidden="true"></svg>
+    <article class="tile<?php echo ! empty( $t['wide'] ) ? ' wide' : ( ! empty( $t['small'] ) ? ' small' : '' ); ?>" data-tone="dark" style="background:<?php echo esc_attr( $bg ); ?>"><svg class="rib-svg" data-rib="tile" data-shape="<?php echo esc_attr( $shape ); ?>" aria-hidden="true"></svg>
       <span class="lbl"><?php echo imagient_text( $t['label'] ?? '' ); ?></span>
       <div class="nums">
 		<?php foreach ( (array) ( $t['figures'] ?? array() ) as $f ) : ?>
