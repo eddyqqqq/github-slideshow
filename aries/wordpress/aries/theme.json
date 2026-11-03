@@ -12,7 +12,7 @@
         { "slug": "interlink", "name": "Interlink", "color": "#2aa8d9" },
         { "slug": "logistics", "name": "Logistics", "color": "#41979c" },
         { "slug": "ink", "name": "Ink", "color": "#111418" },
-        { "slug": "text", "name": "Text", "color": "#2a2f36" },
+        { "slug": "body", "name": "Body text", "color": "#2a2f36" },
         { "slug": "muted", "name": "Muted", "color": "#6a7280" },
         { "slug": "line", "name": "Line", "color": "#d9dee5" },
         { "slug": "paper", "name": "White", "color": "#ffffff" }
@@ -55,7 +55,7 @@
     "useRootPaddingAwareAlignments": false
   },
   "styles": {
-    "color": { "background": "var(--wp--preset--color--paper)", "text": "var(--wp--preset--color--text)" },
+    "color": { "background": "var(--wp--preset--color--paper)", "text": "var(--wp--preset--color--body)" },
     "typography": { "fontFamily": "var(--wp--preset--font-family--area)", "fontSize": "var(--wp--preset--font-size--body)", "lineHeight": "1.5" },
     "spacing": { "blockGap": "var(--wp--preset--spacing--40)", "padding": { "top": "0", "right": "0", "bottom": "0", "left": "0" } },
     "elements": {

@@ -351,6 +351,22 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .scene-two :is(h1, h2, h3), .identity :is(h1, h2, h3), .figs .tile :is(h2, h3), .card h3 { color: inherit; }
 .hero-title h1 { color: var(--blue); }
 
+/* ======================= thank-you page, legal pages ======================= */
+/* thank you: one blue screen; the message at the top under the header, the ribbon across the middle, the link at the
+   foot (the header sits over it) */
+.ig-thanks.is-screen { display: flex; flex-direction: column; min-height: 100vh; min-height: 100svh; overflow: hidden; }
+.ig-thanks > .ig-container { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column;
+  padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 40px) + var(--logo-w, 75px) * 1.76 + clamp(40px, 7vh, 110px)); }
+.ig-thanks .ig-statement { max-width: 15em; margin: 0; }
+.ig-thanks__lead { max-width: calc(640 * var(--pu)); margin: clamp(16px, 2vw, 28px) 0 0; font-size: var(--body); line-height: 1.35; }
+.ig-thanks .wp-block-buttons { margin-top: auto; padding-top: clamp(220px, 34vh, 420px); }
+@media (max-width: 760px) { .ig-thanks > .ig-container { padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 20px) + var(--m-logo, 56px) * 1.76 + 72px); } .ig-thanks__lead { max-width: none; } }
+/* legal pages: running text in a narrow column; empty headings and paragraphs (not yet written) take no room */
+.ig-legal-text :is(h2, h3, h4, p):empty { display: none; }
+.ig-section .wp-block-post-title { color: var(--blue); }   /* a plain page's title, in the Group blue as the company pages' */
+.ig-legal-text h2 { font-size: var(--h-m, 28px); margin: 1.6em 0 .6em; }
+.ig-legal-text p, .ig-legal-text li { font-size: var(--body); line-height: 1.5; }
+
 /* ======================= company pages: page hero, cover, figures, services, menu ======================= */
 /* --pu: one pixel of the 1440 design, growing with the screen up to 1920 */
 :root { --pu: calc(min(100vw, 1920px) / 1440); }
@@ -420,6 +436,17 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-top.logo-off .ig-logo { opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s .35s; }
 .ig-menu__btn { transition: color .35s ease; }
 .ig-top.on-dark-r .ig-menu__btn { color: var(--on); }
+/* once the page has moved on, the button sits in a round badge so it is plain to see wherever it is: blue with white
+   lines over light backgrounds, white with blue lines over dark ones (gone while the menu is open) */
+.ig-menu__btn::before { content: ""; position: absolute; left: 50%; top: 50%; width: calc(var(--bw) + 36px); height: calc(var(--bw) + 36px);
+  margin: calc((var(--bw) + 36px) / -2) 0 0 calc((var(--bw) + 36px) / -2); border-radius: 50%; background: var(--blue);
+  box-shadow: 0 8px 24px rgba(10, 30, 60, .18); transform: scale(0); transition: transform .45s cubic-bezier(.3, 1.4, .5, 1), background .35s ease; }
+.ig-top.is-stuck .ig-menu__btn::before { transform: scale(1); }
+.ig-top.is-stuck .ig-menu__btn { color: var(--on); }
+.ig-top.is-stuck.on-dark-r .ig-menu__btn::before { background: #fff; }
+.ig-top.is-stuck.on-dark-r .ig-menu__btn { color: var(--blue); }
+.menu-open .ig-top .ig-menu__btn::before { transform: scale(0); transition-duration: .25s; }
+.menu-open .ig-top .ig-menu__btn { color: var(--on); }
 
 /* menu: three lines that turn into a cross; the full-screen panel opens from the button's corner */
 .ig-menu__btn { --bw: max(28px, 40 * var(--pu)); --bg: max(8px, 11 * var(--pu)); position: relative; z-index: 2; width: calc(var(--bw) + 20px); height: calc(var(--bg) * 2 + 26px); margin: -12px -10px 0 0; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ink); }

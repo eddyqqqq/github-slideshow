@@ -13,7 +13,7 @@ function imagient_palette() {
 		array( 'slug' => 'interlink', 'name' => 'Interlink', 'color' => '#2aa8d9' ),
 		array( 'slug' => 'logistics', 'name' => 'Logistics', 'color' => '#41979c' ),
 		array( 'slug' => 'ink', 'name' => 'Ink', 'color' => '#111418' ),
-		array( 'slug' => 'text', 'name' => 'Text', 'color' => '#2a2f36' ),
+		array( 'slug' => 'body', 'name' => 'Body text', 'color' => '#2a2f36' ),   // not "text": WordPress' own has-text-color class would take that colour
 		array( 'slug' => 'muted', 'name' => 'Muted', 'color' => '#6a7280' ),
 		array( 'slug' => 'line', 'name' => 'Line', 'color' => '#d9dee5' ),
 		array( 'slug' => 'paper', 'name' => 'White', 'color' => '#ffffff' ),

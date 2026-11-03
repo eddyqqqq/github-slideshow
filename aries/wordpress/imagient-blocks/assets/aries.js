@@ -465,10 +465,11 @@ window.__igRun = () => {
     const headerTone = () => {
       if (root.classList.contains('menu-open')) return;
       const ul = logoBox ? under(logoBox) : [], ub = btn ? under(btn) : [];
-      const inScene = ul.some(e => e.matches('.after-scene, .ig-phero.is-flooded'));
+      const inScene = ul.some(e => e.matches('.after-scene, .ig-phero.is-flooded') || !!e.closest('.ph-flood'));
       hdr.classList.toggle('co-on', inScene && !!$('.ig-top__co', hdr));
       hdr.classList.toggle('on-dark-l', inScene || toneAt(ul) === 'dark');
       hdr.classList.toggle('on-dark-r', toneAt(ub) === 'dark');
+      hdr.classList.toggle('is-stuck', scrollY > innerHeight * 0.4);
       // the logo holds the top of the page and a company page's scene and coloured section; further down it steps
       // aside (over the page's texts it would sit on them), the menu button stays everywhere
       hdr.classList.toggle('logo-off', scrollY > 8 && !ul.some(e => e.matches('.ig-phero, .after-scene')));
@@ -787,8 +788,11 @@ window.__igRun = () => {
         scrollTrigger: { trigger: h, start: last ? 'top bottom' : 'top 92%', end: last ? 'bottom bottom' : 'top 58%', scrub: 0.6 } });
     });
   }));
-  $$('[data-anim="fade-up"]').filter(el => !el.closest('.after-scene') && !el.closest('.ig-phero')).forEach(el => later(() => gsap.from(el, { y: 40, opacity: 0, ease: 'none',
-    scrollTrigger: { trigger: el, start: atEnd(el) ? 'top bottom' : 'top 94%', end: atEnd(el) ? 'bottom bottom' : 'top 66%', scrub: 0.6 } })));
+  $$('[data-anim="fade-up"]').filter(el => !el.closest('.after-scene') && !el.closest('.ig-phero')).forEach((el, i) => later(() => {
+    if (scrollY < 10 && el.getBoundingClientRect().top < innerHeight * 0.9) { gsap.from(el, { y: 40, opacity: 0, duration: 1, ease: 'power3.out', delay: 1.2 + i * 0.15 }); return; }
+    gsap.from(el, { y: 40, opacity: 0, ease: 'none',
+      scrollTrigger: { trigger: el, start: atEnd(el) ? 'top bottom' : 'top 94%', end: atEnd(el) ? 'bottom bottom' : 'top 66%', scrub: 0.6 } });
+  }));
   $$('[data-anim="scale-in"]').forEach(el => later(() => gsap.from(el, { scale: 0.94, opacity: 0, ease: 'none',
     scrollTrigger: { trigger: el, start: 'top 94%', end: 'top 64%', scrub: 0.6 } })));
   // count: every number in the block counts from 0 when it comes into view, and again on the next visit
@@ -811,6 +815,7 @@ window.__igRun = () => {
   [...tileRibs, ...decorRibs.filter(r => !r.svg.closest('.after-scene'))].forEach(r => later(() => {   // (after a scene: below)
     const box = r.svg.parentElement;
     r.st.q = 0; r.render();
+    if (scrollY < 10 && box.getBoundingClientRect().top < innerHeight * 0.5) { gsap.to(r.st, { q: 1, duration: 2.2, delay: 0.5, ease: 'power2.inOut', onUpdate: () => touch(r) }); return; }
     gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: box, start: 'top 92%', end: 'top 45%', scrub: 0.8 } });
     if (r.panning) gsap.fromTo(r.place, { x: r.place.x + 0.08 }, { x: r.place.x - 0.08, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: box, start: 'top bottom', end: 'bottom top', scrub: 1 } });
   }));
