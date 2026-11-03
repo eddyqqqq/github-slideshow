@@ -7,7 +7,7 @@ Description:       Block theme for Aries Group, designed and built by Imagient. 
 Requires at least: 6.5
 Tested up to:      6.8
 Requires PHP:      7.4
-Version:           1.20.0
+Version:           1.21.0
 License:           GNU General Public License v2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:       aries
@@ -27,12 +27,23 @@ img, svg { max-width: 100%; }
 
 /* header: one bar everywhere, the Aries Group logo on the left and the menu on the right; over the hero on the home and
    company pages, a normal bar elsewhere */
-.ig-top { position: sticky; top: 0; z-index: 60; display: flex; justify-content: space-between; align-items: flex-start;
+.ig-top { position: relative; top: 0; z-index: 60; display: flex; justify-content: space-between; align-items: flex-start;
   padding: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 40px)) var(--gut, 68px) 0; pointer-events: none; }
 .ig-top :is(a, button) { pointer-events: auto; }
-/* it stays on screen everywhere (over the hero on the home and company pages, keeping its room on the other pages);
-   the page's script turns the logo and the menu button white over dark backgrounds */
-:is(.home, .page-template-page-company) .ig-top { position: fixed; left: 0; right: 0; }
+/* tablets and desktops: the header is at the top of the page and scrolls away with it (over the hero on the home and
+   company pages); open, the menu holds its close button on screen */
+:is(.home, .page-template-page-company) .ig-top { position: absolute; left: 0; right: 0; }
+.menu-open .ig-top { position: fixed; left: 0; right: 0; }
+/* phones: it stays on screen (fixed over the hero, sticky elsewhere); the page's script turns the logo white over
+   dark backgrounds and shows the company's logo over a company page's coloured section */
+@media (max-width: 760px) {
+  /* sticky on the template part that holds the header (the header alone would only stick inside it) */
+  .wp-site-blocks > .wp-block-template-part:has(> .ig-top) { position: sticky; top: 0; z-index: 60; }
+  .admin-bar .wp-site-blocks > .wp-block-template-part:has(> .ig-top) { top: var(--wp-admin--admin-bar--height, 46px); }
+  .admin-bar .wp-block-template-part > .ig-top { top: 0; }
+  :is(.home, .page-template-page-company) .ig-top { position: fixed; }
+  .admin-bar:is(.home, .page-template-page-company) .ig-top { top: var(--wp-admin--admin-bar--height, 46px); }
+}
 .admin-bar .ig-top { top: var(--wp-admin--admin-bar--height, 32px); }
 
 /* footer: the design's rhythm at 1440 (logo, three link columns, the slogan, the legal line), in design pixels

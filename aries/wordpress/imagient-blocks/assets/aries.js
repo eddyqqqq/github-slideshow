@@ -462,8 +462,11 @@ window.__igRun = () => {
     };
     const under = el => { const r = el.getBoundingClientRect(); if (!r.width) return []; return document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2).filter(e => !hdr.contains(e)); };
     const toneAt = list => { for (const e of list) { if (faded(e)) continue; const t = toneOf(e); if (t) return t; } return 'light'; };
+    // on phones only: there the header stays on screen (on wider screens it scrolls away with the page)
+    const phone = matchMedia('(max-width: 760px)');
     const headerTone = () => {
       if (root.classList.contains('menu-open')) return;
+      if (!phone.matches) { hdr.classList.remove('co-on', 'on-dark-l', 'is-stuck', 'logo-off'); return; }
       const ul = logoBox ? under(logoBox) : [];
       const inScene = ul.some(e => e.matches('.after-scene, .ig-phero.is-flooded') || !!e.closest('.ph-flood'));
       hdr.classList.toggle('co-on', inScene && !!$('.ig-top__co', hdr));
@@ -489,6 +492,7 @@ window.__igRun = () => {
     };
     addEventListener('scroll', queueTone, { passive: true });
     addEventListener('resize', queueTone);
+    if (phone.addEventListener) phone.addEventListener('change', queueTone);
     headerTone(); setTimeout(headerTone, 600);
   }
 

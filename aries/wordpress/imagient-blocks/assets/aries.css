@@ -124,7 +124,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .id-top, .id-foot { position: relative; }
 .id-top { padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top)); }
 .id-top .wrap { position: relative; }
-.co-tabs { position: absolute; top: 4px; right: calc(var(--gut-r) + 100px); }   /* clear of the menu button, which stays on screen */
+.co-tabs { position: absolute; top: 4px; right: var(--gut-r); }
 .id-foot { padding-block: 60px clamp(36px, 8vh, 90px); }
 .id-states { display: grid; gap: 40px; }
 .g-intro { padding-top: clamp(30px, 6vh, 70px); display: grid; gap: 18px; justify-items: start; }
