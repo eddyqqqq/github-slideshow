@@ -15,6 +15,8 @@
   const { PanelBody, SelectControl, TextControl, TextareaControl, Button, Dropdown, ColorPalette, ColorIndicator, Tooltip } = C;
   const CFG = window.IMAGIENT || { palette: [] };
   const PAL = (CFG.palette || []).map(c => ({ name: c.name, color: c.color, slug: c.slug }));
+  // the parts of a block the tab can style on their own (title, text, button …): block name → part → [label, selector]
+  const PARTS = CFG.elements || {};
   const UI = window.IMAGIENT_UI;
 
   /* ---------------- the CSS model (mirrors inc/style.php) ---------------- */
@@ -48,14 +50,22 @@
     if (layers.length) out += 'background-image:' + layers.join(',') + ';';
     return out;
   }
-  function css(style, sel) {
-    if (!style) return '';
+  function rules(style, sel, hover) {
     let out = '';
     const d = decls(style.d), h = decls(style.h), t = decls(style.t), m = decls(style.m);
     if (d) out += `${sel}{${d}}`;
-    if (h) out += `${sel}:hover{${h}}`;
+    if (h && hover !== false) out += sel.split(',').map(s => s + ':hover').join(',') + `{${h}}`;
     if (t) out += `@media (max-width:1024px){${sel}{${t}}}`;
     if (m) out += `@media (max-width:640px){${sel}{${m}}}`;
+    return out;
+  }
+  const scope = (sel, inner) => inner.split(',').map(p => sel + ' ' + p.trim()).join(',');
+  function css(style, sel, name) {
+    if (!style) return '';
+    let out = '';
+    const parts = PARTS[name] || {};
+    Object.keys(style.el || {}).forEach(k => { if (parts[k]) out += rules(style.el[k] || {}, scope(sel, parts[k][1]), parts[k][1].indexOf('::') < 0); });
+    out += rules(style, sel);
     if (style.css) out += String(style.css).replace(/</g, '').replace(/selector/g, sel);
     return out;
   }
@@ -123,6 +133,20 @@
     })));
   }
 
+  // the site's font families: the theme's and any added under Appearance → Editor → Styles → Typography
+  function fontOptions() {
+    let fams = [];
+    try {
+      const f = (wp.data.select('core/block-editor').getSettings().__experimentalFeatures || {}).typography || {};
+      const ff = f.fontFamilies || {};
+      fams = [].concat(ff.theme || [], ff.custom || [], ff.default || [], Array.isArray(ff) ? ff : []);
+    } catch (e) {}
+    const seen = {}, out = [];
+    fams.forEach(x => { if (x && x.slug && !seen[x.slug]) { seen[x.slug] = 1; out.push({ value: 'var(--wp--preset--font-family--' + x.slug + ')', label: x.name || x.slug }); } });
+    if (!out.length) out.push({ value: 'var(--wp--preset--font-family--area)', label: 'Area Normal' });
+    return out.concat([{ value: 'system-ui, sans-serif', label: 'System' }, { value: 'Georgia, serif', label: 'Serif' }, { value: 'ui-monospace, monospace', label: 'Monospace' }]);
+  }
+
   const Group = ({ title, ctx, keys, children, open }) => {
     const count = keys.filter(k => { const v = ctx.cur[k]; return v && (typeof v !== 'object' || !isEmpty(v)); }).length;
     return el(PanelBody, { title: title + (count ? ` · ${count}` : ''), initialOpen: !!open, className: 'igs-panel' }, children);
@@ -133,33 +157,51 @@
     const style = attributes.igStyle || {};
     const [bp, setBp] = useState('d');
     const [state, setState] = useState('normal');
-    const key = state === 'hover' ? 'h' : bp;
-    const cur = style[key] || {};
-    const setProp = (k, v) => {
-      const next = { ...style, [key]: { ...cur, [k]: v } };
-      if (v === '' || v === undefined) delete next[key][k];
-      if (isEmpty(next[key])) delete next[key];
+    const parts = PARTS[name] || {};
+    const [part, setPart] = useState('');
+    const target = parts[part] ? part : '';
+    // the set of values being edited: the block's own, or one part's
+    const base = target ? ((style.el || {})[target] || {}) : style;
+    const key = state === 'hover' && !(target && parts[target][1].indexOf('::') > -1) ? 'h' : bp;
+    const cur = base[key] || {};
+    const commit = nextBase => {
+      Object.keys(nextBase).forEach(b => { if (b !== 'css' && b !== 'el' && isEmpty(nextBase[b])) delete nextBase[b]; });
+      let next;
+      if (target) {
+        const el2 = { ...(style.el || {}) };
+        if (isEmpty(nextBase)) delete el2[target]; else el2[target] = nextBase;
+        next = { ...style, el: el2 };
+        if (isEmpty(el2)) delete next.el;
+      } else next = { ...nextBase, ...(style.el ? { el: style.el } : {}) };
       setAttributes({ igStyle: isEmpty(next) && !next.css ? undefined : next });
+    };
+    const setProp = (k, v) => {
+      const n = { ...cur, [k]: v };
+      if (v === '' || v === undefined) delete n[k];
+      commit({ ...base, [key]: n });
     };
     // several keys in one update (the matrix sets justify and align together)
     const setMany = obj => {
       const n = { ...cur, ...obj };
       Object.keys(n).forEach(x => { if (n[x] === '' || n[x] === undefined) delete n[x]; });
-      const next = { ...style, [key]: n };
-      if (isEmpty(next[key])) delete next[key];
-      setAttributes({ igStyle: isEmpty(next) && !next.css ? undefined : next });
+      commit({ ...base, [key]: n });
     };
-    const ctx = { style, bp: key, cur, setProp, setMany };
-    const used = ['d', 't', 'm', 'h'].filter(b => !isEmpty(style[b]));
-    const opts = list => list;
+    const ctx = { style: base, bp: key, cur, setProp, setMany };
+    const used = ['d', 't', 'm', 'h'].filter(b => !isEmpty(base[b]));
+    const styledParts = Object.keys(style.el || {}).filter(k => parts[k] && !isEmpty(style.el[k]));
     return el(Fragment, {},
       el(PanelBody, { title: 'Imagient Style', initialOpen: true, className: 'igs-head' },
+        Object.keys(parts).length ? el('div', { className: 'igs-part' },
+          el(SelectControl, { label: 'Style this part', value: target, help: target ? 'The settings below change only the ' + parts[target][0].toLowerCase() + ' of this block.' : 'Choose a part (title, text, button, image …) to style it on its own.',
+            options: [{ value: '', label: 'Whole block' + (!isEmpty({ d: style.d, t: style.t, m: style.m, h: style.h }) ? ' ●' : '') }].concat(Object.keys(parts).map(k => ({ value: k, label: parts[k][0] + (styledParts.includes(k) ? ' ●' : '') }))),
+            onChange: v => setPart(v) })) : null,
         el('div', { className: 'igs-switch' },
           STATES.map(s => el(Tooltip, { key: s.k, text: s.label }, el(Button, { icon: s.icon, isPressed: state === 'normal' && bp === s.k, className: used.includes(s.k) ? 'has-values' : '', onClick: () => { setBp(s.k); setState('normal'); } }))),
           el('span', { className: 'igs-sep' }),
           el(Button, { isPressed: state === 'hover', className: used.includes('h') ? 'has-values' : '', onClick: () => setState(state === 'hover' ? 'normal' : 'hover') }, 'Hover')),
         el('p', { className: 'igs-note' }, state === 'hover' ? 'Hover: values applied when the pointer is over the block.' : bp === 'd' ? 'Desktop values apply on every screen unless Tablet or Mobile change them.' : (bp === 't' ? 'Tablet (≤ 1024 px). Empty fields inherit Desktop (shown in grey).' : 'Mobile (≤ 640 px). Empty fields inherit Tablet / Desktop.')),
-        !isEmpty(style) || style.css ? el(Button, { variant: 'link', isDestructive: true, onClick: () => setAttributes({ igStyle: undefined }) }, 'Reset all styles') : null),
+        target ? (!isEmpty(base) ? el(Button, { variant: 'link', isDestructive: true, onClick: () => commit({}) }, 'Reset this part') : null)
+          : (!isEmpty(style) || style.css ? el(Button, { variant: 'link', isDestructive: true, onClick: () => setAttributes({ igStyle: undefined }) }, 'Reset all styles') : null)),
 
       el(Group, { title: 'Layout', ctx, keys: ['display', 'flexDirection', 'justifyContent', 'alignItems', 'flexWrap', 'gap', 'gridTemplateColumns', 'alignSelf', 'order'] },
         el(Select, { label: 'Display', k: 'display', ctx, options: ['block', 'flex', 'grid', 'inline-block', 'inline-flex', 'inline', 'none'] }),
@@ -198,9 +240,9 @@
         el(Value, { label: 'Z-index', k: 'zIndex', ctx })),
 
       el(Group, { title: 'Typography', ctx, keys: ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'textTransform', 'textDecoration', 'fontStyle', 'textAlign', 'color'] },
-        el(Select, { label: 'Font', k: 'fontFamily', ctx, options: [{ value: 'var(--wp--preset--font-family--area)', label: 'Area Normal' }, { value: 'system-ui, sans-serif', label: 'System' }, { value: 'Georgia, serif', label: 'Serif' }, { value: 'ui-monospace, monospace', label: 'Monospace' }] }),
+        el(Select, { label: 'Font', k: 'fontFamily', ctx, options: fontOptions() }),
         el(Value, { label: 'Size', k: 'fontSize', ctx, placeholder: 'e.g. 48px, 3rem, clamp(28px, 3.3vw, 72px)' }),
-        el(Select, { label: 'Weight', k: 'fontWeight', ctx, options: [{ value: '400', label: 'Regular (400)' }, { value: '700', label: 'Bold (700)' }, '300', '500', '600', '800'] }),
+        el(Select, { label: 'Weight', k: 'fontWeight', ctx, options: [{ value: '100', label: 'Thin (100)' }, { value: '400', label: 'Regular (400)' }, { value: '600', label: 'SemiBold (600)' }, { value: '700', label: 'Bold (700)' }, { value: '800', label: 'ExtraBold (800)' }, { value: '900', label: 'Black (900)' }] }),
         el(Value, { label: 'Line height', k: 'lineHeight', ctx, placeholder: 'e.g. 1.15' }),
         el(Value, { label: 'Letter spacing', k: 'letterSpacing', ctx, placeholder: 'e.g. -0.02em' }),
         el(Select, { label: 'Transform', k: 'textTransform', ctx, options: ['none', 'uppercase', 'lowercase', 'capitalize'] }),
@@ -234,7 +276,7 @@
         el(Select, { label: 'Cursor', k: 'cursor', ctx, options: ['pointer', 'default', 'grab'] }),
         el(Select, { label: 'Blend mode', k: 'mixBlendMode', ctx, options: ['normal', 'multiply', 'screen', 'overlay'] })),
 
-      el(PanelBody, { title: 'Custom CSS' + (style.css ? ' · on' : ''), initialOpen: false, className: 'igs-panel' },
+      target ? null : el(PanelBody, { title: 'Custom CSS' + (style.css ? ' · on' : ''), initialOpen: false, className: 'igs-panel' },
         el(TextareaControl, { value: style.css || '', rows: 6, className: 'igs-css', help: 'Use "selector" for this block, e.g. selector h2 { color: #145fad; } or selector:hover { … }',
           onChange: v => { const n = { ...style, css: v }; if (!v) delete n.css; setAttributes({ igStyle: isEmpty(n) && !n.css ? undefined : n }); } })));
   }
@@ -247,7 +289,7 @@
   const hasStylesGroup = !!(wp.blockEditor.InspectorControls && wp.blockEditor.InspectorControls.Slot);
   addFilter('editor.BlockEdit', 'imagient/style-panel', createHigherOrderComponent(BlockEdit => props => {
     const style = props.attributes.igStyle;
-    const preview = style ? css(style, `#block-${props.clientId}#block-${props.clientId}`) : '';
+    const preview = style ? css(style, `#block-${props.clientId}#block-${props.clientId}`, props.name) : '';
     return el(Fragment, {},
       el(BlockEdit, props),
       preview ? el('style', {}, preview) : null,

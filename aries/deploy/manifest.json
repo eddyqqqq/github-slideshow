@@ -1,5 +1,5 @@
 {
- "version": "1.29.0",
+ "version": "1.30.0",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
@@ -15,18 +15,18 @@
     "assets/logos/interlink.svg": "97a65b39c37aa422e576db706d6cadd90993a01cf62f4b075a4db50d1e509c0d",
     "assets/logos/logistics.svg": "da7486c6f4c96919959fab13e5850c81d274905da77c93fe0d2d2d3e6e97f883",
     "assets/shapes.js": "cbe59144226c725528dd05e693f8b4baf8ff5fbb32408575e9524faabe8a8745",
-    "assets/style-panel.js": "c27e5317891b6653ebe7353866c922725c6ddf0548d1ba9ba72c92703faf8ade",
+    "assets/style-panel.js": "52856f22927eac2e9bf28ad30d6fffeb7b1e8c816bf5a4753bdec2da45cbe9ea",
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "53f3923d068c157487c67b75d96e2706884bc54eb227d1d0ca7deb4cf0026a27",
+    "imagient-blocks.php": "1afb3002be1018e3d9349cbcc1e1fe3f76097df2bfe9cbcd722350d78f37d9bc",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "866b727c3619dcb2ca206c9904a04a523066ba0b8e9208048d916b53969b429b",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
     "inc/helpers.php": "40ea9ae5b615cdeb14698aebe27fc680ca980e4e98968241218a55ea98a1b8bf",
     "inc/layout.php": "7c5d90d5dc17ba32165bfe9e650275c73b1854ec440e2639674ba84b233bfd96",
     "inc/pages.php": "50ae319c018af784cda89fbcac15c71788153a2e1e7c3e27c8b3e31bc816aca4",
-    "inc/style.php": "da29543a92aee0ca299636e1dd285fbb397208a72858f7ba5188c48af9cde5c5"
+    "inc/style.php": "cc97b13b45f40c785d2b1fafb345ba33801370124eeadb5f864256f63fa2b4cf"
    }
   },
   "aries": {

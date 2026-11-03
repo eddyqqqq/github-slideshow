@@ -109,15 +109,47 @@ function imagient_style_decls( $set ) {
 	return $out;
 }
 
-/** The whole stylesheet for one block, scoped to its class. */
-function imagient_style_css( $style, $cls ) {
-	$sel = '.' . $cls . '.' . $cls;   // two classes: wins over the blocks' own one-class rules
+/**
+ * The parts inside a block that the Style tab can style on their own, as Elementor's widgets list theirs: block name →
+ * part → [label, selector inside the block]. The editor shows them in the tab's "Part" list.
+ */
+function imagient_style_elements() {
+	return apply_filters( 'imagient_style_elements', array(
+		'imagient/page-hero'   => array( 'title' => array( 'Title', '.ig-phero__title, .ig-phero-edit__title' ), 'scene' => array( 'Scene (its texts)', '.ig-phero__scene, .ig-phero-edit__scene' ) ),
+		'imagient/hero'        => array( 'title' => array( 'Title', '.hero-title h1, .ig-hero-edit__title h1' ), 'subtitle' => array( 'Subtitle', '.hero-title p, .ig-hero-edit__title p' ), 'sceneTitle' => array( 'Second screen: title', '.scene-two h2, .ig-hero-edit__scene h2' ), 'sceneText' => array( 'Second screen: text', '.scene-two p, .ig-hero-edit__scene p' ) ),
+		'imagient/identity'    => array( 'introTitle' => array( 'Intro title', '.g-intro h2, .ig-scene-edit__state:first-child h2' ), 'introText' => array( 'Intro text', '.g-intro p, .ig-scene-edit__state:first-child p:not(.ig-foot)' ), 'footText' => array( 'Text under the ribbon', '.g-foot p, .ig-scene-edit__state:first-child .ig-foot' ), 'name' => array( 'Company name', '.co-item h2, .ig-scene-edit__state + .ig-scene-edit__state h2' ), 'text' => array( 'Company text', '.co-item p, .ig-scene-edit__state + .ig-scene-edit__state p' ), 'link' => array( 'Company link', '.co-item .more, .ig-more' ), 'tabs' => array( 'Company list', '.co-tabs button' ), 'logo' => array( 'Company logo', '.co-logo .logo, .ig-scene-edit__logo' ) ),
+		'imagient/figures'     => array( 'tile' => array( 'Tiles', '.tile' ), 'label' => array( 'Label', '.tile .lbl' ), 'number' => array( 'Figure', '.tile strong' ), 'suffix' => array( 'Figure suffix (+, %, t)', '.tile strong sup' ), 'caption' => array( 'Caption', '.tile small' ) ),
+		'imagient/cards'       => array( 'card' => array( 'Cards', '.card' ), 'title' => array( 'Card title', '.card h3' ), 'image' => array( 'Card photo', '.card .pi img' ) ),
+		'imagient/services'    => array( 'row' => array( 'Rows', '.ig-svc__row' ), 'title' => array( 'Title', '.ig-svc__title' ), 'text' => array( 'Text', '.ig-svc__text' ), 'mark' => array( 'Mark (line)', '.ig-svc__wave' ) ),
+		'imagient/cover'       => array( 'photo' => array( 'Photo', '.ig-cover__media img, .ig-cover-edit img' ), 'shade' => array( 'Colour over the photo', '.ig-cover__shade' ), 'content' => array( 'Content', '.ig-cover__inner, .ig-cover-edit__inner' ) ),
+		'imagient/menu'        => array( 'button' => array( 'Menu button', '.ig-menu__btn, .ig-menu-edit__btn' ), 'panel' => array( 'Menu background', '.ig-menu__panel' ), 'links' => array( 'Menu links', '.ig-menu__panel li a, .ig-menu-edit__label' ), 'slogan' => array( 'Slogan', '.ig-menu__slogan' ) ),
+		'imagient/logo'        => array( 'logo' => array( 'Logo', '.logo, img' ) ),
+		'imagient/section'     => array( 'inner' => array( 'Inner container', '.ig-container' ) ),
+		'imagient/box'         => array( 'inner' => array( 'Inner container', '.ig-box__inner' ) ),
+		'imagient/form'        => array( 'labels' => array( 'Labels', '.ig-field__label' ), 'inputs' => array( 'Fields', '.ig-field__input' ), 'placeholders' => array( 'Placeholders', '.ig-field__input::placeholder' ), 'choices' => array( 'Choices and consent', '.ig-field__choice' ), 'button' => array( 'Button', '.ig-form__button' ), 'status' => array( 'Message after sending', '.ig-form__status' ), 'errors' => array( 'Error messages', '.ig-field__error' ) ),
+		'imagient/field'       => array( 'label' => array( 'Label', '.ig-field__label' ), 'input' => array( 'Field', '.ig-field__input' ), 'placeholder' => array( 'Placeholder', '.ig-field__input::placeholder' ) ),
+		'imagient/form-submit' => array( 'button' => array( 'Button', '.ig-form__button' ) ),
+		'core/button'          => array( 'link' => array( 'Button', '.wp-block-button__link' ) ),
+		'core/buttons'         => array( 'link' => array( 'Buttons', '.wp-block-button__link' ) ),
+		'core/image'           => array( 'image' => array( 'Image', 'img' ), 'caption' => array( 'Caption', 'figcaption' ) ),
+		'core/list'            => array( 'items' => array( 'Items', 'li' ), 'links' => array( 'Links', 'a' ) ),
+		'core/group'           => array( 'headings' => array( 'Headings inside', 'h1, h2, h3, h4' ), 'texts' => array( 'Paragraphs inside', 'p' ), 'links' => array( 'Links inside', 'a' ) ),
+	) );
+}
+
+/** A part's selector, inside the block's own one (each of its comma-separated parts). */
+function imagient_style_scope( $sel, $inner ) {
+	return implode( ',', array_map( function ( $p ) use ( $sel ) { return $sel . ' ' . trim( $p ); }, explode( ',', $inner ) ) );
+}
+
+/** One set of breakpoints and hover, for a selector. */
+function imagient_style_rules( $style, $sel, $hover = true ) {
 	$css = '';
 	if ( $d = imagient_style_decls( $style['d'] ?? array() ) ) {
 		$css .= $sel . '{' . $d . '}';
 	}
-	if ( $h = imagient_style_decls( $style['h'] ?? array() ) ) {
-		$css .= $sel . ':hover{' . $h . '}';
+	if ( $hover && ( $h = imagient_style_decls( $style['h'] ?? array() ) ) ) {
+		$css .= implode( ',', array_map( function ( $p ) { return $p . ':hover'; }, explode( ',', $sel ) ) ) . '{' . $h . '}';
 	}
 	if ( $t = imagient_style_decls( $style['t'] ?? array() ) ) {
 		$css .= '@media (max-width:1024px){' . $sel . '{' . $t . '}}';
@@ -125,6 +157,24 @@ function imagient_style_css( $style, $cls ) {
 	if ( $m = imagient_style_decls( $style['m'] ?? array() ) ) {
 		$css .= '@media (max-width:640px){' . $sel . '{' . $m . '}}';
 	}
+	return $css;
+}
+
+/** The whole stylesheet for one block, scoped to its class. */
+function imagient_style_css( $style, $cls, $name = '' ) {
+	// :root and two classes: wins over the blocks' and the theme's own rules
+	$sel = ':root .' . $cls . '.' . $cls;
+	$css = '';
+	// its parts (title, text, button …), each with its own breakpoints and hover
+	$parts = imagient_style_elements()[ $name ] ?? array();
+	if ( ! empty( $style['el'] ) && is_array( $style['el'] ) ) {
+		foreach ( $style['el'] as $k => $set ) {
+			if ( isset( $parts[ $k ] ) && is_array( $set ) ) {
+				$css .= imagient_style_rules( $set, imagient_style_scope( $sel, $parts[ $k ][1] ), false === strpos( $parts[ $k ][1], '::' ) );
+			}
+		}
+	}
+	$css .= imagient_style_rules( $style, $sel );
 	// custom CSS: "selector" stands for this block, as in Elementor
 	if ( ! empty( $style['css'] ) && is_string( $style['css'] ) ) {
 		$custom = str_replace( array( '<', '\\' ), '', $style['css'] );
@@ -154,8 +204,8 @@ add_filter( 'render_block', function ( $html, $block ) {
 	if ( empty( $style ) || ! is_array( $style ) || ! class_exists( 'WP_HTML_Tag_Processor' ) ) {
 		return $html;
 	}
-	$cls = 'igs-' . substr( md5( wp_json_encode( $style ) ), 0, 8 );
-	$css = imagient_style_css( $style, $cls );
+	$cls = 'igs-' . substr( md5( ( $block['blockName'] ?? '' ) . wp_json_encode( $style ) ), 0, 8 );
+	$css = imagient_style_css( $style, $cls, $block['blockName'] ?? '' );
 	if ( ! $css ) {
 		return $html;
 	}
