@@ -488,30 +488,20 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-top.co-on .ig-logo > :not(.ig-top__co) { opacity: 0; transition: opacity .35s ease; }
 .ig-top .ig-logo > :not(.ig-top__co) { transition: opacity .35s ease; }
 .ig-top.logo-off .ig-logo { opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s .35s; }
-.ig-menu__btn { transition: color .35s ease; }
-.ig-top.on-dark-r .ig-menu__btn { color: var(--on); }
-/* once the page has moved on, the button sits in a round badge so it is plain to see wherever it is: blue with white
-   lines over light backgrounds, white with blue lines over dark ones (gone while the menu is open) */
-.ig-menu__btn::before { content: ""; position: absolute; left: 50%; top: 50%; width: calc(var(--bw) + 36px); height: calc(var(--bw) + 36px);
-  margin: calc((var(--bw) + 36px) / -2) 0 0 calc((var(--bw) + 36px) / -2); border-radius: 50%; background: var(--blue);
-  box-shadow: 0 8px 24px rgba(10, 30, 60, .18); transform: scale(0); transition: transform .45s cubic-bezier(.3, 1.4, .5, 1), background .35s ease; }
-.ig-top.is-stuck .ig-menu__btn::before { transform: scale(1); }
-@media (max-width: 760px) { .ig-menu__btn::before { width: 58px; height: 58px; margin: -29px 0 0 -29px; } .ig-top .ig-menu__btn { margin-right: 0; } }
-.ig-top.is-stuck .ig-menu__btn { color: var(--on); }
-.ig-top.is-stuck.on-dark-r .ig-menu__btn::before { background: #fff; }
-.ig-top.is-stuck.on-dark-r .ig-menu__btn { color: var(--blue); }
-.menu-open .ig-top .ig-menu__btn::before { transform: scale(0); transition-duration: .25s; }
-.menu-open .ig-top .ig-menu__btn { color: var(--on) !important; }   /* the close cross: white on the menu, whatever was under the button */
-
 /* menu: three lines that turn into a cross; the full-screen panel opens from the button's corner */
-.ig-menu__btn { --bw: max(28px, 40 * var(--pu)); --bg: max(8px, 11 * var(--pu)); position: relative; z-index: 2; width: calc(var(--bw) + 20px); height: calc(var(--bg) * 2 + 26px); margin: -12px -10px 0 0; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ink); }
-.ig-menu__btn span { position: absolute; left: 10px; right: 10px; height: 2px; background: currentColor; border-radius: 1px; transition: transform .45s cubic-bezier(.65, 0, .25, 1), opacity .3s, top .45s cubic-bezier(.65, 0, .25, 1); }
-@media (max-width: 760px) { .ig-menu__btn { --bw: 36px; --bg: 10px; } }
-.ig-menu__btn span:nth-child(1) { top: 12px; } .ig-menu__btn span:nth-child(2) { top: calc(12px + var(--bg)); } .ig-menu__btn span:nth-child(3) { top: calc(12px + var(--bg) * 2); }
-.menu-open .ig-menu__btn { color: var(--on); }
-.menu-open .ig-menu__btn span:nth-child(1) { top: calc(12px + var(--bg)); transform: rotate(45deg); }
+/* the menu button: a white square with straight corners and black lines, the same on every background and while
+   the menu is open (its cross); a light shadow once the page has moved on, so it stands out over white too */
+.ig-menu__btn { --bw: max(28px, 40 * var(--pu)); --bg: max(8px, 11 * var(--pu)); --bs: calc(var(--bw) + 24px);
+  position: relative; z-index: 2; width: var(--bs); height: var(--bs); margin: calc((var(--bg) * 2 + 2px - var(--bs)) / 2) 0 0 0; padding: 0; border: 0; border-radius: 0;
+  background: #fff; color: #000; cursor: pointer; transition: box-shadow .35s ease; }
+.ig-top.is-stuck .ig-menu__btn { box-shadow: 0 6px 20px rgba(10, 30, 60, .14); }
+.menu-open .ig-top .ig-menu__btn { box-shadow: none; }
+.ig-menu__btn span { position: absolute; left: 12px; right: 12px; height: 2px; background: currentColor; border-radius: 0; transition: transform .45s cubic-bezier(.65, 0, .25, 1), opacity .3s, top .45s cubic-bezier(.65, 0, .25, 1); }
+@media (max-width: 760px) { .ig-menu__btn { --bw: 32px; --bg: 9px; } }
+.ig-menu__btn span:nth-child(1) { top: calc(50% - 1px - var(--bg)); } .ig-menu__btn span:nth-child(2) { top: calc(50% - 1px); } .ig-menu__btn span:nth-child(3) { top: calc(50% - 1px + var(--bg)); }
+.menu-open .ig-menu__btn span:nth-child(1) { top: calc(50% - 1px); transform: rotate(45deg); }
 .menu-open .ig-menu__btn span:nth-child(2) { opacity: 0; transform: scaleX(.2); }
-.menu-open .ig-menu__btn span:nth-child(3) { top: calc(12px + var(--bg)); transform: rotate(-45deg); }
+.menu-open .ig-menu__btn span:nth-child(3) { top: calc(50% - 1px); transform: rotate(-45deg); }
 .ig-menu__panel { position: fixed; inset: 0; z-index: 1; display: flex; flex-direction: column; justify-content: center; gap: 48px;
   padding: 120px max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu)) 48px; background: var(--menu-bg, var(--blue)); color: var(--on);
   transform: translateY(-100%); visibility: hidden; transition: transform .75s cubic-bezier(.65, 0, .25, 1), visibility 0s .75s; }

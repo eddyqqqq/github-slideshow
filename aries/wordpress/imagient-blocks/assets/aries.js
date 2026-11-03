@@ -445,7 +445,7 @@ window.__igRun = () => {
          (the home page's company scene holds its own logos) ---- */
   const hdr = $('.ig-top');
   if (hdr) {
-    const logoBox = $('.ig-logo', hdr), btn = $('.ig-menu__btn', hdr), tpl = $('.ig-phero__logo');
+    const logoBox = $('.ig-logo', hdr), tpl = $('.ig-phero__logo');
     if (tpl && logoBox) { const co = document.createElement('span'); co.className = 'ig-top__co'; co.setAttribute('aria-hidden', 'true'); co.append(tpl.content.cloneNode(true)); logoBox.append(co); }
     const lum = c => { const m = c && c.match(/[\d.]+/g); if (!m || m.length < 3 || (m[3] !== undefined && +m[3] < 0.5)) return null; return (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255; };
     const faded = el => { for (let e = el; e && e !== document.body; e = e.parentElement) { const s = getComputedStyle(e); if (+s.opacity < 0.35 || s.visibility === 'hidden') return true; } return false; };
@@ -464,22 +464,22 @@ window.__igRun = () => {
     const toneAt = list => { for (const e of list) { if (faded(e)) continue; const t = toneOf(e); if (t) return t; } return 'light'; };
     const headerTone = () => {
       if (root.classList.contains('menu-open')) return;
-      const ul = logoBox ? under(logoBox) : [], ub = btn ? under(btn) : [];
+      const ul = logoBox ? under(logoBox) : [];
       const inScene = ul.some(e => e.matches('.after-scene, .ig-phero.is-flooded') || !!e.closest('.ph-flood'));
       hdr.classList.toggle('co-on', inScene && !!$('.ig-top__co', hdr));
       hdr.classList.toggle('on-dark-l', inScene || toneAt(ul) === 'dark');
-      hdr.classList.toggle('on-dark-r', toneAt(ub) === 'dark');
       hdr.classList.toggle('is-stuck', scrollY > innerHeight * 0.4);
       // the logo holds the top of the page and a company page's scene and coloured section; further down it steps
       // aside (over the page's texts it would sit on them), the menu button stays everywhere
-      // and wherever a text passes under it (a heading scrolling up through the coloured section) it steps aside too
-      let overText = false;
-      if (logoBox && scrollY > 8) {
-        const r = logoBox.getBoundingClientRect(), x = r.left + r.width / 2;
-        overText = [r.top + r.height * 0.15, r.top + r.height / 2, r.bottom - r.height * 0.15].some(y => document.elementsFromPoint(x, y)
-          .some(e => !hdr.contains(e) && e.matches('h1, h2, h3, h4, h5, h6, p, li, label, input, textarea, .wp-block-button__link') && !faded(e)));
+      // the company's logo holds until the coloured section's content (its headline, then its ribbon) reaches it;
+      // from there down the page only the menu button stays
+      let past = false;
+      const sec = $('.after-scene');
+      if (logoBox && sec) {
+        const first = $('h1, h2, h3, h4, h5, h6, p, .ig-form', sec);
+        past = !!first && first.getBoundingClientRect().top < logoBox.getBoundingClientRect().bottom + 16;
       }
-      hdr.classList.toggle('logo-off', scrollY > 8 && (overText || !ul.some(e => e.matches('.ig-phero, .after-scene'))));
+      hdr.classList.toggle('logo-off', scrollY > 8 && (past || !ul.some(e => e.matches('.ig-phero, .after-scene'))));
     };
     let toneQ = 0, toneT = [];
     const queueTone = () => {
