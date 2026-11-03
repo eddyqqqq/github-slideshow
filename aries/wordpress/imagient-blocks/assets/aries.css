@@ -361,22 +361,33 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-contact-form__title { font-size: var(--h-l); line-height: 1.15; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 calc(100 * var(--pu)); }
 /* the design's fields: a line under each (and over the first row), the field's name inside it, small; the button a
    plain underlined word */
-.ig-form { --igf-gap-x: calc(24 * var(--pu)); --igf-gap-y: 0px; --igf-input-size: max(15px, 16 * var(--pu)); --igf-label-size: max(13px, 14 * var(--pu)); }
-.ig-form .ig-field__input { padding: calc(30 * var(--pu)) 0 calc(26 * var(--pu)); }
+.ig-form { --igf-gap-x: calc(24 * var(--pu)); --igf-gap-y: 0px; --igf-input-size: max(18px, 20 * var(--pu)); --igf-label-size: max(15px, 16 * var(--pu));
+  --igf-check-line: var(--blue); --igf-check-bg: var(--blue); --igf-check-mark: #fff; }
+.ig-form .ig-field__input { padding: max(24px, 32 * var(--pu)) 0 max(22px, 28 * var(--pu)); }
 .ig-form .ig-field__input::placeholder { opacity: .8; }
-.ig-form textarea.ig-field__input { min-height: calc(226 * var(--pu)); padding-top: calc(18 * var(--pu)); }
+.ig-form textarea.ig-field__input { min-height: max(180px, 226 * var(--pu)); padding-top: max(22px, 26 * var(--pu)); }
 .ig-form .ig-field__input:focus { box-shadow: none; }
 .ig-form .ig-form__fields > .ig-field.is-w-50:nth-child(-n+2), .ig-form .ig-form__fields > .ig-field.is-w-100:first-child { border-top: 1px solid var(--igf-line); }
 .ig-form .ig-field--consent { margin-top: calc(54 * var(--pu)); }
-.ig-form .ig-field__consent { align-items: center; gap: 14px; font-size: var(--igf-label-size); line-height: 1.35; }
-.ig-form .ig-field__consent input { width: 24px; height: 24px; margin: 0; appearance: none; border: 1px solid currentColor; border-radius: 0; display: grid; place-items: center; }
-.ig-form .ig-field__consent input::after { content: ""; width: 12px; height: 7px; border: solid currentColor; border-width: 0 0 2px 2px; transform: rotate(-45deg) translate(1px, -1px); opacity: 0; transition: opacity .15s; }
-.ig-form .ig-field__consent input:checked::after { opacity: 1; }
+.ig-form .ig-field__consent { align-items: center; gap: 16px; font-size: var(--igf-label-size); line-height: 1.4; }
+/* boxes and dots drawn by the site (the same in every browser): the brand's blue, white on a dark section */
+.ig-form .ig-field__choice input[type="checkbox"], .ig-form .ig-field__choice input[type="radio"] { -webkit-appearance: none; appearance: none; position: relative; flex: none;
+  width: 28px; height: 28px; margin: 0; padding: 0; border: 2px solid var(--igf-check-line); border-radius: 2px; background: transparent; cursor: pointer;
+  transition: background-color .2s, border-color .2s; }
+.ig-form .ig-field__choice input[type="radio"] { border-radius: 50%; }
+.ig-form .ig-field__choice input[type="checkbox"]::after { content: ""; position: absolute; left: 50%; top: 44%; width: 12px; height: 7px; border: solid var(--igf-check-mark);
+  border-width: 0 0 2.5px 2.5px; transform: translate(-50%, -50%) rotate(-45deg) scale(.6); opacity: 0; transition: opacity .15s, transform .2s; }
+.ig-form .ig-field__choice input[type="radio"]::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: var(--igf-check-mark); opacity: 0; transform: scale(.4); transition: opacity .15s, transform .2s; }
+.ig-form .ig-field__choice input:checked { background: var(--igf-check-bg); border-color: var(--igf-check-bg); }
+.ig-form .ig-field__choice input:checked::after { opacity: 1; transform: translate(-50%, -50%) rotate(-45deg) scale(1); }
+.ig-form .ig-field__choice input[type="radio"]:checked::after { transform: none; }
+.ig-form .ig-field__choice input:focus-visible { outline: 2px solid var(--igf-check-line); outline-offset: 3px; }
+.ig-form .ig-field.has-error .ig-field__choice input { border-color: var(--igf-error); }
 .ig-form .ig-field__error { margin-top: 8px; }
 .ig-form .ig-form__submit { margin-top: calc(60 * var(--pu)); }
 .ig-form .ig-form__button { padding: 0 2px 6px; background: none; color: inherit; border-bottom: 1px solid currentColor; border-radius: 0; font-size: var(--link, 16px); }
 .ig-form .ig-form__button:hover { opacity: .75; }
-.ig-section[data-tone="dark"] .ig-form { --igf-line: rgba(255, 255, 255, .6); --igf-error: #ffd0cc; }
+.ig-section[data-tone="dark"] .ig-form { --igf-line: rgba(255, 255, 255, .6); --igf-error: #ffd0cc; --igf-check-line: #fff; --igf-check-bg: #fff; --igf-check-mark: var(--blue); }
 .ig-section[data-tone="dark"] .ig-form .ig-form__status { color: #fff; }
 @media (max-width: 760px) { .ig-form .ig-form__fields > .ig-field.is-w-50:nth-child(2) { border-top: 0; } }
 
@@ -471,6 +482,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   margin: calc((var(--bw) + 36px) / -2) 0 0 calc((var(--bw) + 36px) / -2); border-radius: 50%; background: var(--blue);
   box-shadow: 0 8px 24px rgba(10, 30, 60, .18); transform: scale(0); transition: transform .45s cubic-bezier(.3, 1.4, .5, 1), background .35s ease; }
 .ig-top.is-stuck .ig-menu__btn::before { transform: scale(1); }
+@media (max-width: 760px) { .ig-menu__btn::before { width: 58px; height: 58px; margin: -29px 0 0 -29px; } .ig-top .ig-menu__btn { margin-right: 0; } }
 .ig-top.is-stuck .ig-menu__btn { color: var(--on); }
 .ig-top.is-stuck.on-dark-r .ig-menu__btn::before { background: #fff; }
 .ig-top.is-stuck.on-dark-r .ig-menu__btn { color: var(--blue); }
