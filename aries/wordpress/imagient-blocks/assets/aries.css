@@ -411,7 +411,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-thanks > .ig-container { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column;
   padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 40px) + var(--logo-w, 75px) * 1.76 + clamp(40px, 7vh, 110px)); }
 .ig-thanks .ig-statement { max-width: 15em; margin: 0; }
-.ig-thanks__lead { max-width: calc(640 * var(--pu)); margin: clamp(16px, 2vw, 28px) 0 0; font-size: var(--body); line-height: 1.35; }
+.ig-thanks__lead { max-width: max(640px, 640 * var(--pu)); margin: clamp(16px, 2vw, 28px) 0 0; font-size: var(--body); line-height: 1.35; }
 .ig-thanks .wp-block-buttons { margin-top: auto; padding-top: clamp(220px, 34vh, 420px); }
 @media (max-width: 760px) { .ig-thanks > .ig-container { padding-top: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 20px) + var(--m-logo, 56px) * 1.76 + 72px); } .ig-thanks__lead { max-width: none; } }
 /* legal pages: running text in a narrow column; empty headings and paragraphs (not yet written) take no room */
@@ -577,7 +577,7 @@ html.menu-open:not(.lenis), html.menu-open:not(.lenis) body { overflow: hidden; 
 .ig-cover .wp-block-buttons, .ig-page-figures .wp-block-buttons { margin-top: 0; }
 .ig-page-notes { max-width: calc(640 * var(--pu)); margin-top: calc(470 * var(--pu)); display: grid; gap: calc(24 * var(--pu)); }
 .ig-page-notes p { margin: 0; font-size: var(--body); line-height: 1.2; }   /* the design: 20 px on 24 px lines at 1440 */
-.ig-page-notes.is-wider { max-width: calc(660 * var(--pu)); }   /* the Aries Group page: its notes are set a little wider */
+@media (min-width: 1025px) { .ig-page-notes.is-wider { max-width: calc(660 * var(--pu)); } }   /* the Aries Group page: its notes a little wider on wide screens (smaller screens keep the notes' own width) */
 @media (max-width: 1024px) { .ig-page-notes { max-width: 640px; } }
 /* line breaks set in the text follow the design on wide screens; phones wrap on their own */
 @media (max-width: 760px) { :is(.ig-page-statement, .ig-statement, .ig-page-list li, .ig-svc__title) br { display: none; } }
