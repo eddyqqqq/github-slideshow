@@ -869,15 +869,18 @@ window.__igRun = () => {
       r.layout(); r.vis = true; r.render(); g = r.ga.getBoundingClientRect();   // the section grew: the ribbon's box with it
     }
     if (g.height) { r.place.y += ((hb + nt) / 2 - (g.top + g.height / 2)) / r.H; r.render(); g = r.ga.getBoundingClientRect(); }
+    sec._ribMid = (hb + nt) / 2 - sec.getBoundingClientRect().top;   // where the ribbon sits in its section (its draw-in follows it)
     r.st.q = q; r.vis = vis; r.render();
   };
   $$('.after-scene').forEach(sec => later(() => {
     const r = decorRibs.find(x => sec.contains(x.svg));
     centreRibbon(sec, r);
     ScrollTrigger.addEventListener('refreshInit', () => { r && r.layout(); centreRibbon(sec, r); });
-    // the home page's company scene, timing for timing: the ribbon draws in as the section rises (from the moment its
-    // top enters until it reaches the top), the headline rises word by word, then the texts one after another
-    if (r) { r.st.q = 0; r.render(); gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: sec, start: 'top bottom', end: 'top top', scrub: 0.8 } }); }
+    // the ribbon draws in from left to right while it crosses the screen: from the moment it starts to come up from
+    // the bottom until its middle is a third of the way down (tied to the section's top, it sits so low that it was
+    // mostly drawn before it showed); the headline rises word by word, then the texts one after another
+    const mid = () => sec._ribMid || sec.offsetHeight / 2;
+    if (r) { r.st.q = 0; r.render(); gsap.to(r.st, { q: 1, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: sec, start: () => `top+=${Math.round(mid())} 112%`, end: () => `top+=${Math.round(mid())} 34%`, scrub: 0.8, invalidateOnRefresh: true } }); }
     const hd = $('.ig-page-statement', sec);
     if (hd) gsap.from(splitWords(hd), { yPercent: 115, ease: 'none', stagger: 0.05, scrollTrigger: { trigger: sec, start: 'top 98%', end: 'top 40%', scrub: 0.6 } });
     const ps = $$('.ig-page-notes > *', sec);

@@ -1,12 +1,12 @@
 {
- "version": "1.25.1",
+ "version": "1.25.2",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
     "assets/aries.css": "98c26d2ea5bf59c840962806b0661f8c8f78c382072bece5b65ad9175817b748",
-    "assets/aries.js": "3c6e79ffe4bd0af6fd0176504e448774f5617d5faa932456821a11341bc30d36",
+    "assets/aries.js": "f858e7b469a255de76df34f3211fe3259ec628b1ebcb9ba2ff86e1ff72eadafa",
     "assets/editor.css": "4ff83266367539af4caae5ef388ab775dfd12835202d5d8dc2cd8d87d3071917",
     "assets/editor.js": "f0be32d3f7bb1d13698fa956c1de388e09d759deb5f0d8d4dae3fc4e4cf43486",
     "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
@@ -19,7 +19,7 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "ecc9eab8a15926b270d55300c5260b5232ef6831b1d1f56278387cff7d590f8c",
+    "imagient-blocks.php": "fe8a6865183ab0c63687af6457e5fcc43eb9ebf66eb5f28a279b44b242acd28b",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "866b727c3619dcb2ca206c9904a04a523066ba0b8e9208048d916b53969b429b",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
