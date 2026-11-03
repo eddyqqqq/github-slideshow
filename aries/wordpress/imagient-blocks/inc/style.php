@@ -160,6 +160,14 @@ function imagient_style_rules( $style, $sel, $hover = true ) {
 	return $css;
 }
 
+/** Blocks whose children sit in an inner container: their Layout settings act there. */
+function imagient_style_layout_inner() {
+	return array( 'imagient/section' => '.ig-container', 'imagient/cover' => '.ig-cover__inner' );
+}
+function imagient_style_layout_keys() {
+	return array( 'display', 'flexDirection', 'justifyContent', 'alignItems', 'alignContent', 'flexWrap', 'gap', 'rowGap', 'columnGap', 'gridTemplateColumns', 'gridTemplateRows' );
+}
+
 /** The whole stylesheet for one block, scoped to its class. */
 function imagient_style_css( $style, $cls, $name = '' ) {
 	// :root and two classes: wins over the blocks' and the theme's own rules
@@ -173,6 +181,18 @@ function imagient_style_css( $style, $cls, $name = '' ) {
 				$css .= imagient_style_rules( $set, imagient_style_scope( $sel, $parts[ $k ][1] ), false === strpos( $parts[ $k ][1], '::' ) );
 			}
 		}
+	}
+	$inner = imagient_style_layout_inner()[ $name ] ?? '';
+	if ( $inner ) {
+		$keys = array_flip( imagient_style_layout_keys() );
+		$lay  = array();
+		foreach ( array( 'd', 't', 'm' ) as $bp ) {
+			if ( ! empty( $style[ $bp ] ) && is_array( $style[ $bp ] ) ) {
+				$lay[ $bp ]   = array_intersect_key( $style[ $bp ], $keys );
+				$style[ $bp ] = array_diff_key( $style[ $bp ], $keys );
+			}
+		}
+		$css .= imagient_style_rules( $lay, $sel . ' > ' . $inner, false );
 	}
 	$css .= imagient_style_rules( $style, $sel );
 	// custom CSS: "selector" stands for this block, as in Elementor

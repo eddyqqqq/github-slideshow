@@ -448,7 +448,8 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 /* phones: the section comes up as soon as the statement leaves and holds its headline, ribbon and texts closer
    together (as the home page's company scene, which keeps all of it on one screen) */
 @media (max-width: 760px) and (orientation: portrait) {
-  .anim .after-scene { margin-top: -80vh; margin-top: -80svh; padding-top: 40px !important; }
+  .anim .after-scene { margin-top: -80vh; margin-top: -80svh; }
+  .anim .after-scene:not(.has-pt-m) { padding-top: 40px; }
   .anim .after-scene .ig-page-notes { margin-top: 200px; }
 }
 .ig-phero__scene { position: absolute; z-index: 3; left: 0; right: 0; top: 60%;

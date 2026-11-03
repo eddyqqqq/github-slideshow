@@ -133,12 +133,12 @@
 /* ================= company pages ================= */
 .ig-phero-edit { position: relative; padding: 24px 0 40px; background: #fff; overflow: hidden; }
 .ig-phero-edit__svg { display: block; width: 100%; height: auto; }
-.ig-phero-edit__title { margin: 40px 24px 0 !important; color: #145fad; font-weight: 400 !important; }
+.ig-phero-edit__title { margin: 40px 24px 0 !important; color: var(--blue, #145fad); font-weight: var(--fw-head, 600); }   /* as on the site; the Style tab can change it */
 .ig-cover-edit { position: relative; min-height: 420px; background: var(--cv-img) var(--cv-pos, 50% 50%) / cover no-repeat, #3189a9; color: #fff; }
 .ig-cover-edit::before { content: ""; position: absolute; inset: 0; background: var(--cv-grad); opacity: var(--cv-o, 1); pointer-events: none; }
 .ig-cover-edit.tone-light { color: #111418; }
 .ig-cover-edit__inner { position: relative; padding: 64px 48px; }
-.ig-cover-edit :is(h1, h2, h3, p, a) { color: inherit !important; }
+:where(.ig-cover-edit) :is(h1, h2, h3, p, a) { color: inherit; }
 .ig-svc-edit { display: grid; gap: 28px; padding: 16px 0; }
 .ig-svc-edit__row { position: relative; display: grid; grid-template-columns: 1.1fr .6fr 1.2fr; gap: 20px; align-items: center; }
 .ig-svc-edit .ig-svc__wave { width: 140px; } .ig-svc-edit .ig-svc__wave path { fill: none; stroke: #111; stroke-width: 1; }

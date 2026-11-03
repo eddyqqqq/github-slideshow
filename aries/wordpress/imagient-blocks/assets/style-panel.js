@@ -60,11 +60,21 @@
     return out;
   }
   const scope = (sel, inner) => inner.split(',').map(p => sel + ' ' + p.trim()).join(',');
+  // blocks whose children sit in an inner container: their Layout settings act there (mirrors inc/style.php)
+  const LAYOUT_INNER = { 'imagient/section': '.ig-container', 'imagient/cover': '.ig-cover__inner, .ig-cover-edit__inner' };
+  const LAYOUT_KEYS = ['display', 'flexDirection', 'justifyContent', 'alignItems', 'alignContent', 'flexWrap', 'gap', 'rowGap', 'columnGap', 'gridTemplateColumns', 'gridTemplateRows'];
   function css(style, sel, name) {
     if (!style) return '';
     let out = '';
     const parts = PARTS[name] || {};
     Object.keys(style.el || {}).forEach(k => { if (parts[k]) out += rules(style.el[k] || {}, scope(sel, parts[k][1]), parts[k][1].indexOf('::') < 0); });
+    if (LAYOUT_INNER[name]) {
+      const lay = {}, rest = { ...style };
+      ['d', 't', 'm'].forEach(b => { if (!style[b]) return; lay[b] = {}; rest[b] = {}; Object.keys(style[b]).forEach(k => { (LAYOUT_KEYS.includes(k) ? lay[b] : rest[b])[k] = style[b][k]; }); });
+      // in the editor the inner container is the block list inside it
+      out += rules(lay, LAYOUT_INNER[name].split(',').map(s => sel + ' > ' + s.trim()).join(','), false);
+      style = rest;
+    }
     out += rules(style, sel);
     if (style.css) out += String(style.css).replace(/</g, '').replace(/selector/g, sel);
     return out;
