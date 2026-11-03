@@ -433,9 +433,57 @@ window.__igRun = () => {
       if (open) setTimeout(() => { const a = $('a', panel); if (a) a.focus({ preventScroll: true }); }, 450); else btn.focus({ preventScroll: true });
     };
     btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
-    addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('menu-open')) set(false); });
+    addEventListener('keydown', e => {
+      if (!root.classList.contains('menu-open')) return;
+      if (e.key === 'Escape') set(false);
+      else if ([' ', 'PageDown', 'PageUp', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key) && !e.target.closest('input, textarea')) e.preventDefault();
+    });
     panel.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
   });
+  /* ---- the header stays on screen: its logo and menu button turn white over dark backgrounds (whatever is drawn
+         under each: a colour, a photo, a frame), the company's own logo shows over a company page's coloured section
+         (the home page's company scene holds its own logos) ---- */
+  const hdr = $('.ig-top');
+  if (hdr) {
+    const logoBox = $('.ig-logo', hdr), btn = $('.ig-menu__btn', hdr), tpl = $('.ig-phero__logo');
+    if (tpl && logoBox) { const co = document.createElement('span'); co.className = 'ig-top__co'; co.setAttribute('aria-hidden', 'true'); co.append(tpl.content.cloneNode(true)); logoBox.append(co); }
+    const lum = c => { const m = c && c.match(/[\d.]+/g); if (!m || m.length < 3 || (m[3] !== undefined && +m[3] < 0.5)) return null; return (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255; };
+    const faded = el => { for (let e = el; e && e !== document.body; e = e.parentElement) { const s = getComputedStyle(e); if (+s.opacity < 0.35 || s.visibility === 'hidden') return true; } return false; };
+    const toneOf = el => {
+      const tag = el.tagName.toLowerCase();
+      if (/^(img|picture|video|canvas|image)$/.test(tag)) return 'dark';
+      const s = getComputedStyle(el);
+      if (el instanceof SVGElement) {
+        if (/^(svg|g|defs|clippath|mask)$/.test(tag) || !s.fill || s.fill === 'none' || /url/.test(s.fill) || +s.fillOpacity < 0.5) return null;
+        const L = lum(s.fill); return L === null ? null : L < 0.62 ? 'dark' : 'light';
+      }
+      if (s.backgroundImage && s.backgroundImage !== 'none') return 'dark';
+      const L = lum(s.backgroundColor); return L === null ? null : L < 0.62 ? 'dark' : 'light';
+    };
+    const under = el => { const r = el.getBoundingClientRect(); if (!r.width) return []; return document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2).filter(e => !hdr.contains(e)); };
+    const toneAt = list => { for (const e of list) { if (faded(e)) continue; const t = toneOf(e); if (t) return t; } return 'light'; };
+    const headerTone = () => {
+      if (root.classList.contains('menu-open')) return;
+      const ul = logoBox ? under(logoBox) : [], ub = btn ? under(btn) : [];
+      const inScene = ul.some(e => e.matches('.after-scene, .ig-phero.is-flooded'));
+      hdr.classList.toggle('co-on', inScene && !!$('.ig-top__co', hdr));
+      hdr.classList.toggle('on-dark-l', inScene || toneAt(ul) === 'dark');
+      hdr.classList.toggle('on-dark-r', toneAt(ub) === 'dark');
+      // the logo holds the top of the page and a company page's scene and coloured section; further down it steps
+      // aside (over the page's texts it would sit on them), the menu button stays everywhere
+      hdr.classList.toggle('logo-off', scrollY > 8 && !ul.some(e => e.matches('.ig-phero, .after-scene')));
+    };
+    let toneQ = 0, toneT = [];
+    const queueTone = () => {
+      if (!toneQ) toneQ = requestAnimationFrame(() => { toneQ = 0; headerTone(); });
+      // scrubbed scenes settle after the scroll stops: look again then
+      toneT.forEach(clearTimeout); toneT = [setTimeout(headerTone, 300), setTimeout(headerTone, 1000), setTimeout(headerTone, 2200)];
+    };
+    addEventListener('scroll', queueTone, { passive: true });
+    addEventListener('resize', queueTone);
+    headerTone(); setTimeout(headerTone, 600);
+  }
+
   // the services' wave (design/wave-line.svg) with its swell k: 1 as drawn, more a deeper wave (the hover ripple)
   // the wave's reveal: its mask's soft edge (18 % of its length) at p (0 hidden, 1.18 all shown)
   const waveShow = (wave, p) => { const st = wave._st || (wave._st = $$('stop', wave)); if (st.length < 2) return;
@@ -524,7 +572,6 @@ window.__igRun = () => {
         const k = gsap.parseEase('sine.inOut')(hsc.e);
         hs.eT = hero.eTmax * k; hs.eB = hero.eBmax * k; hs.z = 1 + (hero.zEnd - 1) * k; hs.p = k; H(); } }, 0)
       .to('#heroTitle', { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in' }, 0)   // gone before the lower band reaches it
-      .to('.ig-top', { opacity: 0, duration: 0.3 }, 0)
       .to(shade, { opacity: 1, duration: 0.45, ease: 'none' }, 0.5)
       .fromTo(twoWords, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out' }, 0.62)
       .fromTo(twoP, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' }, 0.85)
@@ -650,10 +697,7 @@ window.__igRun = () => {
     place(); ScrollTrigger.addEventListener('refreshInit', place);
     // pinned while it plays: the frame closes as the title fades (as the home page's), the statement rises under it in
     // dark type, then the colour floods out of the closed frame over the screen and the type turns white
-    // the site's header (logo, menu) stays at the top while the scene holds, until the colour has filled the screen
-    const bar = $('.ig-top');
     const tl = gsap.timeline({ defaults: { onUpdate: render }, scrollTrigger: { trigger: ph, start: 'top top', end: () => '+=' + Math.round(tl.duration() * 100) + '%', pin: true, scrub: 1.2, invalidateOnRefresh: true,
-      onUpdate: t => bar && bar.classList.toggle('is-held', t.progress > 0 && t.progress < 1),
       onRefresh: () => { gEnd = size(); spread = Math.max(0, innerWidth / unitPx() / W - 1) + 0.2; render(); } } });
     gEnd = size(); spread = Math.max(0, innerWidth / unitPx() / W - 1) + 0.2;
     // the home page's pacing (its hero holds for 2.7 screens): the frame closes as the title fades, the statement rises
@@ -666,7 +710,6 @@ window.__igRun = () => {
       .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out', onUpdate: null }, 0.62)
       .to(st, { w: 1, duration: 0.45, ease: 'power2.in' }, 0.85)
       .to(scene, { color: '#fff', duration: 0.2, ease: 'none', onUpdate: null }, 0.98)
-      .to(bar || {}, { autoAlpha: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 1.12)   // gone as the colour fills the screen
       .to(words, { yPercent: -115, duration: 0.3, stagger: 0.012, ease: 'power2.in', onUpdate: null }, out)
       .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, out)
       .to({}, { duration: 0.01, onUpdate: null }, gone + 0.3);

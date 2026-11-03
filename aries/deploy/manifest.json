@@ -1,12 +1,12 @@
 {
- "version": "1.25.2",
+ "version": "1.26.0",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
-    "assets/aries.css": "98c26d2ea5bf59c840962806b0661f8c8f78c382072bece5b65ad9175817b748",
-    "assets/aries.js": "f858e7b469a255de76df34f3211fe3259ec628b1ebcb9ba2ff86e1ff72eadafa",
+    "assets/aries.css": "9164bb4685f009e456b772eb5c1461124e849daf0f66851d8c6ab07e34331817",
+    "assets/aries.js": "31172978f198ce3afeabc92c1be61075ec387475a1a6e3670bcae2fb23fdee36",
     "assets/editor.css": "4ff83266367539af4caae5ef388ab775dfd12835202d5d8dc2cd8d87d3071917",
     "assets/editor.js": "f0be32d3f7bb1d13698fa956c1de388e09d759deb5f0d8d4dae3fc4e4cf43486",
     "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
@@ -19,13 +19,13 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "fe8a6865183ab0c63687af6457e5fcc43eb9ebf66eb5f28a279b44b242acd28b",
+    "imagient-blocks.php": "1e50d14a021ea0e25fc54c58a653ff30860cb30037663039d07ebe5f92e55ceb",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "866b727c3619dcb2ca206c9904a04a523066ba0b8e9208048d916b53969b429b",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
     "inc/helpers.php": "a7418583774fbb3d1e3b19aa5f1b8ad76023a77049a790524b1af9ba2ff4fca4",
     "inc/layout.php": "7c5d90d5dc17ba32165bfe9e650275c73b1854ec440e2639674ba84b233bfd96",
-    "inc/pages.php": "a6efbd9451ec88fd3d887c2222c6c0b8437afd00fed019135af47b846c412153",
+    "inc/pages.php": "6b28c256bdae662d60bf0d2bc9ad064001794ae1f3601296007ab3b9309bf769",
     "inc/style.php": "da29543a92aee0ca299636e1dd285fbb397208a72858f7ba5188c48af9cde5c5"
    }
   },
@@ -82,7 +82,7 @@
     "patterns/text-columns.php": "9c7e27c65c7203b84cd618a47cc2588682d16f043cfee702400a28d9a81d3e66",
     "patterns/three-boxes.php": "976a98c6833da644bb8e41f6b30fc3b5ea98136154d9cdbcb2ac941ec3467f6b",
     "screenshot.png": "34bf19db6ee58a6c74053b44d740f2298125dec650e14fadd98bb451126d5fa8",
-    "style.css": "d9ecdf17e57a1476c1bc4fedcd2b560baac1c12f40f711ace94f431e7ee76f53",
+    "style.css": "63d6e62687f6e43c10b6fd5ac2fbb6cad868adb412c10b202e035bed033d07c6",
     "templates/404.html": "21a392a07b93fb6f9ab5e59e25a4cab409d4f10962738cb7d5fee03665a0b695",
     "templates/front-page.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
     "templates/index.html": "788d6baa71bcef484a405d1285366bf08e86ea54912f07761d65f5b65d1ee299",

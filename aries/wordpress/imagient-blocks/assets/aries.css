@@ -376,7 +376,12 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-phero.is-flooded { background: var(--accent, var(--agency)); }
 /* the section after the page hero's scene slides over the scene's last 55 % of a screen, as on the home page */
 .anim .after-scene { position: relative; z-index: 1; margin-top: -55vh; margin-top: -55svh; }
-html body .ig-top.is-held { position: fixed; }   /* the header stays while the page hero's scene holds */
+/* phones: the section comes up as soon as the statement leaves and holds its headline, ribbon and texts closer
+   together (as the home page's company scene, which keeps all of it on one screen) */
+@media (max-width: 760px) and (orientation: portrait) {
+  .anim .after-scene { margin-top: -80vh; margin-top: -80svh; padding-top: 40px !important; }
+  .anim .after-scene .ig-page-notes { margin-top: 200px; }
+}
 .ig-phero__scene { position: absolute; z-index: 3; left: 0; right: 0; top: 60%;
   padding: 0 var(--gut-r) 0 max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu)); color: var(--ink); }
 .ig-phero__scene :is(h1, h2, h3, h4, p, a) { color: inherit; }
@@ -402,12 +407,24 @@ html body .ig-top.is-held { position: fixed; }   /* the header stays while the p
   .ig-phero__title { margin-top: 40px; font-size: var(--h-xl); max-width: 8.4em; text-wrap: balance; }   /* phones: a long name on two lines, clear of the edge */
 }
 
-/* the header of company pages: only the menu button, over the page hero at the top right */
-.menu-open .ig-top { position: fixed; }   /* open: the close button stays where the menu opens from, whatever the scroll */
+/* the header stays on screen (theme: fixed or sticky); over a dark background its logo and menu button turn white
+   (the page's script reads what is under them); in a company page's coloured section the company's own logo shows */
+.ig-top .ig-logo { position: relative; transition: opacity .35s ease, visibility 0s; }
+.ig-top .ig-logo .logo path { transition: fill .35s ease; }
+.ig-top.on-dark-l .ig-logo .logo path { fill: var(--on); }
+.ig-top__co { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+.ig-top__co .logo path { fill: var(--on); }
+.ig-top.co-on .ig-top__co { opacity: 1; }
+.ig-top.co-on .ig-logo > :not(.ig-top__co) { opacity: 0; transition: opacity .35s ease; }
+.ig-top .ig-logo > :not(.ig-top__co) { transition: opacity .35s ease; }
+.ig-top.logo-off .ig-logo { opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s .35s; }
+.ig-menu__btn { transition: color .35s ease; }
+.ig-top.on-dark-r .ig-menu__btn { color: var(--on); }
 
 /* menu: three lines that turn into a cross; the full-screen panel opens from the button's corner */
 .ig-menu__btn { --bw: max(28px, 40 * var(--pu)); --bg: max(8px, 11 * var(--pu)); position: relative; z-index: 2; width: calc(var(--bw) + 20px); height: calc(var(--bg) * 2 + 26px); margin: -12px -10px 0 0; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ink); }
 .ig-menu__btn span { position: absolute; left: 10px; right: 10px; height: 2px; background: currentColor; border-radius: 1px; transition: transform .45s cubic-bezier(.65, 0, .25, 1), opacity .3s, top .45s cubic-bezier(.65, 0, .25, 1); }
+@media (max-width: 760px) { .ig-menu__btn { --bw: 36px; --bg: 10px; } }
 .ig-menu__btn span:nth-child(1) { top: 12px; } .ig-menu__btn span:nth-child(2) { top: calc(12px + var(--bg)); } .ig-menu__btn span:nth-child(3) { top: calc(12px + var(--bg) * 2); }
 .menu-open .ig-menu__btn { color: var(--on); }
 .menu-open .ig-menu__btn span:nth-child(1) { top: calc(12px + var(--bg)); transform: rotate(45deg); }
@@ -415,8 +432,9 @@ html body .ig-top.is-held { position: fixed; }   /* the header stays while the p
 .menu-open .ig-menu__btn span:nth-child(3) { top: calc(12px + var(--bg)); transform: rotate(-45deg); }
 .ig-menu__panel { position: fixed; inset: 0; z-index: 1; display: flex; flex-direction: column; justify-content: center; gap: 48px;
   padding: 120px max(var(--gut), (100% - 1920px) / 2 + 68 * var(--pu)) 48px; background: var(--menu-bg, var(--blue)); color: var(--on);
-  clip-path: circle(0 at calc(100% - 40px) 40px); visibility: hidden; transition: clip-path .8s cubic-bezier(.65, 0, .25, 1), visibility 0s .8s; }
-.menu-open .ig-menu__panel { clip-path: circle(150% at calc(100% - 40px) 40px); visibility: visible; transition: clip-path .9s cubic-bezier(.65, 0, .25, 1); }
+  transform: translateY(-100%); visibility: hidden; transition: transform .75s cubic-bezier(.65, 0, .25, 1), visibility 0s .75s; }
+/* open: the background drops from the top as one piece, a curtain; closing, it goes back up */
+.menu-open .ig-menu__panel { transform: none; visibility: visible; transition: transform .85s cubic-bezier(.7, 0, .2, 1); }
 .ig-menu { position: relative; }
 .ig-menu__panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(6px, 1.4vh, 16px); }
 .ig-menu__panel li { overflow: hidden; padding-bottom: .16em; margin-bottom: -.16em; }   /* room for g, p, y under the mask */
@@ -425,15 +443,18 @@ html body .ig-top.is-held { position: fixed; }   /* the header stays while the p
 .ig-menu__panel li a span::after { content: ""; position: absolute; left: 0; right: 0; bottom: .02em; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: 100% 50%; transition: transform .5s cubic-bezier(.65, 0, .25, 1); }
 .ig-menu__panel li a:is(:hover, :focus-visible) span::after { transform: scaleX(1); transform-origin: 0 50%; }
 .menu-open .ig-menu__panel li a span { transform: none; }
-.menu-open .ig-menu__panel li:nth-child(1) a span { transition-delay: .25s; } .menu-open .ig-menu__panel li:nth-child(2) a span { transition-delay: .3s; }
-.menu-open .ig-menu__panel li:nth-child(3) a span { transition-delay: .35s; } .menu-open .ig-menu__panel li:nth-child(4) a span { transition-delay: .4s; }
-.menu-open .ig-menu__panel li:nth-child(5) a span { transition-delay: .45s; } .menu-open .ig-menu__panel li:nth-child(n+6) a span { transition-delay: .5s; }
+.menu-open .ig-menu__panel li:nth-child(1) a span { transition-delay: .45s; } .menu-open .ig-menu__panel li:nth-child(2) a span { transition-delay: .5s; }
+.menu-open .ig-menu__panel li:nth-child(3) a span { transition-delay: .55s; } .menu-open .ig-menu__panel li:nth-child(4) a span { transition-delay: .6s; }
+.menu-open .ig-menu__panel li:nth-child(5) a span { transition-delay: .65s; } .menu-open .ig-menu__panel li:nth-child(n+6) a span { transition-delay: .7s; }
 .ig-menu__foot { display: flex; align-items: center; justify-content: space-between; gap: 24px; opacity: 0; transition: opacity .4s; }
-.menu-open .ig-menu__foot { opacity: 1; transition: opacity .6s .55s; }
+.menu-open .ig-menu__foot { opacity: 1; transition: opacity .6s .75s; }
 .ig-menu__slogan { margin: 0; font-size: var(--link); opacity: .85; }
 .ig-menu__li { display: block; width: 32px; line-height: 0; } .ig-menu__li svg { width: 100%; height: auto; }
-html { scrollbar-gutter: stable; }   /* the page never shifts when the menu stops the scroll */
-html.menu-open, html.menu-open body { overflow: hidden; }
+html { scrollbar-gutter: stable; }
+/* the open menu stops the scroll: with smooth scrolling the script holds it (the scrollbar stays, so nothing shifts
+   on a desktop); touch screens and plain scrolling hide the overflow */
+html.menu-open:not(.lenis), html.menu-open:not(.lenis) body { overflow: hidden; }
+@media (hover: none), (pointer: coarse) { html.menu-open, html.menu-open body { overflow: hidden; } }
 
 /* cover: a photo band, its own height ("image"), the screen's, or its content's; a colour gradient over the photo;
    its blocks on top */

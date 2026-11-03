@@ -29,7 +29,6 @@ function imagient_pages_defaults() {
 			array( 'label' => 'Aries Shipping Agency', 'url' => '/aries-shipping-agency/' ),
 			array( 'label' => 'Aries Interlink', 'url' => '/aries-interlink/' ),
 			array( 'label' => 'Aries Logistics', 'url' => '/aries-logistics/' ),
-			array( 'label' => 'News', 'url' => '#' ),
 			array( 'label' => 'Contact', 'url' => '#contact' ),
 		),
 	);
@@ -162,6 +161,13 @@ function imagient_render_page_hero( $a, $content = '' ) {
     </svg>
   </div>
   <h1 class="ig-phero__title"><?php echo imagient_text( $a['title'] ); ?></h1>
+	<?php
+	// the company's own logo (the frame's company), shown white in the header over the coloured section that follows
+	$co = imagient_logo_svg( (string) $a['frame'] );
+	if ( $scene && $co && 'group' !== $a['frame'] ) :
+		?>
+  <template class="ig-phero__logo"><?php echo $co; // phpcs:ignore -- the plugin's own SVG ?></template>
+	<?php endif; ?>
 	<?php if ( $scene ) : ?>
   <div class="ig-phero__scene"><?php echo trim( wp_strip_all_tags( $content, true ) ) ? $content : ''; // phpcs:ignore -- rendered inner blocks ?></div>
 	<?php endif; ?>
