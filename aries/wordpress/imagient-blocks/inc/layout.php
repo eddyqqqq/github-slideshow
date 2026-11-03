@@ -89,7 +89,8 @@ function imagient_render_section( $a, $content ) {
 		$style .= 'background:' . $bg . ';';
 	}
 	$class = 'ig-section tone-' . sanitize_html_class( $a['tone'] );
-	if ( isset( $sp['m']['pt'] ) && '' !== $sp['m']['pt'] ) {
+	$spa = json_decode( wp_json_encode( $sp ), true );   // defaults hold objects, saved blocks arrays
+	if ( isset( $spa['m']['pt'] ) && '' !== $spa['m']['pt'] ) {
 		$class .= ' has-pt-m';   // its own space above on phones (the page's scripts and styles leave it)
 	}
 	if ( 'screen' === $a['minHeight'] ) {
