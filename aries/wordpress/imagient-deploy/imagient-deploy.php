@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Imagient Deploy
  * Description:       Updates the Aries theme and the Imagient Blocks plugin from their GitHub repository: only the files that changed, each checked against the published list before it is written. Run it from Tools → Imagient Deploy, or by an administrator through its REST route.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Imagient
@@ -157,6 +157,33 @@ add_action( 'rest_api_init', function () {
 		'callback'            => function ( WP_REST_Request $req ) {
 			$r = imagient_deploy_run( (bool) $req['dry'] );
 			return is_wp_error( $r ) ? new WP_REST_Response( array( 'error' => $r->get_error_message() ), 500 ) : rest_ensure_response( $r );
+		},
+	) );
+} );
+
+// REST: POST /wp-json/imagient-deploy/v1/font (multipart: name, file), for an administrator: one of the theme's
+// licensed fonts, kept out of the public repository, put in the theme's assets/fonts; only WOFF2 files named area-*.
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'imagient-deploy/v1', '/font', array(
+		'methods'             => 'POST',
+		'permission_callback' => 'imagient_deploy_can',
+		'callback'            => function ( WP_REST_Request $req ) {
+			$name  = (string) $req->get_param( 'name' );
+			$files = $req->get_file_params();
+			if ( ! preg_match( '/^area-[a-z]+(-[a-z]+)?\.woff2$/', $name ) || empty( $files['file']['tmp_name'] ) ) {
+				return new WP_REST_Response( array( 'error' => 'A WOFF2 file named area-*.woff2 is expected.' ), 400 );
+			}
+			$tmp  = $files['file']['tmp_name'];
+			$size = (int) filesize( $tmp );
+			$head = (string) file_get_contents( $tmp, false, null, 0, 4 ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+			if ( 'wOF2' !== $head || $size < 1000 || $size > 400000 ) {
+				return new WP_REST_Response( array( 'error' => 'Not a WOFF2 font.' ), 400 );
+			}
+			$dir = trailingslashit( get_theme_root() ) . 'aries/assets/fonts';
+			if ( ! wp_mkdir_p( $dir ) || ! copy( $tmp, $dir . '/' . $name ) ) {
+				return new WP_REST_Response( array( 'error' => 'Could not write the font.' ), 500 );
+			}
+			return rest_ensure_response( array( 'font' => $name, 'bytes' => $size, 'sha256' => hash_file( 'sha256', $dir . '/' . $name ) ) );
 		},
 	) );
 } );

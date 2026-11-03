@@ -1,11 +1,11 @@
 {
- "version": "1.28.5",
+ "version": "1.29.0",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
-    "assets/aries.css": "e051c543a57f5d5263f2ef07e43c99293b0acabbe97c2cb66e9f3e6334b3c7e8",
+    "assets/aries.css": "c4bebaaca1afe6027ed5e4de3ed01d2c7ba1c880f0ca7f844b6fb2df47ceb277",
     "assets/aries.js": "9677a7ba45f4070bd5f99adea40bac80a264069f24688b139b36867234d5419b",
     "assets/editor.css": "4ff83266367539af4caae5ef388ab775dfd12835202d5d8dc2cd8d87d3071917",
     "assets/editor.js": "f0be32d3f7bb1d13698fa956c1de388e09d759deb5f0d8d4dae3fc4e4cf43486",
@@ -19,7 +19,7 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "ed6972bc518fefd3a9ce71c95d5291b56112063f197798f36ce21ec9ca6b2d2f",
+    "imagient-blocks.php": "53f3923d068c157487c67b75d96e2706884bc54eb227d1d0ca7deb4cf0026a27",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "866b727c3619dcb2ca206c9904a04a523066ba0b8e9208048d916b53969b429b",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
@@ -65,7 +65,7 @@
     "assets/images/shipping-agency-sea-2400.avif": "cb553acedabf65f3b0f3de34738a7a0bd0604ba3c3966f957baef4b3da7f3fb6",
     "assets/images/shipping-agency-sea-3600.avif": "32d019d94e6748049aa1eb4ffadfbe2b9ac870f7b67a08a9017e4da66c8dbb92",
     "assets/images/shipping-agency-sea.webp": "31ef344f001a18731e93d952630a67ce246dee31ced186de6fe2d15aa83d8bcb",
-    "functions.php": "79282bdf7adbb7a1f8195006f8f560346fb4625f1b33dd36512c64a57fe80d0c",
+    "functions.php": "f333efc479989dd6a1c1e23c1068b6fbe68fb4af8f8174cbbcf8986a5c396c75",
     "inc/imagient.php": "7926d5fd7dcd8ba11f6bd731536aa0360dcdbdaa73c16cd7f34bf3349638c2df",
     "parts/footer.html": "ce02b8720f15abbc8ea49b577522c890ff6fdf7e863bb9425a3657bd58a1a1b4",
     "parts/header.html": "2f3070828d00f95c72bf859d4e68fbcec63a78c7c134113d2c7390d4fa6ec073",
@@ -85,15 +85,15 @@
     "patterns/thank-you.php": "6f477f37cf0ca64d5685617e053588849c1026d4a97a34195dda3a6442fe8ca0",
     "patterns/three-boxes.php": "976a98c6833da644bb8e41f6b30fc3b5ea98136154d9cdbcb2ac941ec3467f6b",
     "screenshot.png": "34bf19db6ee58a6c74053b44d740f2298125dec650e14fadd98bb451126d5fa8",
-    "style.css": "2ced82c37803902b0d9c97bd05ed77498ef8c6d3b89862fa63fe158a7fedfad7",
+    "style.css": "1439e9139860d21df85d7a6c358037ff18e19d64cadb603959dffb850b5fc0f3",
     "templates/404.html": "21a392a07b93fb6f9ab5e59e25a4cab409d4f10962738cb7d5fee03665a0b695",
     "templates/front-page.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
     "templates/index.html": "788d6baa71bcef484a405d1285366bf08e86ea54912f07761d65f5b65d1ee299",
     "templates/page-blank.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
     "templates/page-company.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
-    "templates/page.html": "0e1f67ef85c853ac5f2e85cd583bc28812ed4bb150061e1235a8df47dbb1334e",
+    "templates/page.html": "5fc303040d76785ff32ece50b247931f8c47b03cf7a4be808ddbca084d25d642",
     "templates/single.html": "552e3f04692bb3a64371bede103108e2cb3d0d5349f20fe893b9c255ea15fb1c",
-    "theme.json": "69155dcbb849ec1651b793025e594fdfdbacb3e3ce2ec50a0e3bd291fe1096d5"
+    "theme.json": "93b145fe2e095054ef8f9225e15c5c39cdbdc45a665972c9bc68c333bf001a22"
    }
   },
   "imagient-forms": {
@@ -114,7 +114,7 @@
    "type": "plugin",
    "src": "aries/wordpress/imagient-deploy",
    "files": {
-    "imagient-deploy.php": "1cefe9c513179ab810f2b8a53a82ae1f250f57920f3c4f0756eec521b25561e6"
+    "imagient-deploy.php": "bf9adf02590223b37f0c433c8848fa460f057f54fda505097c18bf1adc46b237"
    }
   }
  }

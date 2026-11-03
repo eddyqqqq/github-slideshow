@@ -25,8 +25,15 @@
           "slug": "area", "name": "Area Normal",
           "fontFamily": "\"Area Normal\", \"Area Fallback\", \"Helvetica Neue\", Arial, sans-serif",
           "fontFace": [
+            { "fontFamily": "Area Normal", "fontWeight": "100", "fontStyle": "normal", "fontDisplay": "swap", "src": [ "file:./assets/fonts/area-thin.woff2" ] },
             { "fontFamily": "Area Normal", "fontWeight": "400", "fontStyle": "normal", "fontDisplay": "swap", "src": [ "file:./assets/fonts/area-regular.woff2" ] },
-            { "fontFamily": "Area Normal", "fontWeight": "700", "fontStyle": "normal", "fontDisplay": "swap", "src": [ "file:./assets/fonts/area-bold.woff2" ] }
+            { "fontFamily": "Area Normal", "fontWeight": "400", "fontStyle": "italic", "fontDisplay": "swap", "src": [ "file:./assets/fonts/area-italic.woff2" ] },
+            { "fontFamily": "Area Normal", "fontWeight": "600", "fontStyle": "normal", "fontDisplay": "swap", "src": [ "file:./assets/fonts/area-semibold.woff2" ] },
+            { "fontFamily": "Area Normal", "fontWeight": "600", "fontStyle": "italic", "fontDisplay": "swap", "src": [ "file:./assets/fonts/area-semibold-italic.woff2" ] },
+            { "fontFamily": "Area Normal", "fontWeight": "700", "fontStyle": "normal", "fontDisplay": "swap", "src": [ "file:./assets/fonts/area-bold.woff2" ] },
+            { "fontFamily": "Area Normal", "fontWeight": "700", "fontStyle": "italic", "fontDisplay": "swap", "src": [ "file:./assets/fonts/area-bold-italic.woff2" ] },
+            { "fontFamily": "Area Normal", "fontWeight": "800", "fontStyle": "normal", "fontDisplay": "swap", "src": [ "file:./assets/fonts/area-extrabold.woff2" ] },
+            { "fontFamily": "Area Normal", "fontWeight": "900", "fontStyle": "normal", "fontDisplay": "swap", "src": [ "file:./assets/fonts/area-black.woff2" ] }
           ]
         }
       ],
@@ -59,7 +66,7 @@
     "typography": { "fontFamily": "var(--wp--preset--font-family--area)", "fontSize": "var(--wp--preset--font-size--body)", "lineHeight": "1.5" },
     "spacing": { "blockGap": "var(--wp--preset--spacing--40)", "padding": { "top": "0", "right": "0", "bottom": "0", "left": "0" } },
     "elements": {
-      "heading": { "typography": { "fontWeight": "700", "letterSpacing": "-0.02em", "lineHeight": "1.15" }, "color": { "text": "var(--wp--preset--color--ink)" } },
+      "heading": { "typography": { "fontWeight": "600", "letterSpacing": "-0.02em", "lineHeight": "1.15" }, "color": { "text": "var(--wp--preset--color--ink)" } },
       "h1": { "typography": { "fontSize": "var(--wp--preset--font-size--xl)", "lineHeight": "1.05" } },
       "h2": { "typography": { "fontSize": "var(--wp--preset--font-size--l)" } },
       "h3": { "typography": { "fontSize": "var(--wp--preset--font-size--lead)" } },
