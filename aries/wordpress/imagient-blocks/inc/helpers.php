@@ -155,6 +155,16 @@ function imagient_versioned( $url ) {
  * attributes (escaped here).
  */
 function imagient_picture( $url, $attrs ) {
+	// a theme photo gets its width and height, so its place is kept before it loads (a lazy photo would otherwise
+	// open up when it nears the screen and move everything below it)
+	if ( ! isset( $attrs['width'] ) && function_exists( 'get_theme_file_uri' ) && is_string( $url ) && 0 === strpos( $url, get_theme_file_uri( 'assets/' ) ) ) {
+		$file = get_theme_file_path( 'assets/' . strtok( substr( $url, strlen( get_theme_file_uri( 'assets/' ) ) ), '?' ) );
+		$size = file_exists( $file ) ? @getimagesize( $file ) : false; // phpcs:ignore WordPress.PHP.NoSilencedErrors
+		if ( $size && $size[0] && $size[1] ) {
+			$attrs['width']  = $size[0];
+			$attrs['height'] = $size[1];
+		}
+	}
 	$img = '<img src="' . esc_url( imagient_versioned( $url ) ) . '"';
 	foreach ( $attrs as $k => $v ) {
 		$img .= ' ' . $k . '="' . esc_attr( $v ) . '"';

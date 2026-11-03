@@ -741,13 +741,13 @@ window.__igRun = () => {
         return;
       }
       gsap.from(splitWords(h), { yPercent: 115, ease: 'none', stagger: 0.04,
-        scrollTrigger: { trigger: h, start: last ? 'top bottom' : 'top 94%', end: last ? 'bottom bottom' : 'top 62%', scrub: 0.6 } });
+        scrollTrigger: { trigger: h, start: last ? 'top bottom' : 'top 92%', end: last ? 'bottom bottom' : 'top 58%', scrub: 0.6 } });
     });
   }));
-  $$('[data-anim="fade-up"]').filter(el => !el.closest('.after-scene') && !el.closest('.ig-phero')).forEach(el => later(() => gsap.from(el, { y: 32, opacity: 0, ease: 'none',
-    scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 78%', scrub: 0.6 } })));
+  $$('[data-anim="fade-up"]').filter(el => !el.closest('.after-scene') && !el.closest('.ig-phero')).forEach(el => later(() => gsap.from(el, { y: 40, opacity: 0, ease: 'none',
+    scrollTrigger: { trigger: el, start: atEnd(el) ? 'top bottom' : 'top 94%', end: atEnd(el) ? 'bottom bottom' : 'top 66%', scrub: 0.6 } })));
   $$('[data-anim="scale-in"]').forEach(el => later(() => gsap.from(el, { scale: 0.94, opacity: 0, ease: 'none',
-    scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 70%', scrub: 0.6 } })));
+    scrollTrigger: { trigger: el, start: 'top 94%', end: 'top 64%', scrub: 0.6 } })));
   // count: every number in the block counts from 0 when it comes into view, and again on the next visit
   const fmt = (v, like) => { const r = Math.round(v); return like.indexOf(',') > -1 ? r.toLocaleString('en-US') : like.indexOf('.') > -1 && like.split('.')[1].length === 3 ? r.toLocaleString('de-DE') : String(r); };
   function counter(trigger, nodes) {
@@ -775,8 +775,15 @@ window.__igRun = () => {
   /* ---- figure tiles: rise in, label and caption fade up, the figures count when the tile comes into view ---- */
   $$('[data-tiles] .tile').forEach((t, i) => later(() => {
     gsap.from(t, { y: 70, opacity: 0, ease: 'none', scrollTrigger: { trigger: t, start: `top ${100 - (i % 2) * 3}%`, end: `top ${76 - (i % 2) * 3}%`, scrub: 0.6 } });
-    gsap.from($$('small, .lbl', t), { y: 24, opacity: 0, ease: 'none', stagger: 0.12, scrollTrigger: { trigger: t, start: 'top 85%', end: 'top 55%', scrub: 0.6 } });
-    counter(t, $$('strong', t).map(s => s.firstChild).filter(n => n && n.nodeType === 3));
+    // the label with the tile; each caption and each count as its figure comes into view (low in a tall tile, they
+    // were done before they showed on large screens)
+    const lbl = $('.lbl', t);
+    if (lbl && lbl.textContent.trim()) gsap.from(lbl, { y: 24, opacity: 0, ease: 'none', scrollTrigger: { trigger: t, start: 'top 85%', end: 'top 55%', scrub: 0.6 } });
+    $$('.nums > div', t).forEach(f => {
+      const cap = $('small', f);
+      if (cap) gsap.from(cap, { y: 24, opacity: 0, ease: 'none', scrollTrigger: { trigger: f, start: 'top 96%', end: 'top 70%', scrub: 0.6 } });
+      counter(f, $$('strong', f).map(s => s.firstChild).filter(n => n && n.nodeType === 3));
+    });
   }));
 
   /* ---- service cards: the section pins and the row slides sideways with the scroll ---- */
@@ -874,20 +881,22 @@ window.__igRun = () => {
     const hd = $('.ig-page-statement', sec);
     if (hd) gsap.from(splitWords(hd), { yPercent: 115, ease: 'none', stagger: 0.05, scrollTrigger: { trigger: sec, start: 'top 98%', end: 'top 40%', scrub: 0.6 } });
     const ps = $$('.ig-page-notes > *', sec);
-    if (ps.length) gsap.from(ps, { y: 36, opacity: 0, ease: 'none', stagger: 0.3, scrollTrigger: { trigger: sec, start: 'top 75%', end: 'top 10%', scrub: 0.6 } });
+    // the texts under the ribbon sit low in the section: each comes in as it rises into the screen (tied to the
+    // section's top they finished while still below it, on phones most of all)
+    ps.forEach(p => gsap.from(p, { y: 40, opacity: 0, ease: 'none', scrollTrigger: { trigger: p, start: 'top 94%', end: 'top 64%', scrub: 0.6 } }));
   }));
 
   /* ---- the facility (Interlink): its list of services and its texts come in as the services' titles and texts do ---- */
-  $$('.ig-page-list > li').forEach(li => later(() => gsap.from(li, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: li, start: 'top 98%', end: 'top 74%', scrub: 0.6 } })));
-  $$('.ig-page-facility .ig-page-notes > *').forEach(p => later(() => gsap.from(p, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: p, start: 'top 94%', end: 'top 70%', scrub: 0.6 } })));
+  $$('.ig-page-list > li').forEach(li => later(() => gsap.from(li, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: li, start: 'top 94%', end: 'top 68%', scrub: 0.6 } })));
+  $$('.ig-page-facility .ig-page-notes > *').forEach(p => later(() => gsap.from(p, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: p, start: 'top 94%', end: 'top 66%', scrub: 0.6 } })));
 
   /* ---- services: each row comes in as the home page's blocks do, with the scroll; its wave appears from left to
          right behind a soft edge, as the home page's shapes draw in, over a long stretch of the scroll; under the
          pointer it ripples ---- */
   $$('.ig-svc__row').forEach(row => later(() => {
     const wave = $('.ig-svc__wave', row), path = wave && $('path', wave), text = $('.ig-svc__text', row);
-    gsap.from($('.ig-svc__title', row), { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 98%', end: 'top 74%', scrub: 0.6 } });
-    if (text) gsap.from(text, { y: 32, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 94%', end: 'top 70%', scrub: 0.6 } });
+    gsap.from($('.ig-svc__title', row), { y: 40, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 94%', end: 'top 66%', scrub: 0.6 } });
+    if (text) gsap.from(text, { y: 40, opacity: 0, ease: 'none', scrollTrigger: { trigger: row, start: 'top 91%', end: 'top 62%', scrub: 0.6 } });
     if (!path) return;
     const o = { p: 0 }; waveShow(wave, 0);
     gsap.to(o, { p: 1.18, ease: 'none', onUpdate: () => waveShow(wave, o.p), scrollTrigger: { trigger: row, start: 'top 95%', end: 'top 45%', scrub: 1 } });
@@ -907,4 +916,7 @@ window.__igRun = () => {
   runLater(() => again(true));
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => tasksDone && again());
   addEventListener('load', () => tasksDone && again());
+  // the page's height changing later (a photo that loads when it nears the screen) moves everything below it: the
+  // triggers are measured again, or the entrances further down would run before their texts are on screen
+  if ('ResizeObserver' in window) new ResizeObserver(() => tasksDone && again()).observe(document.body);
 };
