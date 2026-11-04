@@ -729,12 +729,16 @@ window.__igRun = () => {
     // under it, the colour floods out and the type turns white, a short hold, the words leave, then the section below
     // comes over the last 55 % of a screen (1 unit of the timeline = 1 screen of scroll)
     const out = 1.4, gone = out + 0.3 + 0.012 * words.length;
-    tl.to(title, { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in', onUpdate: null }, 0)
+    // (from its shown state: read at load, while the page is still being set up, its start was hidden)
+    tl.fromTo(title, { y: 0, opacity: 1 }, { y: -40, opacity: 0, duration: 0.2, ease: 'power1.in', onUpdate: null, immediateRender: false }, 0)
       .to(st, { c: 1, duration: 0.55, ease: 'power2.inOut' }, 0)
       .fromTo(words, { yPercent: 115 }, { yPercent: 0, duration: 0.4, stagger: 0.025, ease: 'power3.out', onUpdate: null }, 0.4)
       .fromTo(rest, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out', onUpdate: null }, 0.62)
-      .to(st, { w: 1, duration: 0.45, ease: 'power2.in' }, 0.85)
-      .to(scene, { color: '#fff', duration: 0.2, ease: 'none', onUpdate: null }, 0.98)
+      // the colour floods out at once and evenly (eased in, it hung at the closed frame for a moment, then rushed), and
+      // the type turns white only once the colour is under it (before, white type over the page still white below the
+      // colour's edge seemed to vanish: the contact lines, low on the screen, most of all)
+      .to(st, { w: 1, duration: 0.45, ease: 'power1.out' }, 0.85)
+      .to(scene, { color: '#fff', duration: 0.15, ease: 'none', onUpdate: null }, 1.05)
       .to(words, { yPercent: -115, duration: 0.3, stagger: 0.012, ease: 'power2.in', onUpdate: null }, out)
       .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, out)
       .to({}, { duration: 0.01, onUpdate: null }, gone + 0.3);
