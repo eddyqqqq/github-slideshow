@@ -758,7 +758,7 @@ window.__igRun = () => {
     // then and this changes nothing, on a fast one they fade just before being covered instead of vanishing at once
     const nextEl = (ph.parentElement.classList.contains('pin-spacer') ? ph.parentElement : ph).nextElementSibling;
     if (nextEl) {
-      const low = () => Math.round(scene.offsetTop + scene.offsetHeight);
+      const low = () => Math.round(scene.offsetTop + scene.offsetHeight + Math.max(40, innerHeight * 0.05));   // (gone a little before it is reached)
       gsap.fromTo(scene, { opacity: 1 }, { opacity: 0, ease: 'none', immediateRender: false,
         scrollTrigger: { trigger: nextEl, start: () => 'top ' + (low() + Math.round(innerHeight * 0.22)) + 'px', end: () => 'top ' + low() + 'px', scrub: true, invalidateOnRefresh: true } });
     }
