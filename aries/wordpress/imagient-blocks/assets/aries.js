@@ -743,8 +743,12 @@ window.__igRun = () => {
       const st0 = scene.offsetTop, oy = sv.top - pr.top, ox = sv.left - pr.left;
       TXT = $$('h1, h2, h3, h4, p, .wp-block-button', scene).filter(e => !e.parentElement.closest('h1, h2, h3, h4, p, .wp-block-button')).map(el => {
         let top = 0; for (let e = el; e && e !== scene; e = e.offsetParent) top += e.offsetTop;
-        const rg = document.createRange(); rg.selectNodeContents(el); const rr = rg.getBoundingClientRect(), er = el.getBoundingClientRect();
-        const left = (rr.width ? rr.left : er.left) - pr.left, right = (rr.width ? rr.right : er.right) - pr.left;
+        // (its visible words only: a split heading also holds a hidden copy for screen readers, as wide as the hero)
+        let l = Infinity, r = -Infinity; const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        while (tw.nextNode()) { const n = tw.currentNode; if (!n.textContent.trim() || n.parentElement.closest('.sr')) continue;
+          const rg = document.createRange(); rg.selectNodeContents(n); [...rg.getClientRects()].forEach(q => { if (q.width) { l = Math.min(l, q.left); r = Math.max(r, q.right); } }); }
+        const er = el.getBoundingClientRect(); if (l === Infinity) { l = er.left; r = er.right; }
+        const left = l - pr.left, right = r - pr.left;
         return { el, y: vb.y + (st0 + top - oy) / u, x0: vb.x + (left - ox) / u, x1: vb.x + (right - ox) / u, lead: 14 / u, white: null };
       });
       TXT.forEach(t => { t.el.style.color = ''; });

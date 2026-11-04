@@ -1,14 +1,14 @@
 {
- "version": "1.36.4",
+ "version": "1.36.5",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
     "assets/aries.css": "749a999bfeaeadda9ec113b7f2c4e3d0561bf7cf041a6c295f33729eeb296884",
-    "assets/aries.js": "487582afa892a447762e28d4c79b385b997dcd5b3f05923b5d44581b7b75b747",
+    "assets/aries.js": "09fd525b1ef9e8849b964af18ac272a7992a4750a767e68a0f1bdb92e5adbaed",
     "assets/aries.min.css": "f97ccdb2e98e2c717b2e1545d6cc5387e6ffd2518a39e94dd06a5e86218d9a7f",
-    "assets/aries.min.js": "421990099abe9329fda4ef75496114679bc3cb5e61af01640ce0715700018214",
+    "assets/aries.min.js": "a73ccbb95a9c93d444dfffc78b84bbf16b72122f45f75e0eda5acff8e579c264",
     "assets/editor.css": "89374f3f07010a67230b737bac6e67ffac1c5c71d4fba0f0e3f62986762ae5a8",
     "assets/editor.js": "c5c7e2411a08e5295778603dda28e46a79cd0854dc516a18081919496ba8cb69",
     "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
@@ -21,7 +21,7 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "c1e3c332bf24b62a5c6b0f4d0142282a4c9d5ce94071ebe9cbf470126147d117",
+    "imagient-blocks.php": "31eca89ad9fbbab73c4462c772c740c5206aaef9d683d992dc11110eaab68613",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "823765c12ca19b55ab3d227660aac931bf821f2aa83cb91542b829cf29062ac4",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
