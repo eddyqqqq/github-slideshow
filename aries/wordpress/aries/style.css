@@ -7,7 +7,7 @@ Description:       Block theme for Aries Group, designed and built by Imagient. 
 Requires at least: 6.5
 Tested up to:      6.8
 Requires PHP:      7.4
-Version:           1.23.0
+Version:           1.23.1
 License:           GNU General Public License v2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:       aries
@@ -41,6 +41,11 @@ img, svg { max-width: 100%; }
 :is(.home, .page-template-page-company) .ig-top { position: fixed; left: 0; right: 0; }
 .admin-bar:is(.home, .page-template-page-company) .ig-top { top: var(--wp-admin--admin-bar--height, 32px); }
 .menu-open .ig-top { position: fixed; left: 0; right: 0; }
+/* the home page on wider screens: the header stays at the top of the page and scrolls away with it */
+@media (min-width: 761px) {
+  .home .ig-top { position: absolute; }
+  .menu-open.home .ig-top, .menu-open .home .ig-top { position: fixed; }
+}
 .ig-top { transition: transform .5s cubic-bezier(.65, 0, .25, 1), opacity .4s ease, visibility 0s; }
 .ig-top.nav-off { transform: translateY(-110%); opacity: 0; visibility: hidden; transition: transform .5s cubic-bezier(.65, 0, .25, 1), opacity .4s ease, visibility 0s .5s; }
 .menu-open .ig-top.nav-off, .ig-top.nav-off:focus-within { transform: none; opacity: 1; visibility: visible; transition: none; }

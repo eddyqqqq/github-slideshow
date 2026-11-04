@@ -435,9 +435,9 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-legal-text p, .ig-legal-text li { font-size: var(--body); line-height: 1.5; }
 .ig-legal-text > .ig-container > h2:first-child { margin-top: 0; }
 .ig-legal-text p { margin: 0 0 1em; }
-.ig-legal-text ul { margin: 0 0 1.2em; padding-left: 1.3em; }
-.ig-legal-text li { margin: 0 0 .45em; }
-.ig-legal-text li::marker { color: var(--blue); }
+.ig-legal-text ul { margin: 0 0 1.2em; padding-left: 0; list-style: none; }
+.ig-legal-text li { position: relative; margin: 0 0 .45em; padding-left: 1.3em; }
+.ig-legal-text li::before { content: ""; position: absolute; left: .1em; top: .6em; width: .38em; height: .38em; background: var(--blue); }   /* square bullets, as in the email signature */
 .ig-legal-text a { color: var(--blue); text-decoration: underline; text-underline-offset: .15em; }
 
 /* ======================= company pages: page hero, cover, figures, services, menu ======================= */

@@ -494,7 +494,7 @@ window.__igRun = () => {
       }
       const off = y > 8 && (past || !ul.some(e => e.matches('.ig-phero, .after-scene, .hero') || !!e.closest('.hero')));
       if (phone.matches) { hdr.classList.remove('nav-off'); hdr.classList.toggle('logo-off', off); }
-      else { hdr.classList.remove('logo-off'); hdr.classList.toggle('nav-off', off && !up); }
+      else { hdr.classList.remove('logo-off'); hdr.classList.toggle('nav-off', off && !up && !document.body.classList.contains('home')); }   // (the home page's scrolls away)
     };
     let toneQ = 0, toneT = [];
     const queueTone = () => {
