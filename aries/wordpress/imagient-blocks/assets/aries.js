@@ -492,7 +492,7 @@ window.__igRun = () => {
         const first = $('h1, h2, h3, h4, h5, h6, p, .wpcf7', sec);
         past = !!first && first.getBoundingClientRect().top < rectOf(logoBox).bottom + 16;
       }
-      const off = y > 8 && (past || !ul.some(e => e.matches('.ig-phero, .after-scene, .hero') || !!e.closest('.hero')));
+      const off = y > 8 && (past || !ul.some(e => e.matches('.ig-phero, .after-scene')));
       if (phone.matches) { hdr.classList.remove('nav-off'); hdr.classList.toggle('logo-off', off); }
       else { hdr.classList.remove('logo-off'); hdr.classList.toggle('nav-off', off && !up && !document.body.classList.contains('home')); }   // (the home page's scrolls away)
     };
