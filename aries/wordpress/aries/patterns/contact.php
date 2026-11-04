@@ -39,4 +39,4 @@
 <!-- /wp:shortcode -->
 <!-- /wp:imagient/section -->
 
-<!-- wp:imagient/cover {"imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/shipping-agency-port.webp' ) ); ?>","alt":"A bulk carrier at the grain terminal in the port of Constanta","from":"group","to":"group","shade":"tint"} /-->
+<!-- wp:imagient/cover {"imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/about-group.webp' ) ); ?>","alt":"A bulk carrier moored under a gantry crane in the port of Constanta","from":"group","to":"group","shade":"tint"} /-->
