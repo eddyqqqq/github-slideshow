@@ -7,7 +7,7 @@ Description:       Block theme for Aries Group, designed and built by Imagient. 
 Requires at least: 6.5
 Tested up to:      6.8
 Requires PHP:      7.4
-Version:           1.22.0
+Version:           1.23.0
 License:           GNU General Public License v2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:       aries
@@ -30,21 +30,20 @@ img, svg { max-width: 100%; }
 .ig-top { position: relative; top: 0; z-index: 60; display: flex; justify-content: space-between; align-items: flex-start;
   padding: calc(env(safe-area-inset-top, 0px) + var(--logo-top, 40px)) var(--gut, 68px) 0; pointer-events: none; }
 .ig-top :is(a, button) { pointer-events: auto; }
-/* tablets and desktops: the header is at the top of the page and scrolls away with it (over the hero on the home and
-   company pages); open, the menu holds its close button on screen */
-:is(.home, .page-template-page-company) .ig-top { position: absolute; left: 0; right: 0; }
+/* the header stays on screen at every size: fixed over the hero on the home and company pages, sticky elsewhere (on the
+   template part that holds it: the header alone would only stick inside it). The page's script turns the logo white
+   over dark backgrounds, shows the company's logo over a company page's coloured section and, over the page's texts,
+   lets the logo step aside (phones: the menu button stays) or the whole header (wider screens: it comes back as soon
+   as the page is scrolled up) */
+.wp-site-blocks > .wp-block-template-part:has(> .ig-top) { position: sticky; top: 0; z-index: 60; }
+.admin-bar .wp-site-blocks > .wp-block-template-part:has(> .ig-top) { top: var(--wp-admin--admin-bar--height, 32px); }
+.admin-bar .wp-block-template-part > .ig-top { top: 0; }
+:is(.home, .page-template-page-company) .ig-top { position: fixed; left: 0; right: 0; }
+.admin-bar:is(.home, .page-template-page-company) .ig-top { top: var(--wp-admin--admin-bar--height, 32px); }
 .menu-open .ig-top { position: fixed; left: 0; right: 0; }
-/* phones: it stays on screen (fixed over the hero, sticky elsewhere); the page's script turns the logo white over
-   dark backgrounds and shows the company's logo over a company page's coloured section */
-@media (max-width: 760px) {
-  /* sticky on the template part that holds the header (the header alone would only stick inside it) */
-  .wp-site-blocks > .wp-block-template-part:has(> .ig-top) { position: sticky; top: 0; z-index: 60; }
-  .admin-bar .wp-site-blocks > .wp-block-template-part:has(> .ig-top) { top: var(--wp-admin--admin-bar--height, 46px); }
-  .admin-bar .wp-block-template-part > .ig-top { top: 0; }
-  :is(.home, .page-template-page-company) .ig-top { position: fixed; }
-  .admin-bar:is(.home, .page-template-page-company) .ig-top { top: var(--wp-admin--admin-bar--height, 46px); }
-}
-.admin-bar .ig-top { top: var(--wp-admin--admin-bar--height, 32px); }
+.ig-top { transition: transform .5s cubic-bezier(.65, 0, .25, 1), opacity .4s ease, visibility 0s; }
+.ig-top.nav-off { transform: translateY(-110%); opacity: 0; visibility: hidden; transition: transform .5s cubic-bezier(.65, 0, .25, 1), opacity .4s ease, visibility 0s .5s; }
+.menu-open .ig-top.nav-off, .ig-top.nav-off:focus-within { transform: none; opacity: 1; visibility: visible; transition: none; }
 
 /* footer: the design's rhythm at 1440 (logo, three link columns, the slogan, the legal line), in design pixels
    (--ig-fu) that grow at half the screen's rate above 1440 and shrink with it below, so large screens get room

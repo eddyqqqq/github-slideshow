@@ -402,7 +402,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .wpcf7 :is(.wpcf7-acceptance, .wpcf7-checkbox, .wpcf7-radio) input:focus-visible { outline: 2px solid var(--cf-check); outline-offset: 3px; }
 .ig-cf7__submit { display: flex; align-items: center; gap: 12px; margin-top: calc(60 * var(--pu)); }
 /* Send: as the site's link buttons, the same hover (a 2 px line drawing in from the left; blue on a light section) */
-.wpcf7 .wpcf7-submit { padding: 4px 2px 7px; border: 0; border-bottom: 1px solid currentColor; border-radius: 0; color: inherit; font: inherit; font-size: var(--link);
+.wpcf7 .wpcf7-submit { padding: 4px 2px 7px; border: 0; border-bottom: 1px solid currentColor; border-radius: 0; color: inherit; font: inherit; font-size: var(--cf-input);
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat; cursor: pointer; -webkit-appearance: none; appearance: none;
   transition: color .35s, background-size .5s cubic-bezier(.65, 0, .25, 1); }
 .wpcf7 .wpcf7-submit:is(:hover, :focus-visible) { color: var(--blue); background-size: 100% 2px; outline: none; }

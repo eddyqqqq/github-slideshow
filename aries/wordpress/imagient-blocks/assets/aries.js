@@ -465,29 +465,36 @@ window.__igRun = () => {
       if (s.backgroundImage && s.backgroundImage !== 'none') return 'dark';
       const L = lum(s.backgroundColor); return L === null ? null : L < 0.62 ? 'dark' : 'light';
     };
-    const under = el => { const r = el.getBoundingClientRect(); if (!r.width) return []; return document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2).filter(e => !hdr.contains(e)); };
+    // where the logo sits when the header is in place (on wider screens it may be sliding away: its shift is left out)
+    const shiftY = () => { const t = getComputedStyle(hdr).transform; return t && t !== 'none' && window.DOMMatrix ? new DOMMatrix(t).m42 : 0; };
+    const rectOf = el => { const r = el.getBoundingClientRect(), d = shiftY(); return { left: r.left, width: r.width, height: r.height, top: r.top - d, bottom: r.bottom - d }; };
+    const under = el => { const r = rectOf(el); if (!r.width) return []; return document.elementsFromPoint(r.left + r.width / 2, Math.max(0, r.top + r.height / 2)).filter(e => !hdr.contains(e)); };
     const toneAt = list => { for (const e of list) { if (faded(e)) continue; const t = toneOf(e); if (t) return t; } return 'light'; };
-    // on phones only: there the header stays on screen (on wider screens it scrolls away with the page)
+    // the header stays on screen at every size; over the page's texts the logo steps aside on phones (the menu button
+    // stays) and the whole header on wider screens, which comes back as soon as the page is scrolled up
     const phone = matchMedia('(max-width: 760px)');
+    let lastY = scrollY, up = false;
     const headerTone = () => {
-      if (root.classList.contains('menu-open')) return;
-      if (!phone.matches) { hdr.classList.remove('co-on', 'on-dark-l', 'is-stuck', 'logo-off'); return; }
+      if (root.classList.contains('menu-open')) { hdr.classList.remove('nav-off'); return; }
+      const y = scrollY;
+      if (y < lastY - 4) up = true; else if (y > lastY + 4) up = false;
+      if (Math.abs(y - lastY) > 4) lastY = y;
       const ul = logoBox ? under(logoBox) : [];
       const inScene = ul.some(e => e.matches('.after-scene, .ig-phero.is-flooded') || !!e.closest('.ph-flood'));
       hdr.classList.toggle('co-on', inScene && !!$('.ig-top__co', hdr));
       hdr.classList.toggle('on-dark-l', inScene || toneAt(ul) === 'dark');
-      hdr.classList.toggle('is-stuck', scrollY > innerHeight * 0.4);
-      // the logo holds the top of the page and a company page's scene and coloured section; further down it steps
-      // aside (over the page's texts it would sit on them), the menu button stays everywhere
-      // the company's logo holds until the coloured section's content (its headline, then its ribbon) reaches it;
-      // from there down the page only the menu button stays
+      hdr.classList.toggle('is-stuck', y > innerHeight * 0.4);
+      // the logo holds the top of the page, the hero and a company page's scene and coloured section until the
+      // section's content (its headline, then its ribbon) reaches it; further down it would sit on the page's texts
       let past = false;
       const sec = $('.after-scene');
       if (logoBox && sec) {
         const first = $('h1, h2, h3, h4, h5, h6, p, .wpcf7', sec);
-        past = !!first && first.getBoundingClientRect().top < logoBox.getBoundingClientRect().bottom + 16;
+        past = !!first && first.getBoundingClientRect().top < rectOf(logoBox).bottom + 16;
       }
-      hdr.classList.toggle('logo-off', scrollY > 8 && (past || !ul.some(e => e.matches('.ig-phero, .after-scene'))));
+      const off = y > 8 && (past || !ul.some(e => e.matches('.ig-phero, .after-scene, .hero') || !!e.closest('.hero')));
+      if (phone.matches) { hdr.classList.remove('nav-off'); hdr.classList.toggle('logo-off', off); }
+      else { hdr.classList.remove('logo-off'); hdr.classList.toggle('nav-off', off && !up); }
     };
     let toneQ = 0, toneT = [];
     const queueTone = () => {
@@ -730,6 +737,20 @@ window.__igRun = () => {
       .to(words, { yPercent: -115, duration: 0.3, stagger: 0.012, ease: 'power2.in', onUpdate: null }, out)
       .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, out)
       .to({}, { duration: 0.01, onUpdate: null }, gone + 0.3);
+    // the section below slides over the scene's end (55 % of a screen, 80 % on phones), but never over its words before
+    // they have left: on a tall phone, or with a long scene low on the screen (the contact page's lines), it would
+    // cover them while they still show and they would vanish at once. Its overlap is cut to what leaves them room.
+    const fitNext = () => {
+      const next = (ph.parentElement.classList.contains('pin-spacer') ? ph.parentElement : ph).nextElementSibling;
+      if (!next) return;
+      next.style.marginTop = '';
+      const want = -parseFloat(getComputedStyle(next).marginTop) || 0;
+      if (want <= 0) return;
+      const bottom = scene.offsetTop + scene.offsetHeight + 32;
+      const room = ph.offsetHeight + (tl.duration() - gone) * innerHeight - bottom;
+      if (room < want) next.style.marginTop = -Math.max(0, Math.round(room)) + 'px';
+    };
+    fitNext(); ScrollTrigger.addEventListener('refreshInit', fitNext);
   }
   root.classList.remove('pre');
 

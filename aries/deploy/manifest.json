@@ -1,14 +1,14 @@
 {
- "version": "1.34.2",
+ "version": "1.35.0",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
-    "assets/aries.css": "25a18c49abeadfeaed1dd06649b1a5b2eeebf15413c52eba376851389fb3bb3e",
-    "assets/aries.js": "12cfddfea09e64f6b98ef2b3ab0cf8e496b8c46b133fa9725d0e330554a11601",
-    "assets/aries.min.css": "794a0b9e3da0911be9dd98df3dca1520a63c912e3518c6a158d7b5e2ed7a2f0c",
-    "assets/aries.min.js": "20cfedf4e023bba0f307fb2db03c61e711c5c3a7feac54107db0c0e09bd9fd4c",
+    "assets/aries.css": "be368481e093d26bd05ca106a2aa63f853e7c665736f705807f02638f20750d7",
+    "assets/aries.js": "83138d2239485a6926d411f9676b8374f1e2261ba7897f7c1c867ed5e8fe8f38",
+    "assets/aries.min.css": "2856c20d290726a470e3cd1c208e857ec8209e3531550c17b9492f13644e0e03",
+    "assets/aries.min.js": "26a0296de47a2426abdfca972306f1f07f2e1bb34cb07879c43b7a6c1e2704bd",
     "assets/editor.css": "89374f3f07010a67230b737bac6e67ffac1c5c71d4fba0f0e3f62986762ae5a8",
     "assets/editor.js": "f0be32d3f7bb1d13698fa956c1de388e09d759deb5f0d8d4dae3fc4e4cf43486",
     "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
@@ -21,7 +21,7 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "318d068c5d710febb463b6c16e4e8cb4eecb909620e4a45a7644bf22b8153618",
+    "imagient-blocks.php": "3ef3357f7ab5da5693f01704174daabfc41d3adab272cc4c47e1bf0a8ea56d4e",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "866b727c3619dcb2ca206c9904a04a523066ba0b8e9208048d916b53969b429b",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
@@ -88,7 +88,7 @@
     "patterns/thank-you.php": "6f477f37cf0ca64d5685617e053588849c1026d4a97a34195dda3a6442fe8ca0",
     "patterns/three-boxes.php": "976a98c6833da644bb8e41f6b30fc3b5ea98136154d9cdbcb2ac941ec3467f6b",
     "screenshot.png": "34bf19db6ee58a6c74053b44d740f2298125dec650e14fadd98bb451126d5fa8",
-    "style.css": "b6df5a7f5ad6d521d381b802c94f64bd5fe60a5be589f144d6f43685bc16d198",
+    "style.css": "85c6967f8baea17231a5c432126f4d09c37fab77ef5e9f3823191f39a0501a81",
     "templates/404.html": "21a392a07b93fb6f9ab5e59e25a4cab409d4f10962738cb7d5fee03665a0b695",
     "templates/front-page.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
     "templates/index.html": "788d6baa71bcef484a405d1285366bf08e86ea54912f07761d65f5b65d1ee299",
