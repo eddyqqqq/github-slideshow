@@ -697,18 +697,21 @@ window.__igRun = () => {
     // the scene's type turns white line by line as the colour's lower edge comes down to it (at every size the colour
     // and the type meet at a different moment: tied to the edge itself, the type is white as the colour arrives under
     // it, never dark over the colour nor white over the page still white below it)
-    const LOWP = OL.filter(q => shut(q, 1)[1] > q[2] + 0.5).map(q => shut(q, 1));
+    // (the colour's outline as drawn by floodD; its lower edge under a word: the lowest crossing of its outline, its
+    // straight runs included, with the word's middle)
+    const SH = OL.map(q => { const [x, y] = shut(q, 1); return [x, y, y <= q[2] + 0.5]; });
     let TXT = [];
     const ink = () => {
       if (!TXT.length) return;
       const g = gEnd * st.w, k = 1 + spread * Math.min(1, g / Math.max(1, gEnd));
+      const P = st.w > 0 ? SH.map(([x, y, up]) => [W / 2 + (x - W / 2) * k, up ? y - g : y + g]) : null;
+      const edgeAt = cx => { let e = -Infinity;
+        for (let n = 0; n < P.length; n++) { const a = P[n], b = P[(n + 1) % P.length];
+          if ((a[0] <= cx && b[0] >= cx) || (b[0] <= cx && a[0] >= cx)) e = Math.max(e, a[0] === b[0] ? Math.max(a[1], b[1]) : a[1] + (b[1] - a[1]) * (cx - a[0]) / (b[0] - a[0])); }
+        return e; };
       TXT.forEach(t => {
-        let edge = -Infinity, near = null, nd = Infinity;
-        if (st.w > 0) LOWP.forEach(([x, y]) => { const xs = W / 2 + (x - W / 2) * k;
-          if (xs >= t.x0 && xs <= t.x1) edge = Math.max(edge, y + g);
-          const d = Math.abs(xs - (t.x0 + t.x1) / 2); if (d < nd) { nd = d; near = y + g; } });
-        if (edge === -Infinity && near !== null) edge = near;
-        const white = st.w > 0 && edge >= t.y - t.lead;
+        // white as soon as the colour reaches any part of the word (its ends or its middle): white as it comes under it
+        const white = !!P && Math.max(edgeAt(t.x0 + 1), edgeAt((t.x0 + t.x1) / 2), edgeAt(t.x1 - 1)) >= t.y - t.lead;
         if (white !== t.white) { t.white = white; t.el.style.color = white ? '#fff' : ''; }
       });
     };
