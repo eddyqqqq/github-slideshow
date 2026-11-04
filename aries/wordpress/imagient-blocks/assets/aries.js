@@ -741,7 +741,9 @@ window.__igRun = () => {
       // each text's top and its words' left and right, in the frame's units (its place in the layout: the entrances'
       // shifts left out)
       const st0 = scene.offsetTop, oy = sv.top - pr.top, ox = sv.left - pr.left;
-      TXT = $$('h1, h2, h3, h4, p, .wp-block-button', scene).filter(e => !e.parentElement.closest('h1, h2, h3, h4, p, .wp-block-button')).map(el => {
+      // (a heading split into words: each word, so each line turns white as the colour reaches it, not the lines below)
+      TXT = $$('h1, h2, h3, h4, p, .wp-block-button', scene).filter(e => !e.parentElement.closest('h1, h2, h3, h4, p, .wp-block-button'))
+        .flatMap(el => $$('.w', el).length ? $$('.w', el) : [el]).map(el => {
         let top = 0; for (let e = el; e && e !== scene; e = e.offsetParent) top += e.offsetTop;
         // (its visible words only: a split heading also holds a hidden copy for screen readers, as wide as the hero)
         let l = Infinity, r = -Infinity; const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
