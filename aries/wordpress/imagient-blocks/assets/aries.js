@@ -532,6 +532,7 @@ window.__igRun = () => {
      MOTION
      ===================================================================== */
   gsap.registerPlugin(ScrollTrigger);
+  gsap.config({ nullTargetWarn: false });   // (a scene without a heading has no words to move)
   ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true });
   root.classList.add('anim');
 
@@ -751,6 +752,16 @@ window.__igRun = () => {
       if (room < want) next.style.marginTop = -Math.max(0, Math.round(room)) + 'px';
     };
     fitNext(); ScrollTrigger.addEventListener('refreshInit', fitNext);
+    // the scene's words follow the scroll smoothly, a little behind it; on a fast flick (a phone's momentum scroll)
+    // the section below, which moves with the page itself, could still reach them before they leave. So the scene
+    // also fades with the page itself as that section comes up to it: on a calm scroll its words have long left by
+    // then and this changes nothing, on a fast one they fade just before being covered instead of vanishing at once
+    const nextEl = (ph.parentElement.classList.contains('pin-spacer') ? ph.parentElement : ph).nextElementSibling;
+    if (nextEl) {
+      const low = () => Math.round(scene.offsetTop + scene.offsetHeight);
+      gsap.fromTo(scene, { opacity: 1 }, { opacity: 0, ease: 'none', immediateRender: false,
+        scrollTrigger: { trigger: nextEl, start: () => 'top ' + (low() + Math.round(innerHeight * 0.22)) + 'px', end: () => 'top ' + low() + 'px', scrub: true, invalidateOnRefresh: true } });
+    }
   }
   root.classList.remove('pre');
 

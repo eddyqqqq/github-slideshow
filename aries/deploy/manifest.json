@@ -6,9 +6,9 @@
    "src": "aries/wordpress/imagient-blocks",
    "files": {
     "assets/aries.css": "be368481e093d26bd05ca106a2aa63f853e7c665736f705807f02638f20750d7",
-    "assets/aries.js": "83138d2239485a6926d411f9676b8374f1e2261ba7897f7c1c867ed5e8fe8f38",
+    "assets/aries.js": "c8981fa6264a9a1042f7ba6fa4d546271c6c215ff6379e17bf610db2ca66dc6c",
     "assets/aries.min.css": "2856c20d290726a470e3cd1c208e857ec8209e3531550c17b9492f13644e0e03",
-    "assets/aries.min.js": "26a0296de47a2426abdfca972306f1f07f2e1bb34cb07879c43b7a6c1e2704bd",
+    "assets/aries.min.js": "c184087db74ff7749f6b1cd5ae76c494cb7167a21bfa99e77475e9a66cb9f1ee",
     "assets/editor.css": "89374f3f07010a67230b737bac6e67ffac1c5c71d4fba0f0e3f62986762ae5a8",
     "assets/editor.js": "f0be32d3f7bb1d13698fa956c1de388e09d759deb5f0d8d4dae3fc4e4cf43486",
     "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
