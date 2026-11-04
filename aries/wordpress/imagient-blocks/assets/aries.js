@@ -738,7 +738,7 @@ window.__igRun = () => {
       // the type turns white only once the colour is under it (before, white type over the page still white below the
       // colour's edge seemed to vanish: the contact lines, low on the screen, most of all)
       .to(st, { w: 1, duration: 0.45, ease: 'power1.out' }, 0.85)
-      .to(scene, { color: '#fff', duration: 0.15, ease: 'none', onUpdate: null }, 1.05)
+      .to(scene, { color: '#fff', duration: 0.1, ease: 'none', onUpdate: null }, 0.85)   // (white as the colour sets out: white already when it comes under the type)
       .to(words, { yPercent: -115, duration: 0.3, stagger: 0.012, ease: 'power2.in', onUpdate: null }, out)
       .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, out)
       .to({}, { duration: 0.01, onUpdate: null }, gone + 0.3);
