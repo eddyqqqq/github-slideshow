@@ -104,7 +104,7 @@ function imagient_register_aries_blocks() {
 
 	register_block_type( 'imagient/figures', array_merge( $common, array(
 		'title'           => 'Aries figures',
-		'description'     => 'Company tiles with their ribbons and figures that count up when they come into view.',
+		'description'     => 'Company tiles with their ribbons and figures.',
 		'supports'        => array( 'className' => true, 'html' => false, 'align' => array( 'full' ), 'anchor' => true ),
 		'attributes'      => array(
 			'align' => array( 'type' => 'string', 'default' => 'full' ),

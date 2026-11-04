@@ -4,7 +4,7 @@
  * Slug: aries/figures
  * Categories: aries
  * Keywords: numbers, figures, stats
- * Description: Company tiles with ribbons and counting figures.
+ * Description: Company tiles with ribbons and figures.
  * Viewport Width: 1440
  */
 ?>

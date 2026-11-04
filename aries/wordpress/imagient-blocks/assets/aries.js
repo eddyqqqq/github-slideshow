@@ -872,17 +872,16 @@ window.__igRun = () => {
     if (r.panning) gsap.fromTo(r.place, { x: r.place.x + 0.08 }, { x: r.place.x - 0.08, ease: 'none', onUpdate: () => touch(r), scrollTrigger: { trigger: box, start: 'top bottom', end: 'bottom top', scrub: 1 } });
   }));
 
-  /* ---- figure tiles: rise in, label and caption fade up, the figures count when the tile comes into view ---- */
+  /* ---- figure tiles: rise in, label and caption fade up; the figures stay as written (they do not count up) ---- */
   $$('[data-tiles] .tile').forEach((t, i) => later(() => {
     gsap.from(t, { y: 70, opacity: 0, ease: 'none', scrollTrigger: { trigger: t, start: `top ${100 - (i % 2) * 3}%`, end: `top ${76 - (i % 2) * 3}%`, scrub: 0.6 } });
-    // the label with the tile; each caption and each count as its figure comes into view (low in a tall tile, they
-    // were done before they showed on large screens)
+    // the label with the tile; each caption as its figure comes into view (low in a tall tile, it was done before it
+    // showed on large screens)
     const lbl = $('.lbl', t);
     if (lbl && lbl.textContent.trim()) gsap.from(lbl, { y: 24, opacity: 0, ease: 'none', scrollTrigger: { trigger: t, start: 'top 85%', end: 'top 55%', scrub: 0.6 } });
     $$('.nums > div', t).forEach(f => {
       const cap = $('small', f);
       if (cap) gsap.from(cap, { y: 24, opacity: 0, ease: 'none', scrollTrigger: { trigger: f, start: 'top 96%', end: 'top 70%', scrub: 0.6 } });
-      counter(f, $$('strong', f).map(s => s.firstChild).filter(n => n && n.nodeType === 3));
     });
   }));
 
