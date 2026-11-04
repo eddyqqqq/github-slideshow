@@ -16,7 +16,7 @@
 
 <!-- wp:buttons -->
 <div class="wp-block-buttons"><!-- wp:button {"className":"is-style-aries-link"} -->
-<div class="wp-block-button is-style-aries-link"><a class="wp-block-button__link wp-element-button" href="#contact">Contact us</a></div>
+<div class="wp-block-button is-style-aries-link"><a class="wp-block-button__link wp-element-button" href="/contact/">Contact us</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons -->
 <!-- /wp:imagient/page-hero -->

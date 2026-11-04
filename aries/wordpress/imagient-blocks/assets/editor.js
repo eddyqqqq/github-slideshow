@@ -419,7 +419,7 @@
       const f = FRAMES[a.frame] || FRAMES[Object.keys(FRAMES)[0]] || null;
       const frameOpts = Object.keys(FRAMES).map(k => ({ value: k, label: k.charAt(0).toUpperCase() + k.slice(1) }));
       // the second scene: what appears as the page holds (a statement and a link); empty, the hero just scrolls away
-      const inner = useInnerBlocksProps({ className: 'ig-phero-edit__scene' }, { template: [['core/heading', { className: 'ig-page-statement' }], ['core/buttons', {}, [['core/button', { className: 'is-style-aries-link', text: 'Contact us' }]]]], templateLock: false });
+      const inner = useInnerBlocksProps({ className: 'ig-phero-edit__scene' }, { template: [['core/heading', { className: 'ig-page-statement' }], ['core/buttons', {}, [['core/button', { className: 'is-style-aries-link', text: 'Contact us', url: '/contact/' }]]]], templateLock: false });
       return el(Fragment, {},
         el(InspectorControls, {},
           el(PanelBody, { title: 'Scroll scene', initialOpen: true },
@@ -453,7 +453,7 @@
     edit({ attributes: a, setAttributes }) {
       const grad = a.overlay ? `linear-gradient(${a.angle}deg, ${colorOf(a.from)} 0%, ${colorOf(a.from)}b8 30%, ${colorOf(a.to)}29 64%, ${colorOf(a.to)}61 100%)` : 'none';
       const props = useBlockProps({ className: 'ig-cover-edit tone-' + a.tone, style: { '--cv-img': a.imageUrl ? `url("${a.imageUrl}")` : 'none', '--cv-grad': grad, '--cv-o': a.strength / 100, '--cv-pos': `${a.focusX}% ${a.focusY}%` } });
-      const inner = useInnerBlocksProps({ className: 'ig-cover-edit__inner' }, { template: [['core/heading', { className: 'ig-page-statement' }], ['core/buttons', {}, [['core/button', { className: 'is-style-aries-link', text: 'Contact us' }]]]] });
+      const inner = useInnerBlocksProps({ className: 'ig-cover-edit__inner' }, { template: [['core/heading', { className: 'ig-page-statement' }], ['core/buttons', {}, [['core/button', { className: 'is-style-aries-link', text: 'Contact us', url: '/contact/' }]]]] });
       return el(Fragment, {},
         el(InspectorControls, {},
           el(PanelBody, { title: 'Photo', initialOpen: true },
