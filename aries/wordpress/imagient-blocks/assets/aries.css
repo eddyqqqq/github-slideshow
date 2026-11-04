@@ -105,12 +105,12 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .hero-layout { inset: 0; height: auto; padding-top: calc(98 * var(--hu) + var(--hdy)); }
   .hero-layout { justify-content: flex-start; }
   .hero-slot { flex: none; height: calc(878.48 * var(--hu)); }
-  .hero-title { margin-top: calc(-14 * var(--hu)); padding: 0 0 0 calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); gap: calc(10 * var(--hu)); }
+  .hero-title { margin-top: calc(-14 * var(--hu)); padding: 0 0 0 var(--gut); gap: calc(10 * var(--hu)); }
   .hero-title h1 { font-size: max(24px, 70 * var(--hu)); }
   .hero-title p { font-size: max(14px, 22 * var(--hu)); }
   .shade { top: auto; height: 100vh; }
   .anim .scene-two { top: auto; height: 100vh; }
-  :is(.home, .page-template-page-company) .ig-top { padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); padding-right: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu));
+  :is(.home, .page-template-page-company) .ig-top { padding-left: var(--gut); padding-right: var(--gut);
     --logo-top: max(14px, 22 * var(--hu)); --logo-w: max(44px, 80 * var(--hu)); }
   :is(.home, .page-template-page-company) .ig-top .logo { width: calc(var(--logo-w) * .88); }   /* a touch smaller than elsewhere: it sits over the frame */
 }
@@ -478,7 +478,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .ig-phero__scene .wp-block-button__link { border-color: currentColor; }
 .ig-phero__scene .ig-page-statement { margin-bottom: calc(30 * var(--pu)); }
 @media (min-aspect-ratio: 1/1) and (min-width: 760px) {
-  .ig-phero__scene { padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); }
+  .ig-phero__scene { padding-left: var(--gut); }
 }   /* room for p, g, y in the word masks */
 .pre .ig-phero .ph-art, .pre .ig-phero__title { opacity: 0; }
 /* landscape screens: the same places as on the home page (its --hu, one unit of a 1920 frame, and --hdy): the logo at
@@ -488,7 +488,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
   .ig-phero__stage { margin-top: calc(98 * var(--hu) + var(--hdy)); }
   /* the title at the same height on every page: 45.15 units under an 819.33-unit frame (the companies'), so under a
      taller frame (the group's, 878.48) it moves up by the difference, 14 units into it, as on the home page */
-  .ig-phero__title { margin-top: calc((45.15 + 819.33 - var(--fh, 819.33)) * var(--hu)); padding-left: calc(max(0px, (100% - 1920px) / 2) + 90 * var(--hu)); font-size: max(24px, 70 * var(--hu)); }
+  .ig-phero__title { margin-top: calc((45.15 + 819.33 - var(--fh, 819.33)) * var(--hu)); padding-left: var(--gut); font-size: max(24px, 70 * var(--hu)); }
 }
 /* phones: the frame shown 1300 units across the screen, centred on --fpx (the ship), the logo and title smaller */
 @media (max-width: 760px) and (orientation: portrait) {

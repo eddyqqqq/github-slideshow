@@ -692,6 +692,25 @@ window.__igRun = () => {
       photo.style.opacity = st.io;
       fl.setAttribute('d', st.w > 0 ? floodD(gEnd * st.w) : 'M0 0Z');
       ph.classList.toggle('is-flooded', st.w > 0.97);   // the colour has filled it: the hero itself takes it, edge to edge
+      ink();
+    };
+    // the scene's type turns white line by line as the colour's lower edge comes down to it (at every size the colour
+    // and the type meet at a different moment: tied to the edge itself, the type is white as the colour arrives under
+    // it, never dark over the colour nor white over the page still white below it)
+    const LOWP = OL.filter(q => shut(q, 1)[1] > q[2] + 0.5).map(q => shut(q, 1));
+    let TXT = [];
+    const ink = () => {
+      if (!TXT.length) return;
+      const g = gEnd * st.w, k = 1 + spread * Math.min(1, g / Math.max(1, gEnd));
+      TXT.forEach(t => {
+        let edge = -Infinity, near = null, nd = Infinity;
+        if (st.w > 0) LOWP.forEach(([x, y]) => { const xs = W / 2 + (x - W / 2) * k;
+          if (xs >= t.x0 && xs <= t.x1) edge = Math.max(edge, y + g);
+          const d = Math.abs(xs - (t.x0 + t.x1) / 2); if (d < nd) { nd = d; near = y + g; } });
+        if (edge === -Infinity && near !== null) edge = near;
+        const white = st.w > 0 && edge >= t.y - t.lead;
+        if (white !== t.white) { t.white = white; t.el.style.color = white ? '#fff' : ''; }
+      });
     };
     // a scene plays only with its text (the blocks inside the hero)
     const active = !!(ph.dataset.scene && scene && scene.children.length);
@@ -718,7 +737,18 @@ window.__igRun = () => {
     const size = () => { const r = ph.getBoundingClientRect(); return r.height / unitPx() + 300; };
     // the statement under the closed frame, its top a little below the frame's lowest point
     const place = () => { const u = unitPx(), lowest = Math.max(...LO), sv = svg.getBoundingClientRect(), pr = ph.getBoundingClientRect();
-      scene.style.top = Math.round(sv.top - pr.top + lowest * u + Math.max(36, innerHeight * 0.06)) + 'px'; };
+      scene.style.top = Math.round(sv.top - pr.top + lowest * u + Math.max(36, innerHeight * 0.06)) + 'px';
+      // each text's top and its words' left and right, in the frame's units (its place in the layout: the entrances'
+      // shifts left out)
+      const st0 = scene.offsetTop, oy = sv.top - pr.top, ox = sv.left - pr.left;
+      TXT = $$('h1, h2, h3, h4, p, .wp-block-button', scene).filter(e => !e.parentElement.closest('h1, h2, h3, h4, p, .wp-block-button')).map(el => {
+        let top = 0; for (let e = el; e && e !== scene; e = e.offsetParent) top += e.offsetTop;
+        const rg = document.createRange(); rg.selectNodeContents(el); const rr = rg.getBoundingClientRect(), er = el.getBoundingClientRect();
+        const left = (rr.width ? rr.left : er.left) - pr.left, right = (rr.width ? rr.right : er.right) - pr.left;
+        return { el, y: vb.y + (st0 + top - oy) / u, x0: vb.x + (left - ox) / u, x1: vb.x + (right - ox) / u, lead: 14 / u, white: null };
+      });
+      TXT.forEach(t => { t.el.style.color = ''; });
+      ink(); };
     place(); ScrollTrigger.addEventListener('refreshInit', place);
     // pinned while it plays: the frame closes as the title fades (as the home page's), the statement rises under it in
     // dark type, then the colour floods out of the closed frame over the screen and the type turns white
@@ -738,7 +768,6 @@ window.__igRun = () => {
       // the type turns white only once the colour is under it (before, white type over the page still white below the
       // colour's edge seemed to vanish: the contact lines, low on the screen, most of all)
       .to(st, { w: 1, duration: 0.45, ease: 'power1.out' }, 0.85)
-      .to(scene, { color: '#fff', duration: 0.06, ease: 'none', onUpdate: null }, 0.78)   // (white just before the colour sets out: white already when it comes under the type)
       .to(words, { yPercent: -115, duration: 0.3, stagger: 0.012, ease: 'power2.in', onUpdate: null }, out)
       .to(rest, { y: -20, opacity: 0, duration: 0.25, ease: 'power2.in', onUpdate: null }, out)
       .to({}, { duration: 0.01, onUpdate: null }, gone + 0.3);
