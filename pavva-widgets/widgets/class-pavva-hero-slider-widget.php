@@ -2832,6 +2832,15 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		return $bp;
 	}
 
+	/* variantele micșorate ale unei imagini (telefon / tabletă): browserul o alege pe cea potrivită ecranului, nu originalul mare */
+	private function media_srcset( $media, $size, $quality ) {
+		if ( 'max' !== $quality && ! empty( $media['id'] ) ) {
+			$set = wp_get_attachment_image_srcset( (int) $media['id'], $size );
+			if ( $set ) return $set;
+		}
+		return '';
+	}
+
 	private function media_url( $media, $size ) {
 		if ( ! empty( $media['id'] ) ) {
 			$url = wp_get_attachment_image_url( (int) $media['id'], $size );
@@ -2904,11 +2913,13 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		$sources = '';
 		$mobile  = isset( $slide['slide_image_mobile'] ) ? $this->media_url( $slide['slide_image_mobile'], $size ) : '';
 		$tablet  = isset( $slide['slide_image_tablet'] ) ? $this->media_url( $slide['slide_image_tablet'], $size ) : '';
+		$m_set   = $mobile ? $this->media_srcset( $slide['slide_image_mobile'], $size, $quality ) : '';
+		$t_set   = $tablet ? $this->media_srcset( $slide['slide_image_tablet'], $size, $quality ) : '';
 		if ( $mobile ) {
-			$sources .= '<source media="(max-width: ' . (int) $bp['mobile'] . 'px)" srcset="' . esc_url( $mobile ) . '">';
+			$sources .= '<source media="(max-width: ' . (int) $bp['mobile'] . 'px)" ' . ( $m_set ? 'srcset="' . esc_attr( $m_set ) . '" sizes="100vw"' : 'srcset="' . esc_url( $mobile ) . '"' ) . '>';
 		}
 		if ( $tablet ) {
-			$sources .= '<source media="(max-width: ' . (int) $bp['tablet'] . 'px)" srcset="' . esc_url( $tablet ) . '">';
+			$sources .= '<source media="(max-width: ' . (int) $bp['tablet'] . 'px)" ' . ( $t_set ? 'srcset="' . esc_attr( $t_set ) . '" sizes="100vw"' : 'srcset="' . esc_url( $tablet ) . '"' ) . '>';
 		}
 
 		$html = $sources ? '<picture class="ps-picture">' . $sources . $img . '</picture>' : $img;
@@ -2959,11 +2970,17 @@ class Pavva_Hero_Slider_Widget extends Widget_Base {
 		$mobile = isset( $slide['slide_image_mobile'] ) ? $this->media_url( $slide['slide_image_mobile'], $size ) : '';
 		$tablet = isset( $slide['slide_image_tablet'] ) ? $this->media_url( $slide['slide_image_tablet'], $size ) : '';
 		if ( $mobile ) {
-			$out[] = array( 'href' => $mobile, 'media' => '(max-width: ' . (int) $bp['mobile'] . 'px)' );
+			$it    = array( 'href' => $mobile, 'media' => '(max-width: ' . (int) $bp['mobile'] . 'px)' );
+			$set   = $this->media_srcset( $slide['slide_image_mobile'], $size, $quality );
+			if ( $set ) { $it['srcset'] = $set; $it['sizes'] = '100vw'; }
+			$out[] = $it;
 			$max   = (int) $bp['mobile'];
 		}
 		if ( $tablet ) {
-			$out[] = array( 'href' => $tablet, 'media' => ( $max ? '(min-width: ' . ( $max + 1 ) . 'px) and ' : '' ) . '(max-width: ' . (int) $bp['tablet'] . 'px)' );
+			$it    = array( 'href' => $tablet, 'media' => ( $max ? '(min-width: ' . ( $max + 1 ) . 'px) and ' : '' ) . '(max-width: ' . (int) $bp['tablet'] . 'px)' );
+			$set   = $this->media_srcset( $slide['slide_image_tablet'], $size, $quality );
+			if ( $set ) { $it['srcset'] = $set; $it['sizes'] = '100vw'; }
+			$out[] = $it;
 			$max   = (int) $bp['tablet'];
 		}
 		$main = array( 'href' => '' );
