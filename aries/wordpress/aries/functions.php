@@ -38,6 +38,26 @@ add_action( 'wp_head', function () {
 // Contact Form 7: the form's template as written (its own layout, no paragraphs or line breaks added)
 add_filter( 'wpcf7_autop_or_not', '__return_false' );
 
+// Yoast SEO: the company's description, email and phone (set in Yoast → Settings → Site representation; the free
+// plugin keeps them but leaves them out of the schema), its address and its founding year in the Organization data
+add_filter( 'wpseo_schema_organization', function ( $data ) {
+	$get = function ( $k ) { return class_exists( 'WPSEO_Options' ) ? trim( (string) WPSEO_Options::get( $k, '' ) ) : ''; };
+	foreach ( array( 'description' => 'org-description', 'email' => 'org-email', 'telephone' => 'org-phone' ) as $prop => $opt ) {
+		if ( empty( $data[ $prop ] ) && $get( $opt ) ) {
+			$data[ $prop ] = $get( $opt );
+		}
+	}
+	$data['foundingDate'] = $data['foundingDate'] ?? '2003';
+	$data['address']      = $data['address'] ?? array(
+		'@type'           => 'PostalAddress',
+		'streetAddress'   => '175 Mamaia Blvd.',
+		'postalCode'      => '900565',
+		'addressLocality' => 'Constanta',
+		'addressCountry'  => 'RO',
+	);
+	return $data;
+} );
+
 // Contact Form 7's scripts and styles only on the pages that hold a form (the contact page): every other page saved
 // its files; a form placed on another page later brings them with it
 function aries_has_cf7() {

@@ -84,7 +84,7 @@
     "assets/images/shipping-agency-sea-2400.avif": "cb553acedabf65f3b0f3de34738a7a0bd0604ba3c3966f957baef4b3da7f3fb6",
     "assets/images/shipping-agency-sea-3600.avif": "32d019d94e6748049aa1eb4ffadfbe2b9ac870f7b67a08a9017e4da66c8dbb92",
     "assets/images/shipping-agency-sea.webp": "31ef344f001a18731e93d952630a67ce246dee31ced186de6fe2d15aa83d8bcb",
-    "functions.php": "e45c9aa168f613203b3043dd9ce0d983b23d936a31ed20f0b451b7e6dc44172b",
+    "functions.php": "45bef1b404ba46f7295abd0d397420d6b11377cef30f6e3d7d23a953dfa6e14d",
     "inc/imagient.php": "7926d5fd7dcd8ba11f6bd731536aa0360dcdbdaa73c16cd7f34bf3349638c2df",
     "parts/footer.html": "ce02b8720f15abbc8ea49b577522c890ff6fdf7e863bb9425a3657bd58a1a1b4",
     "parts/header.html": "2f3070828d00f95c72bf859d4e68fbcec63a78c7c134113d2c7390d4fa6ec073",
@@ -104,7 +104,7 @@
     "patterns/thank-you.php": "6f477f37cf0ca64d5685617e053588849c1026d4a97a34195dda3a6442fe8ca0",
     "patterns/three-boxes.php": "976a98c6833da644bb8e41f6b30fc3b5ea98136154d9cdbcb2ac941ec3467f6b",
     "screenshot.png": "34bf19db6ee58a6c74053b44d740f2298125dec650e14fadd98bb451126d5fa8",
-    "style.css": "b5bb01cadf7d9b8b2fe3bd23c73452831c9e4f9283dab3c0088140b7ac6c0335",
+    "style.css": "42b4377b036774b565ae94e8af3c64574c8bf153044c016d889f5a07a4937986",
     "templates/404.html": "21a392a07b93fb6f9ab5e59e25a4cab409d4f10962738cb7d5fee03665a0b695",
     "templates/front-page.html": "3399912b212bdc9e748bf8f64e10692985326030f3c7605eba8f95a0c67124e4",
     "templates/index.html": "788d6baa71bcef484a405d1285366bf08e86ea54912f07761d65f5b65d1ee299",
@@ -119,7 +119,7 @@
    "type": "plugin",
    "src": "aries/wordpress/imagient-deploy",
    "files": {
-    "imagient-deploy.php": "4501b15af526729404def1d7140e5e37b31dc20878972d9976af4569d628475e"
+    "imagient-deploy.php": "4a6ba971b3e613eed61a0c713030f87f5fd5e03f5333acfa9f4e7aa2541b7434"
    }
   }
  }
