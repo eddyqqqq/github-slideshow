@@ -15,6 +15,8 @@ define( 'ARIES_VERSION', wp_get_theme( 'aries' )->get( 'Version' ) . '.' . filem
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'wp-block-styles' );
+	// pages get an excerpt (the editor's "Excerpt" panel): Yoast SEO's llms.txt describes each page it lists with it
+	add_post_type_support( 'page', 'excerpt' );
 	add_theme_support( 'editor-styles' );
 	add_editor_style( 'style.css' );
 	add_theme_support( 'responsive-embeds' );
