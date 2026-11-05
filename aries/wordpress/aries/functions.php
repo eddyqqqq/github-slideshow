@@ -36,6 +36,18 @@ add_action( 'wp_head', function () {
 // Contact Form 7: the form's template as written (its own layout, no paragraphs or line breaks added)
 add_filter( 'wpcf7_autop_or_not', '__return_false' );
 
+// Contact Form 7's scripts and styles only on the pages that hold a form (the contact page): every other page saved
+// its files; a form placed on another page later brings them with it
+function aries_has_cf7() {
+	if ( ! is_singular() ) {
+		return false;
+	}
+	$post = get_post();
+	return $post && ( has_shortcode( $post->post_content, 'contact-form-7' ) || has_block( 'contact-form-7/contact-form-selector', $post ) );
+}
+add_filter( 'wpcf7_load_js', 'aries_has_cf7' );
+add_filter( 'wpcf7_load_css', 'aries_has_cf7' );
+
 // no emoji script or its styles: the site has no emoji, and every page saved a script and an inline style for them
 add_action( 'init', function () {
 	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
