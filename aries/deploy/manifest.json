@@ -119,7 +119,7 @@
    "type": "plugin",
    "src": "aries/wordpress/imagient-deploy",
    "files": {
-    "imagient-deploy.php": "bf9adf02590223b37f0c433c8848fa460f057f54fda505097c18bf1adc46b237"
+    "imagient-deploy.php": "4fe3d45be5d353d83adba5150967d1eefd28a7a85226eb8311ca974bf8f48a38"
    }
   }
  }

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Imagient Deploy
  * Description:       Updates the Aries theme and the Imagient Blocks plugin from their GitHub repository: only the files that changed, each checked against the published list before it is written. Run it from Tools → Imagient Deploy, or by an administrator through its REST route.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            Imagient
@@ -141,6 +141,11 @@ function imagient_deploy_run( $dry = false ) {
 	}
 	update_option( 'imagient_deploy_installed', $previous, false );
 	update_option( 'imagient_deploy_last', array( 'time' => time(), 'commit' => $sha, 'version' => $report['version'] ), false );
+	// the cached pages name the old files (their versions): a cache plugin empties its cache once anything changed
+	if ( array_filter( $plan, function ( $p ) { return $p['get'] || $p['gone']; } ) ) {
+		do_action( 'litespeed_purge_all' );
+		$report['cache'] = has_action( 'litespeed_purge_all' ) ? 'purged' : 'no cache plugin';
+	}
 	return $report;
 }
 
