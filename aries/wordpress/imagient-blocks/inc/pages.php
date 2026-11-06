@@ -1,6 +1,6 @@
 <?php
 /**
- * The company pages (Imagient · imagient.ro): Page hero (the company's frame with its photo, the logo and the
+ * The company pages: Page hero (the company's frame with its photo, the logo and the
  * title), Cover (a photo band with a colour gradient and its own blocks on top), Services (a list of services in
  * four layouts) and Menu (the hamburger button and its full-screen menu). Texts, photos, colours and links are
  * attributes edited in place; the motion is in aries.js.

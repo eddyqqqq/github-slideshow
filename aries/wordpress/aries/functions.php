@@ -1,10 +1,10 @@
 <?php
 /**
- * Aries — block theme by Imagient (https://imagient.ro).
+ * Aries — the Aries Group block theme.
  *
- * The design system lives in theme.json; the sections and their motion come from the Imagient Blocks plugin.
- * This file only loads the stylesheet, preloads the type, leaves out WordPress' emoji script and adds the Imagient
- * credits in the admin.
+ * The design system lives in theme.json; the sections and their motion come from the Aries Blocks plugin.
+ * This file only loads the stylesheet, preloads the type, leaves out WordPress' emoji script and sets up the
+ * login screen and the dashboard note.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -85,15 +85,15 @@ add_action( 'init', function () {
 // the plugin carries the blocks; say so in the admin if it is missing
 add_action( 'admin_notices', function () {
 	if ( ! function_exists( 'imagient_register_layout_blocks' ) && current_user_can( 'activate_plugins' ) ) {
-		echo '<div class="notice notice-warning"><p><strong>Aries:</strong> activate the <em>Imagient Blocks</em> plugin to use the Aries sections and layout blocks.</p></div>';
+		echo '<div class="notice notice-warning"><p><strong>Aries:</strong> activate the <em>Aries Blocks</em> plugin to use the Aries sections and layout blocks.</p></div>';
 	}
 } );
 
-require_once get_theme_file_path( 'inc/imagient.php' );
+require_once get_theme_file_path( 'inc/admin.php' );
 
 // one pattern category for the Aries sections, first in the inserter's Patterns tab
 add_action( 'init', function () {
-	register_block_pattern_category( 'aries', array( 'label' => 'Aries (Imagient)', 'description' => 'The homepage sections and starting points for new ones.' ) );
+	register_block_pattern_category( 'aries', array( 'label' => 'Aries', 'description' => 'The homepage sections and starting points for new ones.' ) );
 } );
 
 /**

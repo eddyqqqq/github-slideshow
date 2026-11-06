@@ -1,6 +1,6 @@
 <?php
 /**
- * Imagient Style — an Elementor-like Style tab on every block (core and Imagient).
+ * Style — an Elementor-like Style tab on every block (core and Aries).
  *
  * Each block can carry `igStyle`: { d: {...}, t: {...}, m: {...}, h: {...}, css: "..." }
  *   d = desktop (all screens), t = tablet (≤ 1024 px), m = mobile (≤ 640 px), h = hover, css = custom CSS

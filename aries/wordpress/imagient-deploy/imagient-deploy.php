@@ -1,12 +1,10 @@
 <?php
 /**
- * Plugin Name:       Imagient Deploy
- * Description:       Updates the Aries theme and the Imagient Blocks plugin from their GitHub repository: only the files that changed, each checked against the published list before it is written. Run it from Tools → Imagient Deploy, or by an administrator through its REST route.
- * Version:           1.2.1
+ * Plugin Name:       Aries Deploy
+ * Description:       Updates the Aries theme and the Aries Blocks plugin from their GitHub repository: only the files that changed, each checked against the published list before it is written. Run it from Tools → Aries Deploy, or by an administrator through its REST route.
+ * Version:           1.2.2
  * Requires at least: 6.4
  * Requires PHP:      7.4
- * Author:            Imagient
- * Author URI:        https://imagient.ro
  * License:           GPL-2.0-or-later
  * Text Domain:       imagient-deploy
  *
@@ -193,9 +191,9 @@ add_action( 'rest_api_init', function () {
 	) );
 } );
 
-// Tools → Imagient Deploy: the last run, and a button
+// Tools → Aries Deploy: the last run, and a button
 add_action( 'admin_menu', function () {
-	add_management_page( 'Imagient Deploy', 'Imagient Deploy', 'update_plugins', 'imagient-deploy', 'imagient_deploy_page' );
+	add_management_page( 'Aries Deploy', 'Aries Deploy', 'update_plugins', 'imagient-deploy', 'imagient_deploy_page' );
 } );
 
 function imagient_deploy_page() {
@@ -207,8 +205,8 @@ function imagient_deploy_page() {
 		$out = imagient_deploy_run( ! empty( $_POST['dry'] ) );
 	}
 	$last = get_option( 'imagient_deploy_last' );
-	echo '<div class="wrap"><h1>Imagient Deploy</h1>';
-	echo '<p>Updates the Aries theme and the Imagient Blocks plugin from <code>' . esc_html( IMAGIENT_DEPLOY_REPO ) . '</code>, branch <code>' . esc_html( IMAGIENT_DEPLOY_BRANCH ) . '</code>.</p>';
+	echo '<div class="wrap"><h1>Aries Deploy</h1>';
+	echo '<p>Updates the Aries theme and the Aries Blocks plugin from <code>' . esc_html( IMAGIENT_DEPLOY_REPO ) . '</code>, branch <code>' . esc_html( IMAGIENT_DEPLOY_BRANCH ) . '</code>.</p>';
 	if ( $last ) {
 		echo '<p>Last update: ' . esc_html( wp_date( 'j F Y, H:i', $last['time'] ) ) . ' · version ' . esc_html( $last['version'] ) . ' · commit <code>' . esc_html( substr( $last['commit'], 0, 7 ) ) . '</code></p>';
 	}

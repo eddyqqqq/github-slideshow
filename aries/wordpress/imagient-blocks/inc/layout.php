@@ -200,7 +200,7 @@ function imagient_safe_css( $css ) {
 }
 
 /**
- * The "HTML anchor" field on the Imagient blocks: rendered on the server, they get it as an id here (WordPress adds it
+ * The "HTML anchor" field on the Aries blocks: rendered on the server, they get it as an id here (WordPress adds it
  * only when a block saves its own markup), so links such as #contact reach them.
  */
 add_filter( 'render_block', function ( $html, $block ) {

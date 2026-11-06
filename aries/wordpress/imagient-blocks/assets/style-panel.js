@@ -1,5 +1,5 @@
 /*
- * Imagient Style — the Style tab on every block (Imagient · https://imagient.ro).
+ * Style — the Style tab on every block.
  * Like Elementor's Style tab: Layout, Spacing, Size, Position, Typography, Background, Border, Effects and
  * Custom CSS, each value typed freely (24px, 2rem, 50%, clamp(…), #hex …), for Desktop / Tablet / Mobile and for
  * Hover. Saved in the block's `igStyle` attribute; the same rules are generated in PHP for the site and here for
@@ -200,7 +200,7 @@
     const used = ['d', 't', 'm', 'h'].filter(b => !isEmpty(base[b]));
     const styledParts = Object.keys(style.el || {}).filter(k => parts[k] && !isEmpty(style.el[k]));
     return el(Fragment, {},
-      el(PanelBody, { title: 'Imagient Style', initialOpen: true, className: 'igs-head' },
+      el(PanelBody, { title: 'Style', initialOpen: true, className: 'igs-head' },
         Object.keys(parts).length ? el('div', { className: 'igs-part' },
           el(SelectControl, { label: 'Style this part', value: target, help: target ? 'The settings below change only the ' + parts[target][0].toLowerCase() + ' of this block.' : 'Choose a part (title, text, button, image …) to style it on its own.',
             options: [{ value: '', label: 'Whole block' + (!isEmpty({ d: style.d, t: style.t, m: style.m, h: style.h }) ? ' ●' : '') }].concat(Object.keys(parts).map(k => ({ value: k, label: parts[k][0] + (styledParts.includes(k) ? ' ●' : '') }))),

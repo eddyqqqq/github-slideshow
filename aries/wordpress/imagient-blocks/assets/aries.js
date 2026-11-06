@@ -1,5 +1,5 @@
 /*
- * Imagient Blocks — front-end runtime (Imagient · https://imagient.ro)
+ * Aries Blocks — front-end runtime
  *
  * Starts whatever is on the page: the Aries hero, the company scene, figure tiles, service cards, decorative
  * ribbons and the per-block animations (data-anim). GSAP + ScrollTrigger drive every scroll effect, Lenis
