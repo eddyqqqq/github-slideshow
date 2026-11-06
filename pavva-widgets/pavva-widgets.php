@@ -3,7 +3,7 @@
  * Plugin Name:       Pavva Widgets
  * Plugin URI:        https://imagient.ro/
  * Description:       Widgeturile Elementor, etichetele dinamice și formularele create special pentru site-ul Pavva. Câmpurile produselor / categoriilor sunt în „Pavva Products” și „Pavva Categories”. Creat de Imagient (imagient.ro).
- * Version:           4.15.8
+ * Version:           4.15.9
  * Author:            Imagient
  * Author URI:        https://imagient.ro/
  * Requires at least: 6.0
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PAVVA_WIDGETS_VERSION', '4.15.8' );
+define( 'PAVVA_WIDGETS_VERSION', '4.15.9' );
 define( 'PAVVA_WIDGETS_URL', plugin_dir_url( __FILE__ ) );
 define( 'PAVVA_WIDGETS_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -50,6 +50,9 @@ Pavva_W_Lista::init();
 /* Site în mai multe limbi (Polylang): textele fixe traduse, copierea paginilor / produselor în altă limbă, ordinea în admin. */
 require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-i18n.php';
 Pavva_W_I18n::init();
+
+/* pagina de login: fără logo-ul WordPress */
+require_once PAVVA_WIDGETS_PATH . 'includes/class-pavva-login.php';
 
 /* Verificarea widgeturilor vechi (pagina Plugins), doar în admin. */
 if ( is_admin() ) {
