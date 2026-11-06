@@ -12,7 +12,7 @@ class Pavva_W_Login {
 	public static function init() {
 		add_action( 'login_enqueue_scripts', array( __CLASS__, 'css' ) );
 		/* dacă logo-ul apare totuși (ex. CSS blocat), nu mai duce la wordpress.org */
-		add_filter( 'login_headerurl', 'home_url' );
+		add_filter( 'login_headerurl', function () { return home_url( '/' ); } );
 		add_filter( 'login_headertext', function () { return get_bloginfo( 'name' ); } );
 	}
 
