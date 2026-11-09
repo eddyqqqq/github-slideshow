@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Aries Deploy
  * Description:       Updates the Aries theme and the Aries Blocks plugin from their GitHub repository: only the files that changed, each checked against the published list before it is written. Run it from Tools → Aries Deploy, or by an administrator through its REST route.
- * Version:           1.2.4
+ * Version:           1.2.5
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * License:           GPL-2.0-or-later
@@ -189,6 +189,14 @@ add_action( 'rest_api_init', function () {
 			return rest_ensure_response( array( 'font' => $name, 'bytes' => $size, 'sha256' => hash_file( 'sha256', $dir . '/' . $name ) ) );
 		},
 	) );
+} );
+
+// SETUP (temporary, removed once the SEO texts are set): Yoast SEO's fields on pages through the REST API, for editors
+add_action( 'rest_api_init', function () {
+	foreach ( array( 'title', 'metadesc', 'focuskw', 'meta-robots-noindex', 'opengraph-title' ) as $k ) {
+		register_post_meta( 'page', '_yoast_wpseo_' . $k, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true,
+			'auth_callback' => function ( $allowed, $key, $id ) { return current_user_can( 'edit_post', $id ); } ) );
+	}
 } );
 
 // Tools → Aries Deploy: the last run, and a button
