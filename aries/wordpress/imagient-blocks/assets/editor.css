@@ -1,4 +1,4 @@
-/* Aries Blocks — editor only: previews of the Aries scenes and the settings UI */
+/* Imagient Blocks — editor only: previews of the Aries scenes and the settings UI. Imagient · https://imagient.ro */
 
 /* settings */
 .ig-bp-tabs { margin-bottom: 14px; }
@@ -71,7 +71,7 @@
 .ig-add { justify-self: start; width: auto !important; }
 .ig-figures-edit .ig-add, .ig-scene-edit .ig-add { margin-left: var(--gut, 68px); }
 
-/* ================= Style tab ================= */
+/* ================= Imagient Style tab ================= */
 .igs-head .components-panel__body-title { font-weight: 600; }
 .igs-switch { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .igs-switch .components-button { position: relative; min-width: 36px; justify-content: center; }

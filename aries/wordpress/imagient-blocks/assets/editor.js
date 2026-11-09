@@ -1,5 +1,5 @@
 /*
- * Aries Blocks — editor
+ * Imagient Blocks — editor (Imagient · https://imagient.ro)
  * Plain JavaScript on the WordPress globals: no build step. Block attributes, titles and categories come from the
  * PHP registration; this file adds the editing UI. Every block is dynamic (rendered in PHP), so `save` returns
  * only the inner blocks, if any.
@@ -537,7 +537,7 @@
   addFilter('editor.BlockEdit', 'imagient/anim-control', createHigherOrderComponent(BlockEdit => props => {
     if (!props.isSelected) return el(BlockEdit, props);
     return el(Fragment, {}, el(BlockEdit, props),
-      el(InspectorControls, {}, el(PanelBody, { title: 'Animation', initialOpen: !!props.attributes.igAnim },
+      el(InspectorControls, {}, el(PanelBody, { title: 'Animation (Imagient)', initialOpen: !!props.attributes.igAnim },
         el(SelectControl, { label: 'On scroll', value: props.attributes.igAnim || '', options: ANIMS, onChange: v => props.setAttributes({ igAnim: v }) }),
         el('p', { className: 'ig-help' }, 'Plays on the site as the block scrolls into view.'))));
   }, 'withImagientAnimation'));

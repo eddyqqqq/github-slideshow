@@ -1,10 +1,13 @@
 <?php
 /**
- * Plugin Name:       Aries Blocks
- * Description:       The Aries Group site's blocks: responsive layout (Section, Flex, Grid, Box), scroll animations for every block, and the Aries scenes (hero, company scene, figures, service cards, ribbons).
- * Version:           1.37.0
+ * Plugin Name:       Imagient Blocks
+ * Plugin URI:        https://imagient.ro
+ * Description:       Native Gutenberg blocks by Imagient: responsive layout (Section, Flex, Grid, Box), scroll animations for every block, and the Aries scenes (hero, company scene, figures, service cards, ribbons).
+ * Version:           1.38.0
  * Requires at least: 6.5
  * Requires PHP:      7.4
+ * Author:            Imagient
+ * Author URI:        https://imagient.ro
  * License:           GPL-2.0-or-later
  * Text Domain:       imagient-blocks
  */
@@ -23,9 +26,9 @@ require_once IMAGIENT_BLOCKS_DIR . 'inc/animations.php';
 require_once IMAGIENT_BLOCKS_DIR . 'inc/style.php';
 require_once IMAGIENT_BLOCKS_DIR . 'inc/login.php';
 
-/** One block category for all of the site's own blocks, first in the inserter. */
+/** One block category for everything Imagient, first in the inserter. */
 add_filter( 'block_categories_all', function ( $categories ) {
-	array_unshift( $categories, array( 'slug' => 'imagient', 'title' => 'Aries' ) );
+	array_unshift( $categories, array( 'slug' => 'imagient', 'title' => 'Imagient' ) );
 	return $categories;
 } );
 

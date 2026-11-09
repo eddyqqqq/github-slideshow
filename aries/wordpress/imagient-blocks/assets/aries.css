@@ -1,6 +1,6 @@
 /*
- * Aries Blocks — front-end styles: brand tokens, the layout blocks (Section, Flex, Grid, Box), the Aries scenes
- * and the scroll animations
+ * Imagient Blocks — front-end styles: brand tokens, the layout blocks (Section, Flex, Grid, Box), the Aries scenes
+ * and the scroll animations. Imagient · https://imagient.ro
  */
 
 /* Layout: the homepage design, played as a scroll sequence. Hero bands open onto the photo, the blue
@@ -354,7 +354,7 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
 .scene-two :is(h1, h2, h3), .identity :is(h1, h2, h3), .figs .tile :is(h2, h3), .card h3 { color: inherit; }
 .hero-title h1 { color: var(--blue); }
 
-/* ======================= contact page; forms (Contact Form 7) in the site's look ======================= */
+/* ======================= contact page; forms (Imagient Forms) in the site's look ======================= */
 /* the phone numbers, email and address in the page hero's scene: large, one under the other, a little higher than a
    statement (they take more lines) */
 .ig-contact-lines p { margin: 0 0 calc(14 * var(--pu)); font-size: clamp(24px, 2.6vw, 52px); line-height: 1.2; font-weight: var(--fw-head, 600); letter-spacing: -0.02em; }

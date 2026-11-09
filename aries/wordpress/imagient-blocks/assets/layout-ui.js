@@ -1,5 +1,5 @@
 /*
- * Layout controls: icon pickers in the spirit of Webflow and Elementor V4.
+ * Imagient layout controls (Imagient · https://imagient.ro): icon pickers in the spirit of Webflow and Elementor V4.
  * Device switch, direction arrows, a 3 × 3 alignment matrix, justify / align / wrap / child-sizing icons and a gap
  * field with presets. Shared by the layout blocks (editor.js) and the Style tab (style-panel.js) via window.IMAGIENT_UI.
  */
