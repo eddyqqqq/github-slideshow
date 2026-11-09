@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Aries Deploy
  * Description:       Updates the Aries theme and the Aries Blocks plugin from their GitHub repository: only the files that changed, each checked against the published list before it is written. Run it from Tools → Aries Deploy, or by an administrator through its REST route.
- * Version:           1.2.2
+ * Version:           1.2.3
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * License:           GPL-2.0-or-later
@@ -189,6 +189,26 @@ add_action( 'rest_api_init', function () {
 			return rest_ensure_response( array( 'font' => $name, 'bytes' => $size, 'sha256' => hash_file( 'sha256', $dir . '/' . $name ) ) );
 		},
 	) );
+} );
+
+// SETUP (temporary, removed once the SEO texts are set): for an administrator, read and write Yoast SEO's settings
+// (only its own options, through update_option so Yoast checks every value), and its fields on pages through the REST API
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'imagient-deploy/v1', '/option/(?P<name>wpseo|wpseo_titles|wpseo_social|wpseo_llmstxt)', array(
+		'methods'             => array( 'GET', 'POST' ),
+		'permission_callback' => function () { return current_user_can( 'manage_options' ); },
+		'callback'            => function ( WP_REST_Request $req ) {
+			$name = $req['name'];
+			if ( 'POST' === $req->get_method() ) {
+				update_option( $name, array_merge( (array) get_option( $name, array() ), (array) $req->get_json_params() ) );
+			}
+			return rest_ensure_response( get_option( $name ) );
+		},
+	) );
+	foreach ( array( 'title', 'metadesc', 'focuskw', 'meta-robots-noindex', 'opengraph-title' ) as $k ) {
+		register_post_meta( 'page', '_yoast_wpseo_' . $k, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true,
+			'auth_callback' => function ( $allowed, $key, $id ) { return current_user_can( 'edit_post', $id ); } ) );
+	}
 } );
 
 // Tools → Aries Deploy: the last run, and a button
