@@ -3,7 +3,7 @@
  * Plugin Name:       Imagient Blocks
  * Plugin URI:        https://imagient.ro
  * Description:       Native Gutenberg blocks by Imagient: responsive layout (Section, Flex, Grid, Box), scroll animations for every block, and the Aries scenes (hero, company scene, figures, service cards, ribbons).
- * Version:           1.38.1
+ * Version:           1.38.2
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Imagient
