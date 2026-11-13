@@ -127,7 +127,7 @@ function imagient_render_page_hero( $a, $content = '' ) {
 	$f      = $frames[ $a['frame'] ] ?? reset( $frames );
 	$uid    = wp_unique_id( 'ph' );
 	// the photo shows about 1.1 × the screen's width in the frame (on phones the frame runs 1.6 × past the screen)
-	$photo  = imagient_photo( $a['imageId'], $a['imageUrl'], '', array( 'sizes' => '(orientation: portrait) 170vw, 110vw', 'fetchpriority' => 'high', 'decoding' => 'async', 'loading' => 'eager' ) );
+	$photo  = imagient_photo( $a['imageId'], $a['imageUrl'], '', array( 'sizes' => '(orientation: portrait) 200vw, 125vw', 'fetchpriority' => 'high', 'decoding' => 'async', 'loading' => 'eager' ) );
 	$style  = sprintf( '--accent:%s;--fw:%s;--fh:%s;--fx0:%s;--fx1:%s;--fpx:%s;', imagient_color( $a['color'] ), $f['w'], $f['h'], $f['x0'], $f['x1'], max( 300, min( $f['w'] - 300, floatval( $a['portraitX'] ) ) ) );
 	// the scroll scene (set on the block): its text is the blocks inside the hero or, if there are none, the cover that
 	// follows it (the script brings that cover's text in)
