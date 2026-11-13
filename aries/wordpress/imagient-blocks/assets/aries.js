@@ -185,7 +185,10 @@ window.__igRun = () => {
       const hw = hero.scrH[0] / z + 6, hh = hero.scrH[1] / z + 6;
       let need = s0;
       for (let i = 0; i <= 64; i++) {
-        const x = sx - hw + 2 * hw * i / 64, y0 = Math.max(sy - hh, yAt(A.x, A.b, x) + eT - 5), y1 = Math.min(sy + hh, yAt(B.x, B.t, x) + eB + 5);
+        const x = sx - hw + 2 * hw * i / 64;
+        // only the window between the bars holds the photo (a screen wider than 1920 also shows the page beyond them)
+        if (x < FR.bars[0] || x > FR.bars[1]) continue;
+        const y0 = Math.max(sy - hh, yAt(A.x, A.b, x) + eT - 5), y1 = Math.min(sy + hh, yAt(B.x, B.t, x) + eB + 5);
         if (y1 <= y0) continue;
         [y0, y1].forEach(y => { const dx = x - C[0], dy = y - C[1], u = dx * co + dy * si, v = -dx * si + dy * co;
           need = Math.max(need, u > 0 ? u / (1500 - P[0]) : -u / P[0], v > 0 ? v / (Hp - P[1]) : -v / P[1]); });
