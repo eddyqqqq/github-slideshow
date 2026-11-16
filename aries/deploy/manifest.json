@@ -1,5 +1,5 @@
 {
- "version": "1.39.0",
+ "version": "1.39.1",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
@@ -21,9 +21,9 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "7805536a98046b4a74c167b134efff6b301b0fb0595adebfb081c3a597d72267",
+    "imagient-blocks.php": "8ed499a04dc1005e33edbb41b8a3be487d0ed0156541d8332bc6043e2fc6afe4",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
-    "inc/aries.php": "823765c12ca19b55ab3d227660aac931bf821f2aa83cb91542b829cf29062ac4",
+    "inc/aries.php": "82622c910d691de0eec81801bb4509da67318013ab6d3dd08d0dc4076768a44f",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
     "inc/helpers.php": "09c3a773017cfc73124d0c2730287c8c0b7da90804cb36fdad5d10d7d7b162c3",
     "inc/layout.php": "db178ad514aa649b56fe0ae2b87b9409efc55bda269822172d90e113c92962b3",
