@@ -299,16 +299,6 @@ window.__igRun = () => {
     e.wrap.style.opacity = st.io * st.ld;
   }
 
-  // a header photo given with its preview holds back the full photo (data-src, data-srcset): asked for once the page
-  // has loaded, so the page opens as fast as with a light photo and the full one follows, at its whole quality
-  const startFull = im => {
-    const go = () => {
-      const pic = im.parentElement;
-      if (pic && pic.tagName === 'PICTURE') $$('source[data-srcset]', pic).forEach(s => { s.srcset = s.dataset.srcset; s.removeAttribute('data-srcset'); });
-      if (im.dataset.src) { im.src = im.dataset.src; im.removeAttribute('data-src'); }
-    };
-    if (document.readyState === 'complete') setTimeout(go, 150); else addEventListener('load', () => setTimeout(go, 150), { once: true });
-  };
   if (hero && hero.src) {
     // the photo the browser chose from the srcset (format and size), already loading
     // once, when it has loaded (before that the <picture> may not have picked its source yet: setting the WebP first
@@ -337,7 +327,6 @@ window.__igRun = () => {
       hero.src.addEventListener('load', useSrc, { once: true });
       const pv = hero.src.dataset.preview;
       if (pv) { const im = new Image(); im.onload = () => { if (!full) show(pv, im.naturalWidth, im.naturalHeight); }; im.src = pv; }
-      if (hero.src.dataset.src) startFull(hero.src);
     }
   }
 
@@ -467,7 +456,6 @@ window.__igRun = () => {
         src.addEventListener('load', use, { once: true });
         const pv = src.dataset.preview;
         if (pv) { const im = new Image(); im.onload = () => { if (!full) show(pv, im.naturalWidth, im.naturalHeight); }; im.src = pv; }
-        if (src.dataset.src) startFull(src);
       }
     }
   });

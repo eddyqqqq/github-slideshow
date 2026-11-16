@@ -175,13 +175,9 @@ function imagient_picture( $url, $attrs ) {
 			// after it, at the usual priority
 			$attrs['fetchpriority'] = 'auto';
 			$GLOBALS['imagient_preload'] = $attrs['data-preview'];
-			// the full photo is asked for only once the page has loaded with its preview (the script moves data-src and
-			// data-srcset into place): the page opens as fast as with a light photo, the full one follows at its quality
-			$deferred = true;
 		}
 	}
-	$deferred = isset( $deferred );
-	$img = '<img ' . ( $deferred ? 'data-src' : 'src' ) . '="' . esc_url( imagient_versioned( $url ) ) . '"';
+	$img = '<img src="' . esc_url( imagient_versioned( $url ) ) . '"';
 	foreach ( $attrs as $k => $v ) {
 		$img .= ' ' . $k . '="' . esc_attr( $v ) . '"';
 	}
@@ -200,12 +196,12 @@ function imagient_picture( $url, $attrs ) {
 	if ( $set ) {
 		ksort( $set );
 		$sizes = isset( $attrs['sizes'] ) ? ' sizes="' . esc_attr( $attrs['sizes'] ) . '"' : '';
-		return '<picture><source type="image/avif" ' . ( $deferred ? 'data-srcset' : 'srcset' ) . '="' . implode( ', ', $set ) . '"' . $sizes . '>' . $img . '</picture>';
+		return '<picture><source type="image/avif" srcset="' . implode( ', ', $set ) . '"' . $sizes . '>' . $img . '</picture>';
 	}
 	if ( ! file_exists( get_theme_file_path( 'assets/' . $base . '.avif' ) ) ) {
 		return $img;
 	}
-	return '<picture><source type="image/avif" ' . ( $deferred ? 'data-srcset' : 'srcset' ) . '="' . esc_url( imagient_versioned( get_theme_file_uri( 'assets/' . $base . '.avif' ) ) ) . '">' . $img . '</picture>';
+	return '<picture><source type="image/avif" srcset="' . esc_url( imagient_versioned( get_theme_file_uri( 'assets/' . $base . '.avif' ) ) ) . '">' . $img . '</picture>';
 }
 
 // the header photo's preview, asked for from the head with the highest priority (see imagient_picture)

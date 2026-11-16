@@ -1,14 +1,14 @@
 {
- "version": "1.39.2",
+ "version": "1.39.1",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
     "assets/aries.css": "91f1db1eb4a631a22f2650a850222a0e83c5040b22e576cd211fda46eb75d6f6",
-    "assets/aries.js": "3240645c99b03415d997456665d2341a3c76b5cec714175739cf2a5315e15890",
+    "assets/aries.js": "3e68f8587d7a897d399acdc83eb79e87c8d65a66fb2f8e25ceea1df687577bb5",
     "assets/aries.min.css": "8c5e338b645f1e02ab8235f0a4d0a074892e2a9507279ffe39aac7a5d052f984",
-    "assets/aries.min.js": "4e6e92e48ae3288e43ea06094b449e6ba96757b6318371560cace4ef28b3eb9d",
+    "assets/aries.min.js": "950ac338f51f212f7ccee729e0f72b737ac4a6de4afdeba28e4fae554b879d0e",
     "assets/editor.css": "89374f3f07010a67230b737bac6e67ffac1c5c71d4fba0f0e3f62986762ae5a8",
     "assets/editor.js": "c5c7e2411a08e5295778603dda28e46a79cd0854dc516a18081919496ba8cb69",
     "assets/layout-ui.js": "15b93314880f9202f70a45bf1c65f2f68337bee75546a44587dcd31ebf475323",
@@ -21,11 +21,11 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "c981fe48d5013748531953ccab7a55486e60072695ad0514d1a5ab7a80193a2e",
+    "imagient-blocks.php": "8ed499a04dc1005e33edbb41b8a3be487d0ed0156541d8332bc6043e2fc6afe4",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "82622c910d691de0eec81801bb4509da67318013ab6d3dd08d0dc4076768a44f",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
-    "inc/helpers.php": "6e339af0392d729a1092caf457f6b9fbf8b6aab8995bb9853ebd42b4d7ca41a7",
+    "inc/helpers.php": "09c3a773017cfc73124d0c2730287c8c0b7da90804cb36fdad5d10d7d7b162c3",
     "inc/layout.php": "db178ad514aa649b56fe0ae2b87b9409efc55bda269822172d90e113c92962b3",
     "inc/login.php": "3dd32c75c0a7f86dacc31a27e099465a936322a285ad3ae0ce519a5b408ffc0e",
     "inc/pages.php": "1e6e9e3af419bb3146961436fe1a25690c1118068a52e274d64a9d839dac928f",
