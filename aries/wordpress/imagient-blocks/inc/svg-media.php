@@ -38,19 +38,21 @@ function imagient_svg_size( $file ) {
 add_filter( 'wp_prepare_attachment_for_js', function ( $response, $attachment ) {
 	if ( isset( $response['mime'] ) && 'image/svg+xml' === $response['mime'] && empty( $response['sizes'] ) ) {
 		list( $w, $h ) = imagient_svg_size( get_attached_file( $attachment->ID ) );
-		// the library fills its square tiles: a tall logo marked "landscape" is fitted by its height, so it shows whole
-		$fit  = $h > $w ? 'landscape' : 'portrait';
+		$fit  = $h > $w ? 'portrait' : 'landscape';
 		$size = array( 'url' => $response['url'], 'width' => $w, 'height' => $h, 'orientation' => $fit );
 		$response['width']       = $w;
 		$response['height']      = $h;
 		$response['orientation'] = $fit;
-		$response['sizes']  = array( 'full' => $size, 'medium' => $size, 'thumbnail' => $size );
+		$response['sizes']       = array( 'full' => $size, 'medium' => $size, 'thumbnail' => $size );
 	}
 	return $response;
 }, 10, 2 );
 
-// the company logos are white (they sit on colour on the site): the library shows every SVG on a mid grey, so they can be seen
+// the company logos are white (they sit on colour on the site): the library shows every SVG whole, on a mid grey
 add_action( 'admin_head', function () {
-	echo '<style>.attachment-preview.subtype-svg\\+xml .thumbnail,.attachment-details .thumbnail img[src$=".svg"],.attachment-media-view img[src$=".svg"],.media-sidebar img[src$=".svg"]{background:#7d8590}'
-		. '.attachment-preview.subtype-svg\\+xml .thumbnail img{padding:8px;box-sizing:border-box}</style>' . "\n";
+	$tile = '.attachment-preview.subtype-svg\\+xml';
+	echo '<style>' . $tile . ' .thumbnail{background:#7d8590}'
+		. $tile . ' .thumbnail .centered img{width:auto;height:auto;max-width:70%;max-height:58%;transform:translate(-50%,-72%)}'
+		. '.attachment-media-view img.details-image[src$=".svg"],.attachment-details .thumbnail img[src$=".svg"]{background:#7d8590;padding:24px;box-sizing:content-box}'
+		. '.attachment-media-view img.details-image[src$=".svg"]{width:auto;height:min(60vh,420px);max-width:calc(100% - 48px)}</style>' . "\n";
 } );
