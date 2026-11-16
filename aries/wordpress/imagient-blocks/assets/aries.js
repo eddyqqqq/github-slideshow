@@ -303,31 +303,15 @@ window.__igRun = () => {
     // the photo the browser chose from the srcset (format and size), already loading
     // once, when it has loaded (before that the <picture> may not have picked its source yet: setting the WebP first
     // and the AVIF later downloaded the photo twice and swapped it in view); then it fades in
-    // a light preview of the same photo (data-preview) opens the hero at once; the full photo, loading meanwhile, takes
-    // its place as soon as it is decoded (same framing: the preview has the photo's proportions)
-    let full = false;
-    const show = (url, w, h) => {
-      hero.img.setAttribute('href', url);
-      const moved = !hero.IMG || Math.abs(hero.IMG.w / hero.IMG.h - w / h) > 0.002;
-      hero.IMG = { w, h };
-      if (!hero.ready || moved) heroLayout();
-      if (hero.ready) return;
+    const useSrc = () => {
+      if (hero.ready || !hero.src.naturalWidth) return;
       hero.ready = true;
+      hero.img.setAttribute('href', hero.src.currentSrc || hero.src.src);
+      hero.IMG = { w: hero.src.naturalWidth, h: hero.src.naturalHeight };
+      heroLayout();
       if (window.gsap && typeof request === 'function') gsap.to(hero.st, { ld: 1, duration: 0.6, ease: 'power1.out', onUpdate: () => request(hero) }); else { hero.st.ld = 1; heroRender(); }
     };
-    const useSrc = () => {
-      if (full || !hero.src.naturalWidth) return;
-      full = true;
-      const url = hero.src.currentSrc || hero.src.src, w = hero.src.naturalWidth, h = hero.src.naturalHeight;
-      if (!hero.ready || !hero.src.decode) { show(url, w, h); return; }
-      hero.src.decode().catch(() => {}).then(() => show(url, w, h));
-    };
-    if (hero.src.complete && hero.src.naturalWidth) useSrc();
-    else {
-      hero.src.addEventListener('load', useSrc, { once: true });
-      const pv = hero.src.dataset.preview;
-      if (pv) { const im = new Image(); im.onload = () => { if (!full) show(pv, im.naturalWidth, im.naturalHeight); }; im.src = pv; }
-    }
+    if (hero.src.complete) useSrc(); else hero.src.addEventListener('load', useSrc, { once: true });
   }
 
   /* ---------------- build the ribbons on the page ---------------- */
@@ -432,32 +416,19 @@ window.__igRun = () => {
     const [fx, fy] = (ph.dataset.focus || '50 50').split(' ').map(v => +v / 100), zoom = +ph.dataset.zoom || 1;
     // the photo covers the frame's window with room to drift (1.16 ×), its focus point where the editor set it
     ph._place = () => {
-      if (!src || !ph._ar) return;
-      const b = box.getBBox(), ar = ph._ar, k = zoom * 1.16;
+      if (!src || !src.naturalWidth) return;
+      const b = box.getBBox(), ar = src.naturalWidth / src.naturalHeight, k = zoom * 1.16;
       let w = b.width * k, h = w / ar;
       if (h < b.height * k) { h = b.height * k; w = h * ar; }
       img.setAttribute('x', f1(b.x - (w - b.width) * fx)); img.setAttribute('y', f1(b.y - (h - b.height) * fy));
       img.setAttribute('width', f1(w)); img.setAttribute('height', f1(h)); img.setAttribute('preserveAspectRatio', 'none');
     };
     // set once the <picture> has loaded its source (format and size chosen by the browser), then shown
-    // a light preview of the same photo (data-preview) shows at once; the full photo takes its place once decoded
-    let full = false;
-    const show = (url, w, h) => { ph._ar = w / h; img.setAttribute('href', url); ph._place(); if (!ph._ready) { ph._ready = true; img.classList.add('is-ready'); } };
     const use = () => {
-      if (full || !src.naturalWidth) return;
-      full = true;
-      const url = src.currentSrc || src.src, w = src.naturalWidth, h = src.naturalHeight;
-      if (!ph._ready || !src.decode) { show(url, w, h); return; }
-      src.decode().catch(() => {}).then(() => show(url, w, h));
+      if (ph._ready || !src.naturalWidth) return;
+      ph._ready = true; img.setAttribute('href', src.currentSrc || src.src); ph._place(); img.classList.add('is-ready');
     };
-    if (src) {
-      if (src.complete && src.naturalWidth) use();
-      else {
-        src.addEventListener('load', use, { once: true });
-        const pv = src.dataset.preview;
-        if (pv) { const im = new Image(); im.onload = () => { if (!full) show(pv, im.naturalWidth, im.naturalHeight); }; im.src = pv; }
-      }
-    }
+    if (src) { if (src.complete) use(); else src.addEventListener('load', use, { once: true }); }
   });
   $$('.ig-menu').forEach(m => {
     const btn = $('.ig-menu__btn', m), panel = $('.ig-menu__panel', m);

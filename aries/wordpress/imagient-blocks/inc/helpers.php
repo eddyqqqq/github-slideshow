@@ -165,18 +165,6 @@ function imagient_picture( $url, $attrs ) {
 			$attrs['height'] = $size[1];
 		}
 	}
-	// a header photo with a light preview beside it (name-preview.avif, 1200 px): the page shows it at once and swaps in
-	// the full photo, same framing, as soon as that has loaded (the full photo keeps all its quality)
-	if ( isset( $attrs['fetchpriority'] ) && 'high' === $attrs['fetchpriority'] && function_exists( 'get_theme_file_uri' ) && is_string( $url ) && preg_match( '/\.webp(\?.*)?$/i', $url ) && 0 === strpos( $url, get_theme_file_uri( 'assets/' ) ) ) {
-		$pbase = preg_replace( '/\.webp(\?.*)?$/i', '', substr( $url, strlen( get_theme_file_uri( 'assets/' ) ) ) );
-		if ( file_exists( get_theme_file_path( 'assets/' . $pbase . '-preview.avif' ) ) ) {
-			$attrs['data-preview'] = imagient_versioned( get_theme_file_uri( 'assets/' . $pbase . '-preview.avif' ) );
-			// the preview first, from the page's head (a block theme renders the page before its head); the full photo
-			// after it, at the usual priority
-			$attrs['fetchpriority'] = 'auto';
-			$GLOBALS['imagient_preload'] = $attrs['data-preview'];
-		}
-	}
 	$img = '<img src="' . esc_url( imagient_versioned( $url ) ) . '"';
 	foreach ( $attrs as $k => $v ) {
 		$img .= ' ' . $k . '="' . esc_attr( $v ) . '"';
@@ -203,10 +191,3 @@ function imagient_picture( $url, $attrs ) {
 	}
 	return '<picture><source type="image/avif" srcset="' . esc_url( imagient_versioned( get_theme_file_uri( 'assets/' . $base . '.avif' ) ) ) . '">' . $img . '</picture>';
 }
-
-// the header photo's preview, asked for from the head with the highest priority (see imagient_picture)
-add_action( 'wp_head', function () {
-	if ( ! empty( $GLOBALS['imagient_preload'] ) ) {
-		echo '<link rel="preload" as="image" type="image/avif" href="' . esc_url( $GLOBALS['imagient_preload'] ) . '" fetchpriority="high">' . "\n";
-	}
-}, 1 );
