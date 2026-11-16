@@ -49,6 +49,12 @@ function imagient_color( $value ) {
 	return preg_match( '/^(#[0-9a-f]{3,8}|rgba?\([^)]*\)|hsla?\([^)]*\)|var\(--[\w-]+\))$/i', $value ) ? $value : '';
 }
 
+/** Each logo's file in assets/logos (named after the company), by its key (the key is what the blocks save). */
+function imagient_logo_file( $name ) {
+	$files = array( 'group' => 'aries-group', 'agency' => 'aries-shipping-agency', 'interlink' => 'aries-interlink', 'logistics' => 'aries-logistics' );
+	return $files[ $name ] ?? $name;
+}
+
 function imagient_logo_list() {
 	return array(
 		'group'     => 'Aries Group',
@@ -64,7 +70,7 @@ function imagient_logo_list() {
  */
 function imagient_logo_svg( $name ) {
 	$name = sanitize_key( $name );
-	$file = IMAGIENT_BLOCKS_DIR . 'assets/logos/' . $name . '.svg';
+	$file = IMAGIENT_BLOCKS_DIR . 'assets/logos/' . imagient_logo_file( $name ) . '.svg';
 	if ( ! isset( imagient_logo_list()[ $name ] ) || ! file_exists( $file ) ) {
 		return '';
 	}

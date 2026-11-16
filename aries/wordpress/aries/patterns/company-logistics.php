@@ -9,7 +9,7 @@
  * Block Types: core/post-content
  */
 ?>
-<!-- wp:imagient/page-hero {"title":"Aries Logistics","frame":"logistics","color":"logistics","imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/logistics-road.webp' ) ); ?>","focusX":50,"focusY":50,"scene":"1","anchor":"about"} -->
+<!-- wp:imagient/page-hero {"title":"Aries Logistics","frame":"logistics","color":"logistics","imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/header-logistics.webp' ) ); ?>","focusX":50,"focusY":50,"scene":"1","anchor":"about"} -->
 <!-- wp:heading {"className":"ig-page-statement"} -->
 <h2 class="wp-block-heading ig-page-statement">Bulk and break-bulk logistics company delivering integrated cargo solutions including stevedoring, inland transport, customs brokerage, warehousing, freight forwarding and door-to-door delivery.</h2>
 <!-- /wp:heading -->

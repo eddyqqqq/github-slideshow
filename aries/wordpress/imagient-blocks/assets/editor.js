@@ -13,6 +13,8 @@
   const { addFilter } = wp.hooks;
   const { createHigherOrderComponent } = wp.compose;
   const CFG = window.IMAGIENT || { logos: {}, palette: [], spaces: [], assets: '' };
+  // each logo's file, by the key the blocks save (as imagient_logo_file in PHP)
+  const LOGO_FILE = { group: 'aries-group', agency: 'aries-shipping-agency', interlink: 'aries-interlink', logistics: 'aries-logistics' };
   const PAL = CFG.palette.map(c => ({ name: c.name, color: c.color, slug: c.slug }));
   const colorOf = v => { const c = CFG.palette.find(p => p.slug === v); return c ? c.color : (v || ''); };
   const slugOf = hex => { const c = CFG.palette.find(p => p.color.toLowerCase() === String(hex || '').toLowerCase()); return c ? c.slug : (hex || ''); };
@@ -227,7 +229,7 @@
             el(ToggleControl, { label: 'White (on colour)', checked: a.white, onChange: v => setAttributes({ white: v }) }),
             el(RangeControl, { label: 'Width at 1440 px (px)', value: a.width, min: 30, max: 200, onChange: v => setAttributes({ width: v }) }),
             el(ToggleControl, { label: 'Links to the home page', checked: a.link, onChange: v => setAttributes({ link: v }) }))),
-        el('div', props, el('img', { src: CFG.assets + 'logos/' + a.logo + '.svg', alt: '', style: { width: a.width + 'px', display: 'block', filter: a.white ? 'brightness(0) invert(1)' : 'none' } })));
+        el('div', props, el('img', { src: CFG.assets + 'logos/' + (LOGO_FILE[a.logo] || a.logo) + '.svg', alt: '', style: { width: a.width + 'px', display: 'block', filter: a.white ? 'brightness(0) invert(1)' : 'none' } })));
     },
     save: () => null
   });
@@ -340,7 +342,7 @@
             RT({ tagName: 'p', className: 'ig-foot', value: a.footText, onChange: v => setAttributes({ footText: v }), placeholder: 'Bottom text' })),
           list.map((co, i) => el('div', { key: i, className: 'ig-scene-edit__state' + (i === sel ? ' is-selected' : ''), style: { background: colorOf(co.color) }, onClick: () => setSel(i) },
             el(RibbonPreview, { shape: co.shape, place: { w: 1.1, x: -0.05, y: 0.5 } }),
-            el('img', { className: 'ig-scene-edit__logo', src: CFG.assets + 'logos/' + co.logo + '.svg', alt: '' }),
+            el('img', { className: 'ig-scene-edit__logo', src: CFG.assets + 'logos/' + (LOGO_FILE[co.logo] || co.logo) + '.svg', alt: '' }),
             el(ItemTools, { i, n: list.length, ops, label: 'company' }),
             RT({ tagName: 'h2', value: co.name, onChange: v => ops.update(i, { name: v }), placeholder: 'Company name' }),
             RT({ tagName: 'p', value: co.text, onChange: v => ops.update(i, { text: v }), placeholder: 'Description' }),

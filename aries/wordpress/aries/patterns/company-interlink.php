@@ -9,7 +9,7 @@
  * Block Types: core/post-content
  */
 ?>
-<!-- wp:imagient/page-hero {"title":"Aries Interlink","frame":"interlink","color":"interlink","imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/interlink-rail.webp' ) ); ?>","focusX":60,"focusY":50,"scene":"1","anchor":"about"} -->
+<!-- wp:imagient/page-hero {"title":"Aries Interlink","frame":"interlink","color":"interlink","imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/header-interlink.webp' ) ); ?>","focusX":60,"focusY":50,"scene":"1","anchor":"about"} -->
 <!-- wp:heading {"className":"ig-page-statement"} -->
 <h2 class="wp-block-heading ig-page-statement">Transportation services company providing supply chain support across Romania, with expertise in rail transport and rail operations mainly for grains, steel products and fertilizers.</h2>
 <!-- /wp:heading -->

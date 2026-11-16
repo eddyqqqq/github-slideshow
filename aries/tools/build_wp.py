@@ -178,11 +178,10 @@ def main():
         f.write('/* Aries shapes, from the design SVGs (tools/design_svg.py) — Imagient */\nwindow.ARIES_SHAPES=' + data + ';\n')
     for f in ('gsap.min.js', 'ScrollTrigger.min.js', 'lenis.min.js'):
         copy(os.path.join(ROOT, 'vendor', f), os.path.join(plugin, 'assets', 'vendor', f))
-    # the logos go inline into every page: their coordinates rounded to 0.01 of a design pixel (they show at most
-    # ~90 px wide) and the white space between their tags dropped
+    # the logos go inline into every page, at the full precision of the designer's files (only the white space
+    # between their tags dropped)
     for f in os.listdir(os.path.join(ROOT, 'design', 'logos')):
         svg = open(os.path.join(ROOT, 'design', 'logos', f)).read()
-        svg = re.sub(r'-?\d+\.\d{3,}', lambda m: ('%.2f' % float(m.group(0))).rstrip('0').rstrip('.'), svg)
         svg = re.sub(r'>\s+<', '><', svg).strip() + '\n'
         # the mark's paths (starting in its top two thirds) and the name's: a company logo, white in its file, can then
         # be shown in colour (the mark in the Group blue, the name in ink) by CSS
@@ -200,7 +199,7 @@ def main():
     images = os.path.join(theme, 'assets', 'images')
     for f in os.listdir(images):
         os.remove(os.path.join(images, f))
-    photos = ('hero', 'card-stacker', 'card-vessel', 'shipping-agency-sea', 'shipping-agency-port', 'interlink-rail', 'interlink-wagons', 'logistics-road', 'logistics-port', 'about-group', 'interlink-cover', 'logistics-cover')
+    photos = ('header-', 'card-stacker', 'card-vessel', 'shipping-agency-port', 'interlink-wagons', 'logistics-port', 'about-group', 'interlink-cover', 'logistics-cover')
     for f in sorted(os.listdir(os.path.join(ROOT, 'img'))):
         if not f.startswith(photos) or not f.endswith(('.avif', '.webp')) or f.startswith('hero-900'):
             continue

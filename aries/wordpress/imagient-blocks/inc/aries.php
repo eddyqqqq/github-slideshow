@@ -33,7 +33,7 @@ function imagient_aries_defaults() {
 			array( 'title' => 'Freight forwarding and full-service logistics.', 'imageId' => 0, 'imageUrl' => $img . 'card-stacker.webp', 'alt' => '', 'url' => '' ),
 			array( 'title' => 'Cargo chartering and brokerage.', 'imageId' => 0, 'imageUrl' => $img . 'card-vessel.webp', 'alt' => '', 'url' => '' ),
 		),
-		'heroImage' => $img . 'hero.webp',
+		'heroImage' => $img . 'header-home.webp',
 	);
 }
 

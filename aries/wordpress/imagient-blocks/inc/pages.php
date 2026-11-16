@@ -13,7 +13,7 @@ require_once __DIR__ . '/frames.php';
 function imagient_pages_defaults() {
 	$img = function_exists( 'get_theme_file_uri' ) ? get_theme_file_uri( 'assets/images/' ) : '';
 	return array(
-		'sea'      => $img . 'shipping-agency-sea.webp',
+		'sea'      => $img . 'header-shipping-agency.webp',
 		'port'     => $img . 'shipping-agency-port.webp',
 		'services' => array(
 			array( 'title' => 'Agricultural Commodities Agency', 'text' => 'We handle ships which load or discharge 25% of all agricultural products exported and imported via Romanian ports, including grain, oil seeds, meals, edible oils and sugar.' ),
