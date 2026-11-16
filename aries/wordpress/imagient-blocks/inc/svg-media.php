@@ -38,10 +38,19 @@ function imagient_svg_size( $file ) {
 add_filter( 'wp_prepare_attachment_for_js', function ( $response, $attachment ) {
 	if ( isset( $response['mime'] ) && 'image/svg+xml' === $response['mime'] && empty( $response['sizes'] ) ) {
 		list( $w, $h ) = imagient_svg_size( get_attached_file( $attachment->ID ) );
-		$size = array( 'url' => $response['url'], 'width' => $w, 'height' => $h, 'orientation' => $h > $w ? 'portrait' : 'landscape' );
-		$response['width']  = $w;
-		$response['height'] = $h;
+		// the library fills its square tiles: a tall logo marked "landscape" is fitted by its height, so it shows whole
+		$fit  = $h > $w ? 'landscape' : 'portrait';
+		$size = array( 'url' => $response['url'], 'width' => $w, 'height' => $h, 'orientation' => $fit );
+		$response['width']       = $w;
+		$response['height']      = $h;
+		$response['orientation'] = $fit;
 		$response['sizes']  = array( 'full' => $size, 'medium' => $size, 'thumbnail' => $size );
 	}
 	return $response;
 }, 10, 2 );
+
+// the company logos are white (they sit on colour on the site): the library shows every SVG on a mid grey, so they can be seen
+add_action( 'admin_head', function () {
+	echo '<style>.attachment-preview.subtype-svg\\+xml .thumbnail,.attachment-details .thumbnail img[src$=".svg"],.attachment-media-view img[src$=".svg"],.media-sidebar img[src$=".svg"]{background:#7d8590}'
+		. '.attachment-preview.subtype-svg\\+xml .thumbnail img{padding:8px;box-sizing:border-box}</style>' . "\n";
+} );
