@@ -448,9 +448,11 @@ a.more:hover, a.more:focus-visible, a.ul:hover, a.ul:focus-visible { color: var(
    size, centred, the frame's ends in view) and the title */
 .ig-phero { position: relative; overflow: hidden; background: var(--paper);
   padding: calc(env(safe-area-inset-top, 0px) + max(20px, 68 * var(--pu))) 0 calc(150 * var(--pu)); }
+/* the window is centred (not the frame: its two ends differ) and 2 units wider than the screen on each side, so no
+   sliver of frame, nor its 1.25-unit stroke, shows at the screen's edges, with or without a scrollbar */
 .ig-phero__stage { position: relative; margin-top: calc(80 * var(--pu));
-  --svgw: calc(min(100vw, 1920px) * var(--fw) / (var(--fx1) - var(--fx0))); }
-.ig-phero__svg { display: block; width: var(--svgw); max-width: none; height: auto; margin-left: calc(50% - var(--svgw) / 2); overflow: visible; }
+  --svgw: calc(min(100vw, 1920px) * var(--fw) / (var(--fx1) - var(--fx0) - 4)); }
+.ig-phero__svg { display: block; width: var(--svgw); max-width: none; height: auto; margin-left: calc(50% - var(--svgw) * (var(--fx0) + var(--fx1)) / 2 / var(--fw)); overflow: visible; }
 .ig-phero__src { position: absolute; left: 0; top: 0; width: 15px; opacity: 0; pointer-events: none; }
 .ig-phero__src img { display: block; width: 100%; height: auto; }
 .ph-frame { fill: var(--accent, var(--agency)); stroke: var(--accent, var(--agency)); stroke-width: 2.5; stroke-linejoin: round; }   /* the stroke covers the hairline seam along the photo's edge */
