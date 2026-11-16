@@ -565,7 +565,7 @@ window.__igRun = () => {
      ===================================================================== */
   gsap.registerPlugin(ScrollTrigger);
   gsap.config({ nullTargetWarn: false });   // (a scene without a heading has no words to move)
-  ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true });
+  ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,resize' });   // (on load the page refreshes itself, only if its height changed: below)
   root.classList.add('anim');
 
   let lenis = null;
