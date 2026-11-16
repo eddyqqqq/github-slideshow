@@ -1,5 +1,5 @@
 {
- "version": "1.41.0",
+ "version": "1.41.1",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
@@ -21,7 +21,7 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "acda98e7abf29c20a206e6b2f17ac836c31a5871e51b25b2c479877fc91f44c2",
+    "imagient-blocks.php": "cd26642fcfb5664379d460ed220a22620fbfffe1797a47db120dbe246777ea0f",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "b8dabcdf70d75eb2ce7a612535777d048e641a7e105661acd5804f0981468342",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
@@ -29,7 +29,8 @@
     "inc/layout.php": "db178ad514aa649b56fe0ae2b87b9409efc55bda269822172d90e113c92962b3",
     "inc/login.php": "3dd32c75c0a7f86dacc31a27e099465a936322a285ad3ae0ce519a5b408ffc0e",
     "inc/pages.php": "edb523a635d9aa47f92b3529ff8f76ff6dc9d90222371061d2f98916f8eed8cc",
-    "inc/style.php": "56b0c45410aa71425e1bfbeb82ed4e88ede4c5082677b6aac7fbdd538091d5d8"
+    "inc/style.php": "56b0c45410aa71425e1bfbeb82ed4e88ede4c5082677b6aac7fbdd538091d5d8",
+    "inc/svg-media.php": "561db7cf2be567afce91dfff555aba5ed15b44985c3b99d0563ce7226f6a796f"
    }
   },
   "aries": {
