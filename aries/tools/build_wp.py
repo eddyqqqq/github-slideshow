@@ -199,7 +199,7 @@ def main():
     images = os.path.join(theme, 'assets', 'images')
     for f in os.listdir(images):
         os.remove(os.path.join(images, f))
-    photos = ('header-', 'card-stacker', 'card-vessel', 'shipping-agency-port', 'interlink-wagons', 'logistics-port', 'about-contact-cover', 'interlink-cover', 'logistics-cover')
+    photos = ('header-', 'card-stacker', 'card-vessel', 'shipping-agency-port', 'interlink-wagons', 'logistics-port', 'about-cover', 'contact-cover', 'card-freight-forwarding', 'card-cargo-chartering', 'interlink-cover', 'logistics-cover')
     for f in sorted(os.listdir(os.path.join(ROOT, 'img'))):
         if not f.startswith(photos) or not f.endswith(('.avif', '.webp')) or f.startswith('hero-900'):
             continue

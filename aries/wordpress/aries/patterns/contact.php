@@ -39,4 +39,4 @@
 <!-- /wp:shortcode -->
 <!-- /wp:imagient/section -->
 
-<!-- wp:imagient/cover {"imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/about-contact-cover.webp' ) ); ?>","alt":"A bulk carrier moored at the quay, with port cranes, containers and a truck on the dock","from":"group","to":"group","shade":"tint"} /-->
+<!-- wp:imagient/cover {"imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/contact-cover.webp' ) ); ?>","alt":"A reach stacker lifting a container at a port terminal","from":"group","to":"group","shade":"tint"} /-->

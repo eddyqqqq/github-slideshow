@@ -30,8 +30,8 @@ function imagient_aries_defaults() {
 		'cards'     => array(
 			array( 'title' => 'Multimodal transport, stevedoring and warehousing.', 'imageId' => 0, 'imageUrl' => $img . 'card-stacker.webp', 'alt' => 'Reach stacker lifting a container in the port', 'url' => '' ),
 			array( 'title' => 'Port agency and all related services.', 'imageId' => 0, 'imageUrl' => $img . 'card-vessel.webp', 'alt' => 'Bulk carrier moored at the grain terminal', 'url' => '' ),
-			array( 'title' => 'Freight forwarding and full-service logistics.', 'imageId' => 0, 'imageUrl' => $img . 'card-stacker.webp', 'alt' => '', 'url' => '' ),
-			array( 'title' => 'Cargo chartering and brokerage.', 'imageId' => 0, 'imageUrl' => $img . 'card-vessel.webp', 'alt' => '', 'url' => '' ),
+			array( 'title' => 'Freight forwarding and full-service logistics.', 'imageId' => 0, 'imageUrl' => $img . 'card-freight-forwarding.webp', 'alt' => 'A bulk carrier moored at the quay, with port cranes, containers and a truck on the dock', 'url' => '' ),
+			array( 'title' => 'Cargo chartering and brokerage.', 'imageId' => 0, 'imageUrl' => $img . 'card-cargo-chartering.webp', 'alt' => 'A bulk carrier being loaded with grain from rail wagons at a port terminal', 'url' => '' ),
 		),
 		'heroImage' => $img . 'header-home.webp',
 	);
