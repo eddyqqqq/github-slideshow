@@ -568,6 +568,9 @@ html.menu-open:not(.lenis), html.menu-open:not(.lenis) body { overflow: hidden; 
    fades out before the middle; the ship and the quay stay clear */
 .ig-cover.is-tint .ig-cover__shade { background: linear-gradient(180deg, color-mix(in srgb, var(--cv-to) 88%, transparent) 0%,
   color-mix(in srgb, var(--cv-to) 55%, transparent) 22%, color-mix(in srgb, var(--cv-to) 18%, transparent) 42%, transparent 58%); }
+/* a little stronger (About us: its photo's sky is deep blue already, so the usual tint hardly shows) */
+.ig-cover.is-tint.is-tint-strong .ig-cover__shade { background: linear-gradient(180deg, color-mix(in srgb, var(--cv-to) 94%, transparent) 0%,
+  color-mix(in srgb, var(--cv-to) 70%, transparent) 25%, color-mix(in srgb, var(--cv-to) 32%, transparent) 46%, transparent 66%); }
 @media (max-width: 760px) and (orientation: portrait) {
 }
 .ig-cover__inner { position: relative; z-index: 1; padding-top: calc(120 * var(--pu)); padding-bottom: calc(120 * var(--pu)); }

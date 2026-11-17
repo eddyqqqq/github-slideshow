@@ -1,13 +1,13 @@
 {
- "version": "1.43.0",
+ "version": "1.43.1",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
    "src": "aries/wordpress/imagient-blocks",
    "files": {
-    "assets/aries.css": "ff5a27ed9dc0ff1590a5b08dc9410feb53f76dd191157b54b5f39eb54259831f",
+    "assets/aries.css": "411d3cd285988abe2969b87c05eeef3f6e1948af7109fb07c7941a1c06d33fd1",
     "assets/aries.js": "cb2b320384a184ad26abba80948027b75d0aa2ff97df73be0862bee4c062a2af",
-    "assets/aries.min.css": "534112863b9c605ffbdbc072920f19e9d7de43f414564c8be6c669ed5b4bd32c",
+    "assets/aries.min.css": "81835d7d19d5f1f9f26c8801b7df2827885ad65b9b5d1fe1118a01fcfcfec0ba",
     "assets/aries.min.js": "9eda913874e816cb666470173c5c27c2c196d451d9c62a69732d2bddae538fac",
     "assets/editor.css": "89374f3f07010a67230b737bac6e67ffac1c5c71d4fba0f0e3f62986762ae5a8",
     "assets/editor.js": "12e077494fbdcc0b8db752eba8e94d9c24a091bf997a5419b7aaa1d340f7f665",
@@ -21,7 +21,7 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "69e1228b22da31451b652a1f3a9dc52a3eea753d5104d485d14d28eaf1ccca28",
+    "imagient-blocks.php": "32cb1f486aadaba6b0b7823858aad0e9a2f8270647ddaf5c6895acc0a312b0ae",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
     "inc/aries.php": "66348b8043509adfd0689fa9b915e34407d99ce47958d3e725dccfa83a04e06f",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
@@ -103,7 +103,7 @@
     "parts/header.html": "2f3070828d00f95c72bf859d4e68fbcec63a78c7c134113d2c7390d4fa6ec073",
     "patterns/cards.php": "0af378009689cda9e066d807efdb73245867e791cdd7efdfe795971fbcc4ec96",
     "patterns/companies.php": "13ea591495e1c96ea92917875037036a87e819226761954fbd5c8ffdd8786565",
-    "patterns/company-group.php": "4606f0af94456c0858635e1235c94cbf5032c5f3dc6250001c5e6b0bcc3d69de",
+    "patterns/company-group.php": "af2d6610ccfcd67eadfec45f637c3f246ba1688974d055613156569c20e044f1",
     "patterns/company-interlink.php": "6919b61369440164684f92300c805d9aca1ed3861196385532c96e57ad8be2f4",
     "patterns/company-logistics.php": "e5f036b90c2552c2546def5c8b9f48677d732fcd4215d187ea8261d99e30bf53",
     "patterns/company-shipping-agency.php": "07fcd1644356381a76c747068a08357a05a0793808df88aab8ef3040e250386b",
