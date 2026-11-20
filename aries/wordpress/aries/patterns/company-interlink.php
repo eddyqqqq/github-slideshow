@@ -11,7 +11,7 @@
 ?>
 <!-- wp:imagient/page-hero {"title":"Aries Interlink","frame":"interlink","color":"interlink","imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/header-interlink.webp' ) ); ?>","focusX":60,"focusY":50,"scene":"1","anchor":"about"} -->
 <!-- wp:heading {"className":"ig-page-statement"} -->
-<h2 class="wp-block-heading ig-page-statement">Transportation services company providing supply chain support across Romania, with expertise in rail transport and rail operations mainly for grains, steel products and fertilizers.</h2>
+<h2 class="wp-block-heading ig-page-statement">Transportation services company providing supply chain support across Romania, with expertise in rail transport and rail operations.</h2>
 <!-- /wp:heading -->
 
 <!-- wp:buttons -->
@@ -25,7 +25,7 @@
 <!-- wp:imagient/ribbon {"shape":"interlink","size":108,"x":-4,"y":40,"pan":true} /-->
 
 <!-- wp:heading {"className":"ig-page-statement","igAnim":"split"} -->
-<h2 class="wp-block-heading ig-page-statement">Managing annual rail transport volumes of around 800,000 tons of bulk grain.</h2>
+<h2 class="wp-block-heading ig-page-statement">Managing annual rail transport volumes of around 900,000 tons of cargo.</h2>
 <!-- /wp:heading -->
 
 <!-- wp:group {"className":"ig-page-notes","layout":{"type":"default"},"igAnim":"fade-up"} -->
@@ -44,14 +44,14 @@
 <!-- /wp:imagient/section -->
 
 <!-- wp:imagient/section {"className":"ig-page-services","spacing":{"d":{"pt":"8","pb":"8"},"t":{},"m":{}}} -->
-<!-- wp:imagient/services {"items": [{"title": "Rail <br>Freight", "text": "We provide specialized rail transport services mainly for grains, steel products and fertilizers across Romania, connecting inland loading points with ports and other destinations."}, {"title": "Rail <br>Operations <br>Coordination", "text": "Our team coordinates rail operations throughout the transport process, covering loading, dispatch, arrival and unloading, with continuous operational follow-up at every stage."}, {"title": "Wagon <br>Capacity <br>Management", "text": "We secure wagon availability so cargo reaches terminal operations and vessel loading on schedule, with capacity planned around the specific timing of each shipment."}, {"title": "Train <br>Schedule <br>Optimization", "text": "Train movements are optimized according to terminal availability and vessel loading schedules, keeping rail operations in sync with each shipment’s requirements."}], "color": "interlink", "mark": "zigzag"} /-->
+<!-- wp:imagient/services {"items": [{"title": "Rail <br>Freight", "text": "We provide specialized rail transport services mainly for grains, steel products and fertilizers across Romania, connecting inland loading points with ports and other destinations."}, {"title": "Rail <br>Operations <br>Coordination", "text": "Our team coordinates rail operations throughout the transport process, covering loading, dispatch, arrival and unloading, with continuous operational follow-up at every stage."}, {"title": "Capacity <br>Management", "text": "We secure wagon availability so cargo reaches terminal operations and vessel loading and discharging on schedule, with capacity planned around the specific timing of each shipment."}, {"title": "Train <br>Schedule <br>Optimization", "text": "Train movements are optimized according to terminal availability and vessel loading schedules, keeping rail operations in sync with each shipment’s requirements."}], "color": "interlink", "mark": "zigzag"} /-->
 <!-- /wp:imagient/section -->
 
 <!-- wp:imagient/cover {"imageUrl":"<?php echo esc_url( get_theme_file_uri( 'assets/images/interlink-cover-1.webp' ) ); ?>","alt":"A reach stacker lifting a container next to a gantry crane at the terminal","from":"interlink","to":"group","shade":"tint"} /-->
 
 <!-- wp:imagient/section {"className":"ig-page-facility","spacing":{"d":{"pt":"8","pb":"9"},"t":{},"m":{}}} -->
 <!-- wp:heading {"className":"ig-page-statement","igAnim":"split"} -->
-<h2 class="wp-block-heading ig-page-statement">Handling annual bulk grain volumes that reach <br>100,000 tons.</h2>
+<h2 class="wp-block-heading ig-page-statement">Bulk grains containerization capacity of 1,500 tons / day.</h2>
 <!-- /wp:heading -->
 
 <!-- wp:group {"className":"ig-page-notes","layout":{"type":"default"}} -->
@@ -60,7 +60,7 @@
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>The facility is designed to transfer bulk grain directly into containers from ships, barges, trucks or trains, with a stuffing capacity of 1,500 tons /<br>60 x 20’ containers per day.</p>
+<p>The facility is designed to transfer bulk grain directly into containers from ships, barges, trucks or trains, with a stuffing capacity of 1,500 tons /<br>(60 x 20’) containers per day.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->

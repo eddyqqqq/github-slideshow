@@ -12,7 +12,7 @@ function imagient_aries_defaults() {
 	return array(
 		'companies' => array(
 			array( 'name' => 'Aries Shipping Agency', 'text' => 'Maritime and river agency providing comprehensive agency services in all Romanian Black Sea and Danube ports.', 'linkText' => 'View more', 'linkUrl' => '/aries-shipping-agency/', 'logo' => 'agency', 'shape' => 'agency', 'color' => 'agency' ),
-			array( 'name' => 'Aries Interlink', 'text' => 'Supply chain support across Romania, with expertise in rail transport and rail operations mainly for grains, steel products and fertilizers.', 'linkText' => 'View more', 'linkUrl' => '/aries-interlink/', 'logo' => 'interlink', 'shape' => 'interlink', 'color' => 'interlink' ),
+			array( 'name' => 'Aries Interlink', 'text' => 'Supply chain support across Romania, with expertise in rail transport and rail operations.', 'linkText' => 'View more', 'linkUrl' => '/aries-interlink/', 'logo' => 'interlink', 'shape' => 'interlink', 'color' => 'interlink' ),
 			array( 'name' => 'Aries Logistics', 'text' => 'Bulk and break-bulk logistics, including stevedoring, transport, customs brokerage, warehousing, freight forwarding and door-to-door delivery.', 'linkText' => 'View more', 'linkUrl' => '/aries-logistics/', 'logo' => 'logistics', 'shape' => 'logistics', 'color' => 'logistics' ),
 		),
 		'tiles'     => array(
@@ -21,7 +21,7 @@ function imagient_aries_defaults() {
 				array( 'value' => '800', 'suffix' => '+', 'caption' => 'Inland waterway port calls annually' ),
 			) ),
 			array( 'label' => 'Aries Interlink', 'shape' => 'interlinkT', 'color' => 'interlink', 'wide' => false, 'figures' => array(
-				array( 'value' => '800,000', 'suffix' => 't', 'caption' => 'Bulk grain transported by rail annually' ),
+				array( 'value' => '900,000', 'suffix' => 't', 'caption' => 'Cargo transported by rail annually' ),
 			) ),
 			array( 'label' => 'Aries Logistics', 'shape' => 'logisticsT', 'color' => 'logistics', 'wide' => false, 'figures' => array(
 				array( 'value' => '300,000', 'suffix' => 't', 'caption' => 'Cargo volumes managed annually' ),

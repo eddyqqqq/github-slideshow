@@ -1,5 +1,5 @@
 {
- "version": "1.43.1",
+ "version": "1.43.2",
  "packages": {
   "imagient-blocks": {
    "type": "plugin",
@@ -21,9 +21,9 @@
     "assets/vendor/ScrollTrigger.min.js": "ad33c2df9ada8a663c2147357828f980d0b7ca731ef33eb3c6e4f327c3b2cda5",
     "assets/vendor/gsap.min.js": "28033e449a31ebcc396e5be8b13b63152bf03094288fb5867034321927bce087",
     "assets/vendor/lenis.min.js": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8",
-    "imagient-blocks.php": "32cb1f486aadaba6b0b7823858aad0e9a2f8270647ddaf5c6895acc0a312b0ae",
+    "imagient-blocks.php": "1c66c2a0e5a84a91361fcf037a44eef64564d331ee9b645b3f225357698f7993",
     "inc/animations.php": "2a1fe2e037f4a42c0029018d7f6508550af1de323a8ce449abac40ef73c25e7c",
-    "inc/aries.php": "66348b8043509adfd0689fa9b915e34407d99ce47958d3e725dccfa83a04e06f",
+    "inc/aries.php": "c5050510e0a43f7a657a2a4045e240f76c10554010bdc5b4b50313009e43179a",
     "inc/frames.php": "62264ffab731ec98ec0f63606ddce8fda379b722f2deb50e140eeffa98825ed8",
     "inc/helpers.php": "d4ce584c95417b7d9febe42fb6f20d5509883e6712b2481d9b2243596e018886",
     "inc/layout.php": "db178ad514aa649b56fe0ae2b87b9409efc55bda269822172d90e113c92962b3",
@@ -103,8 +103,8 @@
     "parts/header.html": "2f3070828d00f95c72bf859d4e68fbcec63a78c7c134113d2c7390d4fa6ec073",
     "patterns/cards.php": "0af378009689cda9e066d807efdb73245867e791cdd7efdfe795971fbcc4ec96",
     "patterns/companies.php": "13ea591495e1c96ea92917875037036a87e819226761954fbd5c8ffdd8786565",
-    "patterns/company-group.php": "af2d6610ccfcd67eadfec45f637c3f246ba1688974d055613156569c20e044f1",
-    "patterns/company-interlink.php": "6919b61369440164684f92300c805d9aca1ed3861196385532c96e57ad8be2f4",
+    "patterns/company-group.php": "a73f1c8b4e207eb85aff21052d5fe395936399f805de01ef3f0003456280a2fe",
+    "patterns/company-interlink.php": "b0926257421c769fa68c24a3a4e9c3a26dd6b3e5e405f7895d8b58122fd898bd",
     "patterns/company-logistics.php": "e5f036b90c2552c2546def5c8b9f48677d732fcd4215d187ea8261d99e30bf53",
     "patterns/company-shipping-agency.php": "07fcd1644356381a76c747068a08357a05a0793808df88aab8ef3040e250386b",
     "patterns/contact.php": "5ee01172a38aac776207f9e452a55fbc4c1741afe3798c6eb1d2c7bc74ee5ed4",
